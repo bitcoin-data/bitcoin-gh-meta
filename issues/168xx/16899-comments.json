@@ -1,0 +1,2068 @@
+[
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325291770"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325291770"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I'd prefer to use C++11 member initialization\r\n\r\n```cpp\r\nuint64_t coins_count{0};\r\n```\r\n\r\nFeel free to keep the others (or switch them over as well)",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-17T17:24:50Z",
+      "diff_hunk" : "@@ -24,7 +24,10 @@ struct CCoinsStats\n     uint64_t nDiskSize;\n     CAmount nTotalAmount;\n \n-    CCoinsStats() : nHeight(0), nTransactions(0), nTransactionOutputs(0), nBogoSize(0), nDiskSize(0), nTotalAmount(0) {}\n+    // The number of coins contained.\n+    uint64_t coins_count;\n+\n+    CCoinsStats() : nHeight(0), nTransactions(0), nTransactionOutputs(0), nBogoSize(0), nDiskSize(0), nTotalAmount(0), coins_count(0) {}",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325291770",
+      "id" : 325291770,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNTI5MTc3MA==",
+      "original_commit_id" : "fd56894a3f9377538160ff274bb075b3ababdfd5",
+      "original_position" : 8,
+      "path" : "src/node/coinstats.h",
+      "position" : null,
+      "pull_request_review_id" : 289424719,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:53Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325291770",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325292094"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325292094"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This should use the new `.Check()` syntax on `RPCHelpMan`?",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-17T17:25:35Z",
+      "diff_hunk" : "@@ -2247,6 +2247,106 @@ static UniValue getblockfilter(const JSONRPCRequest& request)\n     return ret;\n }\n \n+/**\n+ * Serialize the UTXO set to a file for loading elsewhere.\n+ *\n+ * @see SnapshotMetadata\n+ */\n+UniValue dumptxoutset(const JSONRPCRequest& request)\n+{\n+    if (request.fHelp || request.params.size() != 1)\n+        throw std::runtime_error(\n+            RPCHelpMan{\n+                \"dumptxoutset\",\n+                \"\\nWrite the serialized UTXO set to disk.\\n\"\n+                \"Incidentally flushes the latest coinsdb (leveldb) to disk.\\n\",\n+                {\n+                    {\"path\",\n+                        RPCArg::Type::STR,\n+                        RPCArg::Optional::NO,\n+                        /* default_val */ \"\",\n+                        \"path to the output file. If relative, will be prefixed by datadir.\"},\n+                },\n+                RPCResults{},\n+                RPCExamples{\"{\\n\"\n+            \"  \\\"coins_written\\\": n,   (numeric) the number of coins written in the snapshot\\n\"\n+            \"  \\\"base_hash\\\": \\\"...\\\",   (string) the hash of the base of the snapshot\\n\"\n+            \"  \\\"base_height\\\": n,     (string) the hash of the base of the snapshot\\n\"\n+            \"  \\\"path\\\": \\\"...\\\"         (string) the absolute path that the snapshot was written to\\n\"\n+            \"]\\n\"},\n+            }.ToString()",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325292094",
+      "id" : 325292094,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNTI5MjA5NA==",
+      "original_commit_id" : "fd56894a3f9377538160ff274bb075b3ababdfd5",
+      "original_position" : 31,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 289424719,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:53Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325292094",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325292343"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325292343"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Looks like this is the Result, not an Example?",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-17T17:26:09Z",
+      "diff_hunk" : "@@ -2247,6 +2247,106 @@ static UniValue getblockfilter(const JSONRPCRequest& request)\n     return ret;\n }\n \n+/**\n+ * Serialize the UTXO set to a file for loading elsewhere.\n+ *\n+ * @see SnapshotMetadata\n+ */\n+UniValue dumptxoutset(const JSONRPCRequest& request)\n+{\n+    if (request.fHelp || request.params.size() != 1)\n+        throw std::runtime_error(\n+            RPCHelpMan{\n+                \"dumptxoutset\",\n+                \"\\nWrite the serialized UTXO set to disk.\\n\"\n+                \"Incidentally flushes the latest coinsdb (leveldb) to disk.\\n\",\n+                {\n+                    {\"path\",\n+                        RPCArg::Type::STR,\n+                        RPCArg::Optional::NO,\n+                        /* default_val */ \"\",\n+                        \"path to the output file. If relative, will be prefixed by datadir.\"},\n+                },\n+                RPCResults{},\n+                RPCExamples{\"{\\n\"\n+            \"  \\\"coins_written\\\": n,   (numeric) the number of coins written in the snapshot\\n\"\n+            \"  \\\"base_hash\\\": \\\"...\\\",   (string) the hash of the base of the snapshot\\n\"\n+            \"  \\\"base_height\\\": n,     (string) the hash of the base of the snapshot\\n\"\n+            \"  \\\"path\\\": \\\"...\\\"         (string) the absolute path that the snapshot was written to\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325292343",
+      "id" : 325292343,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNTI5MjM0Mw==",
+      "original_commit_id" : "fd56894a3f9377538160ff274bb075b3ababdfd5",
+      "original_position" : 29,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : 35,
+      "pull_request_review_id" : 289424719,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:53Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325292343",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325295089"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325295089"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Could also create `src/node/utxo_snapshot.{h,cpp}` and add this there if that seems preferable.  ",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-17T17:32:17Z",
+      "diff_hunk" : "@@ -744,6 +745,62 @@ bool InvalidateBlock(CValidationState& state, const CChainParams& chainparams, C\n /** Remove invalidity status from a block and its descendants. */\n void ResetBlockFailureFlags(CBlockIndex* pindex) EXCLUSIVE_LOCKS_REQUIRED(cs_main);\n \n+/**\n+ * Serialized version of a UTXO set from which an assumed-valid CChainState\n+ * can be constructed.\n+ */\n+class SnapshotMetadata",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325295089",
+      "id" : 325295089,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNTI5NTA4OQ==",
+      "original_commit_id" : "e30e3a4c07223974566c83b2260b8b9a9bb1faea",
+      "original_position" : 16,
+      "path" : "src/validation.h",
+      "position" : null,
+      "pull_request_review_id" : 289428962,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325295089",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "node_id" : "MDQ6VXNlcjczMTk3",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325296061"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325296061"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Why does this need the header (as opposed to just the hash of the header?)",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-17T17:34:28Z",
+      "diff_hunk" : "@@ -744,6 +745,62 @@ bool InvalidateBlock(CValidationState& state, const CChainParams& chainparams, C\n /** Remove invalidity status from a block and its descendants. */\n void ResetBlockFailureFlags(CBlockIndex* pindex) EXCLUSIVE_LOCKS_REQUIRED(cs_main);\n \n+/**\n+ * Serialized version of a UTXO set from which an assumed-valid CChainState\n+ * can be constructed.\n+ */\n+class SnapshotMetadata\n+{\n+public:\n+    //! The block header of the block that reflects the tip of the chain for the\n+    //! UTXO set contained in this snapshot.\n+    CDiskBlockIndex m_base_blockheader;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325296061",
+      "id" : 325296061,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNTI5NjA2MQ==",
+      "original_commit_id" : "e30e3a4c07223974566c83b2260b8b9a9bb1faea",
+      "original_position" : 21,
+      "path" : "src/validation.h",
+      "position" : null,
+      "pull_request_review_id" : 289424719,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325296061",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "What was the conclusion on the question whether the dump should include all headers?",
+      "created_at" : "2019-09-17T17:41:47Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#issuecomment-532325803",
+      "id" : 532325803,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16899",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDUzMjMyNTgwMw==",
+      "updated_at" : "2019-09-17T17:41:47Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/532325803",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#17192](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/17192.html) (util: Add CHECK_NONFATAL and use it in src/rpc by MarcoFalke)\n* [#16523](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/16523.html) (Add removemempoolentry RPC to evict transactions from the mempool by metalicjames)\n* [#16365](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/16365.html) (Log RPC parameters (arguments) if -debug=rpcparams by LarryRuane)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "created_at" : "2019-09-17T18:49:39Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#issuecomment-532352515",
+      "id" : 532352515,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16899",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDUzMjM1MjUxNQ==",
+      "updated_at" : "2019-10-18T20:44:31Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/532352515",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325721215"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325721215"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Ah, right - fixed.",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-18T14:48:46Z",
+      "diff_hunk" : "@@ -2247,6 +2247,106 @@ static UniValue getblockfilter(const JSONRPCRequest& request)\n     return ret;\n }\n \n+/**\n+ * Serialize the UTXO set to a file for loading elsewhere.\n+ *\n+ * @see SnapshotMetadata\n+ */\n+UniValue dumptxoutset(const JSONRPCRequest& request)\n+{\n+    if (request.fHelp || request.params.size() != 1)\n+        throw std::runtime_error(\n+            RPCHelpMan{\n+                \"dumptxoutset\",\n+                \"\\nWrite the serialized UTXO set to disk.\\n\"\n+                \"Incidentally flushes the latest coinsdb (leveldb) to disk.\\n\",\n+                {\n+                    {\"path\",\n+                        RPCArg::Type::STR,\n+                        RPCArg::Optional::NO,\n+                        /* default_val */ \"\",\n+                        \"path to the output file. If relative, will be prefixed by datadir.\"},\n+                },\n+                RPCResults{},\n+                RPCExamples{\"{\\n\"\n+            \"  \\\"coins_written\\\": n,   (numeric) the number of coins written in the snapshot\\n\"\n+            \"  \\\"base_hash\\\": \\\"...\\\",   (string) the hash of the base of the snapshot\\n\"\n+            \"  \\\"base_height\\\": n,     (string) the hash of the base of the snapshot\\n\"\n+            \"  \\\"path\\\": \\\"...\\\"         (string) the absolute path that the snapshot was written to\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325721215",
+      "id" : 325721215,
+      "in_reply_to_id" : 325292343,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNTcyMTIxNQ==",
+      "original_commit_id" : "fd56894a3f9377538160ff274bb075b3ababdfd5",
+      "original_position" : 29,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : 35,
+      "pull_request_review_id" : 289979304,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325721215",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "node_id" : "MDQ6VXNlcjczMTk3",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325721264"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325721264"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Fixed, thanks.",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-18T14:48:51Z",
+      "diff_hunk" : "@@ -2247,6 +2247,106 @@ static UniValue getblockfilter(const JSONRPCRequest& request)\n     return ret;\n }\n \n+/**\n+ * Serialize the UTXO set to a file for loading elsewhere.\n+ *\n+ * @see SnapshotMetadata\n+ */\n+UniValue dumptxoutset(const JSONRPCRequest& request)\n+{\n+    if (request.fHelp || request.params.size() != 1)\n+        throw std::runtime_error(\n+            RPCHelpMan{\n+                \"dumptxoutset\",\n+                \"\\nWrite the serialized UTXO set to disk.\\n\"\n+                \"Incidentally flushes the latest coinsdb (leveldb) to disk.\\n\",\n+                {\n+                    {\"path\",\n+                        RPCArg::Type::STR,\n+                        RPCArg::Optional::NO,\n+                        /* default_val */ \"\",\n+                        \"path to the output file. If relative, will be prefixed by datadir.\"},\n+                },\n+                RPCResults{},\n+                RPCExamples{\"{\\n\"\n+            \"  \\\"coins_written\\\": n,   (numeric) the number of coins written in the snapshot\\n\"\n+            \"  \\\"base_hash\\\": \\\"...\\\",   (string) the hash of the base of the snapshot\\n\"\n+            \"  \\\"base_height\\\": n,     (string) the hash of the base of the snapshot\\n\"\n+            \"  \\\"path\\\": \\\"...\\\"         (string) the absolute path that the snapshot was written to\\n\"\n+            \"]\\n\"},\n+            }.ToString()",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325721264",
+      "id" : 325721264,
+      "in_reply_to_id" : 325292094,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNTcyMTI2NA==",
+      "original_commit_id" : "fd56894a3f9377538160ff274bb075b3ababdfd5",
+      "original_position" : 31,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 289979372,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325721264",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "node_id" : "MDQ6VXNlcjczMTk3",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325721410"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325721410"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Changed them all.",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-18T14:49:04Z",
+      "diff_hunk" : "@@ -24,7 +24,10 @@ struct CCoinsStats\n     uint64_t nDiskSize;\n     CAmount nTotalAmount;\n \n-    CCoinsStats() : nHeight(0), nTransactions(0), nTransactionOutputs(0), nBogoSize(0), nDiskSize(0), nTotalAmount(0) {}\n+    // The number of coins contained.\n+    uint64_t coins_count;\n+\n+    CCoinsStats() : nHeight(0), nTransactions(0), nTransactionOutputs(0), nBogoSize(0), nDiskSize(0), nTotalAmount(0), coins_count(0) {}",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325721410",
+      "id" : 325721410,
+      "in_reply_to_id" : 325291770,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNTcyMTQxMA==",
+      "original_commit_id" : "fd56894a3f9377538160ff274bb075b3ababdfd5",
+      "original_position" : 8,
+      "path" : "src/node/coinstats.h",
+      "position" : null,
+      "pull_request_review_id" : 289979556,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325721410",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "node_id" : "MDQ6VXNlcjczMTk3",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325725481"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325725481"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "During snapshot activation we use `m_base_blockheader.nHeight` to index into the expected assumeutxo hash values, but beyond that I don't think we use other parts of the header. I can split out the height if you like, but I don't see much harm in taking on a few extra bytes for the complete header in case it's somehow advantageous to have in the future.",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-18T14:55:54Z",
+      "diff_hunk" : "@@ -744,6 +745,62 @@ bool InvalidateBlock(CValidationState& state, const CChainParams& chainparams, C\n /** Remove invalidity status from a block and its descendants. */\n void ResetBlockFailureFlags(CBlockIndex* pindex) EXCLUSIVE_LOCKS_REQUIRED(cs_main);\n \n+/**\n+ * Serialized version of a UTXO set from which an assumed-valid CChainState\n+ * can be constructed.\n+ */\n+class SnapshotMetadata\n+{\n+public:\n+    //! The block header of the block that reflects the tip of the chain for the\n+    //! UTXO set contained in this snapshot.\n+    CDiskBlockIndex m_base_blockheader;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325725481",
+      "id" : 325725481,
+      "in_reply_to_id" : 325296061,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNTcyNTQ4MQ==",
+      "original_commit_id" : "e30e3a4c07223974566c83b2260b8b9a9bb1faea",
+      "original_position" : 21,
+      "path" : "src/validation.h",
+      "position" : null,
+      "pull_request_review_id" : 289984971,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325725481",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "node_id" : "MDQ6VXNlcjczMTk3",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325813600"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325813600"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "How is `m_base_blockheader.nHeight` different from `LookupBlockIndex(m_base_blockhash)->nHeight`?",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-18T17:56:31Z",
+      "diff_hunk" : "@@ -744,6 +745,62 @@ bool InvalidateBlock(CValidationState& state, const CChainParams& chainparams, C\n /** Remove invalidity status from a block and its descendants. */\n void ResetBlockFailureFlags(CBlockIndex* pindex) EXCLUSIVE_LOCKS_REQUIRED(cs_main);\n \n+/**\n+ * Serialized version of a UTXO set from which an assumed-valid CChainState\n+ * can be constructed.\n+ */\n+class SnapshotMetadata\n+{\n+public:\n+    //! The block header of the block that reflects the tip of the chain for the\n+    //! UTXO set contained in this snapshot.\n+    CDiskBlockIndex m_base_blockheader;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325813600",
+      "id" : 325813600,
+      "in_reply_to_id" : 325296061,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNTgxMzYwMA==",
+      "original_commit_id" : "e30e3a4c07223974566c83b2260b8b9a9bb1faea",
+      "original_position" : 21,
+      "path" : "src/validation.h",
+      "position" : null,
+      "pull_request_review_id" : 290098300,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325813600",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325816516"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325816516"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Ah yeah, that's a good point. I'll revert to using a hash in the snapshot and just do the lookup during activation.",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-18T18:02:38Z",
+      "diff_hunk" : "@@ -744,6 +745,62 @@ bool InvalidateBlock(CValidationState& state, const CChainParams& chainparams, C\n /** Remove invalidity status from a block and its descendants. */\n void ResetBlockFailureFlags(CBlockIndex* pindex) EXCLUSIVE_LOCKS_REQUIRED(cs_main);\n \n+/**\n+ * Serialized version of a UTXO set from which an assumed-valid CChainState\n+ * can be constructed.\n+ */\n+class SnapshotMetadata\n+{\n+public:\n+    //! The block header of the block that reflects the tip of the chain for the\n+    //! UTXO set contained in this snapshot.\n+    CDiskBlockIndex m_base_blockheader;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325816516",
+      "id" : 325816516,
+      "in_reply_to_id" : 325296061,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNTgxNjUxNg==",
+      "original_commit_id" : "e30e3a4c07223974566c83b2260b8b9a9bb1faea",
+      "original_position" : 21,
+      "path" : "src/validation.h",
+      "position" : null,
+      "pull_request_review_id" : 290102043,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325816516",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "node_id" : "MDQ6VXNlcjczMTk3",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325827703"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325827703"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "thx!",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-18T18:27:33Z",
+      "diff_hunk" : "@@ -744,6 +745,62 @@ bool InvalidateBlock(CValidationState& state, const CChainParams& chainparams, C\n /** Remove invalidity status from a block and its descendants. */\n void ResetBlockFailureFlags(CBlockIndex* pindex) EXCLUSIVE_LOCKS_REQUIRED(cs_main);\n \n+/**\n+ * Serialized version of a UTXO set from which an assumed-valid CChainState\n+ * can be constructed.\n+ */\n+class SnapshotMetadata\n+{\n+public:\n+    //! The block header of the block that reflects the tip of the chain for the\n+    //! UTXO set contained in this snapshot.\n+    CDiskBlockIndex m_base_blockheader;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r325827703",
+      "id" : 325827703,
+      "in_reply_to_id" : 325296061,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNTgyNzcwMw==",
+      "original_commit_id" : "e30e3a4c07223974566c83b2260b8b9a9bb1faea",
+      "original_position" : 21,
+      "path" : "src/validation.h",
+      "position" : null,
+      "pull_request_review_id" : 290116666,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/325827703",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r326898280"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/326898280"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Not sure if assume-valid is the best wording, with assume-valid only script checks are skipped but others are kept like double spends or BIP 68. With assume-utxo, none of this checks are done.",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-22T12:25:06Z",
+      "diff_hunk" : "@@ -744,6 +745,62 @@ bool InvalidateBlock(CValidationState& state, const CChainParams& chainparams, C\n /** Remove invalidity status from a block and its descendants. */\n void ResetBlockFailureFlags(CBlockIndex* pindex) EXCLUSIVE_LOCKS_REQUIRED(cs_main);\n \n+/**\n+ * Serialized version of a UTXO set from which an assumed-valid CChainState",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r326898280",
+      "id" : 326898280,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNjg5ODI4MA==",
+      "original_commit_id" : "3511d6b2ea65219a18dbb6d6ca45a4de62569dc1",
+      "original_position" : 13,
+      "path" : "src/validation.h",
+      "position" : null,
+      "pull_request_review_id" : 291505409,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/326898280",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/23310655?v=4",
+         "events_url" : "https://api.github.com/users/ariard/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ariard/followers",
+         "following_url" : "https://api.github.com/users/ariard/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ariard/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ariard",
+         "id" : 23310655,
+         "login" : "ariard",
+         "node_id" : "MDQ6VXNlcjIzMzEwNjU1",
+         "organizations_url" : "https://api.github.com/users/ariard/orgs",
+         "received_events_url" : "https://api.github.com/users/ariard/received_events",
+         "repos_url" : "https://api.github.com/users/ariard/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ariard/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ariard/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ariard"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r326898488"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/326898488"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Not clear, you're talking about the progress of background UTXO set here, which is estimated compare to nChainTx of foreground one ?",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-22T12:28:21Z",
+      "diff_hunk" : "@@ -744,6 +745,62 @@ bool InvalidateBlock(CValidationState& state, const CChainParams& chainparams, C\n /** Remove invalidity status from a block and its descendants. */\n void ResetBlockFailureFlags(CBlockIndex* pindex) EXCLUSIVE_LOCKS_REQUIRED(cs_main);\n \n+/**\n+ * Serialized version of a UTXO set from which an assumed-valid CChainState\n+ * can be constructed.\n+ */\n+class SnapshotMetadata\n+{\n+public:\n+    //! The hash of the block that reflects the tip of the chain for the\n+    //! UTXO set contained in this snapshot.\n+    uint256 m_base_blockhash;\n+\n+    //! A hash of the snapshot contents as generated by `GetUTXOStats`.\n+    uint256 m_utxo_contents_hash = {};\n+\n+    //! The number of coins in the UTXO set contained in this snapshot.\n+    uint64_t m_coins_count = 0;\n+\n+    //! Necessary to \"fake\" the base nChainTx so that we can estimate progress during",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r326898488",
+      "id" : 326898488,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNjg5ODQ4OA==",
+      "original_commit_id" : "3511d6b2ea65219a18dbb6d6ca45a4de62569dc1",
+      "original_position" : 29,
+      "path" : "src/validation.h",
+      "position" : null,
+      "pull_request_review_id" : 291505409,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/326898488",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/23310655?v=4",
+         "events_url" : "https://api.github.com/users/ariard/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ariard/followers",
+         "following_url" : "https://api.github.com/users/ariard/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ariard/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ariard",
+         "id" : 23310655,
+         "login" : "ariard",
+         "node_id" : "MDQ6VXNlcjIzMzEwNjU1",
+         "organizations_url" : "https://api.github.com/users/ariard/orgs",
+         "received_events_url" : "https://api.github.com/users/ariard/received_events",
+         "repos_url" : "https://api.github.com/users/ariard/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ariard/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ariard/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ariard"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r326899181"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/326899181"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Don't get this field, it is serialized down to a `utxo.dat` file, which is going to be pass to other nodes, what's the meaning of validation completed for them ?",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-22T12:43:17Z",
+      "diff_hunk" : "@@ -744,6 +745,62 @@ bool InvalidateBlock(CValidationState& state, const CChainParams& chainparams, C\n /** Remove invalidity status from a block and its descendants. */\n void ResetBlockFailureFlags(CBlockIndex* pindex) EXCLUSIVE_LOCKS_REQUIRED(cs_main);\n \n+/**\n+ * Serialized version of a UTXO set from which an assumed-valid CChainState\n+ * can be constructed.\n+ */\n+class SnapshotMetadata\n+{\n+public:\n+    //! The hash of the block that reflects the tip of the chain for the\n+    //! UTXO set contained in this snapshot.\n+    uint256 m_base_blockhash;\n+\n+    //! A hash of the snapshot contents as generated by `GetUTXOStats`.\n+    uint256 m_utxo_contents_hash = {};\n+\n+    //! The number of coins in the UTXO set contained in this snapshot.\n+    uint64_t m_coins_count = 0;\n+\n+    //! Necessary to \"fake\" the base nChainTx so that we can estimate progress during\n+    //! snapshot IBD.\n+    unsigned int m_nchaintx = 0;\n+\n+    //! True if this snapshot has been validated by IBDing the chain from scratch up\n+    //! to the base block of the snapshot (`m_base_blockhash`).\n+    //!\n+    //! This is serialized (vs. being memory only) because once we complete\n+    //! validation of a snapshot, we update the metadata on disk so that the next\n+    //! time bitcoind starts up, we know we've validated the snapshot. This would\n+    //! be unnecessary if we overwrote the `chainstate` leveldb directory with the",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r326899181",
+      "id" : 326899181,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNjg5OTE4MQ==",
+      "original_commit_id" : "3511d6b2ea65219a18dbb6d6ca45a4de62569dc1",
+      "original_position" : 39,
+      "path" : "src/validation.h",
+      "position" : null,
+      "pull_request_review_id" : 291505409,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/326899181",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/23310655?v=4",
+         "events_url" : "https://api.github.com/users/ariard/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ariard/followers",
+         "following_url" : "https://api.github.com/users/ariard/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ariard/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ariard",
+         "id" : 23310655,
+         "login" : "ariard",
+         "node_id" : "MDQ6VXNlcjIzMzEwNjU1",
+         "organizations_url" : "https://api.github.com/users/ariard/orgs",
+         "received_events_url" : "https://api.github.com/users/ariard/received_events",
+         "repos_url" : "https://api.github.com/users/ariard/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ariard/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ariard/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ariard"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r326899194"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/326899194"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "\"the height\"",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-22T12:43:36Z",
+      "diff_hunk" : "@@ -2247,6 +2247,108 @@ static UniValue getblockfilter(const JSONRPCRequest& request)\n     return ret;\n }\n \n+/**\n+ * Serialize the UTXO set to a file for loading elsewhere.\n+ *\n+ * @see SnapshotMetadata\n+ */\n+UniValue dumptxoutset(const JSONRPCRequest& request)\n+{\n+    RPCHelpMan{\n+        \"dumptxoutset\",\n+        \"\\nWrite the serialized UTXO set to disk.\\n\"\n+        \"Incidentally flushes the latest coinsdb (leveldb) to disk.\\n\",\n+        {\n+            {\"path\",\n+                RPCArg::Type::STR,\n+                RPCArg::Optional::NO,\n+                /* default_val */ \"\",\n+                \"path to the output file. If relative, will be prefixed by datadir.\"},\n+        },\n+        RPCResult{\n+            \"{\\n\"\n+            \"  \\\"coins_written\\\": n,   (numeric) the number of coins written in the snapshot\\n\"\n+            \"  \\\"base_hash\\\": \\\"...\\\",   (string) the hash of the base of the snapshot\\n\"\n+            \"  \\\"base_height\\\": n,     (string) the hash of the base of the snapshot\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r326899194",
+      "id" : 326899194,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNjg5OTE5NA==",
+      "original_commit_id" : "b6af8f5443c9891ade4fa5ca92a244e3ff8cac79",
+      "original_position" : 26,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 291505409,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/326899194",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/23310655?v=4",
+         "events_url" : "https://api.github.com/users/ariard/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ariard/followers",
+         "following_url" : "https://api.github.com/users/ariard/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ariard/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ariard",
+         "id" : 23310655,
+         "login" : "ariard",
+         "node_id" : "MDQ6VXNlcjIzMzEwNjU1",
+         "organizations_url" : "https://api.github.com/users/ariard/orgs",
+         "received_events_url" : "https://api.github.com/users/ariard/received_events",
+         "repos_url" : "https://api.github.com/users/ariard/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ariard/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ariard/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ariard"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r327682541"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/327682541"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Why can't you use mock time here?\r\n\r\nAlso, the test isn't running (see travis)",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-24T15:27:18Z",
+      "diff_hunk" : "@@ -0,0 +1,44 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2019 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test the generation of UTXO snapshots using `dumptxoutset`.\n+\"\"\"\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import assert_equal, assert_raises_rpc_error\n+\n+from pathlib import Path\n+\n+\n+class DumptxoutsetTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        \"\"\"Test a trivial usage of the dumptxoutset RPC command.\"\"\"\n+        node = self.nodes[0]\n+        node.generate(100)\n+\n+        FILENAME = 'txoutset.dat'\n+        out = node.dumptxoutset(FILENAME)\n+        expected_path = Path(node.datadir) / 'regtest' / FILENAME\n+\n+        assert expected_path.is_file()\n+\n+        assert_equal(out['coins_written'], 100)\n+        assert_equal(out['base_height'], 100)\n+        assert_equal(out['path'], str(expected_path))\n+        assert out['base_hash']\n+\n+        # TODO I'd like to make assertions about the contents of the file\n+        # (ideally its hash), but because we can't get a deterministic block\n+        # header (we'd need to mock time) and we have no way of deserializing",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r327682541",
+      "id" : 327682541,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzY4MjU0MQ==",
+      "original_commit_id" : "52bba3c322b338d27a96ec31b37df702aca428c5",
+      "original_position" : 36,
+      "path" : "test/functional/rpc_dumptxoutset.py",
+      "position" : null,
+      "pull_request_review_id" : 292510573,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/327682541",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r327702924"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/327702924"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "re: https://github.com/bitcoin/bitcoin/pull/16899#discussion_r326899181\r\n\r\nIn commit \"validation: add unused SnapshotMetadata class\" (3511d6b2ea65219a18dbb6d6ca45a4de62569dc1)\r\n\r\n> Don't get this field, it is serialized down to a `utxo.dat` file, which is going to be pass to other nodes, what's the meaning of validation completed for them ?\r\n\r\nI guess SnapshotMetadata is being used for two different things:\r\n\r\n- As a header for dumptxoutset data\r\n- As a way to track state if a node is shut down in the middle of background sync.\r\n\r\nI think it would probably be clearer to use separate structs, maybe having the first one included in the second one to avoid duplication.",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-24T16:04:54Z",
+      "diff_hunk" : "@@ -744,6 +745,62 @@ bool InvalidateBlock(CValidationState& state, const CChainParams& chainparams, C\n /** Remove invalidity status from a block and its descendants. */\n void ResetBlockFailureFlags(CBlockIndex* pindex) EXCLUSIVE_LOCKS_REQUIRED(cs_main);\n \n+/**\n+ * Serialized version of a UTXO set from which an assumed-valid CChainState\n+ * can be constructed.\n+ */\n+class SnapshotMetadata\n+{\n+public:\n+    //! The hash of the block that reflects the tip of the chain for the\n+    //! UTXO set contained in this snapshot.\n+    uint256 m_base_blockhash;\n+\n+    //! A hash of the snapshot contents as generated by `GetUTXOStats`.\n+    uint256 m_utxo_contents_hash = {};\n+\n+    //! The number of coins in the UTXO set contained in this snapshot.\n+    uint64_t m_coins_count = 0;\n+\n+    //! Necessary to \"fake\" the base nChainTx so that we can estimate progress during\n+    //! snapshot IBD.\n+    unsigned int m_nchaintx = 0;\n+\n+    //! True if this snapshot has been validated by IBDing the chain from scratch up\n+    //! to the base block of the snapshot (`m_base_blockhash`).\n+    //!\n+    //! This is serialized (vs. being memory only) because once we complete\n+    //! validation of a snapshot, we update the metadata on disk so that the next\n+    //! time bitcoind starts up, we know we've validated the snapshot. This would\n+    //! be unnecessary if we overwrote the `chainstate` leveldb directory with the",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r327702924",
+      "id" : 327702924,
+      "in_reply_to_id" : 326899181,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzcwMjkyNA==",
+      "original_commit_id" : "3511d6b2ea65219a18dbb6d6ca45a4de62569dc1",
+      "original_position" : 39,
+      "path" : "src/validation.h",
+      "position" : null,
+      "pull_request_review_id" : 292537353,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/327702924",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r327703900"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/327703900"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"validation: add unused SnapshotMetadata class\" (3511d6b2ea65219a18dbb6d6ca45a4de62569dc1)\r\n\r\nComments for m_utxo_contents_hash m_coins_count fields could say what they are used for.",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-24T16:06:41Z",
+      "diff_hunk" : "@@ -744,6 +745,62 @@ bool InvalidateBlock(CValidationState& state, const CChainParams& chainparams, C\n /** Remove invalidity status from a block and its descendants. */\n void ResetBlockFailureFlags(CBlockIndex* pindex) EXCLUSIVE_LOCKS_REQUIRED(cs_main);\n \n+/**\n+ * Serialized version of a UTXO set from which an assumed-valid CChainState\n+ * can be constructed.\n+ */\n+class SnapshotMetadata\n+{\n+public:\n+    //! The hash of the block that reflects the tip of the chain for the\n+    //! UTXO set contained in this snapshot.\n+    uint256 m_base_blockhash;\n+\n+    //! A hash of the snapshot contents as generated by `GetUTXOStats`.\n+    uint256 m_utxo_contents_hash = {};\n+\n+    //! The number of coins in the UTXO set contained in this snapshot.",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r327703900",
+      "id" : 327703900,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzcwMzkwMA==",
+      "original_commit_id" : "3511d6b2ea65219a18dbb6d6ca45a4de62569dc1",
+      "original_position" : 26,
+      "path" : "src/validation.h",
+      "position" : null,
+      "pull_request_review_id" : 292537353,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/327703900",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r327706789"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/327706789"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"rpc: add dumptxoutset\" (b6af8f5443c9891ade4fa5ca92a244e3ff8cac79)\r\n\r\nUp to you, but I think documentation could say more about\r\n\r\n- Data format \r\n- What you'd use this function for, or it's mostly meant to be useful for developers\r\n- Status of the implementation. If this is experimental, whether the data format might change, if there's going to be a corresponding load rpc method\r\n",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-24T16:12:29Z",
+      "diff_hunk" : "@@ -2247,6 +2247,108 @@ static UniValue getblockfilter(const JSONRPCRequest& request)\n     return ret;\n }\n \n+/**\n+ * Serialize the UTXO set to a file for loading elsewhere.\n+ *\n+ * @see SnapshotMetadata\n+ */\n+UniValue dumptxoutset(const JSONRPCRequest& request)\n+{\n+    RPCHelpMan{\n+        \"dumptxoutset\",\n+        \"\\nWrite the serialized UTXO set to disk.\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r327706789",
+      "id" : 327706789,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzcwNjc4OQ==",
+      "original_commit_id" : "b6af8f5443c9891ade4fa5ca92a244e3ff8cac79",
+      "original_position" : 13,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : 21,
+      "pull_request_review_id" : 292537353,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/327706789",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r327711218"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/327711218"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"rpc: add dumptxoutset\" (b6af8f5443c9891ade4fa5ca92a244e3ff8cac79)\r\n\r\nThink you could drop this conditional and just say `path = fs::absolute(path, GetDataDir());`",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-24T16:22:11Z",
+      "diff_hunk" : "@@ -2247,6 +2247,108 @@ static UniValue getblockfilter(const JSONRPCRequest& request)\n     return ret;\n }\n \n+/**\n+ * Serialize the UTXO set to a file for loading elsewhere.\n+ *\n+ * @see SnapshotMetadata\n+ */\n+UniValue dumptxoutset(const JSONRPCRequest& request)\n+{\n+    RPCHelpMan{\n+        \"dumptxoutset\",\n+        \"\\nWrite the serialized UTXO set to disk.\\n\"\n+        \"Incidentally flushes the latest coinsdb (leveldb) to disk.\\n\",\n+        {\n+            {\"path\",\n+                RPCArg::Type::STR,\n+                RPCArg::Optional::NO,\n+                /* default_val */ \"\",\n+                \"path to the output file. If relative, will be prefixed by datadir.\"},\n+        },\n+        RPCResult{\n+            \"{\\n\"\n+            \"  \\\"coins_written\\\": n,   (numeric) the number of coins written in the snapshot\\n\"\n+            \"  \\\"base_hash\\\": \\\"...\\\",   (string) the hash of the base of the snapshot\\n\"\n+            \"  \\\"base_height\\\": n,     (string) the hash of the base of the snapshot\\n\"\n+            \"  \\\"path\\\": \\\"...\\\"         (string) the absolute path that the snapshot was written to\\n\"\n+            \"]\\n\"\n+        },\n+        RPCExamples{\n+            HelpExampleCli(\"dumptxoutset\", \"utxo.dat\")\n+        }\n+    }.Check(request);\n+\n+    fs::path path = request.params[0].get_str();\n+    if (path.is_relative()) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r327711218",
+      "id" : 327711218,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzcxMTIxOA==",
+      "original_commit_id" : "b6af8f5443c9891ade4fa5ca92a244e3ff8cac79",
+      "original_position" : 36,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 292537353,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/327711218",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r327716506"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/327716506"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"rpc: add dumptxoutset\" (b6af8f5443c9891ade4fa5ca92a244e3ff8cac79)\r\n\r\nImplementation seems fine for now. Unclear if in the future we might want to:\r\n\r\n- Put some magic bytes in snapshot header so to make it easier to recognize a snapshot file\r\n- Add version or length fields to make it possible to extend the format and include additional data\r\n- Write to temporary file and then rename in case theres a shutdown or crash in the middle of writing so you can distinguish an incomplete snapshot from a complete one",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-24T16:33:31Z",
+      "diff_hunk" : "@@ -2247,6 +2247,108 @@ static UniValue getblockfilter(const JSONRPCRequest& request)\n     return ret;\n }\n \n+/**\n+ * Serialize the UTXO set to a file for loading elsewhere.\n+ *\n+ * @see SnapshotMetadata\n+ */\n+UniValue dumptxoutset(const JSONRPCRequest& request)\n+{\n+    RPCHelpMan{\n+        \"dumptxoutset\",\n+        \"\\nWrite the serialized UTXO set to disk.\\n\"\n+        \"Incidentally flushes the latest coinsdb (leveldb) to disk.\\n\",\n+        {\n+            {\"path\",\n+                RPCArg::Type::STR,\n+                RPCArg::Optional::NO,\n+                /* default_val */ \"\",\n+                \"path to the output file. If relative, will be prefixed by datadir.\"},\n+        },\n+        RPCResult{\n+            \"{\\n\"\n+            \"  \\\"coins_written\\\": n,   (numeric) the number of coins written in the snapshot\\n\"\n+            \"  \\\"base_hash\\\": \\\"...\\\",   (string) the hash of the base of the snapshot\\n\"\n+            \"  \\\"base_height\\\": n,     (string) the hash of the base of the snapshot\\n\"\n+            \"  \\\"path\\\": \\\"...\\\"         (string) the absolute path that the snapshot was written to\\n\"\n+            \"]\\n\"\n+        },\n+        RPCExamples{\n+            HelpExampleCli(\"dumptxoutset\", \"utxo.dat\")\n+        }\n+    }.Check(request);\n+\n+    fs::path path = request.params[0].get_str();\n+    if (path.is_relative()) {\n+        path = fs::absolute(path, GetDataDir());\n+    }\n+    if (fs::exists(path)) {\n+        throw JSONRPCError(\n+            RPC_INVALID_PARAMETER,\n+            path.string() + \" already exists. If you are sure this is what you want, \"\n+            \"move it out of the way first\");\n+    }\n+\n+    FILE* file{fsbridge::fopen(path, \"wb\")};\n+    CAutoFile afile{file, SER_DISK, CLIENT_VERSION};\n+    std::unique_ptr<CCoinsViewCursor> pcursor;\n+    CCoinsStats stats;\n+    CBlockIndex* tip;\n+\n+    {\n+        // We need to lock cs_main to ensure that the coinsdb isn't written to\n+        // between (i) flushing coins cache to disk (coinsdb), (ii) getting stats\n+        // based upon the coinsdb, and (iii) constructing a cursor to the\n+        // coinsdb for use below this block.\n+        //\n+        // Cursors returned by leveldb iterate over snapshots, so the contents\n+        // of the pcursor will not be affected by simultaneous writes during\n+        // use below this block.\n+        //\n+        // See discussion here:\n+        //   https://github.com/bitcoin/bitcoin/pull/15606#discussion_r274479369\n+        //\n+        LOCK(::cs_main);\n+\n+        ::ChainstateActive().ForceFlushStateToDisk();\n+\n+        if (!GetUTXOStats(&::ChainstateActive().CoinsDB(), stats)) {\n+            throw JSONRPCError(RPC_INTERNAL_ERROR, \"Unable to read UTXO set\");\n+        }\n+\n+        pcursor = std::unique_ptr<CCoinsViewCursor>(::ChainstateActive().CoinsDB().Cursor());\n+        tip = LookupBlockIndex(stats.hashBlock);\n+        assert(tip);\n+    }\n+\n+    SnapshotMetadata metadata{\n+        tip->GetBlockHash(), stats.hashSerialized, stats.coins_count, tip->nChainTx};\n+\n+    afile << metadata;\n+\n+    COutPoint key;\n+    Coin coin;\n+\n+    while (pcursor->Valid()) {\n+        boost::this_thread::interruption_point();\n+        if (pcursor->GetKey(key) && pcursor->GetValue(coin)) {\n+            afile << key;\n+            afile << coin;\n+        }\n+\n+        pcursor->Next();\n+    }\n+\n+    afile.fclose();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r327716506",
+      "id" : 327716506,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzcxNjUwNg==",
+      "original_commit_id" : "b6af8f5443c9891ade4fa5ca92a244e3ff8cac79",
+      "original_position" : 96,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : 108,
+      "pull_request_review_id" : 292537353,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/327716506",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r327719791"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/327719791"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"rpc: add dumptxoutset\" (b6af8f5443c9891ade4fa5ca92a244e3ff8cac79)\r\n\r\nMight want to move this to the hidden section, unless it's useful for something other than debugging. Also, if the format or usage might change, it might be better to not expose so compatibility is less a concern.",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-24T16:40:43Z",
+      "diff_hunk" : "@@ -2275,6 +2377,7 @@ static const CRPCCommand commands[] =\n     { \"blockchain\",         \"preciousblock\",          &preciousblock,          {\"blockhash\"} },\n     { \"blockchain\",         \"scantxoutset\",           &scantxoutset,           {\"action\", \"scanobjects\"} },\n     { \"blockchain\",         \"getblockfilter\",         &getblockfilter,         {\"blockhash\", \"filtertype\"} },\n+    { \"blockchain\",         \"dumptxoutset\",           &dumptxoutset,           {\"path\"} },",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r327719791",
+      "id" : 327719791,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzcxOTc5MQ==",
+      "original_commit_id" : "b6af8f5443c9891ade4fa5ca92a244e3ff8cac79",
+      "original_position" : 113,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 292537353,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/327719791",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r328331837"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/328331837"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "To get a deterministic blockheader, we'd need to use `GetTime<...>()` here: https://github.com/bitcoin/bitcoin/blob/master/src/miner.cpp#L93",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-25T20:44:34Z",
+      "diff_hunk" : "@@ -0,0 +1,44 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2019 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test the generation of UTXO snapshots using `dumptxoutset`.\n+\"\"\"\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import assert_equal, assert_raises_rpc_error\n+\n+from pathlib import Path\n+\n+\n+class DumptxoutsetTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        \"\"\"Test a trivial usage of the dumptxoutset RPC command.\"\"\"\n+        node = self.nodes[0]\n+        node.generate(100)\n+\n+        FILENAME = 'txoutset.dat'\n+        out = node.dumptxoutset(FILENAME)\n+        expected_path = Path(node.datadir) / 'regtest' / FILENAME\n+\n+        assert expected_path.is_file()\n+\n+        assert_equal(out['coins_written'], 100)\n+        assert_equal(out['base_height'], 100)\n+        assert_equal(out['path'], str(expected_path))\n+        assert out['base_hash']\n+\n+        # TODO I'd like to make assertions about the contents of the file\n+        # (ideally its hash), but because we can't get a deterministic block\n+        # header (we'd need to mock time) and we have no way of deserializing",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r328331837",
+      "id" : 328331837,
+      "in_reply_to_id" : 327682541,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODMzMTgzNw==",
+      "original_commit_id" : "52bba3c322b338d27a96ec31b37df702aca428c5",
+      "original_position" : 36,
+      "path" : "test/functional/rpc_dumptxoutset.py",
+      "position" : null,
+      "pull_request_review_id" : 293353020,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/328331837",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "node_id" : "MDQ6VXNlcjczMTk3",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r328333854"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/328333854"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Good points. I've removed this field for now. I'll defer figuring out exactly how to track this state to when I file the PR for loading snapshots, but I suspect I'll just use the presence of a `/datadir/chainstate_*` directory to indicate an unvalidated assumeutxo chainstate, then overwrite `/datadir/chainstate` on validation.",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-25T20:49:18Z",
+      "diff_hunk" : "@@ -744,6 +745,62 @@ bool InvalidateBlock(CValidationState& state, const CChainParams& chainparams, C\n /** Remove invalidity status from a block and its descendants. */\n void ResetBlockFailureFlags(CBlockIndex* pindex) EXCLUSIVE_LOCKS_REQUIRED(cs_main);\n \n+/**\n+ * Serialized version of a UTXO set from which an assumed-valid CChainState\n+ * can be constructed.\n+ */\n+class SnapshotMetadata\n+{\n+public:\n+    //! The hash of the block that reflects the tip of the chain for the\n+    //! UTXO set contained in this snapshot.\n+    uint256 m_base_blockhash;\n+\n+    //! A hash of the snapshot contents as generated by `GetUTXOStats`.\n+    uint256 m_utxo_contents_hash = {};\n+\n+    //! The number of coins in the UTXO set contained in this snapshot.\n+    uint64_t m_coins_count = 0;\n+\n+    //! Necessary to \"fake\" the base nChainTx so that we can estimate progress during\n+    //! snapshot IBD.\n+    unsigned int m_nchaintx = 0;\n+\n+    //! True if this snapshot has been validated by IBDing the chain from scratch up\n+    //! to the base block of the snapshot (`m_base_blockhash`).\n+    //!\n+    //! This is serialized (vs. being memory only) because once we complete\n+    //! validation of a snapshot, we update the metadata on disk so that the next\n+    //! time bitcoind starts up, we know we've validated the snapshot. This would\n+    //! be unnecessary if we overwrote the `chainstate` leveldb directory with the",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r328333854",
+      "id" : 328333854,
+      "in_reply_to_id" : 326899181,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODMzMzg1NA==",
+      "original_commit_id" : "3511d6b2ea65219a18dbb6d6ca45a4de62569dc1",
+      "original_position" : 39,
+      "path" : "src/validation.h",
+      "position" : null,
+      "pull_request_review_id" : 293355510,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/328333854",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "node_id" : "MDQ6VXNlcjczMTk3",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r328334503"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/328334503"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Huh, that `nTimeStart` is only used for logging benchmarks",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-25T20:50:49Z",
+      "diff_hunk" : "@@ -0,0 +1,44 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2019 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test the generation of UTXO snapshots using `dumptxoutset`.\n+\"\"\"\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import assert_equal, assert_raises_rpc_error\n+\n+from pathlib import Path\n+\n+\n+class DumptxoutsetTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        \"\"\"Test a trivial usage of the dumptxoutset RPC command.\"\"\"\n+        node = self.nodes[0]\n+        node.generate(100)\n+\n+        FILENAME = 'txoutset.dat'\n+        out = node.dumptxoutset(FILENAME)\n+        expected_path = Path(node.datadir) / 'regtest' / FILENAME\n+\n+        assert expected_path.is_file()\n+\n+        assert_equal(out['coins_written'], 100)\n+        assert_equal(out['base_height'], 100)\n+        assert_equal(out['path'], str(expected_path))\n+        assert out['base_hash']\n+\n+        # TODO I'd like to make assertions about the contents of the file\n+        # (ideally its hash), but because we can't get a deterministic block\n+        # header (we'd need to mock time) and we have no way of deserializing",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r328334503",
+      "id" : 328334503,
+      "in_reply_to_id" : 327682541,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODMzNDUwMw==",
+      "original_commit_id" : "52bba3c322b338d27a96ec31b37df702aca428c5",
+      "original_position" : 36,
+      "path" : "test/functional/rpc_dumptxoutset.py",
+      "position" : null,
+      "pull_request_review_id" : 293356348,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/328334503",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r328339238"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/328339238"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Ah oops, you're totally right. Will try with mock.",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-25T21:02:15Z",
+      "diff_hunk" : "@@ -0,0 +1,44 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2019 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test the generation of UTXO snapshots using `dumptxoutset`.\n+\"\"\"\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import assert_equal, assert_raises_rpc_error\n+\n+from pathlib import Path\n+\n+\n+class DumptxoutsetTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        \"\"\"Test a trivial usage of the dumptxoutset RPC command.\"\"\"\n+        node = self.nodes[0]\n+        node.generate(100)\n+\n+        FILENAME = 'txoutset.dat'\n+        out = node.dumptxoutset(FILENAME)\n+        expected_path = Path(node.datadir) / 'regtest' / FILENAME\n+\n+        assert expected_path.is_file()\n+\n+        assert_equal(out['coins_written'], 100)\n+        assert_equal(out['base_height'], 100)\n+        assert_equal(out['path'], str(expected_path))\n+        assert out['base_hash']\n+\n+        # TODO I'd like to make assertions about the contents of the file\n+        # (ideally its hash), but because we can't get a deterministic block\n+        # header (we'd need to mock time) and we have no way of deserializing",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r328339238",
+      "id" : 328339238,
+      "in_reply_to_id" : 327682541,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODMzOTIzOA==",
+      "original_commit_id" : "52bba3c322b338d27a96ec31b37df702aca428c5",
+      "original_position" : 36,
+      "path" : "test/functional/rpc_dumptxoutset.py",
+      "position" : null,
+      "pull_request_review_id" : 293362492,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/328339238",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "node_id" : "MDQ6VXNlcjczMTk3",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r328684874"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/328684874"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Thanks for this feedback - made me realize that there's really no point anymore to bundling the contents hash with the snapshot.",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-26T15:36:24Z",
+      "diff_hunk" : "@@ -744,6 +745,62 @@ bool InvalidateBlock(CValidationState& state, const CChainParams& chainparams, C\n /** Remove invalidity status from a block and its descendants. */\n void ResetBlockFailureFlags(CBlockIndex* pindex) EXCLUSIVE_LOCKS_REQUIRED(cs_main);\n \n+/**\n+ * Serialized version of a UTXO set from which an assumed-valid CChainState\n+ * can be constructed.\n+ */\n+class SnapshotMetadata\n+{\n+public:\n+    //! The hash of the block that reflects the tip of the chain for the\n+    //! UTXO set contained in this snapshot.\n+    uint256 m_base_blockhash;\n+\n+    //! A hash of the snapshot contents as generated by `GetUTXOStats`.\n+    uint256 m_utxo_contents_hash = {};\n+\n+    //! The number of coins in the UTXO set contained in this snapshot.",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r328684874",
+      "id" : 328684874,
+      "in_reply_to_id" : 327703900,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODY4NDg3NA==",
+      "original_commit_id" : "3511d6b2ea65219a18dbb6d6ca45a4de62569dc1",
+      "original_position" : 26,
+      "path" : "src/validation.h",
+      "position" : null,
+      "pull_request_review_id" : 293817411,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/328684874",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "node_id" : "MDQ6VXNlcjczMTk3",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "A progress indicator would be nice. If it wasn't for the system activity monitor showing CPU and disk write activity I would have interrupted the script somewhere during the ~ half an hour `dumptxoutset` takes.\r\n\r\nMaybe the script should call `setnetworkactive false`. E.g. I'm seeing `Warning: not punishing manually-connected peer`, as well as a P2P timeout error.\r\n\r\nChecksum on macOS 10.14.6 for block 597000: `3fd987a705a9b70f3197ebbe782ff457b1ea6ca373ac37b5c1a3764f7c414fe4` (produced twice, but on the same datadir)\r\n\r\n```json\r\n{\r\n  \"coins_written\": 62228899,\r\n  \"base_hash\": \"0000000000000000000eadb01d27f7b6ca1c17e71f0ff33853de9d3b25c57e55\",\r\n}\r\n```",
+      "created_at" : "2019-09-30T11:30:30Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#issuecomment-536520911",
+      "id" : 536520911,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16899",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDUzNjUyMDkxMQ==",
+      "updated_at" : "2019-10-01T08:19:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/536520911",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/10217?v=4",
+         "events_url" : "https://api.github.com/users/Sjors/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Sjors/followers",
+         "following_url" : "https://api.github.com/users/Sjors/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Sjors/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Sjors",
+         "id" : 10217,
+         "login" : "Sjors",
+         "node_id" : "MDQ6VXNlcjEwMjE3",
+         "organizations_url" : "https://api.github.com/users/Sjors/orgs",
+         "received_events_url" : "https://api.github.com/users/Sjors/received_events",
+         "repos_url" : "https://api.github.com/users/Sjors/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Sjors/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Sjors"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r329542015"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/329542015"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I don't really like that `coins_count` is initialized to zero at the beginning of the function, but the other members of `stats` aren't. I'd prefer if all stats are initialized in one go: \r\n\r\n```cpp\r\nstats = CCoinsStats{}; // reset stats",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-09-30T12:09:28Z",
+      "diff_hunk" : "@@ -51,6 +51,7 @@ bool GetUTXOStats(CCoinsView *view, CCoinsStats &stats)\n     }\n     ss << stats.hashBlock;\n     uint256 prevkey;\n+    unsigned int coins_count{0};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r329542015",
+      "id" : 329542015,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyOTU0MjAxNQ==",
+      "original_commit_id" : "c2830a9828c85acfc94caeae3d3ec641ed3d148a",
+      "original_position" : 4,
+      "path" : "src/node/coinstats.cpp",
+      "position" : 4,
+      "pull_request_review_id" : 294927286,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/329542015",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Concept ACK, thanks for working on this, will test.\r\n",
+      "created_at" : "2019-10-23T11:35:10Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#issuecomment-545401032",
+      "id" : 545401032,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16899",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU0NTQwMTAzMg==",
+      "updated_at" : "2019-10-23T11:39:14Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/545401032",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "this currently fails the new `rpc_dumptxoutset.py` test, both in CI and locally\r\n```\r\n2019-10-24T07:46:53.097000Z TestFramework (INFO): Initializing test directory /tmp/test_runner_â¿_ð_20191024_094030/rpc_dumptxoutset_22\r\n2019-10-24T07:46:53.489000Z TestFramework (ERROR): Assertion failed\r\nTraceback (most recent call last):                      \r\n  File \"/store/orion/projects/bitcoin/bitcoin/test/functional/test_framework/test_framework.py\", line 194, in main\r\n    self.run_test()                                      \r\n  File \"/home/orion/projects/bitcoin/bitcoin/test/functional/rpc_dumptxoutset.py\", line 39, in run_test\r\n    '10c25df662424c94d06458aa5ecc7bd73680aa098f5093fdd5fa27fb2af08568')\r\n  File \"/store/orion/projects/bitcoin/bitcoin/test/functional/test_framework/util.py\", line 46, in assert_equal\r\n    raise AssertionError(\"not(%s)\" % \" == \".join(str(arg) for arg in (thing1, thing2) + args))\r\nAssertionError: not(4fac28ba32694cf370432ca408620e053a370f11de8b19488568ed1308d9b511 == 10c25df662424c94d06458aa5ecc7bd73680aa098f5093fdd5fa27fb2af08568)\r\n2019-10-24T07:46:53.565000Z TestFramework (INFO): Stopping nodes\r\n2019-10-24T07:46:53.817000Z TestFramework (WARNING): Not cleaning up dir /tmp/test_runner_â¿_ð_20191024_094030/rpc_dumptxoutset_22\r\n2019-10-24T07:46:53.818000Z TestFramework (ERROR): Test failed. Test logging available at /tmp/test_runner_â¿_ð_20191024_094030/rpc_dumptxoutset_22/test_framework.log\r\n2019-10-24T07:46:53.819000Z TestFramework (ERROR): Hint: Call /store/orion/projects/bitcoin/bitcoin/test/functional/combine_logs.py '/tmp/test_runner_â¿_ð_20191024_094030/rpc_dumptxoutset_22' to cons\r\nolidate all logs  \r\n```",
+      "created_at" : "2019-10-24T07:49:10Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#issuecomment-545792336",
+      "id" : 545792336,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16899",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU0NTc5MjMzNg==",
+      "updated_at" : "2019-10-24T07:49:10Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/545792336",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r338445728"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/338445728"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Pretty sure this varies based on locale (`time.mktime` uses local timezone). As this is a constant, and the rest of the test depends on this exact value, might was well hardcode a value here.\r\n",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-10-24T08:32:26Z",
+      "diff_hunk" : "@@ -0,0 +1,52 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2019 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test the generation of UTXO snapshots using `dumptxoutset`.\n+\"\"\"\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import assert_equal, assert_raises_rpc_error\n+\n+import datetime\n+import hashlib\n+import time\n+from pathlib import Path\n+\n+\n+class DumptxoutsetTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        \"\"\"Test a trivial usage of the dumptxoutset RPC command.\"\"\"\n+        node = self.nodes[0]\n+        node.setmocktime(int(time.mktime(datetime.datetime(2019, 9, 9, 0, 0).timetuple())))",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r338445728",
+      "id" : 338445728,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzODQ0NTcyOA==",
+      "original_commit_id" : "c2830a9828c85acfc94caeae3d3ec641ed3d148a",
+      "original_position" : 24,
+      "path" : "test/functional/rpc_dumptxoutset.py",
+      "position" : null,
+      "pull_request_review_id" : 306401781,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/338445728",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r338543995"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/338543995"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "You can maybe use\r\n\r\n```\r\ngetblockheader(getblockhash(0))[time] + 1",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-10-24T12:29:35Z",
+      "diff_hunk" : "@@ -0,0 +1,52 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2019 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test the generation of UTXO snapshots using `dumptxoutset`.\n+\"\"\"\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import assert_equal, assert_raises_rpc_error\n+\n+import datetime\n+import hashlib\n+import time\n+from pathlib import Path\n+\n+\n+class DumptxoutsetTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        \"\"\"Test a trivial usage of the dumptxoutset RPC command.\"\"\"\n+        node = self.nodes[0]\n+        node.setmocktime(int(time.mktime(datetime.datetime(2019, 9, 9, 0, 0).timetuple())))",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r338543995",
+      "id" : 338543995,
+      "in_reply_to_id" : 338445728,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzODU0Mzk5NQ==",
+      "original_commit_id" : "c2830a9828c85acfc94caeae3d3ec641ed3d148a",
+      "original_position" : 24,
+      "path" : "test/functional/rpc_dumptxoutset.py",
+      "position" : null,
+      "pull_request_review_id" : 306533779,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/338543995",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r338706783"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/338706783"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "unused import?",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-10-24T17:45:15Z",
+      "diff_hunk" : "@@ -0,0 +1,52 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2019 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test the generation of UTXO snapshots using `dumptxoutset`.\n+\"\"\"\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import assert_equal, assert_raises_rpc_error\n+\n+import hashlib\n+import time",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r338706783",
+      "id" : 338706783,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzODcwNjc4Mw==",
+      "original_commit_id" : "4e60702a1c4ab7bfe70b61b83a9ca5ac3ebb3adb",
+      "original_position" : 11,
+      "path" : "test/functional/rpc_dumptxoutset.py",
+      "position" : null,
+      "pull_request_review_id" : 306752746,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/338706783",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r338747786"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/338747786"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "https://travis-ci.org/bitcoin/bitcoin/jobs/602444006#L6364\r\n\r\n```\r\n                                       with open(expected_path, 'rb') as f:\r\n                                   TypeError: invalid file: PosixPath('/home/travis/build/bitcoin/bitcoin/ci/scratch/test_runner/test_runner_\\u20bf_ð_20191024_181754/rpc_dumptxoutset_22/node0/regtest/txoutset.dat')",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-10-24T19:17:38Z",
+      "diff_hunk" : "@@ -0,0 +1,51 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2019 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test the generation of UTXO snapshots using `dumptxoutset`.\n+\"\"\"\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import assert_equal, assert_raises_rpc_error\n+\n+import hashlib\n+from pathlib import Path\n+\n+\n+class DumptxoutsetTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        \"\"\"Test a trivial usage of the dumptxoutset RPC command.\"\"\"\n+        node = self.nodes[0]\n+        mocktime = node.getblockheader(node.getblockhash(0))['time'] + 1\n+        node.setmocktime(mocktime)\n+        node.generate(100)\n+\n+        FILENAME = 'txoutset.dat'\n+        out = node.dumptxoutset(FILENAME)\n+        expected_path = Path(node.datadir) / 'regtest' / FILENAME\n+\n+        assert expected_path.is_file()\n+\n+        assert_equal(out['coins_written'], 100)\n+        assert_equal(out['base_height'], 100)\n+        assert_equal(out['path'], str(expected_path))\n+        # Blockhash should be deterministic based on mocked time.\n+        assert_equal(\n+            out['base_hash'],\n+            '6fd417acba2a8738b06fee43330c50d58e6a725046c3d843c8dd7e51d46d1ed6')\n+\n+        with open(expected_path, 'rb') as f:",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r338747786",
+      "id" : 338747786,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzODc0Nzc4Ng==",
+      "original_commit_id" : "95beaf63336ba8f2df9ea85fbf2dfc885e807f79",
+      "original_position" : 40,
+      "path" : "test/functional/rpc_dumptxoutset.py",
+      "position" : null,
+      "pull_request_review_id" : 306806110,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/338747786",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r338748194"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/338748194"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This is python 3.5",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-10-24T19:18:45Z",
+      "diff_hunk" : "@@ -0,0 +1,51 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2019 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test the generation of UTXO snapshots using `dumptxoutset`.\n+\"\"\"\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import assert_equal, assert_raises_rpc_error\n+\n+import hashlib\n+from pathlib import Path\n+\n+\n+class DumptxoutsetTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        \"\"\"Test a trivial usage of the dumptxoutset RPC command.\"\"\"\n+        node = self.nodes[0]\n+        mocktime = node.getblockheader(node.getblockhash(0))['time'] + 1\n+        node.setmocktime(mocktime)\n+        node.generate(100)\n+\n+        FILENAME = 'txoutset.dat'\n+        out = node.dumptxoutset(FILENAME)\n+        expected_path = Path(node.datadir) / 'regtest' / FILENAME\n+\n+        assert expected_path.is_file()\n+\n+        assert_equal(out['coins_written'], 100)\n+        assert_equal(out['base_height'], 100)\n+        assert_equal(out['path'], str(expected_path))\n+        # Blockhash should be deterministic based on mocked time.\n+        assert_equal(\n+            out['base_hash'],\n+            '6fd417acba2a8738b06fee43330c50d58e6a725046c3d843c8dd7e51d46d1ed6')\n+\n+        with open(expected_path, 'rb') as f:",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r338748194",
+      "id" : 338748194,
+      "in_reply_to_id" : 338747786,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzODc0ODE5NA==",
+      "original_commit_id" : "95beaf63336ba8f2df9ea85fbf2dfc885e807f79",
+      "original_position" : 40,
+      "path" : "test/functional/rpc_dumptxoutset.py",
+      "position" : null,
+      "pull_request_review_id" : 306806685,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/338748194",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->Needs rebase",
+      "created_at" : "2019-10-28T12:32:30Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#issuecomment-546925667",
+      "id" : 546925667,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16899",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU0NjkyNTY2Nw==",
+      "updated_at" : "2019-10-28T12:32:30Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/546925667",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r340572982"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/340572982"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "There's no point in adding a boost interruption point here. RPC threads aren't managed by a boost thread group.\r\nCheck `IsRPCRunning()` instead.",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-10-30T11:59:51Z",
+      "diff_hunk" : "@@ -2245,6 +2246,109 @@ static UniValue getblockfilter(const JSONRPCRequest& request)\n     return ret;\n }\n \n+/**\n+ * Serialize the UTXO set to a file for loading elsewhere.\n+ *\n+ * @see SnapshotMetadata\n+ */\n+UniValue dumptxoutset(const JSONRPCRequest& request)\n+{\n+    RPCHelpMan{\n+        \"dumptxoutset\",\n+        \"\\nWrite the serialized UTXO set to disk.\\n\"\n+        \"Incidentally flushes the latest coinsdb (leveldb) to disk.\\n\",\n+        {\n+            {\"path\",\n+                RPCArg::Type::STR,\n+                RPCArg::Optional::NO,\n+                /* default_val */ \"\",\n+                \"path to the output file. If relative, will be prefixed by datadir.\"},\n+        },\n+        RPCResult{\n+            \"{\\n\"\n+            \"  \\\"coins_written\\\": n,   (numeric) the number of coins written in the snapshot\\n\"\n+            \"  \\\"base_hash\\\": \\\"...\\\",   (string) the hash of the base of the snapshot\\n\"\n+            \"  \\\"base_height\\\": n,     (string) the height of the base of the snapshot\\n\"\n+            \"  \\\"path\\\": \\\"...\\\"         (string) the absolute path that the snapshot was written to\\n\"\n+            \"]\\n\"\n+        },\n+        RPCExamples{\n+            HelpExampleCli(\"dumptxoutset\", \"utxo.dat\")\n+        }\n+    }.Check(request);\n+\n+    fs::path path = fs::absolute(request.params[0].get_str(), GetDataDir());\n+    // Write to a temporary path and then move into `path` on completion\n+    // to avoid confusion due to an interruption.\n+    fs::path temppath = fs::absolute(request.params[0].get_str() + \".incomplete\", GetDataDir());\n+\n+    if (fs::exists(path)) {\n+        throw JSONRPCError(\n+            RPC_INVALID_PARAMETER,\n+            path.string() + \" already exists. If you are sure this is what you want, \"\n+            \"move it out of the way first\");\n+    }\n+\n+    FILE* file{fsbridge::fopen(temppath, \"wb\")};\n+    CAutoFile afile{file, SER_DISK, CLIENT_VERSION};\n+    std::unique_ptr<CCoinsViewCursor> pcursor;\n+    CCoinsStats stats;\n+    CBlockIndex* tip;\n+\n+    {\n+        // We need to lock cs_main to ensure that the coinsdb isn't written to\n+        // between (i) flushing coins cache to disk (coinsdb), (ii) getting stats\n+        // based upon the coinsdb, and (iii) constructing a cursor to the\n+        // coinsdb for use below this block.\n+        //\n+        // Cursors returned by leveldb iterate over snapshots, so the contents\n+        // of the pcursor will not be affected by simultaneous writes during\n+        // use below this block.\n+        //\n+        // See discussion here:\n+        //   https://github.com/bitcoin/bitcoin/pull/15606#discussion_r274479369\n+        //\n+        LOCK(::cs_main);\n+\n+        ::ChainstateActive().ForceFlushStateToDisk();\n+\n+        if (!GetUTXOStats(&::ChainstateActive().CoinsDB(), stats)) {\n+            throw JSONRPCError(RPC_INTERNAL_ERROR, \"Unable to read UTXO set\");\n+        }\n+\n+        pcursor = std::unique_ptr<CCoinsViewCursor>(::ChainstateActive().CoinsDB().Cursor());\n+        tip = LookupBlockIndex(stats.hashBlock);\n+        assert(tip);\n+    }\n+\n+    SnapshotMetadata metadata{tip->GetBlockHash(), stats.coins_count, tip->nChainTx};\n+\n+    afile << metadata;\n+\n+    COutPoint key;\n+    Coin coin;\n+\n+    while (pcursor->Valid()) {\n+        boost::this_thread::interruption_point();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r340572982",
+      "id" : 340572982,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MDU3Mjk4Mg==",
+      "original_commit_id" : "95c7f5ef5511de5b0637b27c238139e94e541399",
+      "original_position" : 95,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 309145599,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/340572982",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r342223785"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342223785"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Ah if that's the case then we should fix `FindScriptPubKey` at some point too. https://github.com/bitcoin/bitcoin/blob/master/src/rpc/blockchain.cpp#L1970-L1978",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-11-04T19:18:22Z",
+      "diff_hunk" : "@@ -2245,6 +2246,109 @@ static UniValue getblockfilter(const JSONRPCRequest& request)\n     return ret;\n }\n \n+/**\n+ * Serialize the UTXO set to a file for loading elsewhere.\n+ *\n+ * @see SnapshotMetadata\n+ */\n+UniValue dumptxoutset(const JSONRPCRequest& request)\n+{\n+    RPCHelpMan{\n+        \"dumptxoutset\",\n+        \"\\nWrite the serialized UTXO set to disk.\\n\"\n+        \"Incidentally flushes the latest coinsdb (leveldb) to disk.\\n\",\n+        {\n+            {\"path\",\n+                RPCArg::Type::STR,\n+                RPCArg::Optional::NO,\n+                /* default_val */ \"\",\n+                \"path to the output file. If relative, will be prefixed by datadir.\"},\n+        },\n+        RPCResult{\n+            \"{\\n\"\n+            \"  \\\"coins_written\\\": n,   (numeric) the number of coins written in the snapshot\\n\"\n+            \"  \\\"base_hash\\\": \\\"...\\\",   (string) the hash of the base of the snapshot\\n\"\n+            \"  \\\"base_height\\\": n,     (string) the height of the base of the snapshot\\n\"\n+            \"  \\\"path\\\": \\\"...\\\"         (string) the absolute path that the snapshot was written to\\n\"\n+            \"]\\n\"\n+        },\n+        RPCExamples{\n+            HelpExampleCli(\"dumptxoutset\", \"utxo.dat\")\n+        }\n+    }.Check(request);\n+\n+    fs::path path = fs::absolute(request.params[0].get_str(), GetDataDir());\n+    // Write to a temporary path and then move into `path` on completion\n+    // to avoid confusion due to an interruption.\n+    fs::path temppath = fs::absolute(request.params[0].get_str() + \".incomplete\", GetDataDir());\n+\n+    if (fs::exists(path)) {\n+        throw JSONRPCError(\n+            RPC_INVALID_PARAMETER,\n+            path.string() + \" already exists. If you are sure this is what you want, \"\n+            \"move it out of the way first\");\n+    }\n+\n+    FILE* file{fsbridge::fopen(temppath, \"wb\")};\n+    CAutoFile afile{file, SER_DISK, CLIENT_VERSION};\n+    std::unique_ptr<CCoinsViewCursor> pcursor;\n+    CCoinsStats stats;\n+    CBlockIndex* tip;\n+\n+    {\n+        // We need to lock cs_main to ensure that the coinsdb isn't written to\n+        // between (i) flushing coins cache to disk (coinsdb), (ii) getting stats\n+        // based upon the coinsdb, and (iii) constructing a cursor to the\n+        // coinsdb for use below this block.\n+        //\n+        // Cursors returned by leveldb iterate over snapshots, so the contents\n+        // of the pcursor will not be affected by simultaneous writes during\n+        // use below this block.\n+        //\n+        // See discussion here:\n+        //   https://github.com/bitcoin/bitcoin/pull/15606#discussion_r274479369\n+        //\n+        LOCK(::cs_main);\n+\n+        ::ChainstateActive().ForceFlushStateToDisk();\n+\n+        if (!GetUTXOStats(&::ChainstateActive().CoinsDB(), stats)) {\n+            throw JSONRPCError(RPC_INTERNAL_ERROR, \"Unable to read UTXO set\");\n+        }\n+\n+        pcursor = std::unique_ptr<CCoinsViewCursor>(::ChainstateActive().CoinsDB().Cursor());\n+        tip = LookupBlockIndex(stats.hashBlock);\n+        assert(tip);\n+    }\n+\n+    SnapshotMetadata metadata{tip->GetBlockHash(), stats.coins_count, tip->nChainTx};\n+\n+    afile << metadata;\n+\n+    COutPoint key;\n+    Coin coin;\n+\n+    while (pcursor->Valid()) {\n+        boost::this_thread::interruption_point();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r342223785",
+      "id" : 342223785,
+      "in_reply_to_id" : 340572982,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MjIyMzc4NQ==",
+      "original_commit_id" : "95c7f5ef5511de5b0637b27c238139e94e541399",
+      "original_position" : 95,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 311298187,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T19:27:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342223785",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "node_id" : "MDQ6VXNlcjczMTk3",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r342306074"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342306074"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "@jamesob ping",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-11-04T22:37:26Z",
+      "diff_hunk" : "@@ -51,6 +51,7 @@ bool GetUTXOStats(CCoinsView *view, CCoinsStats &stats)\n     }\n     ss << stats.hashBlock;\n     uint256 prevkey;\n+    unsigned int coins_count{0};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r342306074",
+      "id" : 342306074,
+      "in_reply_to_id" : 329542015,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MjMwNjA3NA==",
+      "original_commit_id" : "c2830a9828c85acfc94caeae3d3ec641ed3d148a",
+      "original_position" : 4,
+      "path" : "src/node/coinstats.cpp",
+      "position" : 4,
+      "pull_request_review_id" : 310706361,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-04T22:38:28Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342306074",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r342530631"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342530631"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I wouldn't mind fixing it in this pull in a new commit. It seem like you copy-pasted the code from there, so it wouldn't hurt review if people saw where the code came from",
+      "commit_id" : "53bae6576833bf7b38fe963097b0d7f557cd0f1a",
+      "created_at" : "2019-11-05T12:14:53Z",
+      "diff_hunk" : "@@ -2245,6 +2246,109 @@ static UniValue getblockfilter(const JSONRPCRequest& request)\n     return ret;\n }\n \n+/**\n+ * Serialize the UTXO set to a file for loading elsewhere.\n+ *\n+ * @see SnapshotMetadata\n+ */\n+UniValue dumptxoutset(const JSONRPCRequest& request)\n+{\n+    RPCHelpMan{\n+        \"dumptxoutset\",\n+        \"\\nWrite the serialized UTXO set to disk.\\n\"\n+        \"Incidentally flushes the latest coinsdb (leveldb) to disk.\\n\",\n+        {\n+            {\"path\",\n+                RPCArg::Type::STR,\n+                RPCArg::Optional::NO,\n+                /* default_val */ \"\",\n+                \"path to the output file. If relative, will be prefixed by datadir.\"},\n+        },\n+        RPCResult{\n+            \"{\\n\"\n+            \"  \\\"coins_written\\\": n,   (numeric) the number of coins written in the snapshot\\n\"\n+            \"  \\\"base_hash\\\": \\\"...\\\",   (string) the hash of the base of the snapshot\\n\"\n+            \"  \\\"base_height\\\": n,     (string) the height of the base of the snapshot\\n\"\n+            \"  \\\"path\\\": \\\"...\\\"         (string) the absolute path that the snapshot was written to\\n\"\n+            \"]\\n\"\n+        },\n+        RPCExamples{\n+            HelpExampleCli(\"dumptxoutset\", \"utxo.dat\")\n+        }\n+    }.Check(request);\n+\n+    fs::path path = fs::absolute(request.params[0].get_str(), GetDataDir());\n+    // Write to a temporary path and then move into `path` on completion\n+    // to avoid confusion due to an interruption.\n+    fs::path temppath = fs::absolute(request.params[0].get_str() + \".incomplete\", GetDataDir());\n+\n+    if (fs::exists(path)) {\n+        throw JSONRPCError(\n+            RPC_INVALID_PARAMETER,\n+            path.string() + \" already exists. If you are sure this is what you want, \"\n+            \"move it out of the way first\");\n+    }\n+\n+    FILE* file{fsbridge::fopen(temppath, \"wb\")};\n+    CAutoFile afile{file, SER_DISK, CLIENT_VERSION};\n+    std::unique_ptr<CCoinsViewCursor> pcursor;\n+    CCoinsStats stats;\n+    CBlockIndex* tip;\n+\n+    {\n+        // We need to lock cs_main to ensure that the coinsdb isn't written to\n+        // between (i) flushing coins cache to disk (coinsdb), (ii) getting stats\n+        // based upon the coinsdb, and (iii) constructing a cursor to the\n+        // coinsdb for use below this block.\n+        //\n+        // Cursors returned by leveldb iterate over snapshots, so the contents\n+        // of the pcursor will not be affected by simultaneous writes during\n+        // use below this block.\n+        //\n+        // See discussion here:\n+        //   https://github.com/bitcoin/bitcoin/pull/15606#discussion_r274479369\n+        //\n+        LOCK(::cs_main);\n+\n+        ::ChainstateActive().ForceFlushStateToDisk();\n+\n+        if (!GetUTXOStats(&::ChainstateActive().CoinsDB(), stats)) {\n+            throw JSONRPCError(RPC_INTERNAL_ERROR, \"Unable to read UTXO set\");\n+        }\n+\n+        pcursor = std::unique_ptr<CCoinsViewCursor>(::ChainstateActive().CoinsDB().Cursor());\n+        tip = LookupBlockIndex(stats.hashBlock);\n+        assert(tip);\n+    }\n+\n+    SnapshotMetadata metadata{tip->GetBlockHash(), stats.coins_count, tip->nChainTx};\n+\n+    afile << metadata;\n+\n+    COutPoint key;\n+    Coin coin;\n+\n+    while (pcursor->Valid()) {\n+        boost::this_thread::interruption_point();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16899#discussion_r342530631",
+      "id" : 342530631,
+      "in_reply_to_id" : 340572982,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MjUzMDYzMQ==",
+      "original_commit_id" : "95c7f5ef5511de5b0637b27c238139e94e541399",
+      "original_position" : 95,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 311690952,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16899",
+      "updated_at" : "2019-11-05T12:14:53Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342530631",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   }
+]

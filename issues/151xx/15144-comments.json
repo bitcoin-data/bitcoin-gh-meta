@@ -1,0 +1,535 @@
+[
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#14929](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/14929.html) (net: Allow connections from misbehavior banned peers by gmaxwell)\n* [#14897](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/14897.html) (randomize GETDATA(tx) request order and introduce bias toward outbound by naumenkogs)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "created_at" : "2019-01-10T20:08:22Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15144#issuecomment-453235897",
+      "id" : 453235897,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15144",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ1MzIzNTg5Nw==",
+      "updated_at" : "2019-01-10T20:08:22Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/453235897",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Concept ACK. Will review.",
+      "created_at" : "2019-01-10T20:15:39Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15144#issuecomment-453237911",
+      "id" : 453237911,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15144",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ1MzIzNzkxMQ==",
+      "updated_at" : "2019-01-10T20:15:39Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/453237911",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7826565?v=4",
+         "events_url" : "https://api.github.com/users/practicalswift/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/practicalswift/followers",
+         "following_url" : "https://api.github.com/users/practicalswift/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/practicalswift/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/practicalswift",
+         "id" : 7826565,
+         "login" : "practicalswift",
+         "node_id" : "MDQ6VXNlcjc4MjY1NjU=",
+         "organizations_url" : "https://api.github.com/users/practicalswift/orgs",
+         "received_events_url" : "https://api.github.com/users/practicalswift/received_events",
+         "repos_url" : "https://api.github.com/users/practicalswift/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/practicalswift/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/practicalswift/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/practicalswift"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15144#discussion_r246907314"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15144"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/246907314"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I'm all for brace initialisation in the general case, but in this case what about using ...\r\n\r\n```\r\nuint64_t nSendBytes = 0 GUARDED_BY(cs_vSend);\r\n```\r\n\r\n... to make it clear that `0` has nothing to do with `GUARDED_BY(cs_vSend)`?\r\n\r\nApplies for the other member variables with `GUARDED_BY(Ã¢ÂÂ¦)`:s.",
+      "commit_id" : "fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "created_at" : "2019-01-10T20:19:27Z",
+      "diff_hunk" : "@@ -640,80 +640,80 @@ class CNode\n     friend class CConnman;\n public:\n     // socket\n-    std::atomic<ServiceFlags> nServices;\n+    std::atomic<ServiceFlags> nServices{NODE_NONE};\n     SOCKET hSocket GUARDED_BY(cs_hSocket);\n-    size_t nSendSize; // total size of all vSendMsg entries\n-    size_t nSendOffset; // offset inside the first vSendMsg already sent\n-    uint64_t nSendBytes GUARDED_BY(cs_vSend);\n+    size_t nSendSize{0}; // total size of all vSendMsg entries\n+    size_t nSendOffset{0}; // offset inside the first vSendMsg already sent\n+    uint64_t nSendBytes GUARDED_BY(cs_vSend){0};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15144#discussion_r246907314",
+      "id" : 246907314,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI0NjkwNzMxNA==",
+      "original_commit_id" : "fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "original_position" : 12,
+      "path" : "src/net.h",
+      "position" : 12,
+      "pull_request_review_id" : 191396700,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15144",
+      "updated_at" : "2019-01-10T21:01:32Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/246907314",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7826565?v=4",
+         "events_url" : "https://api.github.com/users/practicalswift/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/practicalswift/followers",
+         "following_url" : "https://api.github.com/users/practicalswift/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/practicalswift/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/practicalswift",
+         "id" : 7826565,
+         "login" : "practicalswift",
+         "node_id" : "MDQ6VXNlcjc4MjY1NjU=",
+         "organizations_url" : "https://api.github.com/users/practicalswift/orgs",
+         "received_events_url" : "https://api.github.com/users/practicalswift/received_events",
+         "repos_url" : "https://api.github.com/users/practicalswift/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/practicalswift/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/practicalswift/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/practicalswift"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15144#discussion_r246941697"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15144"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/246941697"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "`#include <limits>`",
+      "commit_id" : "fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "created_at" : "2019-01-10T22:17:49Z",
+      "diff_hunk" : "@@ -727,35 +727,35 @@ class CNode\n     CCriticalSection cs_inventory;\n     std::set<uint256> setAskFor;\n     std::multimap<int64_t, CInv> mapAskFor;\n-    int64_t nNextInvSend;\n+    int64_t nNextInvSend{0};\n     // Used for headers announcements - unfiltered blocks to relay\n     std::vector<uint256> vBlockHashesToAnnounce GUARDED_BY(cs_inventory);\n     // Used for BIP35 mempool sending\n-    bool fSendMempool GUARDED_BY(cs_inventory);\n+    bool fSendMempool GUARDED_BY(cs_inventory){false};\n \n     // Last time a \"MEMPOOL\" request was serviced.\n-    std::atomic<int64_t> timeLastMempoolReq;\n+    std::atomic<int64_t> timeLastMempoolReq{0};\n \n     // Block and TXN accept times\n-    std::atomic<int64_t> nLastBlockTime;\n-    std::atomic<int64_t> nLastTXTime;\n+    std::atomic<int64_t> nLastBlockTime{0};\n+    std::atomic<int64_t> nLastTXTime{0};\n \n     // Ping time measurement:\n     // The pong reply we're expecting, or 0 if no pong expected.\n-    std::atomic<uint64_t> nPingNonceSent;\n+    std::atomic<uint64_t> nPingNonceSent{0};\n     // Time (in usec) the last ping was sent, or 0 if no ping was ever sent.\n-    std::atomic<int64_t> nPingUsecStart;\n+    std::atomic<int64_t> nPingUsecStart{0};\n     // Last measured round-trip time.\n-    std::atomic<int64_t> nPingUsecTime;\n+    std::atomic<int64_t> nPingUsecTime{0};\n     // Best measured round-trip time.\n-    std::atomic<int64_t> nMinPingUsecTime;\n+    std::atomic<int64_t> nMinPingUsecTime{std::numeric_limits<int64_t>::max()};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15144#discussion_r246941697",
+      "id" : 246941697,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI0Njk0MTY5Nw==",
+      "original_commit_id" : "fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "original_position" : 143,
+      "path" : "src/net.h",
+      "position" : 143,
+      "pull_request_review_id" : 191441289,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15144",
+      "updated_at" : "2019-01-10T22:17:49Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/246941697",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/5470?v=4",
+         "events_url" : "https://api.github.com/users/Empact/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Empact/followers",
+         "following_url" : "https://api.github.com/users/Empact/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Empact/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Empact",
+         "id" : 5470,
+         "login" : "Empact",
+         "node_id" : "MDQ6VXNlcjU0NzA=",
+         "organizations_url" : "https://api.github.com/users/Empact/orgs",
+         "received_events_url" : "https://api.github.com/users/Empact/received_events",
+         "repos_url" : "https://api.github.com/users/Empact/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Empact/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Empact/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Empact"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15144#discussion_r246972845"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15144"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/246972845"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I prefer consistency, and maybe a space around the annotation would look better:\r\n```cpp\r\nuint64_t nSendBytes GUARDED_BY(cs_vSend) {0};\r\n```",
+      "commit_id" : "fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "created_at" : "2019-01-11T00:46:38Z",
+      "diff_hunk" : "@@ -640,80 +640,80 @@ class CNode\n     friend class CConnman;\n public:\n     // socket\n-    std::atomic<ServiceFlags> nServices;\n+    std::atomic<ServiceFlags> nServices{NODE_NONE};\n     SOCKET hSocket GUARDED_BY(cs_hSocket);\n-    size_t nSendSize; // total size of all vSendMsg entries\n-    size_t nSendOffset; // offset inside the first vSendMsg already sent\n-    uint64_t nSendBytes GUARDED_BY(cs_vSend);\n+    size_t nSendSize{0}; // total size of all vSendMsg entries\n+    size_t nSendOffset{0}; // offset inside the first vSendMsg already sent\n+    uint64_t nSendBytes GUARDED_BY(cs_vSend){0};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15144#discussion_r246972845",
+      "id" : 246972845,
+      "in_reply_to_id" : 246907314,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI0Njk3Mjg0NQ==",
+      "original_commit_id" : "fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "original_position" : 12,
+      "path" : "src/net.h",
+      "position" : 12,
+      "pull_request_review_id" : 191480141,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15144",
+      "updated_at" : "2019-01-11T00:46:38Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/246972845",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "ACK fac2f5e:\r\n - initialization values are the same\r\n - comments are moved\r\n - some styles fixes\r\n - annotations are unchanged\r\n",
+      "created_at" : "2019-01-11T00:50:05Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15144#issuecomment-453323153",
+      "id" : 453323153,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15144",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ1MzMyMzE1Mw==",
+      "updated_at" : "2019-01-11T00:50:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/453323153",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15144#discussion_r247033740"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15144"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/247033740"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "@promag Yes, space is better.",
+      "commit_id" : "fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "created_at" : "2019-01-11T08:28:29Z",
+      "diff_hunk" : "@@ -640,80 +640,80 @@ class CNode\n     friend class CConnman;\n public:\n     // socket\n-    std::atomic<ServiceFlags> nServices;\n+    std::atomic<ServiceFlags> nServices{NODE_NONE};\n     SOCKET hSocket GUARDED_BY(cs_hSocket);\n-    size_t nSendSize; // total size of all vSendMsg entries\n-    size_t nSendOffset; // offset inside the first vSendMsg already sent\n-    uint64_t nSendBytes GUARDED_BY(cs_vSend);\n+    size_t nSendSize{0}; // total size of all vSendMsg entries\n+    size_t nSendOffset{0}; // offset inside the first vSendMsg already sent\n+    uint64_t nSendBytes GUARDED_BY(cs_vSend){0};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15144#discussion_r247033740",
+      "id" : 247033740,
+      "in_reply_to_id" : 246907314,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI0NzAzMzc0MA==",
+      "original_commit_id" : "fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "original_position" : 12,
+      "path" : "src/net.h",
+      "position" : 12,
+      "pull_request_review_id" : 191555353,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15144",
+      "updated_at" : "2019-01-11T08:28:29Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/247033740",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7826565?v=4",
+         "events_url" : "https://api.github.com/users/practicalswift/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/practicalswift/followers",
+         "following_url" : "https://api.github.com/users/practicalswift/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/practicalswift/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/practicalswift",
+         "id" : 7826565,
+         "login" : "practicalswift",
+         "node_id" : "MDQ6VXNlcjc4MjY1NjU=",
+         "organizations_url" : "https://api.github.com/users/practicalswift/orgs",
+         "received_events_url" : "https://api.github.com/users/practicalswift/received_events",
+         "repos_url" : "https://api.github.com/users/practicalswift/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/practicalswift/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/practicalswift/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/practicalswift"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15144#discussion_r247098702"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15144"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/247098702"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "According to clang-format there should be no space",
+      "commit_id" : "fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "created_at" : "2019-01-11T12:25:59Z",
+      "diff_hunk" : "@@ -640,80 +640,80 @@ class CNode\n     friend class CConnman;\n public:\n     // socket\n-    std::atomic<ServiceFlags> nServices;\n+    std::atomic<ServiceFlags> nServices{NODE_NONE};\n     SOCKET hSocket GUARDED_BY(cs_hSocket);\n-    size_t nSendSize; // total size of all vSendMsg entries\n-    size_t nSendOffset; // offset inside the first vSendMsg already sent\n-    uint64_t nSendBytes GUARDED_BY(cs_vSend);\n+    size_t nSendSize{0}; // total size of all vSendMsg entries\n+    size_t nSendOffset{0}; // offset inside the first vSendMsg already sent\n+    uint64_t nSendBytes GUARDED_BY(cs_vSend){0};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15144#discussion_r247098702",
+      "id" : 247098702,
+      "in_reply_to_id" : 246907314,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI0NzA5ODcwMg==",
+      "original_commit_id" : "fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "original_position" : 12,
+      "path" : "src/net.h",
+      "position" : 12,
+      "pull_request_review_id" : 191638264,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15144",
+      "updated_at" : "2019-01-11T12:25:59Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/247098702",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15144#discussion_r247113982"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15144"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/247113982"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Oh, TIL! Then we'll simply go with what `clang-format` prefers.",
+      "commit_id" : "fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "created_at" : "2019-01-11T13:25:45Z",
+      "diff_hunk" : "@@ -640,80 +640,80 @@ class CNode\n     friend class CConnman;\n public:\n     // socket\n-    std::atomic<ServiceFlags> nServices;\n+    std::atomic<ServiceFlags> nServices{NODE_NONE};\n     SOCKET hSocket GUARDED_BY(cs_hSocket);\n-    size_t nSendSize; // total size of all vSendMsg entries\n-    size_t nSendOffset; // offset inside the first vSendMsg already sent\n-    uint64_t nSendBytes GUARDED_BY(cs_vSend);\n+    size_t nSendSize{0}; // total size of all vSendMsg entries\n+    size_t nSendOffset{0}; // offset inside the first vSendMsg already sent\n+    uint64_t nSendBytes GUARDED_BY(cs_vSend){0};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15144#discussion_r247113982",
+      "id" : 247113982,
+      "in_reply_to_id" : 246907314,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI0NzExMzk4Mg==",
+      "original_commit_id" : "fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "original_position" : 12,
+      "path" : "src/net.h",
+      "position" : 12,
+      "pull_request_review_id" : 191657999,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15144",
+      "updated_at" : "2019-01-11T13:25:45Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/247113982",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7826565?v=4",
+         "events_url" : "https://api.github.com/users/practicalswift/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/practicalswift/followers",
+         "following_url" : "https://api.github.com/users/practicalswift/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/practicalswift/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/practicalswift",
+         "id" : 7826565,
+         "login" : "practicalswift",
+         "node_id" : "MDQ6VXNlcjc4MjY1NjU=",
+         "organizations_url" : "https://api.github.com/users/practicalswift/orgs",
+         "received_events_url" : "https://api.github.com/users/practicalswift/received_events",
+         "repos_url" : "https://api.github.com/users/practicalswift/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/practicalswift/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/practicalswift/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/practicalswift"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "utACK fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "created_at" : "2019-01-11T18:06:22Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15144#issuecomment-453605552",
+      "id" : 453605552,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15144",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ1MzYwNTU1Mg==",
+      "updated_at" : "2019-01-11T18:06:22Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/453605552",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/548488?v=4",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "node_id" : "MDQ6VXNlcjU0ODQ4OA==",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15144#discussion_r247209954"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15144"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/247209954"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Remove this redundant line? :-)",
+      "commit_id" : "fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "created_at" : "2019-01-11T18:21:28Z",
+      "diff_hunk" : "@@ -2807,56 +2807,14 @@ CNode::CNode(NodeId idIn, ServiceFlags nLocalServicesIn, int nMyStartingHeightIn\n     id(idIn),\n     nLocalHostNonce(nLocalHostNonceIn),\n     nLocalServices(nLocalServicesIn),\n-    nMyStartingHeight(nMyStartingHeightIn),\n-    nSendVersion(0)\n+    nMyStartingHeight(nMyStartingHeightIn)\n {\n-    nServices = NODE_NONE;\n     hSocket = hSocketIn;\n-    nRecvVersion = INIT_PROTO_VERSION;\n-    nLastSend = 0;\n-    nLastRecv = 0;\n-    nSendBytes = 0;\n-    nRecvBytes = 0;\n-    nTimeOffset = 0;\n     addrName = addrNameIn == \"\" ? addr.ToStringIPPort() : addrNameIn;\n-    nVersion = 0;\n     strSubVer = \"\";",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15144#discussion_r247209954",
+      "id" : 247209954,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI0NzIwOTk1NA==",
+      "original_commit_id" : "fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "original_position" : 29,
+      "path" : "src/net.cpp",
+      "position" : 29,
+      "pull_request_review_id" : 191784749,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15144",
+      "updated_at" : "2019-01-11T18:21:28Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/247209954",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7826565?v=4",
+         "events_url" : "https://api.github.com/users/practicalswift/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/practicalswift/followers",
+         "following_url" : "https://api.github.com/users/practicalswift/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/practicalswift/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/practicalswift",
+         "id" : 7826565,
+         "login" : "practicalswift",
+         "node_id" : "MDQ6VXNlcjc4MjY1NjU=",
+         "organizations_url" : "https://api.github.com/users/practicalswift/orgs",
+         "received_events_url" : "https://api.github.com/users/practicalswift/received_events",
+         "repos_url" : "https://api.github.com/users/practicalswift/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/practicalswift/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/practicalswift/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/practicalswift"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "utACK https://github.com/bitcoin/bitcoin/commit/fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "created_at" : "2019-01-12T08:11:54Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15144#issuecomment-453729101",
+      "id" : 453729101,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15144",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ1MzcyOTEwMQ==",
+      "updated_at" : "2019-01-12T08:12:13Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/453729101",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/5470?v=4",
+         "events_url" : "https://api.github.com/users/Empact/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Empact/followers",
+         "following_url" : "https://api.github.com/users/Empact/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Empact/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Empact",
+         "id" : 5470,
+         "login" : "Empact",
+         "node_id" : "MDQ6VXNlcjU0NzA=",
+         "organizations_url" : "https://api.github.com/users/Empact/orgs",
+         "received_events_url" : "https://api.github.com/users/Empact/received_events",
+         "repos_url" : "https://api.github.com/users/Empact/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Empact/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Empact/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Empact"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "utACK fac2f5ecae96dd11057977ce988501e18bb162c6",
+      "created_at" : "2019-01-14T13:48:25Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15144#issuecomment-454010162",
+      "id" : 454010162,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15144",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ1NDAxMDE2Mg==",
+      "updated_at" : "2019-01-14T13:48:25Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/454010162",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   }
+]

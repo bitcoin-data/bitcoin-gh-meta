@@ -1,0 +1,485 @@
+[
+   {
+      "body" : "Concept ACK; I like making opening the debug log explicit. \r\n\r\nThis will correctly handle any sequence of Shutdown() being called after AppInit2 errored out somewhere along the way? (just asking -  previous changes in this sequence have tended to cause unexpected problems there)",
+      "created_at" : "2015-05-16T07:19:09Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6149#issuecomment-102583130",
+      "id" : 102583130,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6149",
+      "updated_at" : "2015-05-16T07:19:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/102583130",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "body" : "It will now.  I wasn't able to get it to crash in my testing, but I believe that it was possible if the list/buffer were left static.\r\n\r\nI believe the issue you're bringing up is #1832 where the mutex that protects the log was being destroyed before the log print functions were being called resulting in a crash on shutdown.  The fix for that was to explicitly initialize the mutex and put it on the heap.  This generally results in a leak of the mutex and the output fd even on clean shutdown, but that's just merely ugly and benign.  (and to be clear, the way things are today)\r\n\r\nI now do the same with this buffer which will ensure that it is safe, but also leaked at exit along with the mutex and fd.  I looked into cleaning up the shutdown stuff and explicitly destroying the mutex, closing the fd and deleting this buffer, but that's more involved (things are slightly different under QT and bitcoind) and it seems like different, more complex and more difficult to test PR that should probably stand alone.\r\n ",
+      "created_at" : "2015-05-18T23:20:14Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6149#issuecomment-103255112",
+      "id" : 103255112,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6149",
+      "updated_at" : "2015-05-18T23:20:14Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/103255112",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/430315?v=3",
+         "events_url" : "https://api.github.com/users/ajweiss/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ajweiss/followers",
+         "following_url" : "https://api.github.com/users/ajweiss/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ajweiss/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ajweiss",
+         "id" : 430315,
+         "login" : "ajweiss",
+         "organizations_url" : "https://api.github.com/users/ajweiss/orgs",
+         "received_events_url" : "https://api.github.com/users/ajweiss/received_events",
+         "repos_url" : "https://api.github.com/users/ajweiss/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ajweiss/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ajweiss/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ajweiss"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6149#discussion_r31413929"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6149"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/31413929"
+         }
+      },
+      "body" : "This function can be static",
+      "commit_id" : "cd5ef8342b855c5556ced2f25c560cb435b3a2cc",
+      "created_at" : "2015-06-01T10:18:52Z",
+      "diff_hunk" : "@@ -167,23 +167,47 @@ instance_of_cinit;\n  */\n \n static boost::once_flag debugPrintInitFlag = BOOST_ONCE_INIT;\n+\n /**\n- * We use boost::call_once() to make sure these are initialized\n- * in a thread-safe manner the first time called:\n+ * We use boost::call_once() to make sure mutexDebugLog and\n+ * vMsgsBeforeOpenLog are initialized in a thread-safe manner.\n+ *\n+ * FIXME: fileout, mutexDebugLog and vMsgsBeforeOpenLog are leaked\n+ * on exit.  This is ugly, but will be cleaned up by the OS/libc.\n+ * When the shutdown sequence is fully audited and tested, explicit\n+ * destruction of these objects can be implemented.\n  */\n static FILE* fileout = NULL;\n static boost::mutex* mutexDebugLog = NULL;\n+static list<string> *vMsgsBeforeOpenLog;\n+\n+int LogWriteStr(const std::string &str)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6149#discussion_r31413929",
+      "id" : 31413929,
+      "original_commit_id" : "cd5ef8342b855c5556ced2f25c560cb435b3a2cc",
+      "original_position" : 20,
+      "path" : "src/util.cpp",
+      "position" : 20,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6149",
+      "updated_at" : "2015-06-01T10:18:52Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/31413929",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6149#discussion_r31413983"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6149"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/31413983"
+         }
+      },
+      "body" : "Function can be static",
+      "commit_id" : "cd5ef8342b855c5556ced2f25c560cb435b3a2cc",
+      "created_at" : "2015-06-01T10:19:50Z",
+      "diff_hunk" : "@@ -214,6 +238,24 @@ bool LogAcceptCategory(const char* category)\n     return true;\n }\n \n+std::string LogTimestampStr(const std::string &str)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6149#discussion_r31413983",
+      "id" : 31413983,
+      "original_commit_id" : "cd5ef8342b855c5556ced2f25c560cb435b3a2cc",
+      "original_position" : 56,
+      "path" : "src/util.cpp",
+      "position" : 56,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6149",
+      "updated_at" : "2015-06-01T10:19:50Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/31413983",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6149#discussion_r31414090"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6149"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/31414090"
+         }
+      },
+      "body" : "Also I'd suggest to rename it to `FileWriteStr`, and pass in the `file` argument explicitly. This makes for a clearer utility function.",
+      "commit_id" : "cd5ef8342b855c5556ced2f25c560cb435b3a2cc",
+      "created_at" : "2015-06-01T10:22:08Z",
+      "diff_hunk" : "@@ -167,23 +167,47 @@ instance_of_cinit;\n  */\n \n static boost::once_flag debugPrintInitFlag = BOOST_ONCE_INIT;\n+\n /**\n- * We use boost::call_once() to make sure these are initialized\n- * in a thread-safe manner the first time called:\n+ * We use boost::call_once() to make sure mutexDebugLog and\n+ * vMsgsBeforeOpenLog are initialized in a thread-safe manner.\n+ *\n+ * FIXME: fileout, mutexDebugLog and vMsgsBeforeOpenLog are leaked\n+ * on exit.  This is ugly, but will be cleaned up by the OS/libc.\n+ * When the shutdown sequence is fully audited and tested, explicit\n+ * destruction of these objects can be implemented.\n  */\n static FILE* fileout = NULL;\n static boost::mutex* mutexDebugLog = NULL;\n+static list<string> *vMsgsBeforeOpenLog;\n+\n+int LogWriteStr(const std::string &str)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6149#discussion_r31414090",
+      "id" : 31414090,
+      "original_commit_id" : "cd5ef8342b855c5556ced2f25c560cb435b3a2cc",
+      "original_position" : 20,
+      "path" : "src/util.cpp",
+      "position" : 20,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6149",
+      "updated_at" : "2015-06-01T10:22:08Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/31414090",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6149#discussion_r31414179"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6149"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/31414179"
+         }
+      },
+      "body" : "Could delete `vMsgsBeforeOpenLog` here and set it to NULL.\r\n",
+      "commit_id" : "cd5ef8342b855c5556ced2f25c560cb435b3a2cc",
+      "created_at" : "2015-06-01T10:23:59Z",
+      "diff_hunk" : "@@ -167,23 +167,47 @@ instance_of_cinit;\n  */\n \n static boost::once_flag debugPrintInitFlag = BOOST_ONCE_INIT;\n+\n /**\n- * We use boost::call_once() to make sure these are initialized\n- * in a thread-safe manner the first time called:\n+ * We use boost::call_once() to make sure mutexDebugLog and\n+ * vMsgsBeforeOpenLog are initialized in a thread-safe manner.\n+ *\n+ * FIXME: fileout, mutexDebugLog and vMsgsBeforeOpenLog are leaked\n+ * on exit.  This is ugly, but will be cleaned up by the OS/libc.\n+ * When the shutdown sequence is fully audited and tested, explicit\n+ * destruction of these objects can be implemented.\n  */\n static FILE* fileout = NULL;\n static boost::mutex* mutexDebugLog = NULL;\n+static list<string> *vMsgsBeforeOpenLog;\n+\n+int LogWriteStr(const std::string &str)\n+{\n+    return fwrite(str.data(), 1, str.size(), fileout);\n+}\n \n static void DebugPrintInit()\n {\n-    assert(fileout == NULL);\n     assert(mutexDebugLog == NULL);\n+    mutexDebugLog = new boost::mutex();\n+    vMsgsBeforeOpenLog = new list<string>;\n+}\n \n+void OpenDebugLog()\n+{\n+    boost::call_once(&DebugPrintInit, debugPrintInitFlag);\n+    boost::mutex::scoped_lock scoped_lock(*mutexDebugLog);\n+\n+    assert(fileout == NULL);\n     boost::filesystem::path pathDebug = GetDataDir() / \"debug.log\";\n     fileout = fopen(pathDebug.string().c_str(), \"a\");\n     if (fileout) setbuf(fileout, NULL); // unbuffered\n \n-    mutexDebugLog = new boost::mutex();\n+    // dump buffered messages from before we opened the log\n+    while (!vMsgsBeforeOpenLog->empty()) {\n+        LogWriteStr(vMsgsBeforeOpenLog->front());\n+        vMsgsBeforeOpenLog->pop_front();\n+    }",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6149#discussion_r31414179",
+      "id" : 31414179,
+      "original_commit_id" : "cd5ef8342b855c5556ced2f25c560cb435b3a2cc",
+      "original_position" : 48,
+      "path" : "src/util.cpp",
+      "position" : 48,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6149",
+      "updated_at" : "2015-06-01T10:23:59Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/31414179",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6149#discussion_r31414250"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6149"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/31414250"
+         }
+      },
+      "body" : "Just to be sure: add assertion that vMsgsBeforeOpenLog is not null",
+      "commit_id" : "cd5ef8342b855c5556ced2f25c560cb435b3a2cc",
+      "created_at" : "2015-06-01T10:25:11Z",
+      "diff_hunk" : "@@ -223,38 +265,35 @@ int LogPrintStr(const std::string &str)\n         ret = fwrite(str.data(), 1, str.size(), stdout);\n         fflush(stdout);\n     }\n-    else if (fPrintToDebugLog && AreBaseParamsConfigured())\n+    else if (fPrintToDebugLog)\n     {\n-        static bool fStartedNewLine = true;\n         boost::call_once(&DebugPrintInit, debugPrintInitFlag);\n-\n-        if (fileout == NULL)\n-            return ret;\n-\n         boost::mutex::scoped_lock scoped_lock(*mutexDebugLog);\n \n-        // reopen the log file, if requested\n-        if (fReopenDebugLog) {\n-            fReopenDebugLog = false;\n-            boost::filesystem::path pathDebug = GetDataDir() / \"debug.log\";\n-            if (freopen(pathDebug.string().c_str(),\"a\",fileout) != NULL)\n-                setbuf(fileout, NULL); // unbuffered\n-        }\n+        string strTimestamped = LogTimestampStr(str);\n \n-        // Debug print useful for profiling\n-        if (fLogTimestamps && fStartedNewLine)\n-            ret += fprintf(fileout, \"%s \", DateTimeStrFormat(\"%Y-%m-%d %H:%M:%S\", GetTime()).c_str());\n-        if (!str.empty() && str[str.size()-1] == '\\n')\n-            fStartedNewLine = true;\n+        // buffer if we haven't opened the log yet\n+        if (fileout == NULL) {\n+            ret = strTimestamped.length();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6149#discussion_r31414250",
+      "id" : 31414250,
+      "original_commit_id" : "cd5ef8342b855c5556ced2f25c560cb435b3a2cc",
+      "original_position" : 108,
+      "path" : "src/util.cpp",
+      "position" : 108,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6149",
+      "updated_at" : "2015-06-01T10:25:11Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/31414250",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6149#discussion_r31414428"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6149"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/31414428"
+         }
+      },
+      "body" : "I'd suggest passing in `bool& fStartedNewLine` explicitly, so that it can be defined at the caller site. An utility function with internal state is impossible to use from different contexts (not that it matters at this point, but to avoid surprises in the future).",
+      "commit_id" : "cd5ef8342b855c5556ced2f25c560cb435b3a2cc",
+      "created_at" : "2015-06-01T10:28:59Z",
+      "diff_hunk" : "@@ -214,6 +238,24 @@ bool LogAcceptCategory(const char* category)\n     return true;\n }\n \n+std::string LogTimestampStr(const std::string &str)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6149#discussion_r31414428",
+      "id" : 31414428,
+      "original_commit_id" : "cd5ef8342b855c5556ced2f25c560cb435b3a2cc",
+      "original_position" : 56,
+      "path" : "src/util.cpp",
+      "position" : 56,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6149",
+      "updated_at" : "2015-06-01T10:29:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/31414428",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6149#discussion_r31414525"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6149"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/31414525"
+         }
+      },
+      "body" : "Any reason to use `ret +=` here, and `ret = ` in the other fork of the if()?",
+      "commit_id" : "cd5ef8342b855c5556ced2f25c560cb435b3a2cc",
+      "created_at" : "2015-06-01T10:30:51Z",
+      "diff_hunk" : "@@ -223,38 +265,35 @@ int LogPrintStr(const std::string &str)\n         ret = fwrite(str.data(), 1, str.size(), stdout);\n         fflush(stdout);\n     }\n-    else if (fPrintToDebugLog && AreBaseParamsConfigured())\n+    else if (fPrintToDebugLog)\n     {\n-        static bool fStartedNewLine = true;\n         boost::call_once(&DebugPrintInit, debugPrintInitFlag);\n-\n-        if (fileout == NULL)\n-            return ret;\n-\n         boost::mutex::scoped_lock scoped_lock(*mutexDebugLog);\n \n-        // reopen the log file, if requested\n-        if (fReopenDebugLog) {\n-            fReopenDebugLog = false;\n-            boost::filesystem::path pathDebug = GetDataDir() / \"debug.log\";\n-            if (freopen(pathDebug.string().c_str(),\"a\",fileout) != NULL)\n-                setbuf(fileout, NULL); // unbuffered\n-        }\n+        string strTimestamped = LogTimestampStr(str);\n \n-        // Debug print useful for profiling\n-        if (fLogTimestamps && fStartedNewLine)\n-            ret += fprintf(fileout, \"%s \", DateTimeStrFormat(\"%Y-%m-%d %H:%M:%S\", GetTime()).c_str());\n-        if (!str.empty() && str[str.size()-1] == '\\n')\n-            fStartedNewLine = true;\n+        // buffer if we haven't opened the log yet\n+        if (fileout == NULL) {\n+            ret = strTimestamped.length();\n+            vMsgsBeforeOpenLog->push_back(strTimestamped);\n+        }\n         else\n-            fStartedNewLine = false;\n-\n-        ret = fwrite(str.data(), 1, str.size(), fileout);\n+        {\n+            // reopen the log file, if requested\n+            if (fReopenDebugLog) {\n+                fReopenDebugLog = false;\n+                boost::filesystem::path pathDebug = GetDataDir() / \"debug.log\";\n+                if (freopen(pathDebug.string().c_str(),\"a\",fileout) != NULL)\n+                    setbuf(fileout, NULL); // unbuffered\n+            }\n+\n+            ret += LogWriteStr(strTimestamped);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6149#discussion_r31414525",
+      "id" : 31414525,
+      "original_commit_id" : "cd5ef8342b855c5556ced2f25c560cb435b3a2cc",
+      "original_position" : 124,
+      "path" : "src/util.cpp",
+      "position" : 124,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6149",
+      "updated_at" : "2015-06-01T10:30:51Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/31414525",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "body" : "Needs nits addressed, should otherwise be ready for merging.",
+      "created_at" : "2015-07-02T17:42:35Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6149#issuecomment-118106663",
+      "id" : 118106663,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6149",
+      "updated_at" : "2015-07-02T17:42:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/118106663",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "body" : "Nits addressed and rebased.  Waiting for Travis... (which appears to be attempting to build the whole depends tree?)",
+      "created_at" : "2015-07-07T03:28:42Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6149#issuecomment-119060761",
+      "id" : 119060761,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6149",
+      "updated_at" : "2015-07-07T03:28:42Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/119060761",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/430315?v=3",
+         "events_url" : "https://api.github.com/users/ajweiss/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ajweiss/followers",
+         "following_url" : "https://api.github.com/users/ajweiss/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ajweiss/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ajweiss",
+         "id" : 430315,
+         "login" : "ajweiss",
+         "organizations_url" : "https://api.github.com/users/ajweiss/orgs",
+         "received_events_url" : "https://api.github.com/users/ajweiss/received_events",
+         "repos_url" : "https://api.github.com/users/ajweiss/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ajweiss/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ajweiss/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ajweiss"
+      }
+   },
+   {
+      "body" : "lightly tested ACK\r\n",
+      "created_at" : "2015-07-07T03:30:02Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6149#issuecomment-119061360",
+      "id" : 119061360,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6149",
+      "updated_at" : "2015-07-07T03:30:02Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/119061360",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/494411?v=3",
+         "events_url" : "https://api.github.com/users/jgarzik/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jgarzik/followers",
+         "following_url" : "https://api.github.com/users/jgarzik/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jgarzik/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jgarzik",
+         "id" : 494411,
+         "login" : "jgarzik",
+         "organizations_url" : "https://api.github.com/users/jgarzik/orgs",
+         "received_events_url" : "https://api.github.com/users/jgarzik/received_events",
+         "repos_url" : "https://api.github.com/users/jgarzik/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jgarzik/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jgarzik/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jgarzik"
+      }
+   },
+   {
+      "body" : "Tested ACK",
+      "created_at" : "2015-07-22T16:20:27Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6149#issuecomment-123778319",
+      "id" : 123778319,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6149",
+      "updated_at" : "2015-07-22T16:20:27Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/123778319",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   }
+]

@@ -1,0 +1,1529 @@
+[
+   {
+      "body" : "What is a good way to test this in isolation, sans autoprune?\r\n",
+      "created_at" : "2015-03-11T13:52:09Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-78266182",
+      "id" : 78266182,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-03-11T13:52:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/78266182",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/494411?v=3",
+         "events_url" : "https://api.github.com/users/jgarzik/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jgarzik/followers",
+         "following_url" : "https://api.github.com/users/jgarzik/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jgarzik/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jgarzik",
+         "id" : 494411,
+         "login" : "jgarzik",
+         "organizations_url" : "https://api.github.com/users/jgarzik/orgs",
+         "received_events_url" : "https://api.github.com/users/jgarzik/received_events",
+         "repos_url" : "https://api.github.com/users/jgarzik/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jgarzik/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jgarzik/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jgarzik"
+      }
+   },
+   {
+      "body" : "I don't know of a great answer to that question...  I have been separately working on creating a python p2p framework for testing, and I have a test coded up in that framework that exercises this code for blocks received on the network (I manually tested the -reindex case of reading blocks from disk).  If you'd like to take a look, you can see it in my repo at:\r\n\r\nhttps://github.com/sdaftuar/bitcoin/commit/9a013ed41fd07217675b78bbb55e13575f0bb4e1\r\n\r\nThe test is called accept-block-test.py (run it with \"--testbinary=path-to-bitcoind\", with and without the \"--whitelist\" argument, to cover both cases).\r\n\r\nI think the test itself is a reasonable length but it builds on a lot of code that is still a work in progress, so I'm not sure how useful this is as a reference.  But if you do take a look at this, I'd certainly welcome any feedback you have on the testing framework itself.",
+      "created_at" : "2015-03-11T19:52:46Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-78357016",
+      "id" : 78357016,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-03-11T19:52:46Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/78357016",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r26299197"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/26299197"
+         }
+      },
+      "body" : "I think the BLOCK_HAVE_DATA test can remain here: there's no point storing a block for which we already have the data.",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-03-12T13:08:41Z",
+      "diff_hunk" : "@@ -2706,9 +2709,9 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex,\n     if (!AcceptBlockHeader(block, state, &pindex))\n         return false;\n \n-    if (pindex->nStatus & BLOCK_HAVE_DATA) {\n-        // TODO: deal better with duplicate blocks.\n-        // return state.DoS(20, error(\"AcceptBlock(): already have block %d %s\", pindex->nHeight, pindex->GetBlockHash().ToString()), REJECT_DUPLICATE, \"duplicate\");\n+    if (!fRequested && (pindex->nTx != 0 || pindex->nChainWork <= chainActive.Tip()->nChainWork)) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r26299197",
+      "id" : 26299197,
+      "original_commit_id" : "f0d6cef4821ad718579ece5a47f22c1ed78eb024",
+      "original_position" : 36,
+      "path" : "src/main.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-21T15:05:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/26299197",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "body" : "Concept ACK. I think it should be safe to even never process unrequested blocks, but things like @TheBlueMatt's fast relayer would probably stop working without it.",
+      "created_at" : "2015-03-12T13:14:27Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-78476572",
+      "id" : 78476572,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-03-12T13:14:27Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/78476572",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "body" : "Fixed to re-include the BLOCK_HAVE_DATA check as well.",
+      "created_at" : "2015-03-12T16:02:28Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-78510610",
+      "id" : 78510610,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-03-12T16:02:28Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/78510610",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r26692454"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/26692454"
+         }
+      },
+      "body" : "Can this be rewritten to make the logic clearer?  Something like:\r\n```\r\nbool fAlreadyHave = (pindex->nStatus & BLOCK_HAVE_DATA);\r\nbool fHasMoreWork = (pindex->nChainWork > chainActive.Tip()->nChainWork);\r\n\r\nif (fAlreadyHave) return true;\r\nif (!fRequested) { // If we didn't ask for it:\r\n   if (pindex->nTx != 0) return true; <-- what is this condition?\r\n   if (!fHasMoreWork) return true; // don't process less-work chains.\r\n}\r\n```\r\n",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-03-18T18:27:39Z",
+      "diff_hunk" : "@@ -2706,9 +2709,11 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex,\n     if (!AcceptBlockHeader(block, state, &pindex))\n         return false;\n \n-    if (pindex->nStatus & BLOCK_HAVE_DATA) {\n-        // TODO: deal better with duplicate blocks.\n-        // return state.DoS(20, error(\"AcceptBlock(): already have block %d %s\", pindex->nHeight, pindex->GetBlockHash().ToString()), REJECT_DUPLICATE, \"duplicate\");\n+    if ((pindex->nStatus & BLOCK_HAVE_DATA) ||\n+            (!fRequested && (pindex->nTx != 0 || pindex->nChainWork <= chainActive.Tip()->nChainWork))) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r26692454",
+      "id" : 26692454,
+      "original_commit_id" : "53a39c5f9b43ba56dfaae0f86b0971389ffdc3b3",
+      "original_position" : 37,
+      "path" : "src/main.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-21T15:05:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/26692454",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/331997?v=3",
+         "events_url" : "https://api.github.com/users/gavinandresen/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/gavinandresen/followers",
+         "following_url" : "https://api.github.com/users/gavinandresen/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/gavinandresen/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/gavinandresen",
+         "id" : 331997,
+         "login" : "gavinandresen",
+         "organizations_url" : "https://api.github.com/users/gavinandresen/orgs",
+         "received_events_url" : "https://api.github.com/users/gavinandresen/received_events",
+         "repos_url" : "https://api.github.com/users/gavinandresen/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/gavinandresen/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/gavinandresen/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/gavinandresen"
+      }
+   },
+   {
+      "body" : "@sipa If the relayer is whitelisted it should still work?  I see this treats blocks from whitelisted peers as if they were requested.",
+      "created_at" : "2015-03-25T10:39:06Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-85976773",
+      "id" : 85976773,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-03-25T10:39:06Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/85976773",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/3501598?v=3",
+         "events_url" : "https://api.github.com/users/spinza/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/spinza/followers",
+         "following_url" : "https://api.github.com/users/spinza/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/spinza/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/spinza",
+         "id" : 3501598,
+         "login" : "spinza",
+         "organizations_url" : "https://api.github.com/users/spinza/orgs",
+         "received_events_url" : "https://api.github.com/users/spinza/received_events",
+         "repos_url" : "https://api.github.com/users/spinza/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/spinza/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/spinza/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/spinza"
+      }
+   },
+   {
+      "body" : "Is there no better way to check if we would want to request this block before we just ignore it? It seems to me that it is not ideal that we would jsut ignore data we get from a peer because they're using a /very/ loose interpretation of the protocol.",
+      "created_at" : "2015-03-26T10:48:47Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-86449470",
+      "id" : 86449470,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-03-26T10:48:47Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/86449470",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/649246?v=3",
+         "events_url" : "https://api.github.com/users/TheBlueMatt/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/TheBlueMatt/followers",
+         "following_url" : "https://api.github.com/users/TheBlueMatt/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/TheBlueMatt/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/TheBlueMatt",
+         "id" : 649246,
+         "login" : "TheBlueMatt",
+         "organizations_url" : "https://api.github.com/users/TheBlueMatt/orgs",
+         "received_events_url" : "https://api.github.com/users/TheBlueMatt/received_events",
+         "repos_url" : "https://api.github.com/users/TheBlueMatt/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/TheBlueMatt/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/TheBlueMatt/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/TheBlueMatt"
+      }
+   },
+   {
+      "body" : "@TheBlueMatt I've thought about that a bit; I was concerned about that as well.  I believe the test we'd like to perform is whether the block we're processing is on some headers chain that is further along than our tip -- if so, we should process it (because this is a block that we'd like to download).  The options I could think of to try calculating that, using our existing data structures, are:\r\n\r\n1) Walk every entry in mapBlockIndex and calculate exactly whether this block is the ancestor of a header with more work than our tip.\r\n2) Loop over all our peers to see if we would try to download this block from one of them (using what we know about each peer's headers chain).\r\n3) Look specifically at the one peer who sent us this block to see if we would try to download this from them \r\n\r\nI didn't think any of these solutions really made sense.  1 seems too slow, and both 2 and 3 are approximations for what we're interested in to begin with, so iterating over all peers as in 2 seemed too costly to me for this approximate optimization.  3 seems to catch too narrow a case to be worth it.  If we had a data structure that was already keeping track of headers that are further along than our tip, then that would be nice to use here...  Not sure it would make sense to create and maintain such a structure solely for this though.\r\n\r\nRegarding peers that are only loosely respecting the network protocol -- that's why I thought adding an allowance for whitelisted peers made sense, so that unusual peers that are known to you can still have their blocks processed.  On the other hand, if we're connecting to an unknown peer that is behaving oddly, how much effort should we expend to differentiate that peer's behavior from an attacker's?",
+      "created_at" : "2015-03-26T17:20:27Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-86630759",
+      "id" : 86630759,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-03-26T17:20:27Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/86630759",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "body" : "What about just connecting if it happens to be a logical next block on our current tip? It's a simple heuristic and would work for one common \"loose interpretation\" that you see in mining clients/servers/the relay network. More generally, if the peer is making a \"loose interpretation\", there are no guarantees it has a sane header chain, so maybe it's not worth the complexity there.\n\nOn March 26, 2015 1:20:36 PM EDT, Suhas Daftuar <notifications@github.com> wrote:\n>@TheBlueMatt I've thought about that a bit; I was concerned about that\n>as well.  I believe the test we'd like to perform is whether the block\n>we're processing is on some headers chain that is further along than\n>our tip -- if so, we should process it (because this is a block that\n>we'd like to download).  The options I could think of to try\n>calculating that, using our existing data structures, are:\n>\n>1) Walk every entry in mapBlockIndex and calculate exactly whether this\n>block is the ancestor of a header with more work than our tip.\n>2) Loop over all our peers to see if we would try to download this\n>block from one of them (using what we know about each peer's headers\n>chain).\n>3) Look specifically at the one peer who sent us this block to see if\n>we would try to download this from them \n>\n>I didn't think any of these solutions really made sense.  1 seems too\n>slow, and both 2 and 3 are approximations for what we're interested in\n>to begin with, so iterating over all peers as in 2 seemed too costly to\n>me for this approximate optimization.  3 seems to catch too narrow a\n>case to be worth it.  If we had a data structure that was already\n>keeping track of headers that are further along than our tip, then that\n>would be nice to use here...  Not sure it would make sense to create\n>and maintain such a structure solely for this though.\n>\n>Regarding peers that are only loosely respecting the network protocol\n>-- that's why I thought adding an allowance for whitelisted peers made\n>sense, so that unusual peers that are known to you can still have their\n>blocks processed.  On the other hand, if we're connecting to an unknown\n>peer that is behaving oddly, how much effort should we expend to\n>differentiate that peer's behavior from an attacker's?\n>\n>---\n>Reply to this email directly or view it on GitHub:\n>https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-86630759\n",
+      "created_at" : "2015-03-26T22:39:30Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-86743016",
+      "id" : 86743016,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-03-26T22:39:30Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/86743016",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/649246?v=3",
+         "events_url" : "https://api.github.com/users/TheBlueMatt/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/TheBlueMatt/followers",
+         "following_url" : "https://api.github.com/users/TheBlueMatt/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/TheBlueMatt/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/TheBlueMatt",
+         "id" : 649246,
+         "login" : "TheBlueMatt",
+         "organizations_url" : "https://api.github.com/users/TheBlueMatt/orgs",
+         "received_events_url" : "https://api.github.com/users/TheBlueMatt/received_events",
+         "repos_url" : "https://api.github.com/users/TheBlueMatt/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/TheBlueMatt/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/TheBlueMatt/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/TheBlueMatt"
+      }
+   },
+   {
+      "body" : "Unless I'm misunderstanding you, this code does do that -- this does accept an unrequested, non-duplicate block if it has more work than our tip.  So in particular a new block that builds on the tip would be processed, even if unrequested.",
+      "created_at" : "2015-03-26T22:55:14Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-86746229",
+      "id" : 86746229,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-03-26T22:55:14Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/86746229",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "body" : "Also I pushed up a commit which rewrites the AcceptBlock code as @gavinandresen suggested -- I can squash if this looks good.",
+      "created_at" : "2015-03-26T22:57:56Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-86747137",
+      "id" : 86747137,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-03-26T22:57:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/86747137",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "body" : "Heh, oops, I saw that code and looked right through it :/\n\nOn March 26, 2015 6:55:22 PM EDT, Suhas Daftuar <notifications@github.com> wrote:\n>Unless I'm misunderstanding you, this code does do that -- this does\n>accept an unrequested, non-duplicate block if it has more work than our\n>tip.  So in particular a new block that builds on the tip would be\n>processed, even if unrequested.\n>\n>---\n>Reply to this email directly or view it on GitHub:\n>https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-86746229\n",
+      "created_at" : "2015-03-26T23:08:01Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-86749758",
+      "id" : 86749758,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-03-26T23:08:01Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/86749758",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/649246?v=3",
+         "events_url" : "https://api.github.com/users/TheBlueMatt/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/TheBlueMatt/followers",
+         "following_url" : "https://api.github.com/users/TheBlueMatt/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/TheBlueMatt/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/TheBlueMatt",
+         "id" : 649246,
+         "login" : "TheBlueMatt",
+         "organizations_url" : "https://api.github.com/users/TheBlueMatt/orgs",
+         "received_events_url" : "https://api.github.com/users/TheBlueMatt/received_events",
+         "repos_url" : "https://api.github.com/users/TheBlueMatt/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/TheBlueMatt/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/TheBlueMatt/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/TheBlueMatt"
+      }
+   },
+   {
+      "body" : "Squashed the second commit",
+      "created_at" : "2015-03-31T19:10:10Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-88211934",
+      "id" : 88211934,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-03-31T19:10:10Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/88211934",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r27990381"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/27990381"
+         }
+      },
+      "body" : "Perhaps use CBlockIndexWorkComparator?",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-04-08T17:06:27Z",
+      "diff_hunk" : "@@ -2706,10 +2709,16 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex,\n     if (!AcceptBlockHeader(block, state, &pindex))\n         return false;\n \n-    if (pindex->nStatus & BLOCK_HAVE_DATA) {\n-        // TODO: deal better with duplicate blocks.\n-        // return state.DoS(20, error(\"AcceptBlock(): already have block %d %s\", pindex->nHeight, pindex->GetBlockHash().ToString()), REJECT_DUPLICATE, \"duplicate\");\n-        return true;\n+    // Try to process all requested blocks that we don't have, but only\n+    // process an unrequested block if it's new and has enough work to\n+    // advance our tip.\n+    bool fAlreadyHave = pindex->nStatus & BLOCK_HAVE_DATA;\n+    bool fHasMoreWork = (chainActive.Tip() ? pindex->nChainWork > chainActive.Tip()->nChainWork : true);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r27990381",
+      "id" : 27990381,
+      "original_commit_id" : "3484ad4e380f672782f6b5ce128268f7023072f7",
+      "original_position" : 41,
+      "path" : "src/main.cpp",
+      "position" : 44,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-21T15:05:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/27990381",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r27990585"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/27990585"
+         }
+      },
+      "body" : "I think we may want to return false and an error state, so it can be reported etc?",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-04-08T17:08:43Z",
+      "diff_hunk" : "@@ -2706,10 +2709,16 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex,\n     if (!AcceptBlockHeader(block, state, &pindex))\n         return false;\n \n-    if (pindex->nStatus & BLOCK_HAVE_DATA) {\n-        // TODO: deal better with duplicate blocks.\n-        // return state.DoS(20, error(\"AcceptBlock(): already have block %d %s\", pindex->nHeight, pindex->GetBlockHash().ToString()), REJECT_DUPLICATE, \"duplicate\");\n-        return true;\n+    // Try to process all requested blocks that we don't have, but only\n+    // process an unrequested block if it's new and has enough work to\n+    // advance our tip.\n+    bool fAlreadyHave = pindex->nStatus & BLOCK_HAVE_DATA;\n+    bool fHasMoreWork = (chainActive.Tip() ? pindex->nChainWork > chainActive.Tip()->nChainWork : true);\n+    \n+    if (fAlreadyHave) return true;\n+    if (!fRequested) {  // If we didn't ask for it:\n+        if (pindex->nTx != 0) return true;  // This is a previously-processed block\n+        if (!fHasMoreWork) return true;     // Don't process less-work chains",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r27990585",
+      "id" : 27990585,
+      "original_commit_id" : "3484ad4e380f672782f6b5ce128268f7023072f7",
+      "original_position" : 46,
+      "path" : "src/main.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-21T15:05:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/27990585",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r27991491"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/27991491"
+         }
+      },
+      "body" : "\"fRequested\" is maybe a bit confusing; it's hard to argue that blocks loaded from external storage are by definition 'requested'. Perhaps call it 'fForceProcessing' or something?",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-04-08T17:18:55Z",
+      "diff_hunk" : "@@ -2756,21 +2765,22 @@ static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart, unsigned\n }\n \n \n-bool ProcessNewBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)\n+bool ProcessNewBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, bool fRequested, CDiskBlockPos *dbp)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r27991491",
+      "id" : 27991491,
+      "original_commit_id" : "3484ad4e380f672782f6b5ce128268f7023072f7",
+      "original_position" : 55,
+      "path" : "src/main.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-21T15:05:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/27991491",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r27991559"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/27991559"
+         }
+      },
+      "body" : "I missed the comments in the header definition about it. Feel free to ignore.",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-04-08T17:19:43Z",
+      "diff_hunk" : "@@ -2756,21 +2765,22 @@ static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart, unsigned\n }\n \n \n-bool ProcessNewBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)\n+bool ProcessNewBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, bool fRequested, CDiskBlockPos *dbp)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r27991559",
+      "id" : 27991559,
+      "original_commit_id" : "3484ad4e380f672782f6b5ce128268f7023072f7",
+      "original_position" : 55,
+      "path" : "src/main.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-21T15:05:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/27991559",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r27996390"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/27996390"
+         }
+      },
+      "body" : "Ah, I wasn't sure about that -- since we were previously returning true on a duplicate block, I just kept the behavior the same. \r\n\r\nI didn't think we should add ban points to the peer serving such a block, because it could be that we had requested this block from that peer, and some other oddly-behaving peer on the network (perhaps the relay node or some other whitelisted peer) happened to shove the block to us first.  We'd have to do a bit more bookkeeping to distinguish that case from that of a misbehaving peer.\r\n\r\nBut I think we could just return false and log this (seemingly unlikely) event to the debug log; is that all you're suggesting?",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-04-08T18:06:57Z",
+      "diff_hunk" : "@@ -2706,10 +2709,16 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex,\n     if (!AcceptBlockHeader(block, state, &pindex))\n         return false;\n \n-    if (pindex->nStatus & BLOCK_HAVE_DATA) {\n-        // TODO: deal better with duplicate blocks.\n-        // return state.DoS(20, error(\"AcceptBlock(): already have block %d %s\", pindex->nHeight, pindex->GetBlockHash().ToString()), REJECT_DUPLICATE, \"duplicate\");\n-        return true;\n+    // Try to process all requested blocks that we don't have, but only\n+    // process an unrequested block if it's new and has enough work to\n+    // advance our tip.\n+    bool fAlreadyHave = pindex->nStatus & BLOCK_HAVE_DATA;\n+    bool fHasMoreWork = (chainActive.Tip() ? pindex->nChainWork > chainActive.Tip()->nChainWork : true);\n+    \n+    if (fAlreadyHave) return true;\n+    if (!fRequested) {  // If we didn't ask for it:\n+        if (pindex->nTx != 0) return true;  // This is a previously-processed block\n+        if (!fHasMoreWork) return true;     // Don't process less-work chains",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r27996390",
+      "id" : 27996390,
+      "original_commit_id" : "3484ad4e380f672782f6b5ce128268f7023072f7",
+      "original_position" : 46,
+      "path" : "src/main.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-21T15:05:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/27996390",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r27998194"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/27998194"
+         }
+      },
+      "body" : "Or maybe some kind of ban score is called for in the last case, where we get an unrequested new block with too little work -- I'm not coming up with any scenarios where that could result from legitimate behavior.  Perhaps this case is worthy of an immediate ban?",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-04-08T18:24:15Z",
+      "diff_hunk" : "@@ -2706,10 +2709,16 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex,\n     if (!AcceptBlockHeader(block, state, &pindex))\n         return false;\n \n-    if (pindex->nStatus & BLOCK_HAVE_DATA) {\n-        // TODO: deal better with duplicate blocks.\n-        // return state.DoS(20, error(\"AcceptBlock(): already have block %d %s\", pindex->nHeight, pindex->GetBlockHash().ToString()), REJECT_DUPLICATE, \"duplicate\");\n-        return true;\n+    // Try to process all requested blocks that we don't have, but only\n+    // process an unrequested block if it's new and has enough work to\n+    // advance our tip.\n+    bool fAlreadyHave = pindex->nStatus & BLOCK_HAVE_DATA;\n+    bool fHasMoreWork = (chainActive.Tip() ? pindex->nChainWork > chainActive.Tip()->nChainWork : true);\n+    \n+    if (fAlreadyHave) return true;\n+    if (!fRequested) {  // If we didn't ask for it:\n+        if (pindex->nTx != 0) return true;  // This is a previously-processed block\n+        if (!fHasMoreWork) return true;     // Don't process less-work chains",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r27998194",
+      "id" : 27998194,
+      "original_commit_id" : "3484ad4e380f672782f6b5ce128268f7023072f7",
+      "original_position" : 46,
+      "path" : "src/main.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-21T15:05:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/27998194",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r28002350"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/28002350"
+         }
+      },
+      "body" : "Looks like we can't use that, because the nSequenceId in the CBlockIndex entry isn't set until the block is actually processed (in ReceivedBlockTransactions). Since it's initialized to zero when we create the entry, if it has the same work as chainActive.Tip(), then ```CBlockIndexWorkComparator()(chainActive.Tip(), pindex)``` will return true due to the not-yet-set nSequenceId.\r\n\r\nIf pindex has the same work as chainActive.Tip(), I think it's guaranteed that we don't need to process it, because we're either in the process of receiving it for the first time after we received chainActive.Tip(), or we received it in the past and therefore don't need to process it again, so I think it should be okay to leave this line as is.",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-04-08T19:04:44Z",
+      "diff_hunk" : "@@ -2706,10 +2709,16 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex,\n     if (!AcceptBlockHeader(block, state, &pindex))\n         return false;\n \n-    if (pindex->nStatus & BLOCK_HAVE_DATA) {\n-        // TODO: deal better with duplicate blocks.\n-        // return state.DoS(20, error(\"AcceptBlock(): already have block %d %s\", pindex->nHeight, pindex->GetBlockHash().ToString()), REJECT_DUPLICATE, \"duplicate\");\n-        return true;\n+    // Try to process all requested blocks that we don't have, but only\n+    // process an unrequested block if it's new and has enough work to\n+    // advance our tip.\n+    bool fAlreadyHave = pindex->nStatus & BLOCK_HAVE_DATA;\n+    bool fHasMoreWork = (chainActive.Tip() ? pindex->nChainWork > chainActive.Tip()->nChainWork : true);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r28002350",
+      "id" : 28002350,
+      "original_commit_id" : "3484ad4e380f672782f6b5ce128268f7023072f7",
+      "original_position" : 41,
+      "path" : "src/main.cpp",
+      "position" : 44,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-21T15:05:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/28002350",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r28004251"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/28004251"
+         }
+      },
+      "body" : "I would either set an error condition (with or without ban), and returnsl\nfalse; or return true. Just logging and returning false may break some\nassumptions. You can keep things as is now, but leave the comment about\nbetter dealing with duplicates then.\n\nYou're right about nSequenceId, but I would like to only have a single\nplace in the code for comparing/ordering potential blocks. Anyway, leave it\nfor now.\n",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-04-08T19:28:28Z",
+      "diff_hunk" : "@@ -2706,10 +2709,16 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex,\n     if (!AcceptBlockHeader(block, state, &pindex))\n         return false;\n \n-    if (pindex->nStatus & BLOCK_HAVE_DATA) {\n-        // TODO: deal better with duplicate blocks.\n-        // return state.DoS(20, error(\"AcceptBlock(): already have block %d %s\", pindex->nHeight, pindex->GetBlockHash().ToString()), REJECT_DUPLICATE, \"duplicate\");\n-        return true;\n+    // Try to process all requested blocks that we don't have, but only\n+    // process an unrequested block if it's new and has enough work to\n+    // advance our tip.\n+    bool fAlreadyHave = pindex->nStatus & BLOCK_HAVE_DATA;\n+    bool fHasMoreWork = (chainActive.Tip() ? pindex->nChainWork > chainActive.Tip()->nChainWork : true);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r28004251",
+      "id" : 28004251,
+      "original_commit_id" : "3484ad4e380f672782f6b5ce128268f7023072f7",
+      "original_position" : 41,
+      "path" : "src/main.cpp",
+      "position" : 44,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-21T15:05:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/28004251",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "body" : "I am not sure how to proceed regarding the return value in AcceptBlock; if we return state.Invalid or state.DoS (I think it does make sense to ban in the case of an unrequested block with too little work), then the code in ProcessMessages would generate a reject message, which could be inconsistent with BIP 61, if I am reading this correctly:\r\n\r\n> Note: blocks that are not part of the server's idea of the current best chain, but are otherwise valid, should not trigger reject messages.\r\n\r\nI think the protocol here should probably be more nuanced to distinguish between normal block relay of valid but non-main-chain blocks, versus relaying that has DoS properties...  But not sure what to do about this in the meantime.\r\n\r\nI could return state.Error() (which wouldn't generate a reject message), but that doesn't seem like how CValidationState::Error() is meant to be used, as I understand it.  Alternatively, I could also add a log message and leave it returning true, if that would be better.\r\n\r\nFor now, I've re-added the TODO comment about dealing better with this situation.",
+      "created_at" : "2015-04-09T14:03:59Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-91241911",
+      "id" : 91241911,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-04-09T14:03:59Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/91241911",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "body" : "Rebased.",
+      "created_at" : "2015-04-09T18:29:58Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-91319713",
+      "id" : 91319713,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-04-09T18:29:58Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/91319713",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "body" : "Rebased.",
+      "created_at" : "2015-04-13T16:19:39Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-92414774",
+      "id" : 92414774,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-04-13T16:19:39Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/92414774",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "body" : "Rebased",
+      "created_at" : "2015-04-24T14:04:44Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-95943627",
+      "id" : 95943627,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-04-24T14:04:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/95943627",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "body" : "Lightly-tested ACK",
+      "created_at" : "2015-04-27T13:32:34Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-96653160",
+      "id" : 96653160,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-04-27T13:32:34Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/96653160",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r29592996"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/29592996"
+         }
+      },
+      "body" : "On further thought, I think I should remove this line.\r\n\r\nInitially, I had removed the ```BLOCK_HAVE_DATA``` check, so this line would have been needed to keep us from reprocessing blocks that are on disk.  Now that the ```BLOCK_HAVE_DATA``` check is back, this line would only meaningfully trigger if we were to somehow prune a block that has more work than ```chainActive.Tip()```.  That shouldn't ever really happen, but even if it somehow did (say, because of a call to ```InvalidateBlock```), then I think we'd rather re-process the block and not discard it.\r\n\r\nThoughts?",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-05-04T15:20:00Z",
+      "diff_hunk" : "@@ -2725,13 +2728,18 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex,\n     if (!AcceptBlockHeader(block, state, &pindex))\n         return false;\n \n-    // If we're pruning, ensure that we don't allow a peer to dump a copy\n-    // of old blocks.  But we might need blocks that are not on the main chain\n-    // to handle a reorg, even if we've processed once.\n-    if (pindex->nStatus & BLOCK_HAVE_DATA || chainActive.Contains(pindex)) {\n-        // TODO: deal better with duplicate blocks.\n-        // return state.DoS(20, error(\"AcceptBlock(): already have block %d %s\", pindex->nHeight, pindex->GetBlockHash().ToString()), REJECT_DUPLICATE, \"duplicate\");\n-        return true;\n+    // Try to process all requested blocks that we don't have, but only\n+    // process an unrequested block if it's new and has enough work to\n+    // advance our tip.\n+    bool fAlreadyHave = pindex->nStatus & BLOCK_HAVE_DATA;\n+    bool fHasMoreWork = (chainActive.Tip() ? pindex->nChainWork > chainActive.Tip()->nChainWork : true);\n+\n+    // TODO: deal better with return value and error conditions for duplicate\n+    // and unrequested blocks.\n+    if (fAlreadyHave) return true;\n+    if (!fRequested) {  // If we didn't ask for it:\n+        if (pindex->nTx != 0) return true;  // This is a previously-processed block that was pruned",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r29592996",
+      "id" : 29592996,
+      "original_commit_id" : "0c35bf9c72acc17df6a84247606591fdfc6e424c",
+      "original_position" : 50,
+      "path" : "src/main.cpp",
+      "position" : 50,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-21T15:05:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/29592996",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "body" : "Rebased off master and added a p2p regression test that exercises this logic.",
+      "created_at" : "2015-05-04T15:23:11Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-98751222",
+      "id" : 98751222,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-05-04T15:23:11Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/98751222",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r29665936"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/29665936"
+         }
+      },
+      "body" : "So this is a non-requested, pruned block, which somehow has more work than the tip? I would ignore it. A forced-pushed block should only occur because the peer does not know we already knew about the block, but it seems we do, so I think it's our responsibility to request it if necessary.",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-05-05T13:08:40Z",
+      "diff_hunk" : "@@ -2725,13 +2728,18 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex,\n     if (!AcceptBlockHeader(block, state, &pindex))\n         return false;\n \n-    // If we're pruning, ensure that we don't allow a peer to dump a copy\n-    // of old blocks.  But we might need blocks that are not on the main chain\n-    // to handle a reorg, even if we've processed once.\n-    if (pindex->nStatus & BLOCK_HAVE_DATA || chainActive.Contains(pindex)) {\n-        // TODO: deal better with duplicate blocks.\n-        // return state.DoS(20, error(\"AcceptBlock(): already have block %d %s\", pindex->nHeight, pindex->GetBlockHash().ToString()), REJECT_DUPLICATE, \"duplicate\");\n-        return true;\n+    // Try to process all requested blocks that we don't have, but only\n+    // process an unrequested block if it's new and has enough work to\n+    // advance our tip.\n+    bool fAlreadyHave = pindex->nStatus & BLOCK_HAVE_DATA;\n+    bool fHasMoreWork = (chainActive.Tip() ? pindex->nChainWork > chainActive.Tip()->nChainWork : true);\n+\n+    // TODO: deal better with return value and error conditions for duplicate\n+    // and unrequested blocks.\n+    if (fAlreadyHave) return true;\n+    if (!fRequested) {  // If we didn't ask for it:\n+        if (pindex->nTx != 0) return true;  // This is a previously-processed block that was pruned",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r29665936",
+      "id" : 29665936,
+      "original_commit_id" : "0c35bf9c72acc17df6a84247606591fdfc6e424c",
+      "original_position" : 50,
+      "path" : "src/main.cpp",
+      "position" : 50,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-21T15:05:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/29665936",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r29667800"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/29667800"
+         }
+      },
+      "body" : "Ok, will leave as is.",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-05-05T13:31:30Z",
+      "diff_hunk" : "@@ -2725,13 +2728,18 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex,\n     if (!AcceptBlockHeader(block, state, &pindex))\n         return false;\n \n-    // If we're pruning, ensure that we don't allow a peer to dump a copy\n-    // of old blocks.  But we might need blocks that are not on the main chain\n-    // to handle a reorg, even if we've processed once.\n-    if (pindex->nStatus & BLOCK_HAVE_DATA || chainActive.Contains(pindex)) {\n-        // TODO: deal better with duplicate blocks.\n-        // return state.DoS(20, error(\"AcceptBlock(): already have block %d %s\", pindex->nHeight, pindex->GetBlockHash().ToString()), REJECT_DUPLICATE, \"duplicate\");\n-        return true;\n+    // Try to process all requested blocks that we don't have, but only\n+    // process an unrequested block if it's new and has enough work to\n+    // advance our tip.\n+    bool fAlreadyHave = pindex->nStatus & BLOCK_HAVE_DATA;\n+    bool fHasMoreWork = (chainActive.Tip() ? pindex->nChainWork > chainActive.Tip()->nChainWork : true);\n+\n+    // TODO: deal better with return value and error conditions for duplicate\n+    // and unrequested blocks.\n+    if (fAlreadyHave) return true;\n+    if (!fRequested) {  // If we didn't ask for it:\n+        if (pindex->nTx != 0) return true;  // This is a previously-processed block that was pruned",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r29667800",
+      "id" : 29667800,
+      "original_commit_id" : "0c35bf9c72acc17df6a84247606591fdfc6e424c",
+      "original_position" : 50,
+      "path" : "src/main.cpp",
+      "position" : 50,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-21T15:05:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/29667800",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "body" : "Tested ACK.\r\n",
+      "created_at" : "2015-05-13T14:21:23Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-101683505",
+      "id" : 101683505,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-05-13T14:21:23Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/101683505",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/331997?v=3",
+         "events_url" : "https://api.github.com/users/gavinandresen/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/gavinandresen/followers",
+         "following_url" : "https://api.github.com/users/gavinandresen/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/gavinandresen/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/gavinandresen",
+         "id" : 331997,
+         "login" : "gavinandresen",
+         "organizations_url" : "https://api.github.com/users/gavinandresen/orgs",
+         "received_events_url" : "https://api.github.com/users/gavinandresen/received_events",
+         "repos_url" : "https://api.github.com/users/gavinandresen/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/gavinandresen/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/gavinandresen/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/gavinandresen"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r30788633"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/30788633"
+         }
+      },
+      "body" : "nit: Instead of this long line, I'd prefer to see this written out explicitly, especially so that the MarkBlockAsReceived action doesn't get lost in the noise:\r\n```c++\r\nfRequested |= MarkBlockAsReceived(pblock->GetHash());\r\n// Treat all whitelisted peers' blocks as having been requested.\r\nif (pfrom)\r\n    fRequested |= pfrom->fWhitelisted;\r\n```\r\n",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-05-21T10:07:59Z",
+      "diff_hunk" : "@@ -2781,21 +2789,22 @@ static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart, unsigned\n }\n \n \n-bool ProcessNewBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)\n+bool ProcessNewBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, bool fRequested, CDiskBlockPos *dbp)\n {\n     // Preliminary checks\n     bool checked = CheckBlock(*pblock, state);\n \n     {\n         LOCK(cs_main);\n-        MarkBlockAsReceived(pblock->GetHash());\n+        // Treat all whitelisted peers' blocks as having been requested.\n+        fRequested = MarkBlockAsReceived(pblock->GetHash()) || (pfrom ? pfrom->fWhitelisted : false) || fRequested;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r30788633",
+      "id" : 30788633,
+      "original_commit_id" : "0c35bf9c72acc17df6a84247606591fdfc6e424c",
+      "original_position" : 69,
+      "path" : "src/main.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-21T15:05:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/30788633",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r30789068"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/30789068"
+         }
+      },
+      "body" : "Or maybe even better (as I don't think the whitelisting policy belongs in AcceptBlock, but in networking code): remove the pfrom check here, move the whitelisted to the call site in `ProcessMessage` - which is the only one where it matters:\r\n```patch\r\n- ProcessNewBlock(state, pfrom, &block, false, NULL);\r\n+ // Treat all whitelisted peers' blocks as having been requested.\r\n+ ProcessNewBlock(state, pfrom, &block, pfrom->fWhitelisted, NULL);\r\n```\r\n",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-05-21T10:14:29Z",
+      "diff_hunk" : "@@ -2781,21 +2789,22 @@ static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart, unsigned\n }\n \n \n-bool ProcessNewBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp)\n+bool ProcessNewBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, bool fRequested, CDiskBlockPos *dbp)\n {\n     // Preliminary checks\n     bool checked = CheckBlock(*pblock, state);\n \n     {\n         LOCK(cs_main);\n-        MarkBlockAsReceived(pblock->GetHash());\n+        // Treat all whitelisted peers' blocks as having been requested.\n+        fRequested = MarkBlockAsReceived(pblock->GetHash()) || (pfrom ? pfrom->fWhitelisted : false) || fRequested;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r30789068",
+      "id" : 30789068,
+      "original_commit_id" : "0c35bf9c72acc17df6a84247606591fdfc6e424c",
+      "original_position" : 69,
+      "path" : "src/main.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-21T15:05:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/30789068",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "body" : "@laanwj That sounds reasonable, thanks for reviewing; I've pushed a commit that addresses, I can squash if this looks good.",
+      "created_at" : "2015-05-21T13:51:53Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-104283580",
+      "id" : 104283580,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-05-21T13:51:53Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/104283580",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "body" : "Looks good to me.\r\nTested ACK (code reviewed, synced up to block 320700 with #5875 and #5927)",
+      "created_at" : "2015-05-21T14:57:16Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-104308724",
+      "id" : 104308724,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-05-21T14:57:16Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/104308724",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "body" : "Squashed back down to two commits.",
+      "created_at" : "2015-05-21T15:09:49Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-104313686",
+      "id" : 104313686,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-05-21T15:09:49Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/104313686",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r30860279"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/30860279"
+         }
+      },
+      "body" : "Since you're changing ProcessNewBlock and AcceptBlock, do you mind to also pass const CChainParams& chainparams to them?\r\nIf you do it like in https://github.com/jtimon/bitcoin/commit/4868fb0a8912e6176ee886b974c74cf3ccf1ebf8#diff-e8db9b851adc2422aadfffca88f14c91L400 and https://github.com/jtimon/bitcoin/commit/6380f721c65d10c3797544875d396a9c36d71318#diff-e8db9b851adc2422aadfffca88f14c91L169 it will be easy for me to rebase my other changes in that direction later...",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-05-22T00:01:40Z",
+      "diff_hunk" : "@@ -160,10 +160,11 @@ void UnregisterNodeSignals(CNodeSignals& nodeSignals);\n  * @param[out]  state   This may be set to an Error state if any error occurred processing it, including during validation/connection/etc of otherwise unrelated blocks during reorganisation; or it may be set to an Invalid state if pblock is itself invalid (but this is not guaranteed even when the block is checked). If you want to *possibly* get feedback on whether pblock is valid, you must also install a CValidationInterface (see validationinterface.h) - this will have its BlockChecked method called whenever *any* block completes validation.\n  * @param[in]   pfrom   The node which we are receiving the block from; it is added to mapBlockSource and may be penalised if the block is invalid.\n  * @param[in]   pblock  The block we want to process.\n+ * @param[in]   fForceProcessing Process this block even if unrequested; used for non-network block sources and whitelisted peers.\n  * @param[out]  dbp     If pblock is stored to disk (or already there), this will be set to its location.\n  * @return True if state.IsValid()\n  */\n-bool ProcessNewBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp = NULL);\n+bool ProcessNewBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, bool fForceProcessing, CDiskBlockPos *dbp);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r30860279",
+      "id" : 30860279,
+      "original_commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "original_position" : 9,
+      "path" : "src/main.h",
+      "position" : 9,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-22T00:01:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/30860279",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1008458?v=3",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r30951476"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/30951476"
+         }
+      },
+      "body" : "Apologies if I'm misunderstanding, but I think this would be an unrelated change to this pull?  I'd like to see this merged in time for 0.11 (I think this behavior change should occur at the same time as pruning), so I'd prefer to limit changes to those that are strictly necessary to support this fix.",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-05-24T10:03:13Z",
+      "diff_hunk" : "@@ -160,10 +160,11 @@ void UnregisterNodeSignals(CNodeSignals& nodeSignals);\n  * @param[out]  state   This may be set to an Error state if any error occurred processing it, including during validation/connection/etc of otherwise unrelated blocks during reorganisation; or it may be set to an Invalid state if pblock is itself invalid (but this is not guaranteed even when the block is checked). If you want to *possibly* get feedback on whether pblock is valid, you must also install a CValidationInterface (see validationinterface.h) - this will have its BlockChecked method called whenever *any* block completes validation.\n  * @param[in]   pfrom   The node which we are receiving the block from; it is added to mapBlockSource and may be penalised if the block is invalid.\n  * @param[in]   pblock  The block we want to process.\n+ * @param[in]   fForceProcessing Process this block even if unrequested; used for non-network block sources and whitelisted peers.\n  * @param[out]  dbp     If pblock is stored to disk (or already there), this will be set to its location.\n  * @return True if state.IsValid()\n  */\n-bool ProcessNewBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp = NULL);\n+bool ProcessNewBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, bool fForceProcessing, CDiskBlockPos *dbp);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r30951476",
+      "id" : 30951476,
+      "original_commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "original_position" : 9,
+      "path" : "src/main.h",
+      "position" : 9,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-24T10:03:13Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/30951476",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r30953622"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/30953622"
+         }
+      },
+      "body" : "A couple of trivial fixup! commits that don't change behaviour in any way shouldn't delay getting this merged and would make history cleaner by avoiding changing them before (in which case this would be forced to rebase to solve the conflict) or after, since they can be squashed just before merging. Don't feel forced to do it, it would just make this PR nicer.",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-05-24T16:29:08Z",
+      "diff_hunk" : "@@ -160,10 +160,11 @@ void UnregisterNodeSignals(CNodeSignals& nodeSignals);\n  * @param[out]  state   This may be set to an Error state if any error occurred processing it, including during validation/connection/etc of otherwise unrelated blocks during reorganisation; or it may be set to an Invalid state if pblock is itself invalid (but this is not guaranteed even when the block is checked). If you want to *possibly* get feedback on whether pblock is valid, you must also install a CValidationInterface (see validationinterface.h) - this will have its BlockChecked method called whenever *any* block completes validation.\n  * @param[in]   pfrom   The node which we are receiving the block from; it is added to mapBlockSource and may be penalised if the block is invalid.\n  * @param[in]   pblock  The block we want to process.\n+ * @param[in]   fForceProcessing Process this block even if unrequested; used for non-network block sources and whitelisted peers.\n  * @param[out]  dbp     If pblock is stored to disk (or already there), this will be set to its location.\n  * @return True if state.IsValid()\n  */\n-bool ProcessNewBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp = NULL);\n+bool ProcessNewBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, bool fForceProcessing, CDiskBlockPos *dbp);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r30953622",
+      "id" : 30953622,
+      "original_commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "original_position" : 9,
+      "path" : "src/main.h",
+      "position" : 9,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-24T16:29:08Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/30953622",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1008458?v=3",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r30953644"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/30953644"
+         }
+      },
+      "body" : "Remember that the total diff would be similar since you're already touching the same lines that would need to be touched for this. ",
+      "commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "created_at" : "2015-05-24T16:31:28Z",
+      "diff_hunk" : "@@ -160,10 +160,11 @@ void UnregisterNodeSignals(CNodeSignals& nodeSignals);\n  * @param[out]  state   This may be set to an Error state if any error occurred processing it, including during validation/connection/etc of otherwise unrelated blocks during reorganisation; or it may be set to an Invalid state if pblock is itself invalid (but this is not guaranteed even when the block is checked). If you want to *possibly* get feedback on whether pblock is valid, you must also install a CValidationInterface (see validationinterface.h) - this will have its BlockChecked method called whenever *any* block completes validation.\n  * @param[in]   pfrom   The node which we are receiving the block from; it is added to mapBlockSource and may be penalised if the block is invalid.\n  * @param[in]   pblock  The block we want to process.\n+ * @param[in]   fForceProcessing Process this block even if unrequested; used for non-network block sources and whitelisted peers.\n  * @param[out]  dbp     If pblock is stored to disk (or already there), this will be set to its location.\n  * @return True if state.IsValid()\n  */\n-bool ProcessNewBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, CDiskBlockPos *dbp = NULL);\n+bool ProcessNewBlock(CValidationState &state, CNode* pfrom, CBlock* pblock, bool fForceProcessing, CDiskBlockPos *dbp);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#discussion_r30953644",
+      "id" : 30953644,
+      "original_commit_id" : "b003c8676dfd051f0e4f0a6866ac4c524d036312",
+      "original_position" : 9,
+      "path" : "src/main.h",
+      "position" : 9,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5875",
+      "updated_at" : "2015-05-24T16:31:28Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/30953644",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1008458?v=3",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "body" : "This needed rebasing due to the restructuring of the rpc-tests directory.",
+      "created_at" : "2015-06-02T18:24:42Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-108043792",
+      "id" : 108043792,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-06-02T18:24:49Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/108043792",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7463573?v=3",
+         "events_url" : "https://api.github.com/users/sdaftuar/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sdaftuar/followers",
+         "following_url" : "https://api.github.com/users/sdaftuar/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sdaftuar/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sdaftuar",
+         "id" : 7463573,
+         "login" : "sdaftuar",
+         "organizations_url" : "https://api.github.com/users/sdaftuar/orgs",
+         "received_events_url" : "https://api.github.com/users/sdaftuar/received_events",
+         "repos_url" : "https://api.github.com/users/sdaftuar/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sdaftuar/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "body" : "Backported to 0.11 as 304892fc03b11bf04286619d2a6fe0ba99ee41fc 2edec4fe68c5fe0fefb4c0561e8353462bb439bc\r\n",
+      "created_at" : "2015-06-03T14:25:09Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/5875#issuecomment-108452114",
+      "id" : 108452114,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5875",
+      "updated_at" : "2015-06-03T14:25:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/108452114",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   }
+]

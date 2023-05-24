@@ -1,0 +1,3114 @@
+[
+   {
+      "author_association" : "MEMBER",
+      "body" : "ping @ryanofsky @Sjors @promag ",
+      "created_at" : "2019-11-12T15:27:14Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-552942554",
+      "id" : 552942554,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1Mjk0MjU1NA==",
+      "updated_at" : "2019-11-12T15:27:14Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/552942554",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345316090"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345316090"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"util: Add PruneMiBtoGB() function\" (eb498bd0980850f1b2de61cf6a4d5afc728a60d6)\r\n\r\nShould change `GB_BYTES / 2` to `GB_BYTES - 1` as previously suggested https://github.com/bitcoin/bitcoin/pull/17035#discussion_r337594268. The point of the suggestion was to always round **up** to the nearest number of GB, not sometimes round up and sometimes round down. This was for two reasons: 1) avoid misleading users and not show 2GB of disk usage when actually configured for 2.49GB, etc. 2) Always rounding down in PruneGBtoMiB (display -> settings) and always rounding up in PruneMiBtoGB (settings -> display) would be symmetric avoid roundtrip conversion bugs in #15936\r\n\r\nAlso this isn't following the suggestion to use signed types. PR is also changing existing code to use unsigned instead of signed types. This isn't great because ArgsManager, SettingsValue, etc use signed types so these changes can trigger spurious conversion warnings. Also just in general signed types work better for numbers and quantities (don't have crazy wrapping behavior at 0) and unsigned types work better for bit data.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-12T16:39:58Z",
+      "diff_hunk" : "@@ -16,6 +17,9 @@ class Node;\n extern const char *DEFAULT_GUI_PROXY_HOST;\n static constexpr unsigned short DEFAULT_GUI_PROXY_PORT = 9050;\n \n+static inline uint64_t PruneGBtoMiB(unsigned int gb) { return (gb * GB_BYTES) >> 20; }\n+static inline unsigned int PruneMiBtoGB(uint64_t mib) { return ((mib << 20) + GB_BYTES / 2) / GB_BYTES; }",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345316090",
+      "id" : 345316090,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NTMxNjA5MA==",
+      "original_commit_id" : "4824eeb91e8ee7ed2e46519f56d860635e7c4818",
+      "original_position" : 13,
+      "path" : "src/qt/optionsmodel.h",
+      "position" : null,
+      "pull_request_review_id" : 315677146,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345316090",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345331876"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345331876"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"gui: Fix prune settings after intro\" (5fd852990cd0e5c94e384fcf6c5fb22891534f4f)\r\n\r\nIt seems dangerous to give two functions that change different settings (\"bPrune\" vs \"nPruneSize\") the exact same name distinguished only by a `bool` `int` overload. Should give the functions different names. Might suggest `SetPruneSizeGB` and `SetPruneEnabled`.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-12T17:07:43Z",
+      "diff_hunk" : "@@ -74,6 +74,7 @@ class OptionsModel : public QAbstractListModel\n \n     /* Explicit setters */\n     void SetPrune(bool prune, bool force = false);\n+    void SetPrune(unsigned int prune_size_gb, bool force = false);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345331876",
+      "id" : 345331876,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NTMzMTg3Ng==",
+      "original_commit_id" : "5fd852990cd0e5c94e384fcf6c5fb22891534f4f",
+      "original_position" : 4,
+      "path" : "src/qt/optionsmodel.h",
+      "position" : null,
+      "pull_request_review_id" : 315677146,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345331876",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345335127"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345335127"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"gui: Fix prune settings after intro\" (5fd852990cd0e5c94e384fcf6c5fb22891534f4f)\r\n\r\nI can't figure out what this commit is doing. What is being fixed? What was the behavior before this commit and what is the behavior after? Description just says \"If QSettings are set already, it is required to reset prune size option,\" which doesn't make sense to me, but I must be missing context that would make it understandable.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-12T17:13:55Z",
+      "diff_hunk" : "@@ -282,7 +282,7 @@ void BitcoinApplication::parameterSetup()\n }\n \n void BitcoinApplication::SetPrune(bool prune, bool force) {\n-     optionsModel->SetPrune(prune, force);\n+    optionsModel->SetPrune(prune ? DEFAULT_PRUNE_SIZE_GB : 0, force);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345335127",
+      "id" : 345335127,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NTMzNTEyNw==",
+      "original_commit_id" : "5fd852990cd0e5c94e384fcf6c5fb22891534f4f",
+      "original_position" : 5,
+      "path" : "src/qt/bitcoin.cpp",
+      "position" : null,
+      "pull_request_review_id" : 315677146,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345335127",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345338851"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345338851"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"gui: Fix intro dialog when prune is toogled\" (4824eeb91e8ee7ed2e46519f56d860635e7c4818)\r\n\r\nI can't figure out what this commit is doing. Could use description of what behavior was before and how it is changed after. Just looking at code I see it is moving away from convention of using 0 pruning size to represent no pruning, but I don't actually see how behavior is changing.\r\n\r\nEDIT: Just noticed the new QCheckBox::toggled handler below. Maybe pull refactoring changes out of this commit to make each set of changes more obvious? Also s/toogled/toggled/",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-12T17:21:08Z",
+      "diff_hunk" : "@@ -133,9 +133,9 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n         ui->prune->setChecked(true);\n         ui->prune->setEnabled(false);\n     }\n-    const unsigned int prune_target_gb = PruneMiBtoGB(prune_target_mib);\n-    ui->prune->setText(tr(\"Discard blocks after verification, except most recent %1 GB (prune)\").arg(prune_target_gb ? prune_target_gb : DEFAULT_PRUNE_SIZE_GB));\n-    UpdatePruneLabels(prune_target_gb);\n+    m_prune_target_gb = prune_target_mib ? PruneMiBtoGB(prune_target_mib) : DEFAULT_PRUNE_SIZE_GB;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345338851",
+      "id" : 345338851,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NTMzODg1MQ==",
+      "original_commit_id" : "4824eeb91e8ee7ed2e46519f56d860635e7c4818",
+      "original_position" : 7,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 315677146,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345338851",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345340075"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345340075"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"gui: Fix intro dialog when prune is toogled\" (4824eeb91e8ee7ed2e46519f56d860635e7c4818)\r\n\r\nSuggest not deleting this comment line assuming it is still applicable.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-12T17:23:46Z",
+      "diff_hunk" : "@@ -302,7 +302,10 @@ void Intro::startThread()\n \n     connect(executor, &FreespaceChecker::reply, this, &Intro::setStatus);\n     connect(this, &Intro::requestCheck, executor, &FreespaceChecker::check);\n-    /*  make sure executor object is deleted in its own thread */",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345340075",
+      "id" : 345340075,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NTM0MDA3NQ==",
+      "original_commit_id" : "4824eeb91e8ee7ed2e46519f56d860635e7c4818",
+      "original_position" : 17,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 315677146,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345340075",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345342340"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345342340"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"refactor: Add Intro::UpdatePruneLabels()\" (27f716ebbadfefee8eac7e43374f080ff3dbc68a)\r\n\r\nWhy did this line change from `if (prune_target_gb)` if this commit is supposed to be move-only?",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-12T17:27:56Z",
+      "diff_hunk" : "@@ -346,3 +329,25 @@ QString Intro::getPathToCheck()\n     mutex.unlock();\n     return retval;\n }\n+\n+void Intro::UpdatePruneLabels(uint64_t prune_target_gb)\n+{\n+    m_required_space_gb = m_blockchain_size;\n+    QString storageRequiresMsg = tr(\"At least %1 GB of data will be stored in this directory, and it will grow over time.\");\n+    if (ui->prune->isChecked()) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345342340",
+      "id" : 345342340,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NTM0MjM0MA==",
+      "original_commit_id" : "27f716ebbadfefee8eac7e43374f080ff3dbc68a",
+      "original_position" : 35,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 315677146,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345342340",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345424240"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345424240"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "@ryanofsky\r\n> I can't figure out what this commit is doing. What is being fixed?\r\n\r\nSteps to reproduce this bug:\r\n\r\nf25c99e735a2abc930752249687d780923e941c8 (before 5fd852990cd0e5c94e384fcf6c5fb22891534f4f)\r\n\r\n1. run `bitcoin-qt`, set GUI option as pictured:\r\n![Screenshot from 2019-11-12 22-07-27](https://user-images.githubusercontent.com/32963518/68707088-c1eea880-0599-11ea-939a-6a7ec19658e1.png)\r\nand quit\r\n\r\n2. run `bitcoin-qt -choosedatadir`, in intro check prune:\r\n![Screenshot from 2019-11-12 22-08-04](https://user-images.githubusercontent.com/32963518/68707261-142fc980-059a-11ea-90c7-e1f5c0e6219a.png)\r\n\r\nExpected prune target 2 GB = 1907 MiB.\r\nActually, logged:\r\n```\r\nPrune configured to target 5722 MiB on disk for block and undo files.\r\n```\r\n\r\nIt seems, I should split first two commits into separated PR, right?",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-12T20:20:25Z",
+      "diff_hunk" : "@@ -282,7 +282,7 @@ void BitcoinApplication::parameterSetup()\n }\n \n void BitcoinApplication::SetPrune(bool prune, bool force) {\n-     optionsModel->SetPrune(prune, force);\n+    optionsModel->SetPrune(prune ? DEFAULT_PRUNE_SIZE_GB : 0, force);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345424240",
+      "id" : 345424240,
+      "in_reply_to_id" : 345335127,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NTQyNDI0MA==",
+      "original_commit_id" : "5fd852990cd0e5c94e384fcf6c5fb22891534f4f",
+      "original_position" : 5,
+      "path" : "src/qt/bitcoin.cpp",
+      "position" : null,
+      "pull_request_review_id" : 315816818,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345424240",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Thanks, Concept ACK",
+      "created_at" : "2019-11-12T20:28:57Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-553100169",
+      "id" : 553100169,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1MzEwMDE2OQ==",
+      "updated_at" : "2019-11-12T20:28:57Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/553100169",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/12272949?v=4",
+         "events_url" : "https://api.github.com/users/emilengler/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/emilengler/followers",
+         "following_url" : "https://api.github.com/users/emilengler/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/emilengler/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/emilengler",
+         "id" : 12272949,
+         "login" : "emilengler",
+         "node_id" : "MDQ6VXNlcjEyMjcyOTQ5",
+         "organizations_url" : "https://api.github.com/users/emilengler/orgs",
+         "received_events_url" : "https://api.github.com/users/emilengler/received_events",
+         "repos_url" : "https://api.github.com/users/emilengler/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/emilengler/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/emilengler/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/emilengler"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345431925"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345431925"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This line\r\n```\r\nconnect(thread, &QThread::finished, executor, &QObject::deleteLater);\r\n```\r\nseems to be a standard pattern in Qt framework. Yes, the comment is still applicable, but it does not provide any additional knowledge, IMHO. ",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-12T20:38:58Z",
+      "diff_hunk" : "@@ -302,7 +302,10 @@ void Intro::startThread()\n \n     connect(executor, &FreespaceChecker::reply, this, &Intro::setStatus);\n     connect(this, &Intro::requestCheck, executor, &FreespaceChecker::check);\n-    /*  make sure executor object is deleted in its own thread */",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345431925",
+      "id" : 345431925,
+      "in_reply_to_id" : 345340075,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NTQzMTkyNQ==",
+      "original_commit_id" : "4824eeb91e8ee7ed2e46519f56d860635e7c4818",
+      "original_position" : 17,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 315826950,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345431925",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345434097"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345434097"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Agree with rounding and types. Going to fix.\r\n\r\nDo you think the rounding rationale should be commented? If so, what could you suggest?",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-12T20:43:54Z",
+      "diff_hunk" : "@@ -16,6 +17,9 @@ class Node;\n extern const char *DEFAULT_GUI_PROXY_HOST;\n static constexpr unsigned short DEFAULT_GUI_PROXY_PORT = 9050;\n \n+static inline uint64_t PruneGBtoMiB(unsigned int gb) { return (gb * GB_BYTES) >> 20; }\n+static inline unsigned int PruneMiBtoGB(uint64_t mib) { return ((mib << 20) + GB_BYTES / 2) / GB_BYTES; }",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345434097",
+      "id" : 345434097,
+      "in_reply_to_id" : 345316090,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NTQzNDA5Nw==",
+      "original_commit_id" : "4824eeb91e8ee7ed2e46519f56d860635e7c4818",
+      "original_position" : 13,
+      "path" : "src/qt/optionsmodel.h",
+      "position" : null,
+      "pull_request_review_id" : 315829738,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345434097",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345460779"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345460779"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "> Do you think the rounding rationale should be commented? If so, what could you suggest?\r\n\r\nMaybe something like \"Round up when converting from configured MiB to displayed GB to avoid underestimating max disk usage. Round down in the other direction so roundtrip GB -> MiB -> GB conversion is stable.\"",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-12T21:43:15Z",
+      "diff_hunk" : "@@ -16,6 +17,9 @@ class Node;\n extern const char *DEFAULT_GUI_PROXY_HOST;\n static constexpr unsigned short DEFAULT_GUI_PROXY_PORT = 9050;\n \n+static inline uint64_t PruneGBtoMiB(unsigned int gb) { return (gb * GB_BYTES) >> 20; }\n+static inline unsigned int PruneMiBtoGB(uint64_t mib) { return ((mib << 20) + GB_BYTES / 2) / GB_BYTES; }",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345460779",
+      "id" : 345460779,
+      "in_reply_to_id" : 345316090,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NTQ2MDc3OQ==",
+      "original_commit_id" : "4824eeb91e8ee7ed2e46519f56d860635e7c4818",
+      "original_position" : 13,
+      "path" : "src/qt/optionsmodel.h",
+      "position" : null,
+      "pull_request_review_id" : 315864394,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345460779",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345806263"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345806263"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "> I can't figure out what this commit is doing. Could use description of what behavior was before and how it is changed after.\r\n\r\nThe bug and fixed behavior are described in #17035 OP.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-13T14:58:06Z",
+      "diff_hunk" : "@@ -133,9 +133,9 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n         ui->prune->setChecked(true);\n         ui->prune->setEnabled(false);\n     }\n-    const unsigned int prune_target_gb = PruneMiBtoGB(prune_target_mib);\n-    ui->prune->setText(tr(\"Discard blocks after verification, except most recent %1 GB (prune)\").arg(prune_target_gb ? prune_target_gb : DEFAULT_PRUNE_SIZE_GB));\n-    UpdatePruneLabels(prune_target_gb);\n+    m_prune_target_gb = prune_target_mib ? PruneMiBtoGB(prune_target_mib) : DEFAULT_PRUNE_SIZE_GB;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345806263",
+      "id" : 345806263,
+      "in_reply_to_id" : 345338851,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NTgwNjI2Mw==",
+      "original_commit_id" : "4824eeb91e8ee7ed2e46519f56d860635e7c4818",
+      "original_position" : 7,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 316305990,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345806263",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345808975"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345808975"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "> Why did this line change from `if (prune_target_gb)` if this commit is supposed to be move-only?\r\n\r\nYou are right. It is a remnant of the previous branch. Will be fixed.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-13T15:02:37Z",
+      "diff_hunk" : "@@ -346,3 +329,25 @@ QString Intro::getPathToCheck()\n     mutex.unlock();\n     return retval;\n }\n+\n+void Intro::UpdatePruneLabels(uint64_t prune_target_gb)\n+{\n+    m_required_space_gb = m_blockchain_size;\n+    QString storageRequiresMsg = tr(\"At least %1 GB of data will be stored in this directory, and it will grow over time.\");\n+    if (ui->prune->isChecked()) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345808975",
+      "id" : 345808975,
+      "in_reply_to_id" : 345342340,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NTgwODk3NQ==",
+      "original_commit_id" : "27f716ebbadfefee8eac7e43374f080ff3dbc68a",
+      "original_position" : 35,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 316309785,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345808975",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345995529"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345995529"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Done.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-13T20:52:55Z",
+      "diff_hunk" : "@@ -16,6 +17,9 @@ class Node;\n extern const char *DEFAULT_GUI_PROXY_HOST;\n static constexpr unsigned short DEFAULT_GUI_PROXY_PORT = 9050;\n \n+static inline uint64_t PruneGBtoMiB(unsigned int gb) { return (gb * GB_BYTES) >> 20; }\n+static inline unsigned int PruneMiBtoGB(uint64_t mib) { return ((mib << 20) + GB_BYTES / 2) / GB_BYTES; }",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345995529",
+      "id" : 345995529,
+      "in_reply_to_id" : 345316090,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NTk5NTUyOQ==",
+      "original_commit_id" : "4824eeb91e8ee7ed2e46519f56d860635e7c4818",
+      "original_position" : 13,
+      "path" : "src/qt/optionsmodel.h",
+      "position" : null,
+      "pull_request_review_id" : 316547832,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345995529",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345995687"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345995687"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Done.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-13T20:53:18Z",
+      "diff_hunk" : "@@ -74,6 +74,7 @@ class OptionsModel : public QAbstractListModel\n \n     /* Explicit setters */\n     void SetPrune(bool prune, bool force = false);\n+    void SetPrune(unsigned int prune_size_gb, bool force = false);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345995687",
+      "id" : 345995687,
+      "in_reply_to_id" : 345331876,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NTk5NTY4Nw==",
+      "original_commit_id" : "5fd852990cd0e5c94e384fcf6c5fb22891534f4f",
+      "original_position" : 4,
+      "path" : "src/qt/optionsmodel.h",
+      "position" : null,
+      "pull_request_review_id" : 316548051,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345995687",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345995950"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345995950"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Fixed.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-13T20:53:56Z",
+      "diff_hunk" : "@@ -346,3 +329,25 @@ QString Intro::getPathToCheck()\n     mutex.unlock();\n     return retval;\n }\n+\n+void Intro::UpdatePruneLabels(uint64_t prune_target_gb)\n+{\n+    m_required_space_gb = m_blockchain_size;\n+    QString storageRequiresMsg = tr(\"At least %1 GB of data will be stored in this directory, and it will grow over time.\");\n+    if (ui->prune->isChecked()) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r345995950",
+      "id" : 345995950,
+      "in_reply_to_id" : 345342340,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NTk5NTk1MA==",
+      "original_commit_id" : "27f716ebbadfefee8eac7e43374f080ff3dbc68a",
+      "original_position" : 35,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 316548410,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/345995950",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@ryanofsky \r\n\r\nThank you for your review.\r\nAll yours comments have been addressed: implemented, fixed or replied to.",
+      "created_at" : "2019-11-13T20:57:10Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-553598843",
+      "id" : 553598843,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1MzU5ODg0Mw==",
+      "updated_at" : "2019-11-13T20:57:10Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/553598843",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "When you select a volume with low disk space (e.g. a RAM disk), when the user unchecks the prune box, it automatically checks itself again.",
+      "created_at" : "2019-11-14T13:03:19Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-553878433",
+      "id" : 553878433,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1Mzg3ODQzMw==",
+      "updated_at" : "2019-11-14T13:03:19Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/553878433",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/10217?v=4",
+         "events_url" : "https://api.github.com/users/Sjors/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Sjors/followers",
+         "following_url" : "https://api.github.com/users/Sjors/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Sjors/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Sjors",
+         "id" : 10217,
+         "login" : "Sjors",
+         "node_id" : "MDQ6VXNlcjEwMjE3",
+         "organizations_url" : "https://api.github.com/users/Sjors/orgs",
+         "received_events_url" : "https://api.github.com/users/Sjors/received_events",
+         "repos_url" : "https://api.github.com/users/Sjors/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Sjors/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Sjors"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@Sjors \r\n> When you select a volume with low disk space (e.g. a RAM disk), when the user unchecks the prune box, it automatically checks itself again.\r\n\r\nIt seems reasonable (the same behavior was in #17035). How should it be in your opinion?",
+      "created_at" : "2019-11-14T13:54:20Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-553897697",
+      "id" : 553897697,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1Mzg5NzY5Nw==",
+      "updated_at" : "2019-11-14T13:54:20Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/553897697",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Either the user should be allowed to go ahead anyway (maybe they'll delete some movies during IBD), or the checkbox should be disabled.",
+      "created_at" : "2019-11-15T08:20:21Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-554260460",
+      "id" : 554260460,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1NDI2MDQ2MA==",
+      "updated_at" : "2019-11-15T08:20:21Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/554260460",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/10217?v=4",
+         "events_url" : "https://api.github.com/users/Sjors/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Sjors/followers",
+         "following_url" : "https://api.github.com/users/Sjors/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Sjors/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Sjors",
+         "id" : 10217,
+         "login" : "Sjors",
+         "node_id" : "MDQ6VXNlcjEwMjE3",
+         "organizations_url" : "https://api.github.com/users/Sjors/orgs",
+         "received_events_url" : "https://api.github.com/users/Sjors/received_events",
+         "repos_url" : "https://api.github.com/users/Sjors/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Sjors/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Sjors"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@Sjors \r\n\r\nThank you for your review.\r\n\r\n> Either the user should be allowed to go ahead anyway (maybe they'll delete some movies during IBD), or the checkbox should be disabled.\r\n\r\nThe former suggestion has been implemented in the latest push 9672ea841d7a66c765d734cfab57210baa4b074d.",
+      "created_at" : "2019-11-15T18:09:41Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-554468351",
+      "id" : 554468351,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1NDQ2ODM1MQ==",
+      "updated_at" : "2019-11-15T18:09:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/554468351",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "PR description doesn't describe PR. Can you update it to say what the problem with intro dialog labels is and how the problems is fixed? Also if behavior or code organization is changing in other ways because this seems to do more than just change labels...",
+      "created_at" : "2019-11-26T20:08:00Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-558796857",
+      "id" : 558796857,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1ODc5Njg1Nw==",
+      "updated_at" : "2019-11-26T20:08:00Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/558796857",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r350960201"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/350960201"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"gui: Fix prune in QSettings after intro\" (f1ae0412d80ac7f8b30ec412564aaec782b3df0b)\r\n\r\nI can't figure out what this commit is doing. Can the commit description be updated to say what the behavior is before and after this commit?",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-26T20:16:32Z",
+      "diff_hunk" : "@@ -282,7 +282,7 @@ void BitcoinApplication::parameterSetup()\n }\n \n void BitcoinApplication::SetPrune(bool prune, bool force) {\n-     optionsModel->SetPrune(prune, force);\n+    optionsModel->SetPruneTargetGB(prune ? DEFAULT_PRUNE_TARGET_GB : 0, force);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r350960201",
+      "id" : 350960201,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDk2MDIwMQ==",
+      "original_commit_id" : "f1ae0412d80ac7f8b30ec412564aaec782b3df0b",
+      "original_position" : 5,
+      "path" : "src/qt/bitcoin.cpp",
+      "position" : null,
+      "pull_request_review_id" : 323258099,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/350960201",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r350962332"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/350962332"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"util: Add PruneMiBtoGB() function\" (162dafaaa9d47e7d40db09040a265bccf975be20)\r\n\r\nMaybe update commit description to note slight change in label text: now displays GB number instead of GiB number.\r\n\r\nI think there are no other changes in behavior in this commit, or at least I don't see any other changes.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-26T20:22:15Z",
+      "diff_hunk" : "@@ -130,18 +131,18 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n     );\n     ui->lblExplanation2->setText(ui->lblExplanation2->text().arg(PACKAGE_NAME));\n \n-    uint64_t pruneTarget = std::max<int64_t>(0, gArgs.GetArg(\"-prune\", 0));\n-    if (pruneTarget > 1) { // -prune=1 means enabled, above that it's a size in MB\n+    int64_t prune_target_mib = std::max<int64_t>(0, gArgs.GetArg(\"-prune\", 0));\n+    if (prune_target_mib > 1) { // -prune=1 means enabled, above that it's a size in MiB\n         ui->prune->setChecked(true);\n         ui->prune->setEnabled(false);\n     }\n-    ui->prune->setText(tr(\"Discard blocks after verification, except most recent %1 GB (prune)\").arg(pruneTarget ? pruneTarget / 1000 : DEFAULT_PRUNE_TARGET_GB));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r350962332",
+      "id" : 350962332,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDk2MjMzMg==",
+      "original_commit_id" : "162dafaaa9d47e7d40db09040a265bccf975be20",
+      "original_position" : 28,
+      "path" : "src/qt/intro.cpp",
+      "position" : 63,
+      "pull_request_review_id" : 323258099,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/350962332",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r350964759"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/350964759"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"gui: Fix intro dialog when prune is toggled\" (f07dd7c69ed7a5245f79662100c859286557b73b)\r\n\r\nI think this should say `prune_target_mib > 1 ? ...` instead of `prune_target_mib ? ...`\r\n\r\nIf the pruning value is 1, pruning is still effectively disabled and more than 1GB will be required unless manual pruning is done.\r\n\r\nCould also combine this check into the `if (prune_target_mib > 1)` check above.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-26T20:28:29Z",
+      "diff_hunk" : "@@ -133,9 +133,9 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n         ui->prune->setChecked(true);\n         ui->prune->setEnabled(false);\n     }\n-    const int prune_target_gb = PruneMiBtoGB(prune_target_mib);\n-    ui->prune->setText(tr(\"Discard blocks after verification, except most recent %1 GB (prune)\").arg(prune_target_gb ? prune_target_gb : DEFAULT_PRUNE_TARGET_GB));\n-    UpdatePruneLabels(prune_target_gb);\n+    m_prune_target_gb = prune_target_mib ? PruneMiBtoGB(prune_target_mib) : DEFAULT_PRUNE_TARGET_GB;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r350964759",
+      "id" : 350964759,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDk2NDc1OQ==",
+      "original_commit_id" : "f07dd7c69ed7a5245f79662100c859286557b73b",
+      "original_position" : 7,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 323258099,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/350964759",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r350970058"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/350970058"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"gui: Fix intro dialog when prune is toggled\" (f07dd7c69ed7a5245f79662100c859286557b73b)\r\n\r\nWhy trigger a new disk space check here? Can you add explanatory comments? I think I understand updating the labels because the label text depends on the check state, but I don't get the disk space thing.\r\n\r\nIt would also be good to update commit description to say what behavior was before and after this change, and how it works.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-26T20:41:54Z",
+      "diff_hunk" : "@@ -302,7 +302,10 @@ void Intro::startThread()\n \n     connect(executor, &FreespaceChecker::reply, this, &Intro::setStatus);\n     connect(this, &Intro::requestCheck, executor, &FreespaceChecker::check);\n-    /*  make sure executor object is deleted in its own thread */\n+    connect(ui->prune, &QCheckBox::toggled, [this](bool prune_checked) {\n+        UpdatePruneLabels(prune_checked);\n+        Q_EMIT requestCheck();\n+    });",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r350970058",
+      "id" : 350970058,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDk3MDA1OA==",
+      "original_commit_id" : "f07dd7c69ed7a5245f79662100c859286557b73b",
+      "original_position" : 21,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 323258099,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/350970058",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r350972053"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/350972053"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"gui: Let user to uncheck prune on low-space dirs\" (9672ea841d7a66c765d734cfab57210baa4b074d)\r\n\r\nCan you update the commit description to say behavior was before and after this change? It seems without this code the previous commit f07dd7c69ed7a5245f79662100c859286557b73b will be broken, because you added a new space check when the checkbox is toggled, so the box would automatically toggle itself back on after the check completed? All of this is very unclear to me.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-11-26T20:46:57Z",
+      "diff_hunk" : "@@ -255,11 +255,11 @@ void Intro::setStatus(int status, const QString &message, quint64 bytesAvailable\n         if (bytesAvailable < m_required_space_gb * GB_BYTES) {\n             freeString += \" \" + tr(\"(of %n GB needed)\", \"\", m_required_space_gb);\n             ui->freeSpace->setStyleSheet(\"QLabel { color: #800000 }\");\n-            ui->prune->setChecked(true);\n+            if (!keep_prune) ui->prune->setChecked(true);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r350972053",
+      "id" : 350972053,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDk3MjA1Mw==",
+      "original_commit_id" : "9672ea841d7a66c765d734cfab57210baa4b074d",
+      "original_position" : 45,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 323258099,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/350972053",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#17877](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/17877.html) (qt, refactor: Make enums in BitcoinUnits class scoped by hebasto)\n* [#17822](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/17822.html) (refactor: Use uint16_t instead of unsigned short by ahook)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "created_at" : "2019-12-04T01:37:27Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-561435428",
+      "id" : 561435428,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU2MTQzNTQyOA==",
+      "updated_at" : "2020-01-11T04:12:51Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/561435428",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@ryanofsky \r\n\r\n> PR description doesn't describe PR. Can you update it to say what the problem with intro dialog labels is and how the problems is fixed?\r\n\r\nThe OP has been updated.",
+      "created_at" : "2019-12-08T09:42:40Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-562928706",
+      "id" : 562928706,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU2MjkyODcwNg==",
+      "updated_at" : "2019-12-08T09:42:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/562928706",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@ryanofsky \r\n> In commit \"gui: Fix prune in QSettings after intro\" ([f1ae041](https://github.com/bitcoin/bitcoin/commit/f1ae0412d80ac7f8b30ec412564aaec782b3df0b))\r\n> \r\n> I can't figure out what this commit is doing. Can the commit description be updated to say what the behavior is before and after this commit?\r\n\r\nThe first two commits has been split of into #17696, as they are dedicated to an orthogonal bug.\r\nThe related conversations are marked as resolved here.\r\n\r\n",
+      "created_at" : "2019-12-08T10:51:27Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-562934035",
+      "id" : 562934035,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU2MjkzNDAzNQ==",
+      "updated_at" : "2019-12-08T10:51:27Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/562934035",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r355177078"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/355177078"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "See #17696.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-12-08T10:52:07Z",
+      "diff_hunk" : "@@ -282,7 +282,7 @@ void BitcoinApplication::parameterSetup()\n }\n \n void BitcoinApplication::SetPrune(bool prune, bool force) {\n-     optionsModel->SetPrune(prune, force);\n+    optionsModel->SetPrune(prune ? DEFAULT_PRUNE_SIZE_GB : 0, force);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r355177078",
+      "id" : 355177078,
+      "in_reply_to_id" : 345335127,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1NTE3NzA3OA==",
+      "original_commit_id" : "5fd852990cd0e5c94e384fcf6c5fb22891534f4f",
+      "original_position" : 5,
+      "path" : "src/qt/bitcoin.cpp",
+      "position" : null,
+      "pull_request_review_id" : 328600924,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/355177078",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r355177122"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/355177122"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This PR description has been updated.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-12-08T10:53:05Z",
+      "diff_hunk" : "@@ -133,9 +133,9 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n         ui->prune->setChecked(true);\n         ui->prune->setEnabled(false);\n     }\n-    const unsigned int prune_target_gb = PruneMiBtoGB(prune_target_mib);\n-    ui->prune->setText(tr(\"Discard blocks after verification, except most recent %1 GB (prune)\").arg(prune_target_gb ? prune_target_gb : DEFAULT_PRUNE_SIZE_GB));\n-    UpdatePruneLabels(prune_target_gb);\n+    m_prune_target_gb = prune_target_mib ? PruneMiBtoGB(prune_target_mib) : DEFAULT_PRUNE_SIZE_GB;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r355177122",
+      "id" : 355177122,
+      "in_reply_to_id" : 345338851,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1NTE3NzEyMg==",
+      "original_commit_id" : "4824eeb91e8ee7ed2e46519f56d860635e7c4818",
+      "original_position" : 7,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 328600962,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/355177122",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r355177161"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/355177161"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "See #17696.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-12-08T10:54:08Z",
+      "diff_hunk" : "@@ -282,7 +282,7 @@ void BitcoinApplication::parameterSetup()\n }\n \n void BitcoinApplication::SetPrune(bool prune, bool force) {\n-     optionsModel->SetPrune(prune, force);\n+    optionsModel->SetPruneTargetGB(prune ? DEFAULT_PRUNE_TARGET_GB : 0, force);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r355177161",
+      "id" : 355177161,
+      "in_reply_to_id" : 350960201,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1NTE3NzE2MQ==",
+      "original_commit_id" : "f1ae0412d80ac7f8b30ec412564aaec782b3df0b",
+      "original_position" : 5,
+      "path" : "src/qt/bitcoin.cpp",
+      "position" : null,
+      "pull_request_review_id" : 328600999,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/355177161",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r355217326"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/355217326"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Done.\r\n\r\n\r\n\r\n> I think there are no other changes in behavior in this commit, or at least I don't see any other changes.\r\n\r\nCorrect.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-12-08T21:48:14Z",
+      "diff_hunk" : "@@ -130,18 +131,18 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n     );\n     ui->lblExplanation2->setText(ui->lblExplanation2->text().arg(PACKAGE_NAME));\n \n-    uint64_t pruneTarget = std::max<int64_t>(0, gArgs.GetArg(\"-prune\", 0));\n-    if (pruneTarget > 1) { // -prune=1 means enabled, above that it's a size in MB\n+    int64_t prune_target_mib = std::max<int64_t>(0, gArgs.GetArg(\"-prune\", 0));\n+    if (prune_target_mib > 1) { // -prune=1 means enabled, above that it's a size in MiB\n         ui->prune->setChecked(true);\n         ui->prune->setEnabled(false);\n     }\n-    ui->prune->setText(tr(\"Discard blocks after verification, except most recent %1 GB (prune)\").arg(pruneTarget ? pruneTarget / 1000 : DEFAULT_PRUNE_TARGET_GB));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r355217326",
+      "id" : 355217326,
+      "in_reply_to_id" : 350962332,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1NTIxNzMyNg==",
+      "original_commit_id" : "162dafaaa9d47e7d40db09040a265bccf975be20",
+      "original_position" : 28,
+      "path" : "src/qt/intro.cpp",
+      "position" : 63,
+      "pull_request_review_id" : 328634694,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/355217326",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r355217360"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/355217360"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Fixed in the latest push.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-12-08T21:48:54Z",
+      "diff_hunk" : "@@ -133,9 +133,9 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n         ui->prune->setChecked(true);\n         ui->prune->setEnabled(false);\n     }\n-    const int prune_target_gb = PruneMiBtoGB(prune_target_mib);\n-    ui->prune->setText(tr(\"Discard blocks after verification, except most recent %1 GB (prune)\").arg(prune_target_gb ? prune_target_gb : DEFAULT_PRUNE_TARGET_GB));\n-    UpdatePruneLabels(prune_target_gb);\n+    m_prune_target_gb = prune_target_mib ? PruneMiBtoGB(prune_target_mib) : DEFAULT_PRUNE_TARGET_GB;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r355217360",
+      "id" : 355217360,
+      "in_reply_to_id" : 350964759,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1NTIxNzM2MA==",
+      "original_commit_id" : "f07dd7c69ed7a5245f79662100c859286557b73b",
+      "original_position" : 7,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 328634734,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/355217360",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r355217438"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/355217438"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "> Why trigger a new disk space check here?\r\n\r\nReworked. No unneeded disk space check anymore.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-12-08T21:50:26Z",
+      "diff_hunk" : "@@ -302,7 +302,10 @@ void Intro::startThread()\n \n     connect(executor, &FreespaceChecker::reply, this, &Intro::setStatus);\n     connect(this, &Intro::requestCheck, executor, &FreespaceChecker::check);\n-    /*  make sure executor object is deleted in its own thread */\n+    connect(ui->prune, &QCheckBox::toggled, [this](bool prune_checked) {\n+        UpdatePruneLabels(prune_checked);\n+        Q_EMIT requestCheck();\n+    });",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r355217438",
+      "id" : 355217438,
+      "in_reply_to_id" : 350970058,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1NTIxNzQzOA==",
+      "original_commit_id" : "f07dd7c69ed7a5245f79662100c859286557b73b",
+      "original_position" : 21,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 328634815,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/355217438",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r355217493"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/355217493"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "> It seems without this code the previous commit [f07dd7c](https://github.com/bitcoin/bitcoin/commit/f07dd7c69ed7a5245f79662100c859286557b73b) will be broken...\r\n\r\nYou are right. Fixed in the latest push.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2019-12-08T21:51:20Z",
+      "diff_hunk" : "@@ -255,11 +255,11 @@ void Intro::setStatus(int status, const QString &message, quint64 bytesAvailable\n         if (bytesAvailable < m_required_space_gb * GB_BYTES) {\n             freeString += \" \" + tr(\"(of %n GB needed)\", \"\", m_required_space_gb);\n             ui->freeSpace->setStyleSheet(\"QLabel { color: #800000 }\");\n-            ui->prune->setChecked(true);\n+            if (!keep_prune) ui->prune->setChecked(true);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r355217493",
+      "id" : 355217493,
+      "in_reply_to_id" : 350972053,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1NTIxNzQ5Mw==",
+      "original_commit_id" : "9672ea841d7a66c765d734cfab57210baa4b074d",
+      "original_position" : 45,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 328634864,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/355217493",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@ryanofsky \r\nThank you for your review. All your comments have been addressed.\r\n\r\nWould you mind re-reviewing this PR?",
+      "created_at" : "2019-12-08T22:02:20Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-563000348",
+      "id" : 563000348,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU2MzAwMDM0OA==",
+      "updated_at" : "2019-12-08T22:02:20Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/563000348",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->Needs rebase",
+      "created_at" : "2020-01-08T14:16:36Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-572073990",
+      "id" : 572073990,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU3MjA3Mzk5MA==",
+      "updated_at" : "2020-01-08T14:16:36Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/572073990",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Rebased after #17696 has been merged.",
+      "created_at" : "2020-01-08T15:23:27Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-572118585",
+      "id" : 572118585,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU3MjExODU4NQ==",
+      "updated_at" : "2020-01-08T15:23:27Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/572118585",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r364322432"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/364322432"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"refactor: Replace static variable with data member\" (a7454533bc1fc0c78c4b7d8c3acbf1c23ddf4929)\r\n\r\nIt might be clearer to initialize this directly next to `m_blockchain_size` and `m_chain_state_size` above, instead of initializing this to 0 before setting it to `m_blockchain_size`.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-08T16:27:40Z",
+      "diff_hunk" : "@@ -138,21 +135,21 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n     }\n     const int prune_target_gb = PruneMiBtoGB(prune_target_mib);\n     ui->prune->setText(tr(\"Discard blocks after verification, except most recent %1 GB (prune)\").arg(prune_target_gb ? prune_target_gb : DEFAULT_PRUNE_TARGET_GB));\n-    requiredSpace = m_blockchain_size;\n+    m_required_space_gb = m_blockchain_size;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r364322432",
+      "id" : 364322432,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2NDMyMjQzMg==",
+      "original_commit_id" : "a7454533bc1fc0c78c4b7d8c3acbf1c23ddf4929",
+      "original_position" : 15,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 339985198,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/364322432",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r364335506"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/364335506"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"gui: Add Intro::UpdateFreeSpaceLabel()\" (2ee1e1c94b7344acfae572bcfb3618f35e0ab1b5)\r\n\r\n> Change in behavior: if new datadir has enough size, the prune checkbox unchecks.\r\n\r\nJust for clarification, it seems like on initial setup both before and after this PR, the checkbox would automatically be checked if the default datadir drive couldn't hold `m_required_space_gb + 10`, and unchecked otherwise.\r\n\r\nThe difference with this PR is just that the checkbox gets unchecked when a new datadir is selected, where previously it would never get unchecked?",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-08T16:52:43Z",
+      "diff_hunk" : "@@ -251,24 +251,29 @@ void Intro::setStatus(int status, const QString &message, quint64 bytesAvailable\n     {\n         ui->freeSpace->setText(\"\");\n     } else {\n-        QString freeString = tr(\"%n GB of free space available\", \"\", bytesAvailable/GB_BYTES);\n-        if (bytesAvailable < m_required_space_gb * GB_BYTES) {\n-            freeString += \" \" + tr(\"(of %n GB needed)\", \"\", m_required_space_gb);\n-            ui->freeSpace->setStyleSheet(\"QLabel { color: #800000 }\");\n-            ui->prune->setChecked(true);\n-        } else if (bytesAvailable / GB_BYTES - m_required_space_gb < 10) {\n-            freeString += \" \" + tr(\"(%n GB needed for full chain)\", \"\", m_required_space_gb);\n-            ui->freeSpace->setStyleSheet(\"QLabel { color: #999900 }\");\n-            ui->prune->setChecked(true);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r364335506",
+      "id" : 364335506,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2NDMzNTUwNg==",
+      "original_commit_id" : "2ee1e1c94b7344acfae572bcfb3618f35e0ab1b5",
+      "original_position" : 12,
+      "path" : "src/qt/intro.cpp",
+      "position" : 107,
+      "pull_request_review_id" : 339985198,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/364335506",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r364378557"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/364378557"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"gui: Make intro consistent with prune checkbox\" (3f28e1025a97f29f5265d75cdca0cd9e4330a087)\r\n\r\nNote: I found the change on this line confusing, and might suggest reverting it or moving it to a separate refactoring commit:\r\n\r\nThe previous version of this was:\r\n\r\n```c++\r\nif (prune_target_mib > 1) { // -prune=1 means enabled, above that it's a size in MiB\r\n```\r\n\r\nnow replaced by:\r\n\r\n```c++\r\nif (prune_target_mib * 1024 * 1024 >= MIN_DISK_SPACE_FOR_BLOCK_FILES) {\r\n```\r\n\r\nThe old version checked the prune box when the `-prune` setting was > 1, while the new version checks the box when the `-prune` setting is >= 550.\r\n\r\nThe two versions are equivalent because of [other code forbidding values from 2 to 549](https://github.com/bitcoin/bitcoin/blob/6196e930018181301b5972842ae384ea4288ff34/src/init.cpp#L1061-L1063)). But the new version seems less clear with the loss of the comment and extra `* 1024 * 1024` conversion and MIN_DISK_SPACE_FOR_BLOCK_FILES reference.\r\n",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-08T18:31:13Z",
+      "diff_hunk" : "@@ -128,14 +126,22 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n     );\n     ui->lblExplanation2->setText(ui->lblExplanation2->text().arg(PACKAGE_NAME));\n \n-    int64_t prune_target_mib = std::max<int64_t>(0, gArgs.GetArg(\"-prune\", 0));\n-    if (prune_target_mib > 1) { // -prune=1 means enabled, above that it's a size in MiB\n+    connect(ui->prune, &QCheckBox::toggled, [this](bool prune_checked) {\n+        UpdatePruneLabels(prune_checked);\n+        UpdateFreeSpaceLabel();\n+    });\n+\n+    int64_t prune_target_mib = gArgs.GetArg(\"-prune\", 0);\n+    if (prune_target_mib * 1024 * 1024 >= MIN_DISK_SPACE_FOR_BLOCK_FILES) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r364378557",
+      "id" : 364378557,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2NDM3ODU1Nw==",
+      "original_commit_id" : "3f28e1025a97f29f5265d75cdca0cd9e4330a087",
+      "original_position" : 39,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 339985198,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/364378557",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r364391524"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/364391524"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"gui: Make intro consistent with prune checkbox\" (3f28e1025a97f29f5265d75cdca0cd9e4330a087)\r\n\r\nNote: I think there's no change in behavior on this line except in the `-prune=1` case. Now the prune size text will show \"2 GB\" instead of \"1 GB\" there. (Before the earlier commit \"util: Add PruneMiBtoGB() function\" it showed \"0 GB\"). \r\n\r\n\"2 GB\" seems like the correct value to show in this case, since after #17696 2GB is the size that will actually be used if automatic pruning is enabled later.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-08T19:00:37Z",
+      "diff_hunk" : "@@ -128,14 +126,22 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n     );\n     ui->lblExplanation2->setText(ui->lblExplanation2->text().arg(PACKAGE_NAME));\n \n-    int64_t prune_target_mib = std::max<int64_t>(0, gArgs.GetArg(\"-prune\", 0));\n-    if (prune_target_mib > 1) { // -prune=1 means enabled, above that it's a size in MiB\n+    connect(ui->prune, &QCheckBox::toggled, [this](bool prune_checked) {\n+        UpdatePruneLabels(prune_checked);\n+        UpdateFreeSpaceLabel();\n+    });\n+\n+    int64_t prune_target_mib = gArgs.GetArg(\"-prune\", 0);\n+    if (prune_target_mib * 1024 * 1024 >= MIN_DISK_SPACE_FOR_BLOCK_FILES) {\n         ui->prune->setChecked(true);\n         ui->prune->setEnabled(false);\n+        m_prune_target_gb = PruneMiBtoGB(prune_target_mib);\n+    } else {\n+        m_prune_target_gb = DEFAULT_PRUNE_TARGET_GB;\n     }\n-    const int prune_target_gb = PruneMiBtoGB(prune_target_mib);\n-    ui->prune->setText(tr(\"Discard blocks after verification, except most recent %1 GB (prune)\").arg(prune_target_gb ? prune_target_gb : DEFAULT_PRUNE_TARGET_GB));\n-    UpdatePruneLabels(prune_target_gb);\n+    ui->prune->setText(tr(\"Discard blocks after verification, except most recent %1 GB (prune)\").arg(m_prune_target_gb));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r364391524",
+      "id" : 364391524,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2NDM5MTUyNA==",
+      "original_commit_id" : "3f28e1025a97f29f5265d75cdca0cd9e4330a087",
+      "original_position" : 49,
+      "path" : "src/qt/intro.cpp",
+      "position" : 83,
+      "pull_request_review_id" : 339985198,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/364391524",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r364398715"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/364398715"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"gui: Make intro consistent with prune checkbox\" (3f28e1025a97f29f5265d75cdca0cd9e4330a087)\r\n\r\nCurrent commit description is vague. It would be good to say what behavior is changing. As far as I can tell, there are two fixes in this commit and the other changes are refactoring:\r\n\r\n1. Main fix: when prune checkbox in the intro dialog is toggled, the amount of required space shown is updated. (Previously it was only updated when the data directory was updated.)\r\n\r\n2. Corner case fix: prune size shown in the case where pruning is disabled is now consistently shown as 2GB, instead of 1GB in the corner case where `-prune=1` is set from an external config",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-08T19:17:04Z",
+      "diff_hunk" : "@@ -128,14 +126,22 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n     );\n     ui->lblExplanation2->setText(ui->lblExplanation2->text().arg(PACKAGE_NAME));\n \n-    int64_t prune_target_mib = std::max<int64_t>(0, gArgs.GetArg(\"-prune\", 0));\n-    if (prune_target_mib > 1) { // -prune=1 means enabled, above that it's a size in MiB\n+    connect(ui->prune, &QCheckBox::toggled, [this](bool prune_checked) {\n+        UpdatePruneLabels(prune_checked);\n+        UpdateFreeSpaceLabel();\n+    });",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r364398715",
+      "id" : 364398715,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2NDM5ODcxNQ==",
+      "original_commit_id" : "3f28e1025a97f29f5265d75cdca0cd9e4330a087",
+      "original_position" : 36,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 339985198,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/364398715",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r364408088"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/364408088"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"gui: Make intro consistent with prune checkbox\" (3f28e1025a97f29f5265d75cdca0cd9e4330a087)\r\n\r\nI think it'd be clearer to drop this new member and instead just have a function:\r\n\r\n```c++\r\n//! Return pruning size that will be used if automatic pruning is enabled.\r\nint GetPruneTargetGB()\r\n{\r\n    int64_t prune_target_mib = gArgs.GetArg(\"-prune\", 0);\r\n    // >1 means automatic pruning is enabled by config, 1 means manual pruning, 0 means no pruning.\r\n    return prune_target_mib > 1 ? PruneMiBtoGB(prune_target_mib) : DEFAULT_PRUNE_TARGET_GB;\r\n}\r\n```\r\n\r\nIf you'd prefer keeping the member, having this function would still simplify the `Intro::Intro` code and allow declaring the member const.\r\n\r\n",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-08T19:38:41Z",
+      "diff_hunk" : "@@ -72,11 +72,12 @@ private Q_SLOTS:\n     //! Total required space (in GB) depending on user choice (prune or not prune).\n     int64_t m_required_space_gb{0};\n     uint64_t m_bytes_available{0};\n+    int64_t m_prune_target_gb{0};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r364408088",
+      "id" : 364408088,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2NDQwODA4OA==",
+      "original_commit_id" : "3f28e1025a97f29f5265d75cdca0cd9e4330a087",
+      "original_position" : 4,
+      "path" : "src/qt/intro.h",
+      "position" : null,
+      "pull_request_review_id" : 339985198,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/364408088",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365216720"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365216720"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "> The difference with this PR is just that the checkbox gets unchecked when a new datadir is selected, where previously it would never get unchecked?\r\n\r\nSteps to reproduce:\r\n1) the default datadir not having enough free space causes the prune checkbox gets checked (both on master and with this PR)\r\n2) a user chooses a custom datadir with enough free space:\r\n  - on master the prune checkbox remains checked\r\n  - with this PR the prune checkbox gets unchecked",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-10T12:43:01Z",
+      "diff_hunk" : "@@ -251,24 +251,29 @@ void Intro::setStatus(int status, const QString &message, quint64 bytesAvailable\n     {\n         ui->freeSpace->setText(\"\");\n     } else {\n-        QString freeString = tr(\"%n GB of free space available\", \"\", bytesAvailable/GB_BYTES);\n-        if (bytesAvailable < m_required_space_gb * GB_BYTES) {\n-            freeString += \" \" + tr(\"(of %n GB needed)\", \"\", m_required_space_gb);\n-            ui->freeSpace->setStyleSheet(\"QLabel { color: #800000 }\");\n-            ui->prune->setChecked(true);\n-        } else if (bytesAvailable / GB_BYTES - m_required_space_gb < 10) {\n-            freeString += \" \" + tr(\"(%n GB needed for full chain)\", \"\", m_required_space_gb);\n-            ui->freeSpace->setStyleSheet(\"QLabel { color: #999900 }\");\n-            ui->prune->setChecked(true);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365216720",
+      "id" : 365216720,
+      "in_reply_to_id" : 364335506,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2NTIxNjcyMA==",
+      "original_commit_id" : "2ee1e1c94b7344acfae572bcfb3618f35e0ab1b5",
+      "original_position" : 12,
+      "path" : "src/qt/intro.cpp",
+      "position" : 107,
+      "pull_request_review_id" : 341138642,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365216720",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365223128"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365223128"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "> The two versions are equivalent because of [other code forbidding values from 2 to 549](https://github.com/bitcoin/bitcoin/blob/6196e930018181301b5972842ae384ea4288ff34/src/init.cpp#L1061-L1063)).\r\n\r\nThat is not the case.\r\nThe code you mentioned is called much later:\r\nhttps://github.com/bitcoin/bitcoin/blob/e7f84503571c171a7e6728cd2d77dd4103bd7a6f/src/qt/bitcoin.cpp#L581\r\nafter\r\nhttps://github.com/bitcoin/bitcoin/blob/e7f84503571c171a7e6728cd2d77dd4103bd7a6f/src/qt/bitcoin.cpp#L491\r\n\r\nIt implies that forbidding values from 2 to 549 are accepted and\r\n```\r\n$ bitcoin-qt -choosedatadir -prune=42\r\n```\r\nworks as `prune=1` (on master).\r\n\r\nThis PR ignores prune forbidding values from 2 to 549.\r\n\r\nMove it to a separate _non_-refactoring commit?",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-10T13:02:11Z",
+      "diff_hunk" : "@@ -128,14 +126,22 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n     );\n     ui->lblExplanation2->setText(ui->lblExplanation2->text().arg(PACKAGE_NAME));\n \n-    int64_t prune_target_mib = std::max<int64_t>(0, gArgs.GetArg(\"-prune\", 0));\n-    if (prune_target_mib > 1) { // -prune=1 means enabled, above that it's a size in MiB\n+    connect(ui->prune, &QCheckBox::toggled, [this](bool prune_checked) {\n+        UpdatePruneLabels(prune_checked);\n+        UpdateFreeSpaceLabel();\n+    });\n+\n+    int64_t prune_target_mib = gArgs.GetArg(\"-prune\", 0);\n+    if (prune_target_mib * 1024 * 1024 >= MIN_DISK_SPACE_FOR_BLOCK_FILES) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365223128",
+      "id" : 365223128,
+      "in_reply_to_id" : 364378557,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2NTIyMzEyOA==",
+      "original_commit_id" : "3f28e1025a97f29f5265d75cdca0cd9e4330a087",
+      "original_position" : 39,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 341147462,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365223128",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365470987"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365470987"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "> ... having this function would still simplify the `Intro::Intro` code and allow declaring the member const.\r\n\r\nImplemented.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-10T23:33:46Z",
+      "diff_hunk" : "@@ -72,11 +72,12 @@ private Q_SLOTS:\n     //! Total required space (in GB) depending on user choice (prune or not prune).\n     int64_t m_required_space_gb{0};\n     uint64_t m_bytes_available{0};\n+    int64_t m_prune_target_gb{0};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365470987",
+      "id" : 365470987,
+      "in_reply_to_id" : 364408088,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2NTQ3MDk4Nw==",
+      "original_commit_id" : "3f28e1025a97f29f5265d75cdca0cd9e4330a087",
+      "original_position" : 4,
+      "path" : "src/qt/intro.h",
+      "position" : null,
+      "pull_request_review_id" : 341474667,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365470987",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365471179"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365471179"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "> Current commit description is vague.\r\n\r\nFixed.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-10T23:34:48Z",
+      "diff_hunk" : "@@ -128,14 +126,22 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n     );\n     ui->lblExplanation2->setText(ui->lblExplanation2->text().arg(PACKAGE_NAME));\n \n-    int64_t prune_target_mib = std::max<int64_t>(0, gArgs.GetArg(\"-prune\", 0));\n-    if (prune_target_mib > 1) { // -prune=1 means enabled, above that it's a size in MiB\n+    connect(ui->prune, &QCheckBox::toggled, [this](bool prune_checked) {\n+        UpdatePruneLabels(prune_checked);\n+        UpdateFreeSpaceLabel();\n+    });",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365471179",
+      "id" : 365471179,
+      "in_reply_to_id" : 364398715,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2NTQ3MTE3OQ==",
+      "original_commit_id" : "3f28e1025a97f29f5265d75cdca0cd9e4330a087",
+      "original_position" : 36,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 341474909,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365471179",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365471354"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365471354"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "> Note: I found the change on this line confusing, and might suggest reverting...\r\n\r\nReverted.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-10T23:35:45Z",
+      "diff_hunk" : "@@ -128,14 +126,22 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n     );\n     ui->lblExplanation2->setText(ui->lblExplanation2->text().arg(PACKAGE_NAME));\n \n-    int64_t prune_target_mib = std::max<int64_t>(0, gArgs.GetArg(\"-prune\", 0));\n-    if (prune_target_mib > 1) { // -prune=1 means enabled, above that it's a size in MiB\n+    connect(ui->prune, &QCheckBox::toggled, [this](bool prune_checked) {\n+        UpdatePruneLabels(prune_checked);\n+        UpdateFreeSpaceLabel();\n+    });\n+\n+    int64_t prune_target_mib = gArgs.GetArg(\"-prune\", 0);\n+    if (prune_target_mib * 1024 * 1024 >= MIN_DISK_SPACE_FOR_BLOCK_FILES) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365471354",
+      "id" : 365471354,
+      "in_reply_to_id" : 364378557,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2NTQ3MTM1NA==",
+      "original_commit_id" : "3f28e1025a97f29f5265d75cdca0cd9e4330a087",
+      "original_position" : 39,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 341475108,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365471354",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365471813"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365471813"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "The code is reorganized to make assigning values to `m_required_space_gb` variable more clear.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-10T23:38:09Z",
+      "diff_hunk" : "@@ -138,21 +135,21 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n     }\n     const int prune_target_gb = PruneMiBtoGB(prune_target_mib);\n     ui->prune->setText(tr(\"Discard blocks after verification, except most recent %1 GB (prune)\").arg(prune_target_gb ? prune_target_gb : DEFAULT_PRUNE_TARGET_GB));\n-    requiredSpace = m_blockchain_size;\n+    m_required_space_gb = m_blockchain_size;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365471813",
+      "id" : 365471813,
+      "in_reply_to_id" : 364322432,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2NTQ3MTgxMw==",
+      "original_commit_id" : "a7454533bc1fc0c78c4b7d8c3acbf1c23ddf4929",
+      "original_position" : 15,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 341475665,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365471813",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Updated 3f28e1025a97f29f5265d75cdca0cd9e4330a087 -> 91cc02dbeb026f5f029b7368c25739c754f19667 ([pr17453.10](https://github.com/hebasto/bitcoin/commits/pr17453.10) -> [pr17453.11](https://github.com/hebasto/bitcoin/commits/pr17453.11), [compare](https://github.com/hebasto/bitcoin/compare/pr17453.10..pr17453.11)).\r\n\r\n@ryanofsky \r\nThank you for your review. Your comments have been addressed.",
+      "created_at" : "2020-01-10T23:52:20Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-573250142",
+      "id" : 573250142,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU3MzI1MDE0Mg==",
+      "updated_at" : "2020-01-10T23:52:20Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/573250142",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365947039"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365947039"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"refactor: Replace static variable with data member\" (02c6060ba65c160dcd336b57752ce304ecd4ca9f)\r\n\r\nThis line doesn't seem to be replaced by anything. It looks like `m_required_space_gb` will now be set to 0 instead of `m_blockchain_size` when `prune_target_gb` is greater than `m_blockchain_size_gb`.\r\n\r\nIt seems like this should set `m_required_space_gb = m_blockchain_size_gb + m_chain_state_size_gb` when `prune_target_gb > m_blockchain_size_gb`",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-13T18:03:38Z",
+      "diff_hunk" : "@@ -138,21 +135,20 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n     }\n     const int prune_target_gb = PruneMiBtoGB(prune_target_mib);\n     ui->prune->setText(tr(\"Discard blocks after verification, except most recent %1 GB (prune)\").arg(prune_target_gb ? prune_target_gb : DEFAULT_PRUNE_TARGET_GB));\n-    requiredSpace = m_blockchain_size;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365947039",
+      "id" : 365947039,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2NTk0NzAzOQ==",
+      "original_commit_id" : "02c6060ba65c160dcd336b57752ce304ecd4ca9f",
+      "original_position" : 40,
+      "path" : "src/qt/intro.cpp",
+      "position" : 64,
+      "pull_request_review_id" : 342033191,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365947039",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365950333"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365950333"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"gui: Add Intro::UpdateFreeSpaceLabel()\" (a208b68b6f30f932d82e0d625bb230f9c1d5ab72)\r\n\r\n> > The difference with this PR is just that the checkbox gets unchecked when a new datadir is selected, where previously it would never get unchecked?\r\n> \r\n> Steps to reproduce: [...]\r\n\r\nThanks for the description. It sounds like the answer is yes.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-13T18:11:08Z",
+      "diff_hunk" : "@@ -251,24 +251,29 @@ void Intro::setStatus(int status, const QString &message, quint64 bytesAvailable\n     {\n         ui->freeSpace->setText(\"\");\n     } else {\n-        QString freeString = tr(\"%n GB of free space available\", \"\", bytesAvailable/GB_BYTES);\n-        if (bytesAvailable < m_required_space_gb * GB_BYTES) {\n-            freeString += \" \" + tr(\"(of %n GB needed)\", \"\", m_required_space_gb);\n-            ui->freeSpace->setStyleSheet(\"QLabel { color: #800000 }\");\n-            ui->prune->setChecked(true);\n-        } else if (bytesAvailable / GB_BYTES - m_required_space_gb < 10) {\n-            freeString += \" \" + tr(\"(%n GB needed for full chain)\", \"\", m_required_space_gb);\n-            ui->freeSpace->setStyleSheet(\"QLabel { color: #999900 }\");\n-            ui->prune->setChecked(true);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365950333",
+      "id" : 365950333,
+      "in_reply_to_id" : 364335506,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2NTk1MDMzMw==",
+      "original_commit_id" : "2ee1e1c94b7344acfae572bcfb3618f35e0ab1b5",
+      "original_position" : 12,
+      "path" : "src/qt/intro.cpp",
+      "position" : 107,
+      "pull_request_review_id" : 342033191,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365950333",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365951951"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365951951"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"refactor: Add Intro::UpdatePruneLabels()\" (9759ccbb40a1ce333d8ae3b6c3ed82520a948b76)\r\n\r\nIt seems like this should set `m_required_space_gb = m_blockchain_size_gb + m_chain_state_size_gb` in the case where `prune_target_gb > m_blockchain_size_gb` instead of not updating `m_required_space_gb`",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-13T18:14:56Z",
+      "diff_hunk" : "@@ -345,3 +329,24 @@ QString Intro::getPathToCheck()\n     mutex.unlock();\n     return retval;\n }\n+\n+void Intro::UpdatePruneLabels(int64_t prune_target_gb)\n+{\n+    QString storageRequiresMsg = tr(\"At least %1 GB of data will be stored in this directory, and it will grow over time.\");\n+    if (prune_target_gb) {\n+        if (prune_target_gb <= m_blockchain_size_gb) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365951951",
+      "id" : 365951951,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2NTk1MTk1MQ==",
+      "original_commit_id" : "9759ccbb40a1ce333d8ae3b6c3ed82520a948b76",
+      "original_position" : 34,
+      "path" : "src/qt/intro.cpp",
+      "position" : null,
+      "pull_request_review_id" : 342033191,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/365951951",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r366290460"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/366290460"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Yes, this is a bug, and it is easy to reproduce it. Going to fix it.",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-14T11:38:06Z",
+      "diff_hunk" : "@@ -138,21 +135,20 @@ Intro::Intro(QWidget *parent, uint64_t blockchain_size, uint64_t chain_state_siz\n     }\n     const int prune_target_gb = PruneMiBtoGB(prune_target_mib);\n     ui->prune->setText(tr(\"Discard blocks after verification, except most recent %1 GB (prune)\").arg(prune_target_gb ? prune_target_gb : DEFAULT_PRUNE_TARGET_GB));\n-    requiredSpace = m_blockchain_size;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r366290460",
+      "id" : 366290460,
+      "in_reply_to_id" : 365947039,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2NjI5MDQ2MA==",
+      "original_commit_id" : "02c6060ba65c160dcd336b57752ce304ecd4ca9f",
+      "original_position" : 40,
+      "path" : "src/qt/intro.cpp",
+      "position" : 64,
+      "pull_request_review_id" : 342469413,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-14T17:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/366290460",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Updated 91cc02dbeb026f5f029b7368c25739c754f19667 -> 4f7127d1e3a51f0f55d42a08439c516dcc8d1a26 ([pr17453.11](https://github.com/hebasto/bitcoin/commits/pr17453.11) -> [pr17453.12](https://github.com/hebasto/bitcoin/commits/pr17453.12), [compare](https://github.com/hebasto/bitcoin/compare/pr17453.11..pr17453.12)).\r\n\r\n@ryanofsky \r\nThank you for your review. The bug you [mentioned](https://github.com/bitcoin/bitcoin/pull/17453#discussion_r365947039) has been fixed.",
+      "created_at" : "2020-01-14T17:18:21Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-574281153",
+      "id" : 574281153,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU3NDI4MTE1Mw==",
+      "updated_at" : "2020-01-14T17:18:21Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/574281153",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r368214754"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/368214754"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Why do we need a namespace here?",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-18T08:26:55Z",
+      "diff_hunk" : "@@ -109,52 +107,49 @@ void FreespaceChecker::check()\n     Q_EMIT reply(replyStatus, replyMessage, freeBytesAvailable);\n }\n \n+namespace {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r368214754",
+      "id" : 368214754,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2ODIxNDc1NA==",
+      "original_commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "original_position" : 22,
+      "path" : "src/qt/intro.cpp",
+      "position" : 22,
+      "pull_request_review_id" : 344932529,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-18T08:26:55Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/368214754",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/12272949?v=4",
+         "events_url" : "https://api.github.com/users/emilengler/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/emilengler/followers",
+         "following_url" : "https://api.github.com/users/emilengler/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/emilengler/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/emilengler",
+         "id" : 12272949,
+         "login" : "emilengler",
+         "node_id" : "MDQ6VXNlcjEyMjcyOTQ5",
+         "organizations_url" : "https://api.github.com/users/emilengler/orgs",
+         "received_events_url" : "https://api.github.com/users/emilengler/received_events",
+         "repos_url" : "https://api.github.com/users/emilengler/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/emilengler/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/emilengler/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/emilengler"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r368216567"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/368216567"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "[Use an unnamed (anonymous) namespace for all internal/nonexported entities](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#sf22-use-an-unnamed-anonymous-namespace-for-all-internalnonexported-entities)",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-18T09:11:19Z",
+      "diff_hunk" : "@@ -109,52 +107,49 @@ void FreespaceChecker::check()\n     Q_EMIT reply(replyStatus, replyMessage, freeBytesAvailable);\n }\n \n+namespace {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r368216567",
+      "id" : 368216567,
+      "in_reply_to_id" : 368214754,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2ODIxNjU2Nw==",
+      "original_commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "original_position" : 22,
+      "path" : "src/qt/intro.cpp",
+      "position" : 22,
+      "pull_request_review_id" : 344934229,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-18T09:11:19Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/368216567",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r368216957"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/368216957"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Why has it no intends?",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-18T09:20:02Z",
+      "diff_hunk" : "@@ -109,52 +107,49 @@ void FreespaceChecker::check()\n     Q_EMIT reply(replyStatus, replyMessage, freeBytesAvailable);\n }\n \n+namespace {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r368216957",
+      "id" : 368216957,
+      "in_reply_to_id" : 368214754,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2ODIxNjk1Nw==",
+      "original_commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "original_position" : 22,
+      "path" : "src/qt/intro.cpp",
+      "position" : 22,
+      "pull_request_review_id" : 344934589,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-18T09:20:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/368216957",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/12272949?v=4",
+         "events_url" : "https://api.github.com/users/emilengler/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/emilengler/followers",
+         "following_url" : "https://api.github.com/users/emilengler/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/emilengler/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/emilengler",
+         "id" : 12272949,
+         "login" : "emilengler",
+         "node_id" : "MDQ6VXNlcjEyMjcyOTQ5",
+         "organizations_url" : "https://api.github.com/users/emilengler/orgs",
+         "received_events_url" : "https://api.github.com/users/emilengler/received_events",
+         "repos_url" : "https://api.github.com/users/emilengler/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/emilengler/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/emilengler/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/emilengler"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r368217178"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/368217178"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "> Why has it no intends?\r\n\r\nSorry. \"intends\" or \"indents\"?",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-18T09:24:02Z",
+      "diff_hunk" : "@@ -109,52 +107,49 @@ void FreespaceChecker::check()\n     Q_EMIT reply(replyStatus, replyMessage, freeBytesAvailable);\n }\n \n+namespace {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r368217178",
+      "id" : 368217178,
+      "in_reply_to_id" : 368214754,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2ODIxNzE3OA==",
+      "original_commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "original_position" : 22,
+      "path" : "src/qt/intro.cpp",
+      "position" : 22,
+      "pull_request_review_id" : 344934760,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-18T09:24:02Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/368217178",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r368217359"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/368217359"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "indents, sorry",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-18T09:27:12Z",
+      "diff_hunk" : "@@ -109,52 +107,49 @@ void FreespaceChecker::check()\n     Q_EMIT reply(replyStatus, replyMessage, freeBytesAvailable);\n }\n \n+namespace {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r368217359",
+      "id" : 368217359,
+      "in_reply_to_id" : 368214754,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2ODIxNzM1OQ==",
+      "original_commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "original_position" : 22,
+      "path" : "src/qt/intro.cpp",
+      "position" : 22,
+      "pull_request_review_id" : 344934897,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-18T09:27:12Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/368217359",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/12272949?v=4",
+         "events_url" : "https://api.github.com/users/emilengler/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/emilengler/followers",
+         "following_url" : "https://api.github.com/users/emilengler/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/emilengler/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/emilengler",
+         "id" : 12272949,
+         "login" : "emilengler",
+         "node_id" : "MDQ6VXNlcjEyMjcyOTQ5",
+         "organizations_url" : "https://api.github.com/users/emilengler/orgs",
+         "received_events_url" : "https://api.github.com/users/emilengler/received_events",
+         "repos_url" : "https://api.github.com/users/emilengler/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/emilengler/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/emilengler/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/emilengler"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r368217794"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/368217794"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "It follows our [Coding Style](https://github.com/bitcoin/bitcoin/blob/master/doc/developer-notes.md#coding-style-c). Also see [`clang-format-diff.py`](https://github.com/bitcoin/bitcoin/tree/master/contrib/devtools#clang-format-diffpy).",
+      "commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-18T09:38:25Z",
+      "diff_hunk" : "@@ -109,52 +107,49 @@ void FreespaceChecker::check()\n     Q_EMIT reply(replyStatus, replyMessage, freeBytesAvailable);\n }\n \n+namespace {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#discussion_r368217794",
+      "id" : 368217794,
+      "in_reply_to_id" : 368214754,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2ODIxNzc5NA==",
+      "original_commit_id" : "4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "original_position" : 22,
+      "path" : "src/qt/intro.cpp",
+      "position" : 22,
+      "pull_request_review_id" : 344935326,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17453",
+      "updated_at" : "2020-01-18T09:38:25Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/368217794",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "I tested it and it works and the code also looks OK to me.\r\nPlease squash and I will ACK.\r\nThis should get into 0.19.1 btw. Maybe it's worth talking about it on the next meeting",
+      "created_at" : "2020-01-20T14:17:56Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-576294155",
+      "id" : 576294155,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU3NjI5NDE1NQ==",
+      "updated_at" : "2020-01-20T14:17:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/576294155",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/12272949?v=4",
+         "events_url" : "https://api.github.com/users/emilengler/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/emilengler/followers",
+         "following_url" : "https://api.github.com/users/emilengler/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/emilengler/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/emilengler",
+         "id" : 12272949,
+         "login" : "emilengler",
+         "node_id" : "MDQ6VXNlcjEyMjcyOTQ5",
+         "organizations_url" : "https://api.github.com/users/emilengler/orgs",
+         "received_events_url" : "https://api.github.com/users/emilengler/received_events",
+         "repos_url" : "https://api.github.com/users/emilengler/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/emilengler/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/emilengler/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/emilengler"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@emilengler \r\n> Please squash...\r\n\r\nIt seems it could make reviewing a bit harder for other reviewers, no?",
+      "created_at" : "2020-01-20T14:55:28Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-576309699",
+      "id" : 576309699,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU3NjMwOTY5OQ==",
+      "updated_at" : "2020-01-20T14:55:28Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/576309699",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "> It seems it could make reviewing a bit harder for other reviewers, no?\r\n\r\nIf the commit message matters, put them into the longer description. But I don't think it is worth looking at the diffs from commit to commit. It is probably the easiest to just look at the diff from HEAD to master",
+      "created_at" : "2020-01-20T15:16:36Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-576318326",
+      "id" : 576318326,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU3NjMxODMyNg==",
+      "updated_at" : "2020-01-20T15:16:36Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/576318326",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/12272949?v=4",
+         "events_url" : "https://api.github.com/users/emilengler/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/emilengler/followers",
+         "following_url" : "https://api.github.com/users/emilengler/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/emilengler/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/emilengler",
+         "id" : 12272949,
+         "login" : "emilengler",
+         "node_id" : "MDQ6VXNlcjEyMjcyOTQ5",
+         "organizations_url" : "https://api.github.com/users/emilengler/orgs",
+         "received_events_url" : "https://api.github.com/users/emilengler/received_events",
+         "repos_url" : "https://api.github.com/users/emilengler/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/emilengler/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/emilengler/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/emilengler"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@emilengler Even if there are multiple commits, you're free as a reviewer to look at the entire diff at once. The decision whether to break things up is mostly up to the author, with the caveat that each commit must make sense on its own, and ideally, the code compiles and passes tests for every individual step. I don't see a reason here to request squashing - that's usually only done when a PR contains \"fixups\" as a result of review that really should be integrated into the body.",
+      "created_at" : "2020-01-20T15:50:41Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-576331704",
+      "id" : 576331704,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU3NjMzMTcwNA==",
+      "updated_at" : "2020-01-20T15:50:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/576331704",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/548488?v=4",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "node_id" : "MDQ6VXNlcjU0ODQ4OA==",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "ACK",
+      "created_at" : "2020-01-20T19:23:23Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-576402317",
+      "id" : 576402317,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU3NjQwMjMxNw==",
+      "updated_at" : "2020-01-20T19:23:23Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/576402317",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/12272949?v=4",
+         "events_url" : "https://api.github.com/users/emilengler/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/emilengler/followers",
+         "following_url" : "https://api.github.com/users/emilengler/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/emilengler/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/emilengler",
+         "id" : 12272949,
+         "login" : "emilengler",
+         "node_id" : "MDQ6VXNlcjEyMjcyOTQ5",
+         "organizations_url" : "https://api.github.com/users/emilengler/orgs",
+         "received_events_url" : "https://api.github.com/users/emilengler/received_events",
+         "repos_url" : "https://api.github.com/users/emilengler/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/emilengler/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/emilengler/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/emilengler"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "tACK 4f7127d1e3a51f0f55d42a08439c516dcc8d1a26",
+      "created_at" : "2020-01-22T17:18:38Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17453#issuecomment-577292293",
+      "id" : 577292293,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17453",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU3NzI5MjI5Mw==",
+      "updated_at" : "2020-01-22T17:18:38Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/577292293",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/10217?v=4",
+         "events_url" : "https://api.github.com/users/Sjors/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Sjors/followers",
+         "following_url" : "https://api.github.com/users/Sjors/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Sjors/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Sjors",
+         "id" : 10217,
+         "login" : "Sjors",
+         "node_id" : "MDQ6VXNlcjEwMjE3",
+         "organizations_url" : "https://api.github.com/users/Sjors/orgs",
+         "received_events_url" : "https://api.github.com/users/Sjors/received_events",
+         "repos_url" : "https://api.github.com/users/Sjors/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Sjors/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Sjors"
+      }
+   }
+]

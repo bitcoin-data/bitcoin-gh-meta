@@ -1,0 +1,280 @@
+[
+   {
+      "author_association" : "MEMBER",
+      "body" : "Great work!\r\nConcept ACK. Will review...",
+      "created_at" : "2018-01-10T22:55:21Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12138#issuecomment-356765259",
+      "id" : 356765259,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12138",
+      "updated_at" : "2018-01-10T22:55:21Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/356765259",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/178464?v=4",
+         "events_url" : "https://api.github.com/users/jonasschnelli/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonasschnelli/followers",
+         "following_url" : "https://api.github.com/users/jonasschnelli/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonasschnelli/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonasschnelli",
+         "id" : 178464,
+         "login" : "jonasschnelli",
+         "organizations_url" : "https://api.github.com/users/jonasschnelli/orgs",
+         "received_events_url" : "https://api.github.com/users/jonasschnelli/received_events",
+         "repos_url" : "https://api.github.com/users/jonasschnelli/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonasschnelli/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonasschnelli/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonasschnelli"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Note that FindNextBlocksToDownload may want to grow a corresponding nMinimumChainWork check before downloading towards any headers which do not (yet) meet that requirement. Otherwise we'll have a (bandwidth-wasting, but otherwise harmless) infinite download loop on regtest nodes that manually-specify minimum chain work on the command line.",
+      "created_at" : "2018-01-10T22:58:48Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12138#issuecomment-356766073",
+      "id" : 356766073,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12138",
+      "updated_at" : "2018-01-10T22:58:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/356766073",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/649246?v=4",
+         "events_url" : "https://api.github.com/users/TheBlueMatt/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/TheBlueMatt/followers",
+         "following_url" : "https://api.github.com/users/TheBlueMatt/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/TheBlueMatt/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/TheBlueMatt",
+         "id" : 649246,
+         "login" : "TheBlueMatt",
+         "organizations_url" : "https://api.github.com/users/TheBlueMatt/orgs",
+         "received_events_url" : "https://api.github.com/users/TheBlueMatt/received_events",
+         "repos_url" : "https://api.github.com/users/TheBlueMatt/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/TheBlueMatt/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/TheBlueMatt/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/TheBlueMatt"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12138#discussion_r161642040"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12138"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161642040"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "Dead code?",
+      "commit_id" : "ed5b2770b019d66e4ce841a3d6b804e8d7d763df",
+      "created_at" : "2018-01-16T01:09:54Z",
+      "diff_hunk" : "@@ -1260,6 +1286,75 @@ static void CheckForkWarningConditionsOnNewFork(CBlockIndex* pindexNewForkTip)\n     CheckForkWarningConditions();\n }\n \n+/**\n+ * Called when a header (re-)reached BLOCK_VALID_TREE.\n+ *\n+ * setBlockIndexHeaderCandidates is a bit more complicated than\n+ * setBlockIndexCandidates as setBlockIndexCandidates can be rather lazy\n+ * as everything in it is about to be connected. In our case, we may have many\n+ * headers above the tip leading down different chains, for which we really\n+ * only want to keep the tip of each chain.\n+ *\n+ * Works even if chainActive is empty!\n+ *\n+ * If chain_ordered_inertion, we assume that if pindex->pprev was previously a\n+ * header candidate, it will be when we're called. ie we assume that there are\n+ * no header candidates which are parents of us except for possibly our direct\n+ * parent.\n+ *\n+ * no_descendants allows us to make a similar, but inverted, assumption -\n+ * assuming no descendant blocks may be header candidates.\n+ */\n+void CChainState::MaybeAddNewHeaderCandidate(CBlockIndex* pindex, bool chain_ordered_insertion, bool no_descendants) {\n+    if (!pindex->IsValid(BLOCK_VALID_TREE)) return; // We only want things that have a valid header tree\n+\n+    bool lower_work = chainActive.Tip() != nullptr && chainActive.Tip()->nChainWork > pindex->nChainWork;\n+    if (lower_work) return; // We don't want things with less work than our current tip\n+\n+    bool parent_present = false;\n+    if (pindex->pprev && setBlockIndexHeaderCandidates.count(pindex->pprev)) {\n+        // If the parent is a previous candidate, then no parents of it could\n+        // be candidates, either. This is the only thing we need to check by\n+        // definition of chain_ordered_insertion, however even in the case of\n+        // !chain_ordered_insertion, if this is true, no need to do a full\n+        // parent scan (as no further-up parent can be a candidate, either).\n+        setBlockIndexHeaderCandidates.erase(pindex->pprev);\n+        parent_present = true;\n+    } else if (!chain_ordered_insertion) {\n+        // We are being called in a for(p : mapBlockIndex) loop, so can make no\n+        // assumptions about existing entries. Scan all other entries to check\n+        // if we're a descendant of some other candidate.\n+        for (auto it = setBlockIndexHeaderCandidates.begin(); it != setBlockIndexHeaderCandidates.end() && (*it)->nChainWork < pindex->nChainWork; it++) {\n+            if (pindex->GetAncestor((*it)->nHeight) == *it) {\n+                // it should be removed - we only keep the tip of potential\n+                // chains, not anything in them. At this point we should be\n+                // consistent by adding pindex, there should be more more work\n+                // to do here.\n+                setBlockIndexHeaderCandidates.erase(it);\n+                break;\n+                parent_present = true;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12138#discussion_r161642040",
+      "id" : 161642040,
+      "original_commit_id" : "7b8055ff53f7a0d33db148ebf18ef90f46a21941",
+      "original_position" : 90,
+      "path" : "src/validation.cpp",
+      "position" : 149,
+      "pull_request_review_id" : 88963942,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12138",
+      "updated_at" : "2018-01-16T01:09:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161642040",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/8334203?v=4",
+         "events_url" : "https://api.github.com/users/bpay/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/bpay/followers",
+         "following_url" : "https://api.github.com/users/bpay/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/bpay/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/bpay",
+         "id" : 8334203,
+         "login" : "bpay",
+         "organizations_url" : "https://api.github.com/users/bpay/orgs",
+         "received_events_url" : "https://api.github.com/users/bpay/received_events",
+         "repos_url" : "https://api.github.com/users/bpay/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/bpay/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/bpay/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/bpay"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12138#discussion_r162180081"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12138"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/162180081"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Oops, indeed, fixed.",
+      "commit_id" : "ed5b2770b019d66e4ce841a3d6b804e8d7d763df",
+      "created_at" : "2018-01-17T21:11:09Z",
+      "diff_hunk" : "@@ -1260,6 +1286,75 @@ static void CheckForkWarningConditionsOnNewFork(CBlockIndex* pindexNewForkTip)\n     CheckForkWarningConditions();\n }\n \n+/**\n+ * Called when a header (re-)reached BLOCK_VALID_TREE.\n+ *\n+ * setBlockIndexHeaderCandidates is a bit more complicated than\n+ * setBlockIndexCandidates as setBlockIndexCandidates can be rather lazy\n+ * as everything in it is about to be connected. In our case, we may have many\n+ * headers above the tip leading down different chains, for which we really\n+ * only want to keep the tip of each chain.\n+ *\n+ * Works even if chainActive is empty!\n+ *\n+ * If chain_ordered_inertion, we assume that if pindex->pprev was previously a\n+ * header candidate, it will be when we're called. ie we assume that there are\n+ * no header candidates which are parents of us except for possibly our direct\n+ * parent.\n+ *\n+ * no_descendants allows us to make a similar, but inverted, assumption -\n+ * assuming no descendant blocks may be header candidates.\n+ */\n+void CChainState::MaybeAddNewHeaderCandidate(CBlockIndex* pindex, bool chain_ordered_insertion, bool no_descendants) {\n+    if (!pindex->IsValid(BLOCK_VALID_TREE)) return; // We only want things that have a valid header tree\n+\n+    bool lower_work = chainActive.Tip() != nullptr && chainActive.Tip()->nChainWork > pindex->nChainWork;\n+    if (lower_work) return; // We don't want things with less work than our current tip\n+\n+    bool parent_present = false;\n+    if (pindex->pprev && setBlockIndexHeaderCandidates.count(pindex->pprev)) {\n+        // If the parent is a previous candidate, then no parents of it could\n+        // be candidates, either. This is the only thing we need to check by\n+        // definition of chain_ordered_insertion, however even in the case of\n+        // !chain_ordered_insertion, if this is true, no need to do a full\n+        // parent scan (as no further-up parent can be a candidate, either).\n+        setBlockIndexHeaderCandidates.erase(pindex->pprev);\n+        parent_present = true;\n+    } else if (!chain_ordered_insertion) {\n+        // We are being called in a for(p : mapBlockIndex) loop, so can make no\n+        // assumptions about existing entries. Scan all other entries to check\n+        // if we're a descendant of some other candidate.\n+        for (auto it = setBlockIndexHeaderCandidates.begin(); it != setBlockIndexHeaderCandidates.end() && (*it)->nChainWork < pindex->nChainWork; it++) {\n+            if (pindex->GetAncestor((*it)->nHeight) == *it) {\n+                // it should be removed - we only keep the tip of potential\n+                // chains, not anything in them. At this point we should be\n+                // consistent by adding pindex, there should be more more work\n+                // to do here.\n+                setBlockIndexHeaderCandidates.erase(it);\n+                break;\n+                parent_present = true;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12138#discussion_r162180081",
+      "id" : 162180081,
+      "in_reply_to_id" : 161642040,
+      "original_commit_id" : "7b8055ff53f7a0d33db148ebf18ef90f46a21941",
+      "original_position" : 90,
+      "path" : "src/validation.cpp",
+      "position" : 149,
+      "pull_request_review_id" : 89592927,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12138",
+      "updated_at" : "2018-01-17T21:11:10Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/162180081",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/649246?v=4",
+         "events_url" : "https://api.github.com/users/TheBlueMatt/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/TheBlueMatt/followers",
+         "following_url" : "https://api.github.com/users/TheBlueMatt/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/TheBlueMatt/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/TheBlueMatt",
+         "id" : 649246,
+         "login" : "TheBlueMatt",
+         "organizations_url" : "https://api.github.com/users/TheBlueMatt/orgs",
+         "received_events_url" : "https://api.github.com/users/TheBlueMatt/received_events",
+         "repos_url" : "https://api.github.com/users/TheBlueMatt/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/TheBlueMatt/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/TheBlueMatt/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/TheBlueMatt"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12138#discussion_r181606136"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12138"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/181606136"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "FindMostWorkChain() isn't particularly expensive to call redundantly when you know you are on the tip (it amounts to two hashtable lookups)\r\nIf you don't mind calling it unnecessarily on your last pass through the loop you can substantially tighten the 3 if statements you have to implement this logic",
+      "commit_id" : "ed5b2770b019d66e4ce841a3d6b804e8d7d763df",
+      "created_at" : "2018-04-16T01:19:21Z",
+      "diff_hunk" : "@@ -2582,34 +2750,43 @@ bool CChainState::ActivateBestChain(CValidationState &state, const CChainParams&\n         bool fInitialDownload;\n         {\n             LOCK(cs_main);\n-            ConnectTrace connectTrace(mempool); // Destructed before cs_main is unlocked\n-\n-            CBlockIndex *pindexOldTip = chainActive.Tip();\n-            if (pindexMostWork == nullptr) {\n-                pindexMostWork = FindMostWorkChain();\n-            }\n+            arith_uint256 starting_work = chainActive.Tip() ? chainActive.Tip()->nChainWork : arith_uint256(0);\n+            bool blocks_connected = false;\n+            do {\n+                // We absolutely may not unlock cs_main until we've made forward progress\n+                // (with the exception of shutdown due to hardware issues, low disk space, etc).\n+                ConnectTrace connectTrace(mempool); // Destructed before cs_main is unlocked\n+\n+                CBlockIndex *pindexOldTip = chainActive.Tip();\n+                if (pindexMostWork == nullptr) {\n+                    pindexMostWork = FindMostWorkChain();\n+                }\n \n-            // Whether we have anything to do at all.\n-            if (pindexMostWork == nullptr || pindexMostWork == chainActive.Tip())\n-                return true;\n+                // Whether we have anything to do at all.\n+                if (pindexMostWork == nullptr || pindexMostWork == chainActive.Tip()) {\n+                    break;\n+                }\n \n-            bool fInvalidFound = false;\n-            std::shared_ptr<const CBlock> nullBlockPtr;\n-            if (!ActivateBestChainStep(state, chainparams, pindexMostWork, pblock && pblock->GetHash() == pindexMostWork->GetBlockHash() ? pblock : nullBlockPtr, fInvalidFound, connectTrace))\n-                return false;\n+                bool fInvalidFound = false;\n+                std::shared_ptr<const CBlock> nullBlockPtr;\n+                if (!ActivateBestChainStep(state, chainparams, pindexMostWork, pblock && pblock->GetHash() == pindexMostWork->GetBlockHash() ? pblock : nullBlockPtr, fInvalidFound, connectTrace))\n+                    return false;\n+                blocks_connected = true;\n \n-            if (fInvalidFound) {\n-                // Wipe cache, we may need another branch now.\n-                pindexMostWork = nullptr;\n-            }\n-            pindexNewTip = chainActive.Tip();\n-            pindexFork = chainActive.FindFork(pindexOldTip);\n-            fInitialDownload = IsInitialBlockDownload();\n+                if (fInvalidFound) {\n+                    // Wipe cache, we may need another branch now.\n+                    pindexMostWork = nullptr;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12138#discussion_r181606136",
+      "id" : 181606136,
+      "original_commit_id" : "ed5b2770b019d66e4ce841a3d6b804e8d7d763df",
+      "original_position" : 374,
+      "path" : "src/validation.cpp",
+      "position" : 374,
+      "pull_request_review_id" : 112260968,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12138",
+      "updated_at" : "2018-04-16T01:23:59Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/181606136",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/195769?v=4",
+         "events_url" : "https://api.github.com/users/skeees/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/skeees/followers",
+         "following_url" : "https://api.github.com/users/skeees/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/skeees/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/skeees",
+         "id" : 195769,
+         "login" : "skeees",
+         "organizations_url" : "https://api.github.com/users/skeees/orgs",
+         "received_events_url" : "https://api.github.com/users/skeees/received_events",
+         "repos_url" : "https://api.github.com/users/skeees/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/skeees/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/skeees/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/skeees"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12138#discussion_r181606143"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12138"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/181606143"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "Is there always guaranteed to be progress? From reading this loop it seems like it could interrogate a potential alternate chain - find some invalidity and then roll back to the original tip",
+      "commit_id" : "ed5b2770b019d66e4ce841a3d6b804e8d7d763df",
+      "created_at" : "2018-04-16T01:19:26Z",
+      "diff_hunk" : "@@ -2582,34 +2750,43 @@ bool CChainState::ActivateBestChain(CValidationState &state, const CChainParams&\n         bool fInitialDownload;\n         {\n             LOCK(cs_main);\n-            ConnectTrace connectTrace(mempool); // Destructed before cs_main is unlocked\n-\n-            CBlockIndex *pindexOldTip = chainActive.Tip();\n-            if (pindexMostWork == nullptr) {\n-                pindexMostWork = FindMostWorkChain();\n-            }\n+            arith_uint256 starting_work = chainActive.Tip() ? chainActive.Tip()->nChainWork : arith_uint256(0);\n+            bool blocks_connected = false;\n+            do {\n+                // We absolutely may not unlock cs_main until we've made forward progress",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12138#discussion_r181606143",
+      "id" : 181606143,
+      "original_commit_id" : "ed5b2770b019d66e4ce841a3d6b804e8d7d763df",
+      "original_position" : 338,
+      "path" : "src/validation.cpp",
+      "position" : 338,
+      "pull_request_review_id" : 112260968,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12138",
+      "updated_at" : "2018-04-16T01:24:00Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/181606143",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/195769?v=4",
+         "events_url" : "https://api.github.com/users/skeees/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/skeees/followers",
+         "following_url" : "https://api.github.com/users/skeees/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/skeees/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/skeees",
+         "id" : 195769,
+         "login" : "skeees",
+         "organizations_url" : "https://api.github.com/users/skeees/orgs",
+         "received_events_url" : "https://api.github.com/users/skeees/received_events",
+         "repos_url" : "https://api.github.com/users/skeees/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/skeees/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/skeees/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/skeees"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@TheBlueMatt did you move this work somewhere else?\r\n\r\n_Update:_\r\n<img width=\"1119\" alt=\"schermafbeelding 2018-06-15 om 12 53 51\" src=\"https://user-images.githubusercontent.com/10217/41464602-382e3c12-709b-11e8-929d-1673c01b1d5d.png\">\r\n\r\nI guess this should be tagged \"up for grabs, including possibly by the original author\"?",
+      "created_at" : "2018-06-15T10:30:04Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12138#issuecomment-397580941",
+      "id" : 397580941,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12138",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDM5NzU4MDk0MQ==",
+      "updated_at" : "2018-06-15T10:54:57Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/397580941",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/10217?v=4",
+         "events_url" : "https://api.github.com/users/Sjors/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Sjors/followers",
+         "following_url" : "https://api.github.com/users/Sjors/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Sjors/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Sjors",
+         "id" : 10217,
+         "login" : "Sjors",
+         "node_id" : "MDQ6VXNlcjEwMjE3",
+         "organizations_url" : "https://api.github.com/users/Sjors/orgs",
+         "received_events_url" : "https://api.github.com/users/Sjors/received_events",
+         "repos_url" : "https://api.github.com/users/Sjors/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Sjors/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Sjors"
+      }
+   }
+]

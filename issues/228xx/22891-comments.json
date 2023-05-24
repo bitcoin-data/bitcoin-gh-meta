@@ -1,0 +1,3063 @@
+[
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r702419700"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/702419700"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "These fee rate ranges seem arbitrary. Relevant real fee rates may evolve to be much higher or lower.",
+      "commit_id" : "9e266a955afbc3820eb23b25688dbe81cfd8e1f5",
+      "created_at" : "2021-09-05T12:45:37Z",
+      "diff_hunk" : "@@ -1027,7 +1053,31 @@ static void ParseGetInfoResult(UniValue& result)\n         }\n         result_string += \"\\n\";\n     }\n-\n+    \n+    result_string += strprintf(\"Feerate Distribution: \\n\");\n+    \n+    std::string dist (\"feerate_dist\");\n+    std::string dist_n;\n+    std::string fee_rate;\n+    for (int i = 0; i < 3; ++i) {\n+        dist_n = dist + std::to_string(i);\n+        const double fee_size{result[\"feerate_dist1\"].get_real()};\n+        std::string size_bar;\n+        GetFeerateDist(fee_size, size_bar);\n+        size_bar += \" \";\n+        \n+    switch (i)\n+    {    \n+    case 0: fee_rate = \"1-9\"; \n+        break;\n+    case 1: fee_rate = \"10-19\";\n+        break;\n+    case 2: fee_rate = \"20-29\";",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r702419700",
+      "id" : 702419700,
+      "line" : 1075,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwMjQxOTcwMA==",
+      "original_commit_id" : "9e266a955afbc3820eb23b25688dbe81cfd8e1f5",
+      "original_line" : 1075,
+      "original_position" : 78,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 78,
+      "pull_request_review_id" : 746647909,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-09-05T12:49:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/702419700",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r702441587"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/702441587"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "I used them to test. Was planning to add more once results are as expected. We can do one of these to improve:\r\n\r\n1. Add more groups: https://i.imgur.com/ffyusBA.png\r\n2. Define a MIN and MAX, MIN will be 1 and MAX can be highest fee rate used by transactions in mempool. And then divide this in two few groups.",
+      "commit_id" : "9e266a955afbc3820eb23b25688dbe81cfd8e1f5",
+      "created_at" : "2021-09-05T15:38:27Z",
+      "diff_hunk" : "@@ -1027,7 +1053,31 @@ static void ParseGetInfoResult(UniValue& result)\n         }\n         result_string += \"\\n\";\n     }\n-\n+    \n+    result_string += strprintf(\"Feerate Distribution: \\n\");\n+    \n+    std::string dist (\"feerate_dist\");\n+    std::string dist_n;\n+    std::string fee_rate;\n+    for (int i = 0; i < 3; ++i) {\n+        dist_n = dist + std::to_string(i);\n+        const double fee_size{result[\"feerate_dist1\"].get_real()};\n+        std::string size_bar;\n+        GetFeerateDist(fee_size, size_bar);\n+        size_bar += \" \";\n+        \n+    switch (i)\n+    {    \n+    case 0: fee_rate = \"1-9\"; \n+        break;\n+    case 1: fee_rate = \"10-19\";\n+        break;\n+    case 2: fee_rate = \"20-29\";",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r702441587",
+      "id" : 702441587,
+      "in_reply_to_id" : 702419700,
+      "line" : 1075,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwMjQ0MTU4Nw==",
+      "original_commit_id" : "9e266a955afbc3820eb23b25688dbe81cfd8e1f5",
+      "original_line" : 1075,
+      "original_position" : 78,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 78,
+      "pull_request_review_id" : 746662828,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-09-05T15:38:27Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/702441587",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "@jonatack Thanks for review\r\n\r\n> is Add feerate histogram to getmempoolinfo #21422 enough; what is the added value of an additional CLI?\r\n\r\nI consider `-getinfo` as a dashboard for users who do not like GUI but still prefer to see a summary open in a terminal while using Bitcoin Core for several things. If used with `watch` it can also update regularly. \r\n\r\n> if a CLI command would add additional value relative to an RPC, -getinfo is already a bit slow due to calling several RPCs; maybe a separate CLI -feerateinfo or -mempoolinfo command\r\n\r\nAgree this will add one more RPC in it and things can be slow sometimes. So we can do one of these:\r\n\r\n1. Add some option which is `false` by default and `-getinfo` will not return fee rate distribution until user mentions `bitcoin-cli -getinfo mempool=true`\r\n2. Create a new CLI option as you suggested only for this information (-feerateinfo or -mempoolinfo)\r\n3. Add it in RPC `getmempoolinfo` with an argument `feerate_dist` which is false by default",
+      "created_at" : "2021-09-05T15:38:32Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#issuecomment-913177387",
+      "id" : 913177387,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22891",
+      "node_id" : "IC_kwDOABII5842bfsr",
+      "performed_via_github_app" : null,
+      "updated_at" : "2021-09-05T15:53:58Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/913177387",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r703056412"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/703056412"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Updating the code to this solved the error for me.\r\n\r\n```suggestion\r\n        UniValue params{RPCConvertValues(\"getmempoolinfo\", {\"[1,10,20,30]\"})};\r\n        result.push_back(JSONRPCRequestObj(\"getmempoolinfo\", params, ID_MEMPOOLINFO));\r\n```\r\n\r\n![image](https://user-images.githubusercontent.com/49265907/132257557-5145c44a-5066-4e89-a336-556a39e0a8e9.png)\r\n\r\n",
+      "commit_id" : "c7d17d7e1552f2fe177612eefb1cb4bde60a2e03",
+      "created_at" : "2021-09-06T19:56:27Z",
+      "diff_hunk" : "@@ -315,6 +316,7 @@ class GetinfoRequestHandler: public BaseRequestHandler\n         result.push_back(JSONRPCRequestObj(\"getblockchaininfo\", NullUniValue, ID_BLOCKCHAININFO));\n         result.push_back(JSONRPCRequestObj(\"getwalletinfo\", NullUniValue, ID_WALLETINFO));\n         result.push_back(JSONRPCRequestObj(\"getbalances\", NullUniValue, ID_BALANCES));\n+        result.push_back(JSONRPCRequestObj(\"getmempoolinfo\", \"[1,10,20,30]\", ID_MEMPOOLINFO));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r703056412",
+      "id" : 703056412,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwMzA1NjQxMg==",
+      "original_commit_id" : "9e266a955afbc3820eb23b25688dbe81cfd8e1f5",
+      "original_line" : 319,
+      "original_position" : 12,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : null,
+      "pull_request_review_id" : 747407868,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-09-06T20:01:50Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/703056412",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/49265907?v=4",
+         "events_url" : "https://api.github.com/users/klementtan/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/klementtan/followers",
+         "following_url" : "https://api.github.com/users/klementtan/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/klementtan/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/klementtan",
+         "id" : 49265907,
+         "login" : "klementtan",
+         "node_id" : "MDQ6VXNlcjQ5MjY1OTA3",
+         "organizations_url" : "https://api.github.com/users/klementtan/orgs",
+         "received_events_url" : "https://api.github.com/users/klementtan/received_events",
+         "repos_url" : "https://api.github.com/users/klementtan/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/klementtan/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/klementtan/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/klementtan"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r703056499"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/703056499"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Maybe add color to standardize with the other headers? ",
+      "commit_id" : "9e266a955afbc3820eb23b25688dbe81cfd8e1f5",
+      "created_at" : "2021-09-06T19:56:59Z",
+      "diff_hunk" : "@@ -1027,7 +1053,31 @@ static void ParseGetInfoResult(UniValue& result)\n         }\n         result_string += \"\\n\";\n     }\n-\n+    \n+    result_string += strprintf(\"Feerate Distribution: \\n\");",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r703056499",
+      "id" : 703056499,
+      "line" : 1057,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwMzA1NjQ5OQ==",
+      "original_commit_id" : "9e266a955afbc3820eb23b25688dbe81cfd8e1f5",
+      "original_line" : 1057,
+      "original_position" : 60,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 60,
+      "pull_request_review_id" : 747407868,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-09-06T19:59:22Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/703056499",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/49265907?v=4",
+         "events_url" : "https://api.github.com/users/klementtan/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/klementtan/followers",
+         "following_url" : "https://api.github.com/users/klementtan/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/klementtan/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/klementtan",
+         "id" : 49265907,
+         "login" : "klementtan",
+         "node_id" : "MDQ6VXNlcjQ5MjY1OTA3",
+         "organizations_url" : "https://api.github.com/users/klementtan/orgs",
+         "received_events_url" : "https://api.github.com/users/klementtan/received_events",
+         "repos_url" : "https://api.github.com/users/klementtan/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/klementtan/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/klementtan/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/klementtan"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Result for `bitcoin-cli -getinfo` after last commit:\r\n\r\n![image](https://user-images.githubusercontent.com/13405205/132280052-ff15d960-c965-4b12-85f4-9f6300e2961f.png)\r\n\r\nChanges:\r\n\r\n- Change feerate groups\r\n- Increment by 1000\r\n- Use L_BAR for vbytes less than 250k\r\n- Add RED color and use it for MEMPOOL\r\n- Fix fee_size in for loop\r\n- Only show fee distribution for a group if size>0\r\n\r\n@klementtan Thanks for review and help in fixing JSON error\r\n",
+      "created_at" : "2021-09-07T03:35:54Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#issuecomment-913965254",
+      "id" : 913965254,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22891",
+      "node_id" : "IC_kwDOABII5842egDG",
+      "performed_via_github_app" : null,
+      "updated_at" : "2021-09-07T03:39:50Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/913965254",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r703153491"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/703153491"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Changed 'Feerate Distribution' to 'Mempool' and added RED color",
+      "commit_id" : "c7d17d7e1552f2fe177612eefb1cb4bde60a2e03",
+      "created_at" : "2021-09-07T03:37:23Z",
+      "diff_hunk" : "@@ -1027,7 +1053,31 @@ static void ParseGetInfoResult(UniValue& result)\n         }\n         result_string += \"\\n\";\n     }\n-\n+    \n+    result_string += strprintf(\"Feerate Distribution: \\n\");",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r703153491",
+      "id" : 703153491,
+      "in_reply_to_id" : 703056499,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwMzE1MzQ5MQ==",
+      "original_commit_id" : "9e266a955afbc3820eb23b25688dbe81cfd8e1f5",
+      "original_line" : 1057,
+      "original_position" : 60,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : null,
+      "pull_request_review_id" : 747510487,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-09-07T03:37:23Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/703153491",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r703153854"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/703153854"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Used different groups in last commit: 1-9, 10-99, 100-199 and Above 200",
+      "commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "created_at" : "2021-09-07T03:38:35Z",
+      "diff_hunk" : "@@ -1027,7 +1053,31 @@ static void ParseGetInfoResult(UniValue& result)\n         }\n         result_string += \"\\n\";\n     }\n-\n+    \n+    result_string += strprintf(\"Feerate Distribution: \\n\");\n+    \n+    std::string dist (\"feerate_dist\");\n+    std::string dist_n;\n+    std::string fee_rate;\n+    for (int i = 0; i < 3; ++i) {\n+        dist_n = dist + std::to_string(i);\n+        const double fee_size{result[\"feerate_dist1\"].get_real()};\n+        std::string size_bar;\n+        GetFeerateDist(fee_size, size_bar);\n+        size_bar += \" \";\n+        \n+    switch (i)\n+    {    \n+    case 0: fee_rate = \"1-9\"; \n+        break;\n+    case 1: fee_rate = \"10-19\";\n+        break;\n+    case 2: fee_rate = \"20-29\";",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r703153854",
+      "id" : 703153854,
+      "in_reply_to_id" : 702419700,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwMzE1Mzg1NA==",
+      "original_commit_id" : "9e266a955afbc3820eb23b25688dbe81cfd8e1f5",
+      "original_line" : 1075,
+      "original_position" : 78,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : null,
+      "pull_request_review_id" : 747510863,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-09-11T19:44:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/703153854",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Concept ACK. It's a really nice feature.\r\nIt would be great if the fee rate ranges were automatically calculated based on the minimum and maximum fees.",
+      "created_at" : "2021-09-10T18:43:32Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#issuecomment-917129213",
+      "id" : 917129213,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22891",
+      "node_id" : "IC_kwDOABII5842qkf9",
+      "performed_via_github_app" : null,
+      "updated_at" : "2021-09-10T18:43:32Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/917129213",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/84432093?v=4",
+         "events_url" : "https://api.github.com/users/lsilva01/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/lsilva01/followers",
+         "following_url" : "https://api.github.com/users/lsilva01/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/lsilva01/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/lsilva01",
+         "id" : 84432093,
+         "login" : "lsilva01",
+         "node_id" : "MDQ6VXNlcjg0NDMyMDkz",
+         "organizations_url" : "https://api.github.com/users/lsilva01/orgs",
+         "received_events_url" : "https://api.github.com/users/lsilva01/received_events",
+         "repos_url" : "https://api.github.com/users/lsilva01/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/lsilva01/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/lsilva01/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/lsilva01"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "@lsilva01 Thanks for review. Made few changes in last commit. Let me know if this looks better. Will try few more things in next few days.\r\n\r\nResult for `bitcoin-cli -getinfo` after last commit: \r\n\r\n![image](https://user-images.githubusercontent.com/13405205/132926798-ea7fc16c-75a4-4f54-a521-e7c572c1e18f.png)\r\n\r\nChanges:\r\n\r\n1. Add one more group for fee rates above 200\r\n2. Change colors: \r\n   Mempool: RED -> MAGENTA\r\n   Wallet: MAGENTA -> CYAN (Wallet and Balance are related so can use the same color. Red color looks weird for anything except errors.)\r\n3. Do not show Mempool section if mempool size is zero\r\n\r\nTO DO:\r\n\r\n- [x] Dynamic INCREMENT. Use INCREMENT based on size.\r\n- [ ] ~~`mempool=true` argument~~ Not required\r\n- [ ] Other things based on reviews\r\n",
+      "created_at" : "2021-09-10T23:24:17Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#issuecomment-917274308",
+      "id" : 917274308,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22891",
+      "node_id" : "IC_kwDOABII5842rH7E",
+      "performed_via_github_app" : null,
+      "updated_at" : "2021-09-12T00:14:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/917274308",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "I have made few changes and squashed commits. Also updated things in PR description. Please test and let me know if there are any issues and scope for improvement. \r\n\r\n@klementtan I tried adding you as co-author because PR is inspired by your work to add progress bar for sync, used lot of code from it and you helped in fixing JSON error initially. Maybe didn't add it correctly. Will have to commit again anyway, so will fix it. Please share your email address that I should use.\r\n\r\nCc: @jonatack @lsilva01 ",
+      "created_at" : "2021-09-11T19:53:57Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#issuecomment-917468438",
+      "id" : 917468438,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22891",
+      "node_id" : "IC_kwDOABII5842r3UW",
+      "performed_via_github_app" : null,
+      "updated_at" : "2021-09-11T19:53:57Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/917468438",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "@prayank23 My email is klementtan@gmail.com. Thanks!\r\n\r\nWill review the PR soon ð ",
+      "created_at" : "2021-09-12T05:22:41Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#issuecomment-917559682",
+      "id" : 917559682,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22891",
+      "node_id" : "IC_kwDOABII5842sNmC",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/917559682/reactions"
+      },
+      "updated_at" : "2021-09-12T09:31:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/917559682",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/49265907?v=4",
+         "events_url" : "https://api.github.com/users/klementtan/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/klementtan/followers",
+         "following_url" : "https://api.github.com/users/klementtan/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/klementtan/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/klementtan",
+         "id" : 49265907,
+         "login" : "klementtan",
+         "node_id" : "MDQ6VXNlcjQ5MjY1OTA3",
+         "organizations_url" : "https://api.github.com/users/klementtan/orgs",
+         "received_events_url" : "https://api.github.com/users/klementtan/received_events",
+         "repos_url" : "https://api.github.com/users/klementtan/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/klementtan/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/klementtan/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/klementtan"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r706983262"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/706983262"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Just checking, did you intentionally leave out `batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"1000\"][\"size\"]`?",
+      "commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "created_at" : "2021-09-13T03:38:14Z",
+      "diff_hunk" : "@@ -359,6 +362,13 @@ class GetinfoRequestHandler: public BaseRequestHandler\n             result.pushKV(\"balance\", batch[ID_BALANCES][\"result\"][\"mine\"][\"trusted\"]);\n         }\n         result.pushKV(\"relayfee\", batch[ID_NETWORKINFO][\"result\"][\"relayfee\"]);\n+\n+        result.pushKV(\"feerate_dist1\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"1\"][\"size\"]);\n+        result.pushKV(\"feerate_dist2\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"10\"][\"size\"]);\n+        result.pushKV(\"feerate_dist3\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"100\"][\"size\"]);\n+        result.pushKV(\"feerate_dist4\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"200\"][\"size\"]);\n+        result.pushKV(\"mempool_bytes\", batch[ID_MEMPOOLINFO][\"result\"][\"bytes\"]);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r706983262",
+      "id" : 706983262,
+      "line" : 370,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwNjk4MzI2Mg==",
+      "original_commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "original_line" : 370,
+      "original_position" : 26,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 26,
+      "pull_request_review_id" : 752286529,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-09-13T04:04:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/706983262",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/49265907?v=4",
+         "events_url" : "https://api.github.com/users/klementtan/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/klementtan/followers",
+         "following_url" : "https://api.github.com/users/klementtan/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/klementtan/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/klementtan",
+         "id" : 49265907,
+         "login" : "klementtan",
+         "node_id" : "MDQ6VXNlcjQ5MjY1OTA3",
+         "organizations_url" : "https://api.github.com/users/klementtan/orgs",
+         "received_events_url" : "https://api.github.com/users/klementtan/received_events",
+         "repos_url" : "https://api.github.com/users/klementtan/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/klementtan/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/klementtan/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/klementtan"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r706985793"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/706985793"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "nit: Possible to refactor this into a separate method? ",
+      "commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "created_at" : "2021-09-13T03:48:46Z",
+      "diff_hunk" : "@@ -1028,6 +1073,64 @@ static void ParseGetInfoResult(UniValue& result)\n         result_string += \"\\n\";\n     }\n \n+    const double mempool_bytes{result[\"mempool_bytes\"].get_real()};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r706985793",
+      "id" : 706985793,
+      "line" : 1076,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwNjk4NTc5Mw==",
+      "original_commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "original_line" : 1076,
+      "original_position" : 108,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 108,
+      "pull_request_review_id" : 752286529,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-09-13T04:04:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/706985793",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/49265907?v=4",
+         "events_url" : "https://api.github.com/users/klementtan/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/klementtan/followers",
+         "following_url" : "https://api.github.com/users/klementtan/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/klementtan/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/klementtan",
+         "id" : 49265907,
+         "login" : "klementtan",
+         "node_id" : "MDQ6VXNlcjQ5MjY1OTA3",
+         "organizations_url" : "https://api.github.com/users/klementtan/orgs",
+         "received_events_url" : "https://api.github.com/users/klementtan/received_events",
+         "repos_url" : "https://api.github.com/users/klementtan/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/klementtan/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/klementtan/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/klementtan"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r706986559"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/706986559"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Could add Doxygen documentation for this new function.",
+      "commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "created_at" : "2021-09-13T03:51:32Z",
+      "diff_hunk" : "@@ -928,6 +938,39 @@ static void GetProgressBar(double progress, std::string& progress_bar)\n     }\n }\n \n+\n+static void GetFeerateBar(double size, std::string& size_bar, double inc_size, double max_size)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r706986559",
+      "id" : 706986559,
+      "line" : 942,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwNjk4NjU1OQ==",
+      "original_commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "original_line" : 942,
+      "original_position" : 36,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 36,
+      "pull_request_review_id" : 752286529,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-09-13T04:04:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/706986559",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/49265907?v=4",
+         "events_url" : "https://api.github.com/users/klementtan/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/klementtan/followers",
+         "following_url" : "https://api.github.com/users/klementtan/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/klementtan/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/klementtan",
+         "id" : 49265907,
+         "login" : "klementtan",
+         "node_id" : "MDQ6VXNlcjQ5MjY1OTA3",
+         "organizations_url" : "https://api.github.com/users/klementtan/orgs",
+         "received_events_url" : "https://api.github.com/users/klementtan/received_events",
+         "repos_url" : "https://api.github.com/users/klementtan/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/klementtan/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/klementtan/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/klementtan"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r707019664"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/707019664"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Yes. Because fee rate groups are:\r\n\r\n1 (from 1 to 9)\r\n10 (from 10 to 99)\r\n100 (from 100 to 199)\r\n200 (from 200 to 1000)\r\n\r\nYou can see them in the results for `bitcoin-cli getmempoolinfo \"[1,10,100,200,1000]\"`",
+      "commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "created_at" : "2021-09-13T05:42:28Z",
+      "diff_hunk" : "@@ -359,6 +362,13 @@ class GetinfoRequestHandler: public BaseRequestHandler\n             result.pushKV(\"balance\", batch[ID_BALANCES][\"result\"][\"mine\"][\"trusted\"]);\n         }\n         result.pushKV(\"relayfee\", batch[ID_NETWORKINFO][\"result\"][\"relayfee\"]);\n+\n+        result.pushKV(\"feerate_dist1\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"1\"][\"size\"]);\n+        result.pushKV(\"feerate_dist2\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"10\"][\"size\"]);\n+        result.pushKV(\"feerate_dist3\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"100\"][\"size\"]);\n+        result.pushKV(\"feerate_dist4\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"200\"][\"size\"]);\n+        result.pushKV(\"mempool_bytes\", batch[ID_MEMPOOLINFO][\"result\"][\"bytes\"]);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r707019664",
+      "id" : 707019664,
+      "in_reply_to_id" : 706983262,
+      "line" : 370,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwNzAxOTY2NA==",
+      "original_commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "original_line" : 370,
+      "original_position" : 26,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 26,
+      "pull_request_review_id" : 752329987,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-09-13T05:42:29Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/707019664",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r707020158"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/707020158"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "A function for whole thing? Yes. ",
+      "commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "created_at" : "2021-09-13T05:43:59Z",
+      "diff_hunk" : "@@ -1028,6 +1073,64 @@ static void ParseGetInfoResult(UniValue& result)\n         result_string += \"\\n\";\n     }\n \n+    const double mempool_bytes{result[\"mempool_bytes\"].get_real()};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r707020158",
+      "id" : 707020158,
+      "in_reply_to_id" : 706985793,
+      "line" : 1076,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwNzAyMDE1OA==",
+      "original_commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "original_line" : 1076,
+      "original_position" : 108,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 108,
+      "pull_request_review_id" : 752330649,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-09-13T05:44:00Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/707020158",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r707020247"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/707020247"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Sure",
+      "commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "created_at" : "2021-09-13T05:44:14Z",
+      "diff_hunk" : "@@ -928,6 +938,39 @@ static void GetProgressBar(double progress, std::string& progress_bar)\n     }\n }\n \n+\n+static void GetFeerateBar(double size, std::string& size_bar, double inc_size, double max_size)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r707020247",
+      "id" : 707020247,
+      "in_reply_to_id" : 706986559,
+      "line" : 942,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwNzAyMDI0Nw==",
+      "original_commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "original_line" : 942,
+      "original_position" : 36,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 36,
+      "pull_request_review_id" : 752330740,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-09-13T05:44:14Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/707020247",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r707025664"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/707025664"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Ah got it! Tx with fee >= 1000 sat/vB will not be displayed.\r\n\r\nWould it be better to update s/Above 200  |/200-1000   |/? IIUC `batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"200\"][\"size\"]` only considers fees from `200-1000`\r\n\r\n```\r\n./src/bitcoin-cli -signet getmempoolinfo \"[1,10,100,200,1000]\"\r\n...\r\n      \"200\": {\r\n        \"size\": 0,\r\n        \"count\": 0,\r\n        \"fees\": 0,\r\n        \"from\": 200,\r\n        \"to\": 999\r\n      },\r\n...\r\n```",
+      "commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "created_at" : "2021-09-13T05:58:15Z",
+      "diff_hunk" : "@@ -359,6 +362,13 @@ class GetinfoRequestHandler: public BaseRequestHandler\n             result.pushKV(\"balance\", batch[ID_BALANCES][\"result\"][\"mine\"][\"trusted\"]);\n         }\n         result.pushKV(\"relayfee\", batch[ID_NETWORKINFO][\"result\"][\"relayfee\"]);\n+\n+        result.pushKV(\"feerate_dist1\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"1\"][\"size\"]);\n+        result.pushKV(\"feerate_dist2\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"10\"][\"size\"]);\n+        result.pushKV(\"feerate_dist3\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"100\"][\"size\"]);\n+        result.pushKV(\"feerate_dist4\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"200\"][\"size\"]);\n+        result.pushKV(\"mempool_bytes\", batch[ID_MEMPOOLINFO][\"result\"][\"bytes\"]);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r707025664",
+      "id" : 707025664,
+      "in_reply_to_id" : 706983262,
+      "line" : 370,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwNzAyNTY2NA==",
+      "original_commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "original_line" : 370,
+      "original_position" : 26,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 26,
+      "pull_request_review_id" : 752337888,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-09-13T05:58:15Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/707025664",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/49265907?v=4",
+         "events_url" : "https://api.github.com/users/klementtan/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/klementtan/followers",
+         "following_url" : "https://api.github.com/users/klementtan/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/klementtan/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/klementtan",
+         "id" : 49265907,
+         "login" : "klementtan",
+         "node_id" : "MDQ6VXNlcjQ5MjY1OTA3",
+         "organizations_url" : "https://api.github.com/users/klementtan/orgs",
+         "received_events_url" : "https://api.github.com/users/klementtan/received_events",
+         "repos_url" : "https://api.github.com/users/klementtan/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/klementtan/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/klementtan/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/klementtan"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r707027581"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/707027581"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Yup L1076-L1130 looks like it could be cleanly refactored into another function ð ",
+      "commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "created_at" : "2021-09-13T06:02:54Z",
+      "diff_hunk" : "@@ -1028,6 +1073,64 @@ static void ParseGetInfoResult(UniValue& result)\n         result_string += \"\\n\";\n     }\n \n+    const double mempool_bytes{result[\"mempool_bytes\"].get_real()};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r707027581",
+      "id" : 707027581,
+      "in_reply_to_id" : 706985793,
+      "line" : 1076,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwNzAyNzU4MQ==",
+      "original_commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "original_line" : 1076,
+      "original_position" : 108,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 108,
+      "pull_request_review_id" : 752340331,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-09-13T06:02:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/707027581",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/49265907?v=4",
+         "events_url" : "https://api.github.com/users/klementtan/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/klementtan/followers",
+         "following_url" : "https://api.github.com/users/klementtan/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/klementtan/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/klementtan",
+         "id" : 49265907,
+         "login" : "klementtan",
+         "node_id" : "MDQ6VXNlcjQ5MjY1OTA3",
+         "organizations_url" : "https://api.github.com/users/klementtan/orgs",
+         "received_events_url" : "https://api.github.com/users/klementtan/received_events",
+         "repos_url" : "https://api.github.com/users/klementtan/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/klementtan/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/klementtan/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/klementtan"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r707027786"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/707027786"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Possible. Or we can change 1000 to a higher number. Will see what other reviewers think and decide accordingly.",
+      "commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "created_at" : "2021-09-13T06:03:33Z",
+      "diff_hunk" : "@@ -359,6 +362,13 @@ class GetinfoRequestHandler: public BaseRequestHandler\n             result.pushKV(\"balance\", batch[ID_BALANCES][\"result\"][\"mine\"][\"trusted\"]);\n         }\n         result.pushKV(\"relayfee\", batch[ID_NETWORKINFO][\"result\"][\"relayfee\"]);\n+\n+        result.pushKV(\"feerate_dist1\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"1\"][\"size\"]);\n+        result.pushKV(\"feerate_dist2\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"10\"][\"size\"]);\n+        result.pushKV(\"feerate_dist3\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"100\"][\"size\"]);\n+        result.pushKV(\"feerate_dist4\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"200\"][\"size\"]);\n+        result.pushKV(\"mempool_bytes\", batch[ID_MEMPOOLINFO][\"result\"][\"bytes\"]);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r707027786",
+      "id" : 707027786,
+      "in_reply_to_id" : 706983262,
+      "line" : 370,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwNzAyNzc4Ng==",
+      "original_commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "original_line" : 370,
+      "original_position" : 26,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 26,
+      "pull_request_review_id" : 752340682,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-09-13T06:03:33Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/707027786",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#23127](https://github.com/bitcoin/bitcoin/pull/23127) (tests: Use test framework utils where possible by vincenzopalazzo)\n* [#21422](https://github.com/bitcoin/bitcoin/pull/21422) (Add feerate histogram to getmempoolinfo by kiminuo)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "created_at" : "2021-11-02T13:57:45Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#issuecomment-957633221",
+      "id" : 957633221,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22891",
+      "node_id" : "IC_kwDOABII5845FFLF",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/957633221/reactions"
+      },
+      "updated_at" : "2021-12-01T16:41:12Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/957633221",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r742256447"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/742256447"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Done",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-03T19:14:41Z",
+      "diff_hunk" : "@@ -928,6 +938,39 @@ static void GetProgressBar(double progress, std::string& progress_bar)\n     }\n }\n \n+\n+static void GetFeerateBar(double size, std::string& size_bar, double inc_size, double max_size)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r742256447",
+      "id" : 742256447,
+      "in_reply_to_id" : 706986559,
+      "line" : 949,
+      "node_id" : "PRRC_kwDOABII584sPe8_",
+      "original_commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "original_line" : 949,
+      "original_position" : 36,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 43,
+      "pull_request_review_id" : 796992691,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/742256447/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-03T19:14:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/742256447",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r742257786"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/742257786"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Sorry Its been more than a month. I was waiting for some progress in PR 21422 before making any changes here as it depends on it. Anyways looked at the code today and this looks alright because everything is inside `ParseGetInfoResult()`",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-03T19:16:41Z",
+      "diff_hunk" : "@@ -1028,6 +1073,64 @@ static void ParseGetInfoResult(UniValue& result)\n         result_string += \"\\n\";\n     }\n \n+    const double mempool_bytes{result[\"mempool_bytes\"].get_real()};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r742257786",
+      "id" : 742257786,
+      "in_reply_to_id" : 706985793,
+      "line" : 1083,
+      "node_id" : "PRRC_kwDOABII584sPfR6",
+      "original_commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "original_line" : 1083,
+      "original_position" : 108,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 115,
+      "pull_request_review_id" : 796994542,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/742257786/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-03T19:16:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/742257786",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r742258915"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/742258915"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Will keep this unchanged as nobody reviewed and had issues with it. Fee rates are normally less than 1000 sat/vB and we can ignore if someone uses higher in few transactions because this is just the fee rate distribution summary to help users and complete information.",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-03T19:18:22Z",
+      "diff_hunk" : "@@ -359,6 +362,13 @@ class GetinfoRequestHandler: public BaseRequestHandler\n             result.pushKV(\"balance\", batch[ID_BALANCES][\"result\"][\"mine\"][\"trusted\"]);\n         }\n         result.pushKV(\"relayfee\", batch[ID_NETWORKINFO][\"result\"][\"relayfee\"]);\n+\n+        result.pushKV(\"feerate_dist1\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"1\"][\"size\"]);\n+        result.pushKV(\"feerate_dist2\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"10\"][\"size\"]);\n+        result.pushKV(\"feerate_dist3\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"100\"][\"size\"]);\n+        result.pushKV(\"feerate_dist4\", batch[ID_MEMPOOLINFO][\"result\"][\"fee_histogram\"][\"fee_rate_groups\"][\"200\"][\"size\"]);\n+        result.pushKV(\"mempool_bytes\", batch[ID_MEMPOOLINFO][\"result\"][\"bytes\"]);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r742258915",
+      "id" : 742258915,
+      "in_reply_to_id" : 706983262,
+      "line" : 370,
+      "node_id" : "PRRC_kwDOABII584sPfjj",
+      "original_commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "original_line" : 370,
+      "original_position" : 26,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 26,
+      "pull_request_review_id" : 796996064,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/742258915/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-03T19:18:23Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/742258915",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746025964"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746025964"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "```suggestion\r\n    if (mempool_bytes > 0) {\r\n```",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-09T20:50:28Z",
+      "diff_hunk" : "@@ -1028,6 +1080,64 @@ static void ParseGetInfoResult(UniValue& result)\n         result_string += \"\\n\";\n     }\n \n+    const double mempool_bytes{result[\"mempool_bytes\"].get_real()};\n+\n+    if (mempool_bytes >0){",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746025964",
+      "id" : 746025964,
+      "line" : 1085,
+      "node_id" : "PRRC_kwDOABII584sd3Ps",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 1085,
+      "original_position" : 117,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 117,
+      "pull_request_review_id" : 801868827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746025964/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-09T21:20:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746025964",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746026278"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746026278"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "\r\n\r\n\r\nI can see mixing of tabs and spaces in the source code: \r\n![image](https://user-images.githubusercontent.com/58662979/141002352-bca9f6de-5a65-49e5-9afd-aabeddbe0be2.png) \r\n\r\n(This is actually interesting because if you use an editor that supports .editorconfig, it should be quite hard to get to this situation)",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-09T20:50:46Z",
+      "diff_hunk" : "@@ -1028,6 +1080,64 @@ static void ParseGetInfoResult(UniValue& result)\n         result_string += \"\\n\";\n     }\n \n+    const double mempool_bytes{result[\"mempool_bytes\"].get_real()};\n+",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746026278",
+      "id" : 746026278,
+      "line" : 1084,
+      "node_id" : "PRRC_kwDOABII584sd3Um",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 1084,
+      "original_position" : 116,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 116,
+      "pull_request_review_id" : 801868827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746026278/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-09T21:20:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746026278",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746027915"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746027915"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "I would consider naming the function `GetFeeRateBar` as I can see that we have `CFeeRate` class. But I may be wrong on this.",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-09T20:52:21Z",
+      "diff_hunk" : "@@ -928,6 +938,39 @@ static void GetProgressBar(double progress, std::string& progress_bar)\n     }\n }\n \n+\n+static void GetFeerateBar(double size, std::string& size_bar, double inc_size, double max_size)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746027915",
+      "id" : 746027915,
+      "in_reply_to_id" : 706986559,
+      "line" : 949,
+      "node_id" : "PRRC_kwDOABII584sd3uL",
+      "original_commit_id" : "58fd0a4d4431f084f7f8260ed453be0c6d984517",
+      "original_line" : 949,
+      "original_position" : 36,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 43,
+      "pull_request_review_id" : 801868827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746027915/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-09T21:20:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746027915",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746033022"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746033022"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "```suggestion\r\n    \t// Removing zero from numbers used in std::min to avoid division by zero in GetFeeRateBar()\r\n```",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-09T20:56:49Z",
+      "diff_hunk" : "@@ -1028,6 +1080,64 @@ static void ParseGetInfoResult(UniValue& result)\n         result_string += \"\\n\";\n     }\n \n+    const double mempool_bytes{result[\"mempool_bytes\"].get_real()};\n+\n+    if (mempool_bytes >0){\n+\n+    \tresult_string += strprintf(\"%sMempool:%s\\n\", MAGENTA, RESET);\n+\n+    \tstd::string fee_rate;\n+    \tstd::string size_bar;\n+    \tdouble fee_size = 0;\n+\n+    \tdouble size1 = result[\"feerate_dist1\"].get_real();\n+    \tdouble size2 = result[\"feerate_dist2\"].get_real();\n+    \tdouble size3 = result[\"feerate_dist3\"].get_real();\n+    \tdouble size4 = result[\"feerate_dist4\"].get_real();\n+\n+    \t//Removing zero from numbers used in std::min to avoid division by zero in GetFeerateBar()",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746033022",
+      "id" : 746033022,
+      "line" : 1098,
+      "node_id" : "PRRC_kwDOABII584sd49-",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 1098,
+      "original_position" : 130,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 130,
+      "pull_request_review_id" : 801868827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746033022/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-09T21:20:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746033022",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746033614"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746033614"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "```suggestion\r\n    \t\tif (fee_size > 0) {\r\n```",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-09T20:57:20Z",
+      "diff_hunk" : "@@ -1028,6 +1080,64 @@ static void ParseGetInfoResult(UniValue& result)\n         result_string += \"\\n\";\n     }\n \n+    const double mempool_bytes{result[\"mempool_bytes\"].get_real()};\n+\n+    if (mempool_bytes >0){\n+\n+    \tresult_string += strprintf(\"%sMempool:%s\\n\", MAGENTA, RESET);\n+\n+    \tstd::string fee_rate;\n+    \tstd::string size_bar;\n+    \tdouble fee_size = 0;\n+\n+    \tdouble size1 = result[\"feerate_dist1\"].get_real();\n+    \tdouble size2 = result[\"feerate_dist2\"].get_real();\n+    \tdouble size3 = result[\"feerate_dist3\"].get_real();\n+    \tdouble size4 = result[\"feerate_dist4\"].get_real();\n+\n+    \t//Removing zero from numbers used in std::min to avoid division by zero in GetFeerateBar()\n+    \tauto const ignore_zero = [](auto const& a, auto const& b) -> bool {\n+        \tif(0 == a || 0 == b)\n+        \t{\n+            \treturn false;\n+        \t}\n+        \treturn a < b;\n+    \t};\n+\n+    \tdouble max_size = std::max({size1, size2, size3, size4});\n+    \tdouble inc_size = std::min({size1, size2, size3, size4}, ignore_zero);\n+\n+    \tfor (int i = 1; i < 5; ++i) {\n+\n+        \tswitch (i)\n+    \t\t{\n+    \t\tcase 1: fee_rate = \"1-9       |\";\n+    \t\t        fee_size = size1;\n+        \t\tbreak;\n+    \t\tcase 2: fee_rate = \"10-99     |\";\n+    \t\t        fee_size = size2;\n+        \t\tbreak;\n+    \t\tcase 3: fee_rate = \"100-199   |\";\n+    \t\t        fee_size = size3;\n+        \t\tbreak;\n+        \tcase 4: fee_rate = \"Above 200 |\";\n+        \t        fee_size = size4;\n+        \t\tbreak;\n+    \t\t}\n+\n+    \t\tGetFeerateBar(fee_size, size_bar, inc_size, max_size);\n+    \t\tsize_bar += \" \";\n+\n+    \t\tif (fee_size > 0){",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746033614",
+      "id" : 746033614,
+      "line" : 1131,
+      "node_id" : "PRRC_kwDOABII584sd5HO",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 1131,
+      "original_position" : 163,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 163,
+      "pull_request_review_id" : 801868827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746033614/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-09T21:20:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746033614",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746039369"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746039369"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Maybe the arguments can be re-ordered so that `in` params are first and the `out` param is last.",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-09T21:02:28Z",
+      "diff_hunk" : "@@ -928,6 +938,46 @@ static void GetProgressBar(double progress, std::string& progress_bar)\n     }\n }\n \n+/**\n+ * GetFeerateBar constructs fee rate distribution bars using dynamic increment based on size.\n+ *\n+ * @param[in]  size      Size of fee rate group in bytes.",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746039369",
+      "id" : 746039369,
+      "line" : 944,
+      "node_id" : "PRRC_kwDOABII584sd6hJ",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 944,
+      "original_position" : 38,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 38,
+      "pull_request_review_id" : 801868827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746039369/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-09T21:20:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746039369",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746044132"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746044132"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Given that there so many very similar numbers differing in the number of zero digits, one may consider using `10'000` syntax to represent `10000` (https://en.cppreference.com/w/cpp/language/integer_literal). (I'm not sure if it is allowed in this repo though)",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-09T21:06:39Z",
+      "diff_hunk" : "@@ -928,6 +938,46 @@ static void GetProgressBar(double progress, std::string& progress_bar)\n     }\n }\n \n+/**\n+ * GetFeerateBar constructs fee rate distribution bars using dynamic increment based on size.\n+ *\n+ * @param[in]  size      Size of fee rate group in bytes.\n+ * @param[out] size_bar  String representation of the distribution bar.\n+ * @param[in]  inc_size  Minimum size of fee rate groups in bytes.\n+ * @param[in]  max_size  Maximum size of fee rate groups in bytes.\n+ */\n+static void GetFeerateBar(double size, std::string& size_bar, double inc_size, double max_size)\n+{\n+    if (size == 0) return;\n+\n+    static double INCREMENT{inc_size};\n+    static const std::string BAR{\"\\u2591\"};\n+\n+    if (max_size < 10000){",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746044132",
+      "id" : 746044132,
+      "line" : 956,
+      "node_id" : "PRRC_kwDOABII584sd7rk",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 956,
+      "original_position" : 50,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 50,
+      "pull_request_review_id" : 801868827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746044132/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-09T21:20:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746044132",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746044853"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746044853"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "```suggestion\r\n    } else if (max_size > 10000000 && max_size < 100000000) {\r\n```",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-09T21:07:17Z",
+      "diff_hunk" : "@@ -928,6 +938,46 @@ static void GetProgressBar(double progress, std::string& progress_bar)\n     }\n }\n \n+/**\n+ * GetFeerateBar constructs fee rate distribution bars using dynamic increment based on size.\n+ *\n+ * @param[in]  size      Size of fee rate group in bytes.\n+ * @param[out] size_bar  String representation of the distribution bar.\n+ * @param[in]  inc_size  Minimum size of fee rate groups in bytes.\n+ * @param[in]  max_size  Maximum size of fee rate groups in bytes.\n+ */\n+static void GetFeerateBar(double size, std::string& size_bar, double inc_size, double max_size)\n+{\n+    if (size == 0) return;\n+\n+    static double INCREMENT{inc_size};\n+    static const std::string BAR{\"\\u2591\"};\n+\n+    if (max_size < 10000){\n+        for (int i = 0; i < size / INCREMENT; ++i) {\n+            size_bar += BAR;\n+        }\n+    } else if (max_size > 10000 && max_size < 100000){\n+        for (int i = 0; i < size / (INCREMENT*10); ++i) {\n+            size_bar += BAR;\n+        }\n+    } else if (max_size > 100000 && max_size < 1000000){\n+    \tfor (int i = 0; i < size / (INCREMENT*100); ++i) {\n+            size_bar += BAR;\n+        }\n+    } else if (max_size > 1000000 && max_size < 10000000){\n+    \tfor (int i = 0; i < size / (INCREMENT*1000); ++i) {\n+            size_bar += BAR;\n+        }\n+    } else if (max_size > 10000000 && max_size < 100000000){",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746044853",
+      "id" : 746044853,
+      "line" : 972,
+      "node_id" : "PRRC_kwDOABII584sd721",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 972,
+      "original_position" : 66,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 66,
+      "pull_request_review_id" : 801868827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746044853/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-09T21:20:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746044853",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746048121"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746048121"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "What will happen for value `100000`? ",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-09T21:10:12Z",
+      "diff_hunk" : "@@ -928,6 +938,46 @@ static void GetProgressBar(double progress, std::string& progress_bar)\n     }\n }\n \n+/**\n+ * GetFeerateBar constructs fee rate distribution bars using dynamic increment based on size.\n+ *\n+ * @param[in]  size      Size of fee rate group in bytes.\n+ * @param[out] size_bar  String representation of the distribution bar.\n+ * @param[in]  inc_size  Minimum size of fee rate groups in bytes.\n+ * @param[in]  max_size  Maximum size of fee rate groups in bytes.\n+ */\n+static void GetFeerateBar(double size, std::string& size_bar, double inc_size, double max_size)\n+{\n+    if (size == 0) return;\n+\n+    static double INCREMENT{inc_size};\n+    static const std::string BAR{\"\\u2591\"};\n+\n+    if (max_size < 10000){\n+        for (int i = 0; i < size / INCREMENT; ++i) {\n+            size_bar += BAR;\n+        }\n+    } else if (max_size > 10000 && max_size < 100000){",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746048121",
+      "id" : 746048121,
+      "line" : 960,
+      "node_id" : "PRRC_kwDOABII584sd8p5",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 960,
+      "original_position" : 54,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 54,
+      "pull_request_review_id" : 801868827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746048121/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-09T21:20:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746048121",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746049296"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746049296"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "All the for-cycles are the same basically, so maybe you can have one for-cycle after this set of conditions. That may actually be easier to review.",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-09T21:11:15Z",
+      "diff_hunk" : "@@ -928,6 +938,46 @@ static void GetProgressBar(double progress, std::string& progress_bar)\n     }\n }\n \n+/**\n+ * GetFeerateBar constructs fee rate distribution bars using dynamic increment based on size.\n+ *\n+ * @param[in]  size      Size of fee rate group in bytes.\n+ * @param[out] size_bar  String representation of the distribution bar.\n+ * @param[in]  inc_size  Minimum size of fee rate groups in bytes.\n+ * @param[in]  max_size  Maximum size of fee rate groups in bytes.\n+ */\n+static void GetFeerateBar(double size, std::string& size_bar, double inc_size, double max_size)\n+{\n+    if (size == 0) return;\n+\n+    static double INCREMENT{inc_size};\n+    static const std::string BAR{\"\\u2591\"};\n+\n+    if (max_size < 10000){\n+        for (int i = 0; i < size / INCREMENT; ++i) {\n+            size_bar += BAR;\n+        }\n+    } else if (max_size > 10000 && max_size < 100000){\n+        for (int i = 0; i < size / (INCREMENT*10); ++i) {\n+            size_bar += BAR;\n+        }\n+    } else if (max_size > 100000 && max_size < 1000000){\n+    \tfor (int i = 0; i < size / (INCREMENT*100); ++i) {\n+            size_bar += BAR;\n+        }",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746049296",
+      "id" : 746049296,
+      "line" : 967,
+      "node_id" : "PRRC_kwDOABII584sd88Q",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 967,
+      "original_position" : 61,
+      "original_start_line" : 965,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 61,
+      "pull_request_review_id" : 801868827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746049296/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : 965,
+      "start_side" : "RIGHT",
+      "updated_at" : "2021-11-09T21:20:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746049296",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746050610"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746050610"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "```suggestion\r\n        \tif (0 == a || 0 == b)\r\n```",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-09T21:12:47Z",
+      "diff_hunk" : "@@ -1028,6 +1080,64 @@ static void ParseGetInfoResult(UniValue& result)\n         result_string += \"\\n\";\n     }\n \n+    const double mempool_bytes{result[\"mempool_bytes\"].get_real()};\n+\n+    if (mempool_bytes >0){\n+\n+    \tresult_string += strprintf(\"%sMempool:%s\\n\", MAGENTA, RESET);\n+\n+    \tstd::string fee_rate;\n+    \tstd::string size_bar;\n+    \tdouble fee_size = 0;\n+\n+    \tdouble size1 = result[\"feerate_dist1\"].get_real();\n+    \tdouble size2 = result[\"feerate_dist2\"].get_real();\n+    \tdouble size3 = result[\"feerate_dist3\"].get_real();\n+    \tdouble size4 = result[\"feerate_dist4\"].get_real();\n+\n+    \t//Removing zero from numbers used in std::min to avoid division by zero in GetFeerateBar()\n+    \tauto const ignore_zero = [](auto const& a, auto const& b) -> bool {\n+        \tif(0 == a || 0 == b)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746050610",
+      "id" : 746050610,
+      "line" : 1100,
+      "node_id" : "PRRC_kwDOABII584sd9Qy",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 1100,
+      "original_position" : 132,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 132,
+      "pull_request_review_id" : 801868827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746050610/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-09T21:20:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746050610",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746054948"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746054948"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "What should happen when all values are zero?",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-09T21:19:36Z",
+      "diff_hunk" : "@@ -1028,6 +1080,64 @@ static void ParseGetInfoResult(UniValue& result)\n         result_string += \"\\n\";\n     }\n \n+    const double mempool_bytes{result[\"mempool_bytes\"].get_real()};\n+\n+    if (mempool_bytes >0){\n+\n+    \tresult_string += strprintf(\"%sMempool:%s\\n\", MAGENTA, RESET);\n+\n+    \tstd::string fee_rate;\n+    \tstd::string size_bar;\n+    \tdouble fee_size = 0;\n+\n+    \tdouble size1 = result[\"feerate_dist1\"].get_real();\n+    \tdouble size2 = result[\"feerate_dist2\"].get_real();\n+    \tdouble size3 = result[\"feerate_dist3\"].get_real();\n+    \tdouble size4 = result[\"feerate_dist4\"].get_real();\n+\n+    \t//Removing zero from numbers used in std::min to avoid division by zero in GetFeerateBar()\n+    \tauto const ignore_zero = [](auto const& a, auto const& b) -> bool {\n+        \tif(0 == a || 0 == b)\n+        \t{\n+            \treturn false;\n+        \t}\n+        \treturn a < b;\n+    \t};\n+\n+    \tdouble max_size = std::max({size1, size2, size3, size4});\n+    \tdouble inc_size = std::min({size1, size2, size3, size4}, ignore_zero);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746054948",
+      "id" : 746054948,
+      "line" : 1108,
+      "node_id" : "PRRC_kwDOABII584sd-Uk",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 1108,
+      "original_position" : 140,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 140,
+      "pull_request_review_id" : 801868827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746054948/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-09T21:20:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746054948",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746055262"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746055262"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "This line makes me think that value `200` is not included neither in case 3 nor in case 4.",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-09T21:20:07Z",
+      "diff_hunk" : "@@ -1028,6 +1080,64 @@ static void ParseGetInfoResult(UniValue& result)\n         result_string += \"\\n\";\n     }\n \n+    const double mempool_bytes{result[\"mempool_bytes\"].get_real()};\n+\n+    if (mempool_bytes >0){\n+\n+    \tresult_string += strprintf(\"%sMempool:%s\\n\", MAGENTA, RESET);\n+\n+    \tstd::string fee_rate;\n+    \tstd::string size_bar;\n+    \tdouble fee_size = 0;\n+\n+    \tdouble size1 = result[\"feerate_dist1\"].get_real();\n+    \tdouble size2 = result[\"feerate_dist2\"].get_real();\n+    \tdouble size3 = result[\"feerate_dist3\"].get_real();\n+    \tdouble size4 = result[\"feerate_dist4\"].get_real();\n+\n+    \t//Removing zero from numbers used in std::min to avoid division by zero in GetFeerateBar()\n+    \tauto const ignore_zero = [](auto const& a, auto const& b) -> bool {\n+        \tif(0 == a || 0 == b)\n+        \t{\n+            \treturn false;\n+        \t}\n+        \treturn a < b;\n+    \t};\n+\n+    \tdouble max_size = std::max({size1, size2, size3, size4});\n+    \tdouble inc_size = std::min({size1, size2, size3, size4}, ignore_zero);\n+\n+    \tfor (int i = 1; i < 5; ++i) {\n+\n+        \tswitch (i)\n+    \t\t{\n+    \t\tcase 1: fee_rate = \"1-9       |\";\n+    \t\t        fee_size = size1;\n+        \t\tbreak;\n+    \t\tcase 2: fee_rate = \"10-99     |\";\n+    \t\t        fee_size = size2;\n+        \t\tbreak;\n+    \t\tcase 3: fee_rate = \"100-199   |\";\n+    \t\t        fee_size = size3;\n+        \t\tbreak;\n+        \tcase 4: fee_rate = \"Above 200 |\";",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746055262",
+      "id" : 746055262,
+      "line" : 1123,
+      "node_id" : "PRRC_kwDOABII584sd-Ze",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 1123,
+      "original_position" : 155,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 155,
+      "pull_request_review_id" : 801868827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746055262/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-09T21:20:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746055262",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "author_association" : "NONE",
+      "body" : "Feature ACK. Useful.",
+      "created_at" : "2021-11-10T10:05:39Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#issuecomment-964977451",
+      "id" : 964977451,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22891",
+      "node_id" : "IC_kwDOABII5845hGMr",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/964977451/reactions"
+      },
+      "updated_at" : "2021-11-10T10:05:47Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/964977451",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/9156103?v=4",
+         "events_url" : "https://api.github.com/users/nopara73/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/nopara73/followers",
+         "following_url" : "https://api.github.com/users/nopara73/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/nopara73/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/nopara73",
+         "id" : 9156103,
+         "login" : "nopara73",
+         "node_id" : "MDQ6VXNlcjkxNTYxMDM=",
+         "organizations_url" : "https://api.github.com/users/nopara73/orgs",
+         "received_events_url" : "https://api.github.com/users/nopara73/received_events",
+         "repos_url" : "https://api.github.com/users/nopara73/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/nopara73/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/nopara73/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/nopara73"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746454171"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746454171"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Playing devil's advocate: Why to use these values and not different ones? \r\n\r\nI think it's very hard to argue that these values are the best possible. Without more information in PR's description, this feels arbitrary. And even if you can persuade people for Bitcoin mainnet chain, I would be surprised if these values were good for Bitcoin testnet chain.\r\n\r\nI don't really know how to approach this but it seems important. This is also the reason why #21422 lets user to decide. Original #15836 [mentioned log scale](https://github.com/bitcoin/bitcoin/pull/15836/files#diff-decae4be02fb8a47ab4557fe74a9cb853bdfa3ec0fa1b515c0a1e5de91f4ad0bR1497) which seems in principle much better to me.",
+      "commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "created_at" : "2021-11-10T10:28:43Z",
+      "diff_hunk" : "@@ -315,6 +316,8 @@ class GetinfoRequestHandler: public BaseRequestHandler\n         result.push_back(JSONRPCRequestObj(\"getblockchaininfo\", NullUniValue, ID_BLOCKCHAININFO));\n         result.push_back(JSONRPCRequestObj(\"getwalletinfo\", NullUniValue, ID_WALLETINFO));\n         result.push_back(JSONRPCRequestObj(\"getbalances\", NullUniValue, ID_BALANCES));\n+        UniValue params{RPCConvertValues(\"getmempoolinfo\", {\"[1,10,100,200,1000]\"})};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r746454171",
+      "id" : 746454171,
+      "line" : 319,
+      "node_id" : "PRRC_kwDOABII584sffyb",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 319,
+      "original_position" : 12,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 12,
+      "pull_request_review_id" : 802400904,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746454171/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-10T10:28:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746454171",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747118637"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747118637"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "I think I used different editor while working on this and my VS Code is behaving weird since few days. Will try to fix this.",
+      "commit_id" : "338bfbf83db82e2996a3305c330c7f2c3a912879",
+      "created_at" : "2021-11-11T00:44:00Z",
+      "diff_hunk" : "@@ -1028,6 +1080,64 @@ static void ParseGetInfoResult(UniValue& result)\n         result_string += \"\\n\";\n     }\n \n+    const double mempool_bytes{result[\"mempool_bytes\"].get_real()};\n+",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747118637",
+      "id" : 747118637,
+      "in_reply_to_id" : 746026278,
+      "line" : 1084,
+      "node_id" : "PRRC_kwDOABII584siCAt",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 1084,
+      "original_position" : 116,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 116,
+      "pull_request_review_id" : 803309712,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747118637/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-11T00:44:00Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747118637",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747122131"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747122131"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Done",
+      "commit_id" : "338bfbf83db82e2996a3305c330c7f2c3a912879",
+      "created_at" : "2021-11-11T00:53:16Z",
+      "diff_hunk" : "@@ -928,6 +938,46 @@ static void GetProgressBar(double progress, std::string& progress_bar)\n     }\n }\n \n+/**\n+ * GetFeerateBar constructs fee rate distribution bars using dynamic increment based on size.\n+ *\n+ * @param[in]  size      Size of fee rate group in bytes.",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747122131",
+      "id" : 747122131,
+      "in_reply_to_id" : 746039369,
+      "line" : 944,
+      "node_id" : "PRRC_kwDOABII584siC3T",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 944,
+      "original_position" : 38,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 38,
+      "pull_request_review_id" : 803313841,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747122131/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-11T00:53:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747122131",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747124129"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747124129"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Not sure about this as I have not seen such format for any constants in this repository.",
+      "commit_id" : "338bfbf83db82e2996a3305c330c7f2c3a912879",
+      "created_at" : "2021-11-11T00:58:38Z",
+      "diff_hunk" : "@@ -928,6 +938,46 @@ static void GetProgressBar(double progress, std::string& progress_bar)\n     }\n }\n \n+/**\n+ * GetFeerateBar constructs fee rate distribution bars using dynamic increment based on size.\n+ *\n+ * @param[in]  size      Size of fee rate group in bytes.\n+ * @param[out] size_bar  String representation of the distribution bar.\n+ * @param[in]  inc_size  Minimum size of fee rate groups in bytes.\n+ * @param[in]  max_size  Maximum size of fee rate groups in bytes.\n+ */\n+static void GetFeerateBar(double size, std::string& size_bar, double inc_size, double max_size)\n+{\n+    if (size == 0) return;\n+\n+    static double INCREMENT{inc_size};\n+    static const std::string BAR{\"\\u2591\"};\n+\n+    if (max_size < 10000){",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747124129",
+      "id" : 747124129,
+      "in_reply_to_id" : 746044132,
+      "line" : 956,
+      "node_id" : "PRRC_kwDOABII584siDWh",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 956,
+      "original_position" : 50,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 50,
+      "pull_request_review_id" : 803316200,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747124129/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-11T00:58:39Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747124129",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747125864"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747125864"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Good catch. Will have to make some changes.",
+      "commit_id" : "fb46f43f3b29342ccd0bd6b1478e997af17d5e7f",
+      "created_at" : "2021-11-11T01:03:19Z",
+      "diff_hunk" : "@@ -928,6 +938,46 @@ static void GetProgressBar(double progress, std::string& progress_bar)\n     }\n }\n \n+/**\n+ * GetFeerateBar constructs fee rate distribution bars using dynamic increment based on size.\n+ *\n+ * @param[in]  size      Size of fee rate group in bytes.\n+ * @param[out] size_bar  String representation of the distribution bar.\n+ * @param[in]  inc_size  Minimum size of fee rate groups in bytes.\n+ * @param[in]  max_size  Maximum size of fee rate groups in bytes.\n+ */\n+static void GetFeerateBar(double size, std::string& size_bar, double inc_size, double max_size)\n+{\n+    if (size == 0) return;\n+\n+    static double INCREMENT{inc_size};\n+    static const std::string BAR{\"\\u2591\"};\n+\n+    if (max_size < 10000){\n+        for (int i = 0; i < size / INCREMENT; ++i) {\n+            size_bar += BAR;\n+        }\n+    } else if (max_size > 10000 && max_size < 100000){",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747125864",
+      "id" : 747125864,
+      "in_reply_to_id" : 746048121,
+      "line" : 960,
+      "node_id" : "PRRC_kwDOABII584siDxo",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 960,
+      "original_position" : 54,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 54,
+      "pull_request_review_id" : 803318277,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747125864/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-11T01:03:19Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747125864",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747127196"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747127196"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Right this can be done. Will do later today.",
+      "commit_id" : "fb46f43f3b29342ccd0bd6b1478e997af17d5e7f",
+      "created_at" : "2021-11-11T01:07:05Z",
+      "diff_hunk" : "@@ -928,6 +938,46 @@ static void GetProgressBar(double progress, std::string& progress_bar)\n     }\n }\n \n+/**\n+ * GetFeerateBar constructs fee rate distribution bars using dynamic increment based on size.\n+ *\n+ * @param[in]  size      Size of fee rate group in bytes.\n+ * @param[out] size_bar  String representation of the distribution bar.\n+ * @param[in]  inc_size  Minimum size of fee rate groups in bytes.\n+ * @param[in]  max_size  Maximum size of fee rate groups in bytes.\n+ */\n+static void GetFeerateBar(double size, std::string& size_bar, double inc_size, double max_size)\n+{\n+    if (size == 0) return;\n+\n+    static double INCREMENT{inc_size};\n+    static const std::string BAR{\"\\u2591\"};\n+\n+    if (max_size < 10000){\n+        for (int i = 0; i < size / INCREMENT; ++i) {\n+            size_bar += BAR;\n+        }\n+    } else if (max_size > 10000 && max_size < 100000){\n+        for (int i = 0; i < size / (INCREMENT*10); ++i) {\n+            size_bar += BAR;\n+        }\n+    } else if (max_size > 100000 && max_size < 1000000){\n+    \tfor (int i = 0; i < size / (INCREMENT*100); ++i) {\n+            size_bar += BAR;\n+        }",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747127196",
+      "id" : 747127196,
+      "in_reply_to_id" : 746049296,
+      "line" : 967,
+      "node_id" : "PRRC_kwDOABII584siEGc",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 967,
+      "original_position" : 61,
+      "original_start_line" : 965,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 61,
+      "pull_request_review_id" : 803319892,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747127196/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : 965,
+      "start_side" : "RIGHT",
+      "updated_at" : "2021-11-11T01:07:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747127196",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747128040"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747128040"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "`mempool_bytes` will be zero in that case and mempool section will not be printed L1085",
+      "commit_id" : "fb46f43f3b29342ccd0bd6b1478e997af17d5e7f",
+      "created_at" : "2021-11-11T01:09:29Z",
+      "diff_hunk" : "@@ -1028,6 +1080,64 @@ static void ParseGetInfoResult(UniValue& result)\n         result_string += \"\\n\";\n     }\n \n+    const double mempool_bytes{result[\"mempool_bytes\"].get_real()};\n+\n+    if (mempool_bytes >0){\n+\n+    \tresult_string += strprintf(\"%sMempool:%s\\n\", MAGENTA, RESET);\n+\n+    \tstd::string fee_rate;\n+    \tstd::string size_bar;\n+    \tdouble fee_size = 0;\n+\n+    \tdouble size1 = result[\"feerate_dist1\"].get_real();\n+    \tdouble size2 = result[\"feerate_dist2\"].get_real();\n+    \tdouble size3 = result[\"feerate_dist3\"].get_real();\n+    \tdouble size4 = result[\"feerate_dist4\"].get_real();\n+\n+    \t//Removing zero from numbers used in std::min to avoid division by zero in GetFeerateBar()\n+    \tauto const ignore_zero = [](auto const& a, auto const& b) -> bool {\n+        \tif(0 == a || 0 == b)\n+        \t{\n+            \treturn false;\n+        \t}\n+        \treturn a < b;\n+    \t};\n+\n+    \tdouble max_size = std::max({size1, size2, size3, size4});\n+    \tdouble inc_size = std::min({size1, size2, size3, size4}, ignore_zero);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747128040",
+      "id" : 747128040,
+      "in_reply_to_id" : 746054948,
+      "line" : 1108,
+      "node_id" : "PRRC_kwDOABII584siETo",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 1108,
+      "original_position" : 140,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 140,
+      "pull_request_review_id" : 803320880,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747128040/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-11T01:09:30Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747128040",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747128697"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747128697"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "200 is included in case 4. I wrote `Above 200` in short for `200 and Above 200`",
+      "commit_id" : "fb46f43f3b29342ccd0bd6b1478e997af17d5e7f",
+      "created_at" : "2021-11-11T01:11:22Z",
+      "diff_hunk" : "@@ -1028,6 +1080,64 @@ static void ParseGetInfoResult(UniValue& result)\n         result_string += \"\\n\";\n     }\n \n+    const double mempool_bytes{result[\"mempool_bytes\"].get_real()};\n+\n+    if (mempool_bytes >0){\n+\n+    \tresult_string += strprintf(\"%sMempool:%s\\n\", MAGENTA, RESET);\n+\n+    \tstd::string fee_rate;\n+    \tstd::string size_bar;\n+    \tdouble fee_size = 0;\n+\n+    \tdouble size1 = result[\"feerate_dist1\"].get_real();\n+    \tdouble size2 = result[\"feerate_dist2\"].get_real();\n+    \tdouble size3 = result[\"feerate_dist3\"].get_real();\n+    \tdouble size4 = result[\"feerate_dist4\"].get_real();\n+\n+    \t//Removing zero from numbers used in std::min to avoid division by zero in GetFeerateBar()\n+    \tauto const ignore_zero = [](auto const& a, auto const& b) -> bool {\n+        \tif(0 == a || 0 == b)\n+        \t{\n+            \treturn false;\n+        \t}\n+        \treturn a < b;\n+    \t};\n+\n+    \tdouble max_size = std::max({size1, size2, size3, size4});\n+    \tdouble inc_size = std::min({size1, size2, size3, size4}, ignore_zero);\n+\n+    \tfor (int i = 1; i < 5; ++i) {\n+\n+        \tswitch (i)\n+    \t\t{\n+    \t\tcase 1: fee_rate = \"1-9       |\";\n+    \t\t        fee_size = size1;\n+        \t\tbreak;\n+    \t\tcase 2: fee_rate = \"10-99     |\";\n+    \t\t        fee_size = size2;\n+        \t\tbreak;\n+    \t\tcase 3: fee_rate = \"100-199   |\";\n+    \t\t        fee_size = size3;\n+        \t\tbreak;\n+        \tcase 4: fee_rate = \"Above 200 |\";",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747128697",
+      "id" : 747128697,
+      "in_reply_to_id" : 746055262,
+      "line" : 1123,
+      "node_id" : "PRRC_kwDOABII584siEd5",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 1123,
+      "original_position" : 155,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 155,
+      "pull_request_review_id" : 803321714,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747128697/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-11T01:11:23Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747128697",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747131552"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747131552"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "> Playing devil's advocate: Why to use these values and not different ones?\r\n\r\nDifferent can be either random values which is difficult to support in this feature as its just a summary of mempool. Or use more values in between which will use more space hence used all multiples of 10 until 100 and then trying to include everything else in 'Above 200' category.\r\n\r\n> And even if you can persuade people for Bitcoin mainnet chain, I would be surprised if these values were good for Bitcoin testnet chain.\r\n\r\nI tried them on testnet and mainnet. Works fine because it wont print a category if it has zero size.\r\n\r\n> This is also the reason why #21422 lets user to decide.\r\n\r\nThis is not replacement for 21422 but a usecase for it.\r\n\r\n> Original #15836 mentioned log scale which seems in principle much better to me.\r\n\r\nIt was closed by one of the maintainers with comment: \"Closing this, given it's been taken over in #21422\"\r\n\r\nOne example of fee rate distribution from https://btc.bitaps.com/:\r\n\r\n![image](https://user-images.githubusercontent.com/13405205/141219327-18086649-6c4a-43df-b208-ca849efa9f72.png)\r\n",
+      "commit_id" : "fb46f43f3b29342ccd0bd6b1478e997af17d5e7f",
+      "created_at" : "2021-11-11T01:19:16Z",
+      "diff_hunk" : "@@ -315,6 +316,8 @@ class GetinfoRequestHandler: public BaseRequestHandler\n         result.push_back(JSONRPCRequestObj(\"getblockchaininfo\", NullUniValue, ID_BLOCKCHAININFO));\n         result.push_back(JSONRPCRequestObj(\"getwalletinfo\", NullUniValue, ID_WALLETINFO));\n         result.push_back(JSONRPCRequestObj(\"getbalances\", NullUniValue, ID_BALANCES));\n+        UniValue params{RPCConvertValues(\"getmempoolinfo\", {\"[1,10,100,200,1000]\"})};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747131552",
+      "id" : 747131552,
+      "in_reply_to_id" : 746454171,
+      "line" : 319,
+      "node_id" : "PRRC_kwDOABII584siFKg",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 319,
+      "original_position" : 12,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 12,
+      "pull_request_review_id" : 803325232,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747131552/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-11T01:20:58Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747131552",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
+         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/prayank23/followers",
+         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/prayank23",
+         "id" : 13405205,
+         "login" : "prayank23",
+         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
+         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
+         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
+         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/prayank23"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747256562"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747256562"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "> > And even if you can persuade people for Bitcoin mainnet chain, I would be surprised if these values were good for Bitcoin testnet chain.\r\n> \r\n> I tried them on testnet and mainnet. Works fine because it wont print a category if it has zero size.\r\n\r\nI'm not sure we understand each other. Anyway, I just wanted to point out that any fixed intervals may sooner or later become obsolete. Suppose that your PR is merged and for whatever reasons nobody will mine fee rates less than 200. Then you will just show one bar (right?) and that's not useful really. That is my main concern and that's why I mentioned #15836 and and the log scale (a nice curve with interesting mathematical properties) - again, I'm not saying \"use this\", just trying to say that some math analysis might be needed here.\r\n\r\n> > This is also the reason why #21422 lets user to decide.\r\n> \r\n> This is not replacement for 21422 but a usecase for it.\r\n\r\nYes, I know.\r\n\r\n> One example of fee rate distribution from https://btc.bitaps.com/:\r\n> \r\n> ![image](https://user-images.githubusercontent.com/13405205/141219327-18086649-6c4a-43df-b208-ca849efa9f72.png)\r\n\r\nI like it but it's a website and they can change the output whenever they like. I don't consider this to be true for Bitcoin Core.",
+      "commit_id" : "fb46f43f3b29342ccd0bd6b1478e997af17d5e7f",
+      "created_at" : "2021-11-11T07:18:19Z",
+      "diff_hunk" : "@@ -315,6 +316,8 @@ class GetinfoRequestHandler: public BaseRequestHandler\n         result.push_back(JSONRPCRequestObj(\"getblockchaininfo\", NullUniValue, ID_BLOCKCHAININFO));\n         result.push_back(JSONRPCRequestObj(\"getwalletinfo\", NullUniValue, ID_WALLETINFO));\n         result.push_back(JSONRPCRequestObj(\"getbalances\", NullUniValue, ID_BALANCES));\n+        UniValue params{RPCConvertValues(\"getmempoolinfo\", {\"[1,10,100,200,1000]\"})};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747256562",
+      "id" : 747256562,
+      "in_reply_to_id" : 746454171,
+      "line" : 319,
+      "node_id" : "PRRC_kwDOABII584sijry",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 319,
+      "original_position" : 12,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 12,
+      "pull_request_review_id" : 803477505,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747256562/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-11T07:18:20Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747256562",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747257562"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747257562"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Yeah. Maybe one can use `â¥ 200` (https://www.fileformat.info/info/unicode/char/2265/index.htm) instead of \"Above 200\" to make the meaning absolutely clear.",
+      "commit_id" : "fb46f43f3b29342ccd0bd6b1478e997af17d5e7f",
+      "created_at" : "2021-11-11T07:20:27Z",
+      "diff_hunk" : "@@ -1028,6 +1080,64 @@ static void ParseGetInfoResult(UniValue& result)\n         result_string += \"\\n\";\n     }\n \n+    const double mempool_bytes{result[\"mempool_bytes\"].get_real()};\n+\n+    if (mempool_bytes >0){\n+\n+    \tresult_string += strprintf(\"%sMempool:%s\\n\", MAGENTA, RESET);\n+\n+    \tstd::string fee_rate;\n+    \tstd::string size_bar;\n+    \tdouble fee_size = 0;\n+\n+    \tdouble size1 = result[\"feerate_dist1\"].get_real();\n+    \tdouble size2 = result[\"feerate_dist2\"].get_real();\n+    \tdouble size3 = result[\"feerate_dist3\"].get_real();\n+    \tdouble size4 = result[\"feerate_dist4\"].get_real();\n+\n+    \t//Removing zero from numbers used in std::min to avoid division by zero in GetFeerateBar()\n+    \tauto const ignore_zero = [](auto const& a, auto const& b) -> bool {\n+        \tif(0 == a || 0 == b)\n+        \t{\n+            \treturn false;\n+        \t}\n+        \treturn a < b;\n+    \t};\n+\n+    \tdouble max_size = std::max({size1, size2, size3, size4});\n+    \tdouble inc_size = std::min({size1, size2, size3, size4}, ignore_zero);\n+\n+    \tfor (int i = 1; i < 5; ++i) {\n+\n+        \tswitch (i)\n+    \t\t{\n+    \t\tcase 1: fee_rate = \"1-9       |\";\n+    \t\t        fee_size = size1;\n+        \t\tbreak;\n+    \t\tcase 2: fee_rate = \"10-99     |\";\n+    \t\t        fee_size = size2;\n+        \t\tbreak;\n+    \t\tcase 3: fee_rate = \"100-199   |\";\n+    \t\t        fee_size = size3;\n+        \t\tbreak;\n+        \tcase 4: fee_rate = \"Above 200 |\";",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747257562",
+      "id" : 747257562,
+      "in_reply_to_id" : 746055262,
+      "line" : 1123,
+      "node_id" : "PRRC_kwDOABII584sij7a",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 1123,
+      "original_position" : 155,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 155,
+      "pull_request_review_id" : 803478769,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747257562/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-11T07:20:27Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747257562",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747258097"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747258097"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "IDK, maybe @jonatack would know. ð ",
+      "commit_id" : "fb46f43f3b29342ccd0bd6b1478e997af17d5e7f",
+      "created_at" : "2021-11-11T07:21:42Z",
+      "diff_hunk" : "@@ -928,6 +938,46 @@ static void GetProgressBar(double progress, std::string& progress_bar)\n     }\n }\n \n+/**\n+ * GetFeerateBar constructs fee rate distribution bars using dynamic increment based on size.\n+ *\n+ * @param[in]  size      Size of fee rate group in bytes.\n+ * @param[out] size_bar  String representation of the distribution bar.\n+ * @param[in]  inc_size  Minimum size of fee rate groups in bytes.\n+ * @param[in]  max_size  Maximum size of fee rate groups in bytes.\n+ */\n+static void GetFeerateBar(double size, std::string& size_bar, double inc_size, double max_size)\n+{\n+    if (size == 0) return;\n+\n+    static double INCREMENT{inc_size};\n+    static const std::string BAR{\"\\u2591\"};\n+\n+    if (max_size < 10000){",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#discussion_r747258097",
+      "id" : 747258097,
+      "in_reply_to_id" : 746044132,
+      "line" : 956,
+      "node_id" : "PRRC_kwDOABII584sikDx",
+      "original_commit_id" : "797eac624a18d58123c163bced4bad150a1ebbc0",
+      "original_line" : 956,
+      "original_position" : 50,
+      "original_start_line" : null,
+      "path" : "src/bitcoin-cli.cpp",
+      "position" : 50,
+      "pull_request_review_id" : 803479509,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22891",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747258097/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-11-11T07:21:42Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/747258097",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/58662979?v=4",
+         "events_url" : "https://api.github.com/users/kiminuo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kiminuo/followers",
+         "following_url" : "https://api.github.com/users/kiminuo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kiminuo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kiminuo",
+         "id" : 58662979,
+         "login" : "kiminuo",
+         "node_id" : "MDQ6VXNlcjU4NjYyOTc5",
+         "organizations_url" : "https://api.github.com/users/kiminuo/orgs",
+         "received_events_url" : "https://api.github.com/users/kiminuo/received_events",
+         "repos_url" : "https://api.github.com/users/kiminuo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kiminuo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kiminuo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kiminuo"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
+      "created_at" : "2022-01-05T17:16:23Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22891#issuecomment-1005917766",
+      "id" : 1005917766,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22891",
+      "node_id" : "IC_kwDOABII58479RZG",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1005917766/reactions"
+      },
+      "updated_at" : "2022-01-05T17:16:23Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1005917766",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   }
+]

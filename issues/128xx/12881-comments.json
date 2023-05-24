@@ -1,0 +1,883 @@
+[
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179101685"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179101685"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Nit: `if (upper)` instead of `if(upper)`",
+      "commit_id" : "60f61f99529f54f85c847d61122c70c0358ebecc",
+      "created_at" : "2018-04-04T11:05:50Z",
+      "diff_hunk" : "@@ -161,26 +155,28 @@ std::pair<std::string, data> Decode(const std::string& str) {\n     for (size_t i = 0; i < str.size(); ++i) {\n         unsigned char c = str[i];\n         if (c < 33 || c > 126) return {};\n-        if (c >= 'a' && c <= 'z') lower = true;\n-        if (c >= 'A' && c <= 'Z') upper = true;\n+        // Mixing upper and lowercase is not OK.\n+        if (!lower && c >= 'a' && c <= 'z') { if(upper) return {}; lower = true; }",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179101685",
+      "id" : 179101685,
+      "original_commit_id" : "b65a5a3bfd27900e5554c62a1b4e3691e6aac748",
+      "original_position" : 20,
+      "path" : "src/bech32.cpp",
+      "position" : null,
+      "pull_request_review_id" : 109280050,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881",
+      "updated_at" : "2018-04-13T00:54:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179101685",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7826565?v=4",
+         "events_url" : "https://api.github.com/users/practicalswift/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/practicalswift/followers",
+         "following_url" : "https://api.github.com/users/practicalswift/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/practicalswift/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/practicalswift",
+         "id" : 7826565,
+         "login" : "practicalswift",
+         "organizations_url" : "https://api.github.com/users/practicalswift/orgs",
+         "received_events_url" : "https://api.github.com/users/practicalswift/received_events",
+         "repos_url" : "https://api.github.com/users/practicalswift/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/practicalswift/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/practicalswift/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/practicalswift"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179102794"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179102794"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Add `assert(c >= 33 && c <= 126);` on the line before `int8_t rev = CHARSET_REV[c];` to make assumption explicit?",
+      "commit_id" : "60f61f99529f54f85c847d61122c70c0358ebecc",
+      "created_at" : "2018-04-04T11:10:57Z",
+      "diff_hunk" : "@@ -161,26 +155,28 @@ std::pair<std::string, data> Decode(const std::string& str) {\n     for (size_t i = 0; i < str.size(); ++i) {\n         unsigned char c = str[i];\n         if (c < 33 || c > 126) return {};\n-        if (c >= 'a' && c <= 'z') lower = true;\n-        if (c >= 'A' && c <= 'Z') upper = true;\n+        // Mixing upper and lowercase is not OK.\n+        if (!lower && c >= 'a' && c <= 'z') { if(upper) return {}; lower = true; }\n+        else if (!upper && c >= 'A' && c <= 'Z') { if(lower) return {}; upper = true; }\n     }\n-    if (lower && upper) return {};\n+\n     size_t pos = str.rfind('1');\n     if (str.size() > 90 || pos == str.npos || pos == 0 || pos + 7 > str.size()) {\n         return {};\n     }\n     data values(str.size() - 1 - pos);\n     for (size_t i = 0; i < str.size() - 1 - pos; ++i) {\n         unsigned char c = str[i + pos + 1];\n-        int8_t rev = (c < 33 || c > 126) ? -1 : CHARSET_REV[c];\n+        int8_t rev = CHARSET_REV[c];",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179102794",
+      "id" : 179102794,
+      "original_commit_id" : "b65a5a3bfd27900e5554c62a1b4e3691e6aac748",
+      "original_position" : 33,
+      "path" : "src/bech32.cpp",
+      "position" : 17,
+      "pull_request_review_id" : 109281352,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881",
+      "updated_at" : "2018-04-13T00:54:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179102794",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7826565?v=4",
+         "events_url" : "https://api.github.com/users/practicalswift/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/practicalswift/followers",
+         "following_url" : "https://api.github.com/users/practicalswift/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/practicalswift/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/practicalswift",
+         "id" : 7826565,
+         "login" : "practicalswift",
+         "organizations_url" : "https://api.github.com/users/practicalswift/orgs",
+         "received_events_url" : "https://api.github.com/users/practicalswift/received_events",
+         "repos_url" : "https://api.github.com/users/practicalswift/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/practicalswift/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/practicalswift/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/practicalswift"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "`LowerCase()` and `std::tolower()` are not equivalent. `std::tolower()` takes the currently installed C locale into account.",
+      "created_at" : "2018-04-04T11:13:39Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#issuecomment-378564722",
+      "id" : 378564722,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12881",
+      "updated_at" : "2018-04-04T11:13:53Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/378564722",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7826565?v=4",
+         "events_url" : "https://api.github.com/users/practicalswift/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/practicalswift/followers",
+         "following_url" : "https://api.github.com/users/practicalswift/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/practicalswift/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/practicalswift",
+         "id" : 7826565,
+         "login" : "practicalswift",
+         "organizations_url" : "https://api.github.com/users/practicalswift/orgs",
+         "received_events_url" : "https://api.github.com/users/practicalswift/received_events",
+         "repos_url" : "https://api.github.com/users/practicalswift/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/practicalswift/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/practicalswift/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/practicalswift"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179107878"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179107878"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Not even a nit. Should be a compiler error IMO. I must be tired. :-)",
+      "commit_id" : "60f61f99529f54f85c847d61122c70c0358ebecc",
+      "created_at" : "2018-04-04T11:32:56Z",
+      "diff_hunk" : "@@ -161,26 +155,28 @@ std::pair<std::string, data> Decode(const std::string& str) {\n     for (size_t i = 0; i < str.size(); ++i) {\n         unsigned char c = str[i];\n         if (c < 33 || c > 126) return {};\n-        if (c >= 'a' && c <= 'z') lower = true;\n-        if (c >= 'A' && c <= 'Z') upper = true;\n+        // Mixing upper and lowercase is not OK.\n+        if (!lower && c >= 'a' && c <= 'z') { if(upper) return {}; lower = true; }",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179107878",
+      "id" : 179107878,
+      "in_reply_to_id" : 179101685,
+      "original_commit_id" : "b65a5a3bfd27900e5554c62a1b4e3691e6aac748",
+      "original_position" : 20,
+      "path" : "src/bech32.cpp",
+      "position" : null,
+      "pull_request_review_id" : 109287208,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881",
+      "updated_at" : "2018-04-13T00:54:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179107878",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/5404807?v=4",
+         "events_url" : "https://api.github.com/users/murrayn/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/murrayn/followers",
+         "following_url" : "https://api.github.com/users/murrayn/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/murrayn/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/murrayn",
+         "id" : 5404807,
+         "login" : "murrayn",
+         "organizations_url" : "https://api.github.com/users/murrayn/orgs",
+         "received_events_url" : "https://api.github.com/users/murrayn/received_events",
+         "repos_url" : "https://api.github.com/users/murrayn/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/murrayn/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/murrayn/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/murrayn"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179323297"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179323297"
+         }
+      },
+      "author_association" : "OWNER",
+      "body" : "Please follow the coding style: any `if` that has anything but just a single-statement then body must use braces and indentation.",
+      "commit_id" : "60f61f99529f54f85c847d61122c70c0358ebecc",
+      "created_at" : "2018-04-05T00:44:08Z",
+      "diff_hunk" : "@@ -161,18 +161,20 @@ std::pair<std::string, data> Decode(const std::string& str) {\n     for (size_t i = 0; i < str.size(); ++i) {\n         unsigned char c = str[i];\n         if (c < 33 || c > 126) return {};\n-        if (c >= 'a' && c <= 'z') lower = true;\n-        if (c >= 'A' && c <= 'Z') upper = true;\n+        // Mixing upper and lowercase is not OK.\n+        if (!lower && c >= 'a' && c <= 'z') { if (upper) return {}; lower = true; }",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179323297",
+      "id" : 179323297,
+      "original_commit_id" : "1bc88b4a6642b7acba01ba9b7abe1ae2a8d8d8c4",
+      "original_position" : 7,
+      "path" : "src/bech32.cpp",
+      "position" : null,
+      "pull_request_review_id" : 109547041,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881",
+      "updated_at" : "2018-04-13T00:54:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179323297",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/548488?v=4",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@murrayn After fixing any nits, please also [squash your commits](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#squashing-commits).",
+      "created_at" : "2018-04-05T01:06:54Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#issuecomment-378791318",
+      "id" : 378791318,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12881",
+      "updated_at" : "2018-04-05T01:06:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/378791318",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/863730?v=4",
+         "events_url" : "https://api.github.com/users/fanquake/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/fanquake/followers",
+         "following_url" : "https://api.github.com/users/fanquake/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/fanquake/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/fanquake",
+         "id" : 863730,
+         "login" : "fanquake",
+         "organizations_url" : "https://api.github.com/users/fanquake/orgs",
+         "received_events_url" : "https://api.github.com/users/fanquake/received_events",
+         "repos_url" : "https://api.github.com/users/fanquake/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/fanquake/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/fanquake/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/fanquake"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179329952"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179329952"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "`else` here would improve a bit.",
+      "commit_id" : "60f61f99529f54f85c847d61122c70c0358ebecc",
+      "created_at" : "2018-04-05T01:32:12Z",
+      "diff_hunk" : "@@ -161,18 +161,25 @@ std::pair<std::string, data> Decode(const std::string& str) {\n     for (size_t i = 0; i < str.size(); ++i) {\n         unsigned char c = str[i];\n         if (c < 33 || c > 126) return {};\n-        if (c >= 'a' && c <= 'z') lower = true;\n-        if (c >= 'A' && c <= 'Z') upper = true;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179329952",
+      "id" : 179329952,
+      "original_commit_id" : "163d794add855adb14dcce4f59a04f58bc7f1ded",
+      "original_position" : 5,
+      "path" : "src/bech32.cpp",
+      "position" : null,
+      "pull_request_review_id" : 109554379,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881",
+      "updated_at" : "2018-04-13T00:54:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179329952",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179331525"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179331525"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Maybe better:\r\n```cpp\r\nif (c >= 'a') { if (c <= 'z') lower = true; }\r\nelse if (c >= 'A') { if (c <= 'Z') upper = true; }",
+      "commit_id" : "60f61f99529f54f85c847d61122c70c0358ebecc",
+      "created_at" : "2018-04-05T01:43:05Z",
+      "diff_hunk" : "@@ -161,18 +161,25 @@ std::pair<std::string, data> Decode(const std::string& str) {\n     for (size_t i = 0; i < str.size(); ++i) {\n         unsigned char c = str[i];\n         if (c < 33 || c > 126) return {};\n-        if (c >= 'a' && c <= 'z') lower = true;\n-        if (c >= 'A' && c <= 'Z') upper = true;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179331525",
+      "id" : 179331525,
+      "in_reply_to_id" : 179329952,
+      "original_commit_id" : "163d794add855adb14dcce4f59a04f58bc7f1ded",
+      "original_position" : 5,
+      "path" : "src/bech32.cpp",
+      "position" : null,
+      "pull_request_review_id" : 109554379,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881",
+      "updated_at" : "2018-04-13T00:54:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179331525",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179341938"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179341938"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "@practicalswift If I were writing Decode() from scratch, I don't think it would occur to me to add an assert() there. Not convinced it adds any value.\r\n",
+      "commit_id" : "60f61f99529f54f85c847d61122c70c0358ebecc",
+      "created_at" : "2018-04-05T03:23:39Z",
+      "diff_hunk" : "@@ -161,26 +155,28 @@ std::pair<std::string, data> Decode(const std::string& str) {\n     for (size_t i = 0; i < str.size(); ++i) {\n         unsigned char c = str[i];\n         if (c < 33 || c > 126) return {};\n-        if (c >= 'a' && c <= 'z') lower = true;\n-        if (c >= 'A' && c <= 'Z') upper = true;\n+        // Mixing upper and lowercase is not OK.\n+        if (!lower && c >= 'a' && c <= 'z') { if(upper) return {}; lower = true; }\n+        else if (!upper && c >= 'A' && c <= 'Z') { if(lower) return {}; upper = true; }\n     }\n-    if (lower && upper) return {};\n+\n     size_t pos = str.rfind('1');\n     if (str.size() > 90 || pos == str.npos || pos == 0 || pos + 7 > str.size()) {\n         return {};\n     }\n     data values(str.size() - 1 - pos);\n     for (size_t i = 0; i < str.size() - 1 - pos; ++i) {\n         unsigned char c = str[i + pos + 1];\n-        int8_t rev = (c < 33 || c > 126) ? -1 : CHARSET_REV[c];\n+        int8_t rev = CHARSET_REV[c];",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179341938",
+      "id" : 179341938,
+      "in_reply_to_id" : 179102794,
+      "original_commit_id" : "b65a5a3bfd27900e5554c62a1b4e3691e6aac748",
+      "original_position" : 33,
+      "path" : "src/bech32.cpp",
+      "position" : 17,
+      "pull_request_review_id" : 109567714,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881",
+      "updated_at" : "2018-04-13T00:54:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179341938",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/5404807?v=4",
+         "events_url" : "https://api.github.com/users/murrayn/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/murrayn/followers",
+         "following_url" : "https://api.github.com/users/murrayn/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/murrayn/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/murrayn",
+         "id" : 5404807,
+         "login" : "murrayn",
+         "organizations_url" : "https://api.github.com/users/murrayn/orgs",
+         "received_events_url" : "https://api.github.com/users/murrayn/received_events",
+         "repos_url" : "https://api.github.com/users/murrayn/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/murrayn/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/murrayn/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/murrayn"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179342380"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179342380"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "@promag Do you have an example in mind of a most common case?",
+      "commit_id" : "60f61f99529f54f85c847d61122c70c0358ebecc",
+      "created_at" : "2018-04-05T03:29:02Z",
+      "diff_hunk" : "@@ -161,18 +161,25 @@ std::pair<std::string, data> Decode(const std::string& str) {\n     for (size_t i = 0; i < str.size(); ++i) {\n         unsigned char c = str[i];\n         if (c < 33 || c > 126) return {};\n-        if (c >= 'a' && c <= 'z') lower = true;\n-        if (c >= 'A' && c <= 'Z') upper = true;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179342380",
+      "id" : 179342380,
+      "in_reply_to_id" : 179329952,
+      "original_commit_id" : "163d794add855adb14dcce4f59a04f58bc7f1ded",
+      "original_position" : 5,
+      "path" : "src/bech32.cpp",
+      "position" : null,
+      "pull_request_review_id" : 109568239,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881",
+      "updated_at" : "2018-04-13T00:54:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179342380",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/5404807?v=4",
+         "events_url" : "https://api.github.com/users/murrayn/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/murrayn/followers",
+         "following_url" : "https://api.github.com/users/murrayn/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/murrayn/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/murrayn",
+         "id" : 5404807,
+         "login" : "murrayn",
+         "organizations_url" : "https://api.github.com/users/murrayn/orgs",
+         "received_events_url" : "https://api.github.com/users/murrayn/received_events",
+         "repos_url" : "https://api.github.com/users/murrayn/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/murrayn/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/murrayn/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/murrayn"
+      }
+   },
+   {
+      "author_association" : "OWNER",
+      "body" : "> LowerCase() and std::tolower() are not equivalent. std::tolower() takes the currently installed C locale into account.\r\n\r\nThanks for catching this. We should be extremely careful to not introduce locale dependencies in the low-level string parsing functions. We've had serious problems with those in the past. This can result in country-specific bugs...",
+      "created_at" : "2018-04-05T07:25:16Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#issuecomment-378844244",
+      "id" : 378844244,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12881",
+      "updated_at" : "2018-04-05T07:25:16Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/378844244",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179387291"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179387291"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "The success case?",
+      "commit_id" : "60f61f99529f54f85c847d61122c70c0358ebecc",
+      "created_at" : "2018-04-05T08:35:20Z",
+      "diff_hunk" : "@@ -161,18 +161,25 @@ std::pair<std::string, data> Decode(const std::string& str) {\n     for (size_t i = 0; i < str.size(); ++i) {\n         unsigned char c = str[i];\n         if (c < 33 || c > 126) return {};\n-        if (c >= 'a' && c <= 'z') lower = true;\n-        if (c >= 'A' && c <= 'Z') upper = true;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179387291",
+      "id" : 179387291,
+      "in_reply_to_id" : 179329952,
+      "original_commit_id" : "163d794add855adb14dcce4f59a04f58bc7f1ded",
+      "original_position" : 5,
+      "path" : "src/bech32.cpp",
+      "position" : null,
+      "pull_request_review_id" : 109619322,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881",
+      "updated_at" : "2018-04-13T00:54:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179387291",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179417135"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179417135"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "OK, in that case (let's assume a string consisting only of lowercase or uppercase letters) the existing code will do three comparisons and one assignment, per character. The proposed code will do three comparisons per character, with the added benefit of returning earlier in the case of a malformed string. Not sure why you would \"suspect this makes the most common case worst\".\r\n",
+      "commit_id" : "60f61f99529f54f85c847d61122c70c0358ebecc",
+      "created_at" : "2018-04-05T10:25:09Z",
+      "diff_hunk" : "@@ -161,18 +161,25 @@ std::pair<std::string, data> Decode(const std::string& str) {\n     for (size_t i = 0; i < str.size(); ++i) {\n         unsigned char c = str[i];\n         if (c < 33 || c > 126) return {};\n-        if (c >= 'a' && c <= 'z') lower = true;\n-        if (c >= 'A' && c <= 'Z') upper = true;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179417135",
+      "id" : 179417135,
+      "in_reply_to_id" : 179329952,
+      "original_commit_id" : "163d794add855adb14dcce4f59a04f58bc7f1ded",
+      "original_position" : 5,
+      "path" : "src/bech32.cpp",
+      "position" : null,
+      "pull_request_review_id" : 109654486,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881",
+      "updated_at" : "2018-04-13T00:54:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179417135",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/5404807?v=4",
+         "events_url" : "https://api.github.com/users/murrayn/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/murrayn/followers",
+         "following_url" : "https://api.github.com/users/murrayn/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/murrayn/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/murrayn",
+         "id" : 5404807,
+         "login" : "murrayn",
+         "organizations_url" : "https://api.github.com/users/murrayn/orgs",
+         "received_events_url" : "https://api.github.com/users/murrayn/received_events",
+         "repos_url" : "https://api.github.com/users/murrayn/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/murrayn/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/murrayn/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/murrayn"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179430899"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179430899"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Further to this, if we're going to assume the most common case is the success case (which is reasonable), it would probably be good to move the initial (c < 33 || c > 126) check to an ultimate \"else if\" check to the original code.\r\n",
+      "commit_id" : "60f61f99529f54f85c847d61122c70c0358ebecc",
+      "created_at" : "2018-04-05T11:28:26Z",
+      "diff_hunk" : "@@ -161,18 +161,25 @@ std::pair<std::string, data> Decode(const std::string& str) {\n     for (size_t i = 0; i < str.size(); ++i) {\n         unsigned char c = str[i];\n         if (c < 33 || c > 126) return {};\n-        if (c >= 'a' && c <= 'z') lower = true;\n-        if (c >= 'A' && c <= 'Z') upper = true;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179430899",
+      "id" : 179430899,
+      "in_reply_to_id" : 179329952,
+      "original_commit_id" : "163d794add855adb14dcce4f59a04f58bc7f1ded",
+      "original_position" : 5,
+      "path" : "src/bech32.cpp",
+      "position" : null,
+      "pull_request_review_id" : 109671226,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881",
+      "updated_at" : "2018-04-13T00:54:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179430899",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/5404807?v=4",
+         "events_url" : "https://api.github.com/users/murrayn/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/murrayn/followers",
+         "following_url" : "https://api.github.com/users/murrayn/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/murrayn/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/murrayn",
+         "id" : 5404807,
+         "login" : "murrayn",
+         "organizations_url" : "https://api.github.com/users/murrayn/orgs",
+         "received_events_url" : "https://api.github.com/users/murrayn/received_events",
+         "repos_url" : "https://api.github.com/users/murrayn/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/murrayn/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/murrayn/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/murrayn"
+      }
+   },
+   {
+      "author_association" : "OWNER",
+      "body" : "Please don't overthink this. Decoding addresses is hardly relevant (I don't think anyone would notice if they were 100x slower). My goal when writing this was more clarity and simplicity than speed, though I'm obviously not opposed to performance improvements if they don't conflict with those goals.\n\nI am interested in whether the additional branches don't make performance worse though. My gut feeling is that they impact performance more than comparisons.",
+      "created_at" : "2018-04-05T11:50:32Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#issuecomment-378909918",
+      "id" : 378909918,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12881",
+      "updated_at" : "2018-04-05T11:50:32Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/378909918",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/548488?v=4",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179594303"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179594303"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "@murrayn probably, but can you post benchmark results?",
+      "commit_id" : "60f61f99529f54f85c847d61122c70c0358ebecc",
+      "created_at" : "2018-04-05T20:41:25Z",
+      "diff_hunk" : "@@ -161,18 +161,25 @@ std::pair<std::string, data> Decode(const std::string& str) {\n     for (size_t i = 0; i < str.size(); ++i) {\n         unsigned char c = str[i];\n         if (c < 33 || c > 126) return {};\n-        if (c >= 'a' && c <= 'z') lower = true;\n-        if (c >= 'A' && c <= 'Z') upper = true;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r179594303",
+      "id" : 179594303,
+      "in_reply_to_id" : 179329952,
+      "original_commit_id" : "163d794add855adb14dcce4f59a04f58bc7f1ded",
+      "original_position" : 5,
+      "path" : "src/bech32.cpp",
+      "position" : null,
+      "pull_request_review_id" : 109869557,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881",
+      "updated_at" : "2018-04-13T00:54:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/179594303",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "@sipa Thanks for the feedback. I've reworked the code again to reflect your input.\r\n",
+      "created_at" : "2018-04-06T02:10:30Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#issuecomment-379128807",
+      "id" : 379128807,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12881",
+      "updated_at" : "2018-04-06T02:10:30Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/379128807",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/5404807?v=4",
+         "events_url" : "https://api.github.com/users/murrayn/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/murrayn/followers",
+         "following_url" : "https://api.github.com/users/murrayn/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/murrayn/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/murrayn",
+         "id" : 5404807,
+         "login" : "murrayn",
+         "organizations_url" : "https://api.github.com/users/murrayn/orgs",
+         "received_events_url" : "https://api.github.com/users/murrayn/received_events",
+         "repos_url" : "https://api.github.com/users/murrayn/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/murrayn/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/murrayn/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/murrayn"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "To get rid of the merge commit, please squash your commits according to https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#squashing-commits",
+      "created_at" : "2018-04-11T19:38:20Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#issuecomment-380571375",
+      "id" : 380571375,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12881",
+      "updated_at" : "2018-04-11T19:38:20Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/380571375",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Not sure if this PR is stalled due to the earlier comment about benchmarks...I didn't think benchmarks would be as interesting after my most recent commit, in which the code was more straightforward. Just in case, I have benchmarked:\r\n\r\n    if (c >= 'a' && c <= 'z') lower = 1;\r\n    else if (c >= 'A' && c <= 'Z') upper = 1;\r\n    else if (c < 33 || c > 126) return 0;\r\n\r\nversus\r\n\r\n    if (c < 33 || c > 126) return 0;\r\n    if (c >= 'a' && c <= 'z') lower = 1;\r\n    if (c >= 'A' && c <= 'Z') upper = 1;\r\n\r\nand my results show the former is significantly faster; however, with -O2 compiler optimization enabled they benchmark identically, which isn't surprising.\r\n",
+      "created_at" : "2018-04-20T09:22:46Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#issuecomment-383039089",
+      "id" : 383039089,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12881",
+      "updated_at" : "2018-04-20T09:24:30Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/383039089",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/5404807?v=4",
+         "events_url" : "https://api.github.com/users/murrayn/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/murrayn/followers",
+         "following_url" : "https://api.github.com/users/murrayn/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/murrayn/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/murrayn",
+         "id" : 5404807,
+         "login" : "murrayn",
+         "organizations_url" : "https://api.github.com/users/murrayn/orgs",
+         "received_events_url" : "https://api.github.com/users/murrayn/received_events",
+         "repos_url" : "https://api.github.com/users/murrayn/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/murrayn/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/murrayn/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/murrayn"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r184350396"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/184350396"
+         }
+      },
+      "author_association" : "OWNER",
+      "body" : "Remember that we have asserts enabled on release notes, better not add them in inner loops especially not if the goal is to 'tighten up' anything.",
+      "commit_id" : "60f61f99529f54f85c847d61122c70c0358ebecc",
+      "created_at" : "2018-04-26T11:05:00Z",
+      "diff_hunk" : "@@ -161,26 +155,28 @@ std::pair<std::string, data> Decode(const std::string& str) {\n     for (size_t i = 0; i < str.size(); ++i) {\n         unsigned char c = str[i];\n         if (c < 33 || c > 126) return {};\n-        if (c >= 'a' && c <= 'z') lower = true;\n-        if (c >= 'A' && c <= 'Z') upper = true;\n+        // Mixing upper and lowercase is not OK.\n+        if (!lower && c >= 'a' && c <= 'z') { if(upper) return {}; lower = true; }\n+        else if (!upper && c >= 'A' && c <= 'Z') { if(lower) return {}; upper = true; }\n     }\n-    if (lower && upper) return {};\n+\n     size_t pos = str.rfind('1');\n     if (str.size() > 90 || pos == str.npos || pos == 0 || pos + 7 > str.size()) {\n         return {};\n     }\n     data values(str.size() - 1 - pos);\n     for (size_t i = 0; i < str.size() - 1 - pos; ++i) {\n         unsigned char c = str[i + pos + 1];\n-        int8_t rev = (c < 33 || c > 126) ? -1 : CHARSET_REV[c];\n+        int8_t rev = CHARSET_REV[c];",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#discussion_r184350396",
+      "id" : 184350396,
+      "in_reply_to_id" : 179102794,
+      "original_commit_id" : "b65a5a3bfd27900e5554c62a1b4e3691e6aac748",
+      "original_position" : 33,
+      "path" : "src/bech32.cpp",
+      "position" : 17,
+      "pull_request_review_id" : 115526784,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12881",
+      "updated_at" : "2018-04-26T11:05:00Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/184350396",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Please also adjust the OP",
+      "created_at" : "2018-04-26T11:47:25Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#issuecomment-384611605",
+      "id" : 384611605,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12881",
+      "updated_at" : "2018-04-26T11:47:25Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/384611605",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "utACK 60f61f99529f54f85c847d61122c70c0358ebecc",
+      "created_at" : "2018-05-15T10:08:14Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12881#issuecomment-389114819",
+      "id" : 389114819,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12881",
+      "updated_at" : "2018-05-15T10:08:14Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/389114819",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   }
+]

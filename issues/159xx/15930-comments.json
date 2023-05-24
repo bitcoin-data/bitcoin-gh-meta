@@ -1,0 +1,1421 @@
+[
+   {
+      "author_association" : "MEMBER",
+      "body" : "Concept ACK\r\n\r\n> or rpcs redundant to this such as getbalance could be removed.\r\n\r\nDunno, I think having a dedicated call to get the balance is useful. If it's not broken (like mis-named methods) I'd prefer keeping it.",
+      "created_at" : "2019-05-01T15:29:06Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-488315314",
+      "id" : 488315314,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4ODMxNTMxNA==",
+      "updated_at" : "2019-05-01T15:29:06Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/488315314",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "concept ACK",
+      "created_at" : "2019-05-01T15:43:51Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-488319813",
+      "id" : 488319813,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4ODMxOTgxMw==",
+      "updated_at" : "2019-05-01T15:43:51Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/488319813",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "node_id" : "MDQ6VXNlcjU3Njc4OTE=",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280115804"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280115804"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Consider changing description to \"alias for balances.mine.trusted for backwards compatibility. This filed may be removed in a future version.\" and similar for below.",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-01T15:52:26Z",
+      "diff_hunk" : "@@ -2382,18 +2382,28 @@ static UniValue getwalletinfo(const JSONRPCRequest& request)\n         return NullUniValue;\n     }\n \n-    if (request.fHelp || request.params.size() != 0)\n-        throw std::runtime_error(\n-            RPCHelpMan{\"getwalletinfo\",\n+    const RPCHelpMan help{\"getwalletinfo\",\n                 \"Returns an object containing various wallet state info.\\n\",\n                 {},\n                 RPCResult{\n             \"{\\n\"\n             \"  \\\"walletname\\\": xxxxx,               (string) the wallet name\\n\"\n             \"  \\\"walletversion\\\": xxxxx,            (numeric) the wallet version\\n\"\n-            \"  \\\"balance\\\": xxxxxxx,                (numeric) the total confirmed balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n-            \"  \\\"unconfirmed_balance\\\": xxx,        (numeric) the total unconfirmed balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n-            \"  \\\"immature_balance\\\": xxxxxx,        (numeric) the total immature balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n+            \"  \\\"balances\\\": {                      (object) the wallet balances in \" + CURRENCY_UNIT + \"\\n\"\n+            \"    \\\"mine\\\": {                        (object) balances from outputs that the wallet can sign\\n\"\n+            \"      \\\"trusted\\\": xxx                 (numeric) trusted balance (outputs created by the wallet or confirmed outputs)\\n\"\n+            \"      \\\"untrusted_pending\\\": xxx       (numeric) untrusted pending balance (outputs created by others that are in the mempool)\\n\"\n+            \"      \\\"immature\\\": xxx                (numeric) balance from immature coinbase outputs\\n\"\n+            \"    },\\n\"\n+            \"    \\\"watchonly\\\": {                   (object) watchonly balances (not present if wallet does not watch anything)\\n\"\n+            \"      \\\"trusted\\\": xxx                 (numeric) trusted balance (outputs created by the wallet or confirmed outputs)\\n\"\n+            \"      \\\"untrusted_pending\\\": xxx       (numeric) untrusted pending balance (outputs created by others that are in the mempool)\\n\"\n+            \"      \\\"immature\\\": xxx                (numeric) balance from immature coinbase outputs\\n\"\n+            \"    },\\n\"\n+            \"  },\\n\"\n+            \"  \\\"balance\\\": xxxxxxx,                (numeric) Identical to balances.mine.trusted\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280115804",
+      "id" : 280115804,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDExNTgwNA==",
+      "original_commit_id" : "fac5d96105afb26a78d6cbdda9a5892c38392b20",
+      "original_position" : 66,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : null,
+      "pull_request_review_id" : 232628850,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T17:59:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280115804",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> How about we have a getbalances RPC that just returns the balances object added in this PR.\r\n\r\nThen I'd rather not add the same struct to getwalletinfo. Imo a single place where to get this is enough.",
+      "created_at" : "2019-05-01T16:38:58Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-488336043",
+      "id" : 488336043,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4ODMzNjA0Mw==",
+      "updated_at" : "2019-05-01T16:38:58Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/488336043",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "I don't have an issue with the same data appearing in multiple RPC methods, but if you think that's an issue, then I'd have a slight preference for a `getbalances` RPC method to be separate from `getwalletinfo`. I think either is an improvement though.\r\n\r\nI also think all wallet `get-` and `list-` methods should return a best block hash, so it's clear at what point the returned values are valid.",
+      "created_at" : "2019-05-01T18:16:34Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-488365245",
+      "id" : 488365245,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4ODM2NTI0NQ==",
+      "updated_at" : "2019-05-01T18:16:34Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/488365245",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280193929"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280193929"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Could assert `balances.min.trusted == balance` as well as for `unconfirmed_balance` and `immature_balance`.",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-01T19:55:51Z",
+      "diff_hunk" : "@@ -59,14 +59,23 @@ def run_test(self):\n         assert_equal(len(self.nodes[0].listunspent()), 0)\n         assert_equal(len(self.nodes[1].listunspent()), 0)\n \n-        self.log.info(\"Mining blocks ...\")\n+        self.log.info(\"Check that only node 0 is watching an address\")\n+        assert 'watchonly' in self.nodes[0].getwalletinfo()['balances']\n+        assert 'watchonly' not in self.nodes[1].getwalletinfo()['balances']\n \n+        self.log.info(\"Mining blocks ...\")\n         self.nodes[0].generate(1)\n         self.sync_all()\n         self.nodes[1].generate(1)\n         self.nodes[1].generatetoaddress(101, ADDRESS_WATCHONLY)\n         self.sync_all()\n \n+        assert_equal(self.nodes[0].getwalletinfo()['balances']['mine']['trusted'], 50)\n+        assert_equal(self.nodes[1].getwalletinfo()['balances']['mine']['trusted'], 50)\n+\n+        assert_equal(self.nodes[0].getwalletinfo()['balances']['watchonly']['immature'], 5000)\n+        assert 'watchonly' not in self.nodes[1].getwalletinfo()['balances']\n+",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280193929",
+      "id" : 280193929,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDE5MzkyOQ==",
+      "original_commit_id" : "fac5d96105afb26a78d6cbdda9a5892c38392b20",
+      "original_position" : 21,
+      "path" : "test/functional/wallet_balance.py",
+      "position" : 22,
+      "pull_request_review_id" : 232728355,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T17:59:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280193929",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Nice!\r\nConcept ACK.\r\n\r\nI agree with @jnewbery about returning the new object through `getbalance`. Why?\r\n`getwalletinfo`, for historical and logical reasons, has the is_min is_spendable balance value in it and I think removing it makes little sense. We already have the same data type in `getbalance` and to me it would just be logical to switch from a single balance value to the new obect (in both calls).\r\n\r\nI agree about depracating / removing `getunconfirmedbalance`",
+      "created_at" : "2019-05-02T08:41:33Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-488593290",
+      "id" : 488593290,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4ODU5MzI5MA==",
+      "updated_at" : "2019-05-02T08:41:33Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/488593290",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/178464?v=4",
+         "events_url" : "https://api.github.com/users/jonasschnelli/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonasschnelli/followers",
+         "following_url" : "https://api.github.com/users/jonasschnelli/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonasschnelli/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonasschnelli",
+         "id" : 178464,
+         "login" : "jonasschnelli",
+         "node_id" : "MDQ6VXNlcjE3ODQ2NA==",
+         "organizations_url" : "https://api.github.com/users/jonasschnelli/orgs",
+         "received_events_url" : "https://api.github.com/users/jonasschnelli/received_events",
+         "repos_url" : "https://api.github.com/users/jonasschnelli/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonasschnelli/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonasschnelli/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonasschnelli"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "This seems redundant with JSON-RPC batching?",
+      "created_at" : "2019-05-02T12:15:43Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-488649814",
+      "id" : 488649814,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4ODY0OTgxNA==",
+      "updated_at" : "2019-05-02T12:15:43Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/488649814",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "node_id" : "MDQ6VXNlcjEwOTU2NzU=",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@luke-jr It would be horribly redundant to provide a separate rpc for each balance type, when it comes at no cost to return them all.",
+      "created_at" : "2019-05-02T12:24:14Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-488652088",
+      "id" : 488652088,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4ODY1MjA4OA==",
+      "updated_at" : "2019-05-02T12:24:14Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/488652088",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Perhaps just a `getbalances` as @jnewbery suggested then?",
+      "created_at" : "2019-05-02T12:43:58Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-488657748",
+      "id" : 488657748,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4ODY1Nzc0OA==",
+      "updated_at" : "2019-05-02T12:43:58Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/488657748",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "node_id" : "MDQ6VXNlcjEwOTU2NzU=",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Having a separate RPC makes `getwalletinfo` constant (after removing deprecated fields).",
+      "created_at" : "2019-05-02T12:49:48Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-488659526",
+      "id" : 488659526,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4ODY1OTUyNg==",
+      "updated_at" : "2019-05-02T12:49:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/488659526",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Ok, going to rework to make this a fresh `getbalances` call (not to be confused with `getbalance`)",
+      "created_at" : "2019-05-02T12:59:27Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-488662718",
+      "id" : 488662718,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4ODY2MjcxOA==",
+      "updated_at" : "2019-05-02T12:59:27Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/488662718",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> This seems redundant with JSON-RPC batching?\r\n\r\nNote that batched RPCs are not atomic (and nor could they ever be, since the RPC server can't take the main lock).",
+      "created_at" : "2019-05-02T13:47:02Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-488679795",
+      "id" : 488679795,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4ODY3OTc5NQ==",
+      "updated_at" : "2019-05-02T13:47:02Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/488679795",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280450427"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280450427"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Maybe `Deprecated, use getbalances().mine.trusted` instead?",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-02T14:40:16Z",
+      "diff_hunk" : "@@ -2389,9 +2451,9 @@ static UniValue getwalletinfo(const JSONRPCRequest& request)\n             \"{\\n\"\n             \"  \\\"walletname\\\": xxxxx,               (string) the wallet name\\n\"\n             \"  \\\"walletversion\\\": xxxxx,            (numeric) the wallet version\\n\"\n-            \"  \\\"balance\\\": xxxxxxx,                (numeric) the total confirmed balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n-            \"  \\\"unconfirmed_balance\\\": xxx,        (numeric) the total unconfirmed balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n-            \"  \\\"immature_balance\\\": xxxxxx,        (numeric) the total immature balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n+            \"  \\\"balance\\\": xxxxxxx,                (numeric) Identical to getbalances().mine.trusted\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280450427",
+      "id" : 280450427,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDQ1MDQyNw==",
+      "original_commit_id" : "999931cf8f167c7547f1015cdf05437a460c27f0",
+      "original_position" : 104,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : null,
+      "pull_request_review_id" : 233048033,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T17:59:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280450427",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280451748"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280451748"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Any reason to not just send zeros?",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-02T14:43:03Z",
+      "diff_hunk" : "@@ -2373,6 +2373,68 @@ static UniValue settxfee(const JSONRPCRequest& request)\n     return true;\n }\n \n+static UniValue getbalances(const JSONRPCRequest& request)\n+{\n+    std::shared_ptr<CWallet> const rpc_wallet = GetWalletForJSONRPCRequest(request);\n+    if (!EnsureWalletIsAvailable(rpc_wallet.get(), request.fHelp)) {\n+        return NullUniValue;\n+    }\n+    CWallet& wallet = *rpc_wallet;\n+\n+    const RPCHelpMan help{\n+        \"getbalances\",\n+        \"Returns an object with all balances in \" + CURRENCY_UNIT + \".\\n\",\n+        {},\n+        RPCResult{\n+            \"{\\n\"\n+            \"    \\\"mine\\\": {                        (object) balances from outputs that the wallet can sign\\n\"\n+            \"      \\\"trusted\\\": xxx                 (numeric) trusted balance (outputs created by the wallet or confirmed outputs)\\n\"\n+            \"      \\\"untrusted_pending\\\": xxx       (numeric) untrusted pending balance (outputs created by others that are in the mempool)\\n\"\n+            \"      \\\"immature\\\": xxx                (numeric) balance from immature coinbase outputs\\n\"\n+            \"    },\\n\"\n+            \"    \\\"watchonly\\\": {                   (object) watchonly balances (not present if wallet does not watch anything)\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280451748",
+      "id" : 280451748,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDQ1MTc0OA==",
+      "original_commit_id" : "999931cf8f167c7547f1015cdf05437a460c27f0",
+      "original_position" : 51,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : 86,
+      "pull_request_review_id" : 233048033,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T17:59:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280451748",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280453748"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280453748"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Unless a rescan is in progress?",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-02T14:47:21Z",
+      "diff_hunk" : "@@ -2373,6 +2373,68 @@ static UniValue settxfee(const JSONRPCRequest& request)\n     return true;\n }\n \n+static UniValue getbalances(const JSONRPCRequest& request)\n+{\n+    std::shared_ptr<CWallet> const rpc_wallet = GetWalletForJSONRPCRequest(request);\n+    if (!EnsureWalletIsAvailable(rpc_wallet.get(), request.fHelp)) {\n+        return NullUniValue;\n+    }\n+    CWallet& wallet = *rpc_wallet;\n+\n+    const RPCHelpMan help{\n+        \"getbalances\",\n+        \"Returns an object with all balances in \" + CURRENCY_UNIT + \".\\n\",\n+        {},\n+        RPCResult{\n+            \"{\\n\"\n+            \"    \\\"mine\\\": {                        (object) balances from outputs that the wallet can sign\\n\"\n+            \"      \\\"trusted\\\": xxx                 (numeric) trusted balance (outputs created by the wallet or confirmed outputs)\\n\"\n+            \"      \\\"untrusted_pending\\\": xxx       (numeric) untrusted pending balance (outputs created by others that are in the mempool)\\n\"\n+            \"      \\\"immature\\\": xxx                (numeric) balance from immature coinbase outputs\\n\"\n+            \"    },\\n\"\n+            \"    \\\"watchonly\\\": {                   (object) watchonly balances (not present if wallet does not watch anything)\\n\"\n+            \"      \\\"trusted\\\": xxx                 (numeric) trusted balance (outputs created by the wallet or confirmed outputs)\\n\"\n+            \"      \\\"untrusted_pending\\\": xxx       (numeric) untrusted pending balance (outputs created by others that are in the mempool)\\n\"\n+            \"      \\\"immature\\\": xxx                (numeric) balance from immature coinbase outputs\\n\"\n+            \"    },\\n\"\n+            \"}\\n\"},\n+        RPCExamples{\n+            HelpExampleCli(\"getbalances\", \"\") +\n+            HelpExampleRpc(\"getbalances\", \"\")},\n+    };\n+\n+    if (request.fHelp || !help.IsValidNumArgs(request.params.size())) {\n+        throw std::runtime_error(help.ToString());\n+    }\n+\n+    // Make sure the results are valid at least up to the most recent block\n+    // the user could have gotten from another RPC command prior to now",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280453748",
+      "id" : 280453748,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDQ1Mzc0OA==",
+      "original_commit_id" : "eeee1497aca36eea40e386d0694bbd062bd1e89d",
+      "original_position" : 102,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : 102,
+      "pull_request_review_id" : 233048033,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T17:59:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280453748",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280482897"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280482897"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I agree this could be changed. My suggestion earlier was something like \"Alias for getbalances().mine.trusted for backwards compatibility. This filed may be removed in a future version.\"",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-02T15:49:28Z",
+      "diff_hunk" : "@@ -2389,9 +2451,9 @@ static UniValue getwalletinfo(const JSONRPCRequest& request)\n             \"{\\n\"\n             \"  \\\"walletname\\\": xxxxx,               (string) the wallet name\\n\"\n             \"  \\\"walletversion\\\": xxxxx,            (numeric) the wallet version\\n\"\n-            \"  \\\"balance\\\": xxxxxxx,                (numeric) the total confirmed balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n-            \"  \\\"unconfirmed_balance\\\": xxx,        (numeric) the total unconfirmed balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n-            \"  \\\"immature_balance\\\": xxxxxx,        (numeric) the total immature balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n+            \"  \\\"balance\\\": xxxxxxx,                (numeric) Identical to getbalances().mine.trusted\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280482897",
+      "id" : 280482897,
+      "in_reply_to_id" : 280450427,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDQ4Mjg5Nw==",
+      "original_commit_id" : "999931cf8f167c7547f1015cdf05437a460c27f0",
+      "original_position" : 104,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : null,
+      "pull_request_review_id" : 233090251,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T17:59:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280482897",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "utACK eeee1497aca36eea40e386d0694bbd062bd1e89d",
+      "created_at" : "2019-05-02T15:49:39Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-488726916",
+      "id" : 488726916,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4ODcyNjkxNg==",
+      "updated_at" : "2019-05-02T15:49:39Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/488726916",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280532230"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280532230"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Why are these losing pointer constness?",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-02T17:58:01Z",
+      "diff_hunk" : "@@ -70,14 +70,14 @@ std::shared_ptr<CWallet> GetWalletForJSONRPCRequest(const JSONRPCRequest& reques\n     return wallets.size() == 1 || (request.fHelp && wallets.size() > 0) ? wallets[0] : nullptr;\n }\n \n-std::string HelpRequiringPassphrase(CWallet * const pwallet)\n+std::string HelpRequiringPassphrase(const CWallet* pwallet)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280532230",
+      "id" : 280532230,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDUzMjIzMA==",
+      "original_commit_id" : "eeee1497aca36eea40e386d0694bbd062bd1e89d",
+      "original_position" : 33,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : 33,
+      "pull_request_review_id" : 233153456,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T17:59:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280532230",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "node_id" : "MDQ6VXNlcjEwOTU2NzU=",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280534324"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280534324"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "We don't really use pointer constness anywhere else in the code base. If it is required, the function should take a const reference instead.",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-02T18:03:36Z",
+      "diff_hunk" : "@@ -70,14 +70,14 @@ std::shared_ptr<CWallet> GetWalletForJSONRPCRequest(const JSONRPCRequest& reques\n     return wallets.size() == 1 || (request.fHelp && wallets.size() > 0) ? wallets[0] : nullptr;\n }\n \n-std::string HelpRequiringPassphrase(CWallet * const pwallet)\n+std::string HelpRequiringPassphrase(const CWallet* pwallet)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280534324",
+      "id" : 280534324,
+      "in_reply_to_id" : 280532230,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDUzNDMyNA==",
+      "original_commit_id" : "eeee1497aca36eea40e386d0694bbd062bd1e89d",
+      "original_position" : 33,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : 33,
+      "pull_request_review_id" : 233156209,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T17:59:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280534324",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280534524"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280534524"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This boilerplate is copy-pasted, so I'd rather change it in another pull.",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-02T18:04:12Z",
+      "diff_hunk" : "@@ -2373,6 +2373,68 @@ static UniValue settxfee(const JSONRPCRequest& request)\n     return true;\n }\n \n+static UniValue getbalances(const JSONRPCRequest& request)\n+{\n+    std::shared_ptr<CWallet> const rpc_wallet = GetWalletForJSONRPCRequest(request);\n+    if (!EnsureWalletIsAvailable(rpc_wallet.get(), request.fHelp)) {\n+        return NullUniValue;\n+    }\n+    CWallet& wallet = *rpc_wallet;\n+\n+    const RPCHelpMan help{\n+        \"getbalances\",\n+        \"Returns an object with all balances in \" + CURRENCY_UNIT + \".\\n\",\n+        {},\n+        RPCResult{\n+            \"{\\n\"\n+            \"    \\\"mine\\\": {                        (object) balances from outputs that the wallet can sign\\n\"\n+            \"      \\\"trusted\\\": xxx                 (numeric) trusted balance (outputs created by the wallet or confirmed outputs)\\n\"\n+            \"      \\\"untrusted_pending\\\": xxx       (numeric) untrusted pending balance (outputs created by others that are in the mempool)\\n\"\n+            \"      \\\"immature\\\": xxx                (numeric) balance from immature coinbase outputs\\n\"\n+            \"    },\\n\"\n+            \"    \\\"watchonly\\\": {                   (object) watchonly balances (not present if wallet does not watch anything)\\n\"\n+            \"      \\\"trusted\\\": xxx                 (numeric) trusted balance (outputs created by the wallet or confirmed outputs)\\n\"\n+            \"      \\\"untrusted_pending\\\": xxx       (numeric) untrusted pending balance (outputs created by others that are in the mempool)\\n\"\n+            \"      \\\"immature\\\": xxx                (numeric) balance from immature coinbase outputs\\n\"\n+            \"    },\\n\"\n+            \"}\\n\"},\n+        RPCExamples{\n+            HelpExampleCli(\"getbalances\", \"\") +\n+            HelpExampleRpc(\"getbalances\", \"\")},\n+    };\n+\n+    if (request.fHelp || !help.IsValidNumArgs(request.params.size())) {\n+        throw std::runtime_error(help.ToString());\n+    }\n+\n+    // Make sure the results are valid at least up to the most recent block\n+    // the user could have gotten from another RPC command prior to now",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280534524",
+      "id" : 280534524,
+      "in_reply_to_id" : 280453748,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDUzNDUyNA==",
+      "original_commit_id" : "eeee1497aca36eea40e386d0694bbd062bd1e89d",
+      "original_position" : 102,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : 102,
+      "pull_request_review_id" : 233156502,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T17:59:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280534524",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280534799"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280534799"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Seems too bloated ",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-02T18:05:00Z",
+      "diff_hunk" : "@@ -2373,6 +2373,68 @@ static UniValue settxfee(const JSONRPCRequest& request)\n     return true;\n }\n \n+static UniValue getbalances(const JSONRPCRequest& request)\n+{\n+    std::shared_ptr<CWallet> const rpc_wallet = GetWalletForJSONRPCRequest(request);\n+    if (!EnsureWalletIsAvailable(rpc_wallet.get(), request.fHelp)) {\n+        return NullUniValue;\n+    }\n+    CWallet& wallet = *rpc_wallet;\n+\n+    const RPCHelpMan help{\n+        \"getbalances\",\n+        \"Returns an object with all balances in \" + CURRENCY_UNIT + \".\\n\",\n+        {},\n+        RPCResult{\n+            \"{\\n\"\n+            \"    \\\"mine\\\": {                        (object) balances from outputs that the wallet can sign\\n\"\n+            \"      \\\"trusted\\\": xxx                 (numeric) trusted balance (outputs created by the wallet or confirmed outputs)\\n\"\n+            \"      \\\"untrusted_pending\\\": xxx       (numeric) untrusted pending balance (outputs created by others that are in the mempool)\\n\"\n+            \"      \\\"immature\\\": xxx                (numeric) balance from immature coinbase outputs\\n\"\n+            \"    },\\n\"\n+            \"    \\\"watchonly\\\": {                   (object) watchonly balances (not present if wallet does not watch anything)\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280534799",
+      "id" : 280534799,
+      "in_reply_to_id" : 280451748,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDUzNDc5OQ==",
+      "original_commit_id" : "999931cf8f167c7547f1015cdf05437a460c27f0",
+      "original_position" : 51,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : 86,
+      "pull_request_review_id" : 233156872,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T17:59:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280534799",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280535587"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280535587"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "We have a track record of removing RPC features when users relied on them, so I'd rather keep them around redundantly instead of getting yelled at again and have users stick to EOL software instead of upgrading to a recent version.",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-02T18:07:16Z",
+      "diff_hunk" : "@@ -2389,9 +2451,9 @@ static UniValue getwalletinfo(const JSONRPCRequest& request)\n             \"{\\n\"\n             \"  \\\"walletname\\\": xxxxx,               (string) the wallet name\\n\"\n             \"  \\\"walletversion\\\": xxxxx,            (numeric) the wallet version\\n\"\n-            \"  \\\"balance\\\": xxxxxxx,                (numeric) the total confirmed balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n-            \"  \\\"unconfirmed_balance\\\": xxx,        (numeric) the total unconfirmed balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n-            \"  \\\"immature_balance\\\": xxxxxx,        (numeric) the total immature balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n+            \"  \\\"balance\\\": xxxxxxx,                (numeric) Identical to getbalances().mine.trusted\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280535587",
+      "id" : 280535587,
+      "in_reply_to_id" : 280450427,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDUzNTU4Nw==",
+      "original_commit_id" : "999931cf8f167c7547f1015cdf05437a460c27f0",
+      "original_position" : 104,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : null,
+      "pull_request_review_id" : 233157927,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T17:59:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280535587",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280535914"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280535914"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "@luke-jr It is not the pointer losing constness, but the `pwallet` local variable losing constness.\r\n\r\n`CWallet * const pwallet` means \"Take a pointer-to-CWallet as argument, and store in the local variable `pwallet` which is const\". It's not actually part of the function signature.",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-02T18:08:10Z",
+      "diff_hunk" : "@@ -70,14 +70,14 @@ std::shared_ptr<CWallet> GetWalletForJSONRPCRequest(const JSONRPCRequest& reques\n     return wallets.size() == 1 || (request.fHelp && wallets.size() > 0) ? wallets[0] : nullptr;\n }\n \n-std::string HelpRequiringPassphrase(CWallet * const pwallet)\n+std::string HelpRequiringPassphrase(const CWallet* pwallet)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280535914",
+      "id" : 280535914,
+      "in_reply_to_id" : 280532230,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDUzNTkxNA==",
+      "original_commit_id" : "eeee1497aca36eea40e386d0694bbd062bd1e89d",
+      "original_position" : 33,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : 33,
+      "pull_request_review_id" : 233158343,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T17:59:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280535914",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/548488?v=4",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "node_id" : "MDQ6VXNlcjU0ODQ4OA==",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280542994"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280542994"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "It's not part of the function signature, but it safeguards against accidentally changing the pointer within the function.",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-02T18:27:38Z",
+      "diff_hunk" : "@@ -70,14 +70,14 @@ std::shared_ptr<CWallet> GetWalletForJSONRPCRequest(const JSONRPCRequest& reques\n     return wallets.size() == 1 || (request.fHelp && wallets.size() > 0) ? wallets[0] : nullptr;\n }\n \n-std::string HelpRequiringPassphrase(CWallet * const pwallet)\n+std::string HelpRequiringPassphrase(const CWallet* pwallet)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280542994",
+      "id" : 280542994,
+      "in_reply_to_id" : 280532230,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDU0Mjk5NA==",
+      "original_commit_id" : "eeee1497aca36eea40e386d0694bbd062bd1e89d",
+      "original_position" : 33,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : 33,
+      "pull_request_review_id" : 233167749,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T17:59:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280542994",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "node_id" : "MDQ6VXNlcjEwOTU2NzU=",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "PR title/description needs update",
+      "created_at" : "2019-05-02T18:28:27Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-488780872",
+      "id" : 488780872,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4ODc4MDg3Mg==",
+      "updated_at" : "2019-05-02T18:28:27Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/488780872",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "node_id" : "MDQ6VXNlcjEwOTU2NzU=",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280543669"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280543669"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "We've been using a `-` here, not `*`",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-02T18:29:28Z",
+      "diff_hunk" : "@@ -61,6 +61,15 @@ platform.\n Notable changes\n ===============\n \n+New RPCs\n+--------\n+\n+* `getbalances` returns an object with all balances (`mine`,",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280543669",
+      "id" : 280543669,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDU0MzY2OQ==",
+      "original_commit_id" : "eeee1497aca36eea40e386d0694bbd062bd1e89d",
+      "original_position" : 7,
+      "path" : "doc/release-notes.md",
+      "position" : null,
+      "pull_request_review_id" : 233168656,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T17:59:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280543669",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "node_id" : "MDQ6VXNlcjEwOTU2NzU=",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280783644"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280783644"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "@MarcoFalke agree it shouldn't be removed, but marking deprecated encourages using `getbalances` instead.",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-03T13:54:25Z",
+      "diff_hunk" : "@@ -2389,9 +2451,9 @@ static UniValue getwalletinfo(const JSONRPCRequest& request)\n             \"{\\n\"\n             \"  \\\"walletname\\\": xxxxx,               (string) the wallet name\\n\"\n             \"  \\\"walletversion\\\": xxxxx,            (numeric) the wallet version\\n\"\n-            \"  \\\"balance\\\": xxxxxxx,                (numeric) the total confirmed balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n-            \"  \\\"unconfirmed_balance\\\": xxx,        (numeric) the total unconfirmed balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n-            \"  \\\"immature_balance\\\": xxxxxx,        (numeric) the total immature balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n+            \"  \\\"balance\\\": xxxxxxx,                (numeric) Identical to getbalances().mine.trusted\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280783644",
+      "id" : 280783644,
+      "in_reply_to_id" : 280450427,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDc4MzY0NA==",
+      "original_commit_id" : "999931cf8f167c7547f1015cdf05437a460c27f0",
+      "original_position" : 104,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : null,
+      "pull_request_review_id" : 233481824,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T17:59:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280783644",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280872739"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280872739"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Done",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-03T18:00:37Z",
+      "diff_hunk" : "@@ -2389,9 +2451,9 @@ static UniValue getwalletinfo(const JSONRPCRequest& request)\n             \"{\\n\"\n             \"  \\\"walletname\\\": xxxxx,               (string) the wallet name\\n\"\n             \"  \\\"walletversion\\\": xxxxx,            (numeric) the wallet version\\n\"\n-            \"  \\\"balance\\\": xxxxxxx,                (numeric) the total confirmed balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n-            \"  \\\"unconfirmed_balance\\\": xxx,        (numeric) the total unconfirmed balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n-            \"  \\\"immature_balance\\\": xxxxxx,        (numeric) the total immature balance of the wallet in \" + CURRENCY_UNIT + \"\\n\"\n+            \"  \\\"balance\\\": xxxxxxx,                (numeric) Identical to getbalances().mine.trusted\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280872739",
+      "id" : 280872739,
+      "in_reply_to_id" : 280450427,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDg3MjczOQ==",
+      "original_commit_id" : "999931cf8f167c7547f1015cdf05437a460c27f0",
+      "original_position" : 104,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : null,
+      "pull_request_review_id" : 233598663,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T18:00:38Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280872739",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280875255"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280875255"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Done: Replaced `*` with `-`",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-03T18:08:02Z",
+      "diff_hunk" : "@@ -61,6 +61,15 @@ platform.\n Notable changes\n ===============\n \n+New RPCs\n+--------\n+\n+* `getbalances` returns an object with all balances (`mine`,",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r280875255",
+      "id" : 280875255,
+      "in_reply_to_id" : 280543669,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MDg3NTI1NQ==",
+      "original_commit_id" : "eeee1497aca36eea40e386d0694bbd062bd1e89d",
+      "original_position" : 7,
+      "path" : "doc/release-notes.md",
+      "position" : null,
+      "pull_request_review_id" : 233601829,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-03T18:08:02Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/280875255",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "utACK facfb4111d14a3b06c46690a2cca7ca91cea8a96\r\n\r\nOnly change is adding \"DEPRECATED\" to the balance descriptions in `getwalletinfo` and replacing the despicable `*` with a glorious `-` in the release notes.",
+      "created_at" : "2019-05-03T18:56:49Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-489203824",
+      "id" : 489203824,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4OTIwMzgyNA==",
+      "updated_at" : "2019-05-03T18:56:49Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/489203824",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "lightly tested ACK facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-06T09:35:15Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-489562344",
+      "id" : 489562344,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4OTU2MjM0NA==",
+      "updated_at" : "2019-05-06T09:35:15Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/489562344",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r281118831"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/281118831"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Good call on referring to the RPC help for details. This is what the release notes should do instead of substitute for documentation :+1: ",
+      "commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "created_at" : "2019-05-06T09:36:36Z",
+      "diff_hunk" : "@@ -61,6 +61,15 @@ platform.\n Notable changes\n ===============\n \n+New RPCs\n+--------\n+\n+- `getbalances` returns an object with all balances (`mine`,\n+  `untrusted_pending` and `immature`). Please refer to the RPC help of\n+  `getbalances` for details. The new RPC is intended to replace",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#discussion_r281118831",
+      "id" : 281118831,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MTExODgzMQ==",
+      "original_commit_id" : "facfb4111d14a3b06c46690a2cca7ca91cea8a96",
+      "original_position" : 9,
+      "path" : "doc/release-notes.md",
+      "position" : 9,
+      "pull_request_review_id" : 233896281,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15930",
+      "updated_at" : "2019-05-06T09:36:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/281118831",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Post-merge tested ACK a3d2d6b0674c11e7c0cf227848322470b1cf11e9",
+      "created_at" : "2019-05-06T11:36:14Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-489589895",
+      "id" : 489589895,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4OTU4OTg5NQ==",
+      "updated_at" : "2019-05-06T11:36:14Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/489589895",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "utACK facfb41.",
+      "created_at" : "2019-05-06T15:13:19Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15930#issuecomment-489657711",
+      "id" : 489657711,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15930",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4OTY1NzcxMQ==",
+      "updated_at" : "2019-05-06T15:13:19Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/489657711",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   }
+]

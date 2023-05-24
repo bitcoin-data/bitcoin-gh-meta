@@ -1,0 +1,312 @@
+[
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22378#discussion_r662992006"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22378"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/662992006"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "e26ad3b39cf7afcf5588bb55ceaf3c3902f7b5d3: Can remove `()`",
+      "commit_id" : "e26ad3b39cf7afcf5588bb55ceaf3c3902f7b5d3",
+      "created_at" : "2021-07-02T12:55:26Z",
+      "diff_hunk" : "@@ -502,7 +502,7 @@ def run_test(self):\n         # Make sure we didn't accidentally make too big a block. Note that the\n         # size of the block has non-determinism due to the ECDSA signature in\n         # the first transaction.\n-        while (len(b39.serialize()) >= MAX_BLOCK_BASE_SIZE):\n+        while (b39.get_weight() >= MAX_BLOCK_WEIGHT):",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22378#discussion_r662992006",
+      "id" : 662992006,
+      "line" : 505,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY2Mjk5MjAwNg==",
+      "original_commit_id" : "e26ad3b39cf7afcf5588bb55ceaf3c3902f7b5d3",
+      "original_line" : 505,
+      "original_position" : 74,
+      "original_start_line" : null,
+      "path" : "test/functional/feature_block.py",
+      "position" : 74,
+      "pull_request_review_id" : 698157678,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22378",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-07-02T12:57:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/662992006",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22378#discussion_r663070730"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22378"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/663070730"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Does this 1  * 4 make sense? If you wanna add 1 to MAX_BLOCK_WEIGHT I think you have to use (MAX_BLOCK_WEIGHT + 1) * 4. ",
+      "commit_id" : "e26ad3b39cf7afcf5588bb55ceaf3c3902f7b5d3",
+      "created_at" : "2021-07-02T14:52:41Z",
+      "diff_hunk" : "@@ -307,33 +307,33 @@ def run_test(self):\n         b22 = self.next_block(22, spend=out[5])\n         self.send_blocks([b22], success=False, reject_reason='bad-txns-premature-spend-of-coinbase', reconnect=True)\n \n-        # Create a block on either side of MAX_BLOCK_BASE_SIZE and make sure its accepted/rejected\n+        # Create a block on either side of MAX_BLOCK_WEIGHT and make sure its accepted/rejected\n         #     genesis -> b1 (0) -> b2 (1) -> b5 (2) -> b6  (3)\n         #                                          \\-> b12 (3) -> b13 (4) -> b15 (5) -> b23 (6)\n         #                                                                           \\-> b24 (6) -> b25 (7)\n         #                      \\-> b3 (1) -> b4 (2)\n-        self.log.info(\"Accept a block of size MAX_BLOCK_BASE_SIZE\")\n+        self.log.info(\"Accept a block of weight MAX_BLOCK_WEIGHT\")\n         self.move_tip(15)\n         b23 = self.next_block(23, spend=out[6])\n         tx = CTransaction()\n-        script_length = MAX_BLOCK_BASE_SIZE - len(b23.serialize()) - 69\n+        script_length = (MAX_BLOCK_WEIGHT - b23.get_weight() - 276) // 4\n         script_output = CScript([b'\\x00' * script_length])\n         tx.vout.append(CTxOut(0, script_output))\n         tx.vin.append(CTxIn(COutPoint(b23.vtx[1].sha256, 0)))\n         b23 = self.update_block(23, [tx])\n-        # Make sure the math above worked out to produce a max-sized block\n-        assert_equal(len(b23.serialize()), MAX_BLOCK_BASE_SIZE)\n+        # Make sure the math above worked out to produce a max-weighted block\n+        assert_equal(b23.get_weight(), MAX_BLOCK_WEIGHT)\n         self.send_blocks([b23], True)\n         self.save_spendable_output()\n \n-        self.log.info(\"Reject a block of size MAX_BLOCK_BASE_SIZE + 1\")\n+        self.log.info(\"Reject a block of weight MAX_BLOCK_WEIGHT + 4\")\n         self.move_tip(15)\n         b24 = self.next_block(24, spend=out[6])\n-        script_length = MAX_BLOCK_BASE_SIZE - len(b24.serialize()) - 69\n+        script_length = (MAX_BLOCK_WEIGHT - b24.get_weight() - 276) // 4\n         script_output = CScript([b'\\x00' * (script_length + 1)])\n         tx.vout = [CTxOut(0, script_output)]\n         b24 = self.update_block(24, [tx])\n-        assert_equal(len(b24.serialize()), MAX_BLOCK_BASE_SIZE + 1)\n+        assert_equal(b24.get_weight(), MAX_BLOCK_WEIGHT + 1 * 4)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22378#discussion_r663070730",
+      "id" : 663070730,
+      "line" : 336,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY2MzA3MDczMA==",
+      "original_commit_id" : "e26ad3b39cf7afcf5588bb55ceaf3c3902f7b5d3",
+      "original_line" : 336,
+      "original_position" : 47,
+      "original_start_line" : null,
+      "path" : "test/functional/feature_block.py",
+      "position" : 47,
+      "pull_request_review_id" : 698266311,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22378",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-07-02T14:52:42Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/663070730",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/19480819?v=4",
+         "events_url" : "https://api.github.com/users/brunoerg/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/brunoerg/followers",
+         "following_url" : "https://api.github.com/users/brunoerg/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/brunoerg/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/brunoerg",
+         "id" : 19480819,
+         "login" : "brunoerg",
+         "node_id" : "MDQ6VXNlcjE5NDgwODE5",
+         "organizations_url" : "https://api.github.com/users/brunoerg/orgs",
+         "received_events_url" : "https://api.github.com/users/brunoerg/received_events",
+         "repos_url" : "https://api.github.com/users/brunoerg/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/brunoerg/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/brunoerg/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/brunoerg"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22378#discussion_r663092461"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22378"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/663092461"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "bytes in the scriptSig count for 4 weight units.\r\n\r\nNot sure, but it might be possible to pad the scriptWitness to get exactly +1 weight unit",
+      "commit_id" : "e26ad3b39cf7afcf5588bb55ceaf3c3902f7b5d3",
+      "created_at" : "2021-07-02T15:25:25Z",
+      "diff_hunk" : "@@ -307,33 +307,33 @@ def run_test(self):\n         b22 = self.next_block(22, spend=out[5])\n         self.send_blocks([b22], success=False, reject_reason='bad-txns-premature-spend-of-coinbase', reconnect=True)\n \n-        # Create a block on either side of MAX_BLOCK_BASE_SIZE and make sure its accepted/rejected\n+        # Create a block on either side of MAX_BLOCK_WEIGHT and make sure its accepted/rejected\n         #     genesis -> b1 (0) -> b2 (1) -> b5 (2) -> b6  (3)\n         #                                          \\-> b12 (3) -> b13 (4) -> b15 (5) -> b23 (6)\n         #                                                                           \\-> b24 (6) -> b25 (7)\n         #                      \\-> b3 (1) -> b4 (2)\n-        self.log.info(\"Accept a block of size MAX_BLOCK_BASE_SIZE\")\n+        self.log.info(\"Accept a block of weight MAX_BLOCK_WEIGHT\")\n         self.move_tip(15)\n         b23 = self.next_block(23, spend=out[6])\n         tx = CTransaction()\n-        script_length = MAX_BLOCK_BASE_SIZE - len(b23.serialize()) - 69\n+        script_length = (MAX_BLOCK_WEIGHT - b23.get_weight() - 276) // 4\n         script_output = CScript([b'\\x00' * script_length])\n         tx.vout.append(CTxOut(0, script_output))\n         tx.vin.append(CTxIn(COutPoint(b23.vtx[1].sha256, 0)))\n         b23 = self.update_block(23, [tx])\n-        # Make sure the math above worked out to produce a max-sized block\n-        assert_equal(len(b23.serialize()), MAX_BLOCK_BASE_SIZE)\n+        # Make sure the math above worked out to produce a max-weighted block\n+        assert_equal(b23.get_weight(), MAX_BLOCK_WEIGHT)\n         self.send_blocks([b23], True)\n         self.save_spendable_output()\n \n-        self.log.info(\"Reject a block of size MAX_BLOCK_BASE_SIZE + 1\")\n+        self.log.info(\"Reject a block of weight MAX_BLOCK_WEIGHT + 4\")\n         self.move_tip(15)\n         b24 = self.next_block(24, spend=out[6])\n-        script_length = MAX_BLOCK_BASE_SIZE - len(b24.serialize()) - 69\n+        script_length = (MAX_BLOCK_WEIGHT - b24.get_weight() - 276) // 4\n         script_output = CScript([b'\\x00' * (script_length + 1)])\n         tx.vout = [CTxOut(0, script_output)]\n         b24 = self.update_block(24, [tx])\n-        assert_equal(len(b24.serialize()), MAX_BLOCK_BASE_SIZE + 1)\n+        assert_equal(b24.get_weight(), MAX_BLOCK_WEIGHT + 1 * 4)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22378#discussion_r663092461",
+      "id" : 663092461,
+      "in_reply_to_id" : 663070730,
+      "line" : 336,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY2MzA5MjQ2MQ==",
+      "original_commit_id" : "e26ad3b39cf7afcf5588bb55ceaf3c3902f7b5d3",
+      "original_line" : 336,
+      "original_position" : 47,
+      "original_start_line" : null,
+      "path" : "test/functional/feature_block.py",
+      "position" : 47,
+      "pull_request_review_id" : 698297016,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22378",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-07-02T15:25:26Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/663092461",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22378#discussion_r663378557"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22378"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/663378557"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Thanks, done. Also identified another pair of unneeded parantheses in an if condition to remove.",
+      "commit_id" : "607076d01bf23c69ac21950c17b01fb4e1130774",
+      "created_at" : "2021-07-03T15:39:31Z",
+      "diff_hunk" : "@@ -502,7 +502,7 @@ def run_test(self):\n         # Make sure we didn't accidentally make too big a block. Note that the\n         # size of the block has non-determinism due to the ECDSA signature in\n         # the first transaction.\n-        while (len(b39.serialize()) >= MAX_BLOCK_BASE_SIZE):\n+        while (b39.get_weight() >= MAX_BLOCK_WEIGHT):",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22378#discussion_r663378557",
+      "id" : 663378557,
+      "in_reply_to_id" : 662992006,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY2MzM3ODU1Nw==",
+      "original_commit_id" : "e26ad3b39cf7afcf5588bb55ceaf3c3902f7b5d3",
+      "original_line" : 505,
+      "original_position" : 74,
+      "original_start_line" : null,
+      "path" : "test/functional/feature_block.py",
+      "position" : null,
+      "pull_request_review_id" : 698601943,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22378",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-07-03T15:39:31Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/663378557",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/91535?v=4",
+         "events_url" : "https://api.github.com/users/theStack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theStack/followers",
+         "following_url" : "https://api.github.com/users/theStack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theStack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theStack",
+         "id" : 91535,
+         "login" : "theStack",
+         "node_id" : "MDQ6VXNlcjkxNTM1",
+         "organizations_url" : "https://api.github.com/users/theStack/orgs",
+         "received_events_url" : "https://api.github.com/users/theStack/received_events",
+         "repos_url" : "https://api.github.com/users/theStack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theStack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22378#discussion_r663380134"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22378"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/663380134"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "@brunoerg:  `MAX_BLOCK_WEIGHT + 4` is the smallest over-weight block you can reach if you only change non-witness data (as in this test scenario, the scriptPubKey), as every byte added increases the block weight by 4 WU\r\n(What you probably meant was `(MAX_BLOCK_BASE_SIZE + 1) * 4` but that constant doesn't exist anymore in this PR :))\r\n\r\n@MarcoFalke: yes I guess it's possible to reach exactly MAX_BLOCK_WEIGHT+1 by tweaking the witness. Didn't want to change too much of the surrounding logic though, can be done in a follow-up I guess. E.g. adding test coverage for the rejection state `bad-blk-weight` is on my TODO list, it could be appropriate to include it in such a PR.",
+      "commit_id" : "607076d01bf23c69ac21950c17b01fb4e1130774",
+      "created_at" : "2021-07-03T15:54:45Z",
+      "diff_hunk" : "@@ -307,33 +307,33 @@ def run_test(self):\n         b22 = self.next_block(22, spend=out[5])\n         self.send_blocks([b22], success=False, reject_reason='bad-txns-premature-spend-of-coinbase', reconnect=True)\n \n-        # Create a block on either side of MAX_BLOCK_BASE_SIZE and make sure its accepted/rejected\n+        # Create a block on either side of MAX_BLOCK_WEIGHT and make sure its accepted/rejected\n         #     genesis -> b1 (0) -> b2 (1) -> b5 (2) -> b6  (3)\n         #                                          \\-> b12 (3) -> b13 (4) -> b15 (5) -> b23 (6)\n         #                                                                           \\-> b24 (6) -> b25 (7)\n         #                      \\-> b3 (1) -> b4 (2)\n-        self.log.info(\"Accept a block of size MAX_BLOCK_BASE_SIZE\")\n+        self.log.info(\"Accept a block of weight MAX_BLOCK_WEIGHT\")\n         self.move_tip(15)\n         b23 = self.next_block(23, spend=out[6])\n         tx = CTransaction()\n-        script_length = MAX_BLOCK_BASE_SIZE - len(b23.serialize()) - 69\n+        script_length = (MAX_BLOCK_WEIGHT - b23.get_weight() - 276) // 4\n         script_output = CScript([b'\\x00' * script_length])\n         tx.vout.append(CTxOut(0, script_output))\n         tx.vin.append(CTxIn(COutPoint(b23.vtx[1].sha256, 0)))\n         b23 = self.update_block(23, [tx])\n-        # Make sure the math above worked out to produce a max-sized block\n-        assert_equal(len(b23.serialize()), MAX_BLOCK_BASE_SIZE)\n+        # Make sure the math above worked out to produce a max-weighted block\n+        assert_equal(b23.get_weight(), MAX_BLOCK_WEIGHT)\n         self.send_blocks([b23], True)\n         self.save_spendable_output()\n \n-        self.log.info(\"Reject a block of size MAX_BLOCK_BASE_SIZE + 1\")\n+        self.log.info(\"Reject a block of weight MAX_BLOCK_WEIGHT + 4\")\n         self.move_tip(15)\n         b24 = self.next_block(24, spend=out[6])\n-        script_length = MAX_BLOCK_BASE_SIZE - len(b24.serialize()) - 69\n+        script_length = (MAX_BLOCK_WEIGHT - b24.get_weight() - 276) // 4\n         script_output = CScript([b'\\x00' * (script_length + 1)])\n         tx.vout = [CTxOut(0, script_output)]\n         b24 = self.update_block(24, [tx])\n-        assert_equal(len(b24.serialize()), MAX_BLOCK_BASE_SIZE + 1)\n+        assert_equal(b24.get_weight(), MAX_BLOCK_WEIGHT + 1 * 4)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22378#discussion_r663380134",
+      "id" : 663380134,
+      "in_reply_to_id" : 663070730,
+      "line" : 336,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY2MzM4MDEzNA==",
+      "original_commit_id" : "e26ad3b39cf7afcf5588bb55ceaf3c3902f7b5d3",
+      "original_line" : 336,
+      "original_position" : 47,
+      "original_start_line" : null,
+      "path" : "test/functional/feature_block.py",
+      "position" : 47,
+      "pull_request_review_id" : 698602928,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22378",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2021-07-03T15:54:45Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/663380134",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/91535?v=4",
+         "events_url" : "https://api.github.com/users/theStack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theStack/followers",
+         "following_url" : "https://api.github.com/users/theStack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theStack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theStack",
+         "id" : 91535,
+         "login" : "theStack",
+         "node_id" : "MDQ6VXNlcjkxNTM1",
+         "organizations_url" : "https://api.github.com/users/theStack/orgs",
+         "received_events_url" : "https://api.github.com/users/theStack/received_events",
+         "repos_url" : "https://api.github.com/users/theStack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theStack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* #22509 by sriramdvt\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "created_at" : "2021-07-21T12:44:41Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22378#issuecomment-884160255",
+      "id" : 884160255,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22378",
+      "node_id" : "IC_kwDOABII5840szb_",
+      "performed_via_github_app" : null,
+      "updated_at" : "2021-07-21T12:44:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/884160255",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   }
+]

@@ -1,0 +1,477 @@
+[
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12491#discussion_r169457935"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12491"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/169457935"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "`off_t end = ...` and remove line 840?",
+      "commit_id" : "5259c72a769eba32aabb4e61d77e9f6ef4ce9a0d",
+      "created_at" : "2018-02-20T21:02:04Z",
+      "diff_hunk" : "@@ -817,6 +808,49 @@ void AllocateFileRange(FILE *file, unsigned int offset, unsigned int length) {\n #endif\n }\n \n+FILE* AdviseSequential(FILE *file) {\n+#if _POSIX_C_SOURCE >= 200112L\n+    // Since this whole thing is advisory anyway, we can ignore any errors\n+    // encountered up to and including the posix_fadvise call. However, we must\n+    // rewind the file to the appropriate position if we've changed the seek\n+    // offset.\n+    if (file == nullptr)\n+        return nullptr;\n+    int fd = fileno(file);\n+    if (fd == -1)\n+        return file;\n+    off_t start = lseek(fd, 0, SEEK_CUR);\n+    if (start == -1)\n+        return file;\n+    off_t end = lseek(fd, 0, SEEK_END);\n+    if (end != -1) {\n+        posix_fadvise(fd, start, end - start, POSIX_FADV_WILLNEED);\n+        posix_fadvise(fd, start, end - start, POSIX_FADV_SEQUENTIAL);\n+    }\n+    lseek(fd, start, SEEK_SET);\n+#endif\n+    return file;\n+}\n+\n+int CloseAndDiscard(FILE *file) {\n+#if _POSIX_C_SOURCE >= 200112L\n+    // Ignore any errors up to and including the posix_fadvise call since it's\n+    // advisory.\n+    if (file != nullptr) {\n+        off_t end;\n+        int fd = fileno(file);\n+        if (fd == -1)\n+            goto close;\n+        end = lseek(fd, 0, SEEK_END);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12491#discussion_r169457935",
+      "id" : 169457935,
+      "original_commit_id" : "5259c72a769eba32aabb4e61d77e9f6ef4ce9a0d",
+      "original_position" : 66,
+      "path" : "src/util.cpp",
+      "position" : 66,
+      "pull_request_review_id" : 97987172,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12491",
+      "updated_at" : "2018-02-20T21:03:31Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/169457935",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Note for future reviewers: the only usage of `CBufferedFile` I can find is [in `LoadExternalBLockFile`](https://github.com/bitcoin/bitcoin/blob/5eff1c748d56a2318d10bf6cd925b6084349e13e/src/validation.cpp#L4211).",
+      "created_at" : "2018-02-20T21:06:54Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12491#issuecomment-367119407",
+      "id" : 367119407,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12491",
+      "updated_at" : "2018-02-20T21:06:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/367119407",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Concept ACK on advising, but we'll definitely want some data first.",
+      "created_at" : "2018-02-21T15:44:42Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12491#issuecomment-367368977",
+      "id" : 367368977,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12491",
+      "updated_at" : "2018-02-21T15:44:42Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/367368977",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/417043?v=4",
+         "events_url" : "https://api.github.com/users/theuni/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theuni/followers",
+         "following_url" : "https://api.github.com/users/theuni/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theuni/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theuni",
+         "id" : 417043,
+         "login" : "theuni",
+         "organizations_url" : "https://api.github.com/users/theuni/orgs",
+         "received_events_url" : "https://api.github.com/users/theuni/received_events",
+         "repos_url" : "https://api.github.com/users/theuni/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theuni/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theuni/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theuni"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12491#discussion_r170968478"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12491"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170968478"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "If SEEK_END didn't fail, we need to be sure this doesn't fail either.",
+      "commit_id" : "5259c72a769eba32aabb4e61d77e9f6ef4ce9a0d",
+      "created_at" : "2018-02-27T15:51:17Z",
+      "diff_hunk" : "@@ -817,6 +808,49 @@ void AllocateFileRange(FILE *file, unsigned int offset, unsigned int length) {\n #endif\n }\n \n+FILE* AdviseSequential(FILE *file) {\n+#if _POSIX_C_SOURCE >= 200112L\n+    // Since this whole thing is advisory anyway, we can ignore any errors\n+    // encountered up to and including the posix_fadvise call. However, we must\n+    // rewind the file to the appropriate position if we've changed the seek\n+    // offset.\n+    if (file == nullptr)\n+        return nullptr;\n+    int fd = fileno(file);\n+    if (fd == -1)\n+        return file;\n+    off_t start = lseek(fd, 0, SEEK_CUR);\n+    if (start == -1)\n+        return file;\n+    off_t end = lseek(fd, 0, SEEK_END);\n+    if (end != -1) {\n+        posix_fadvise(fd, start, end - start, POSIX_FADV_WILLNEED);\n+        posix_fadvise(fd, start, end - start, POSIX_FADV_SEQUENTIAL);\n+    }\n+    lseek(fd, start, SEEK_SET);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12491#discussion_r170968478",
+      "id" : 170968478,
+      "original_commit_id" : "5259c72a769eba32aabb4e61d77e9f6ef4ce9a0d",
+      "original_position" : 52,
+      "path" : "src/util.cpp",
+      "position" : 52,
+      "pull_request_review_id" : 99738266,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12491",
+      "updated_at" : "2018-02-27T15:57:01Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170968478",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12491#discussion_r170969251"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12491"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170969251"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I think POSIX_FADV_NOREUSE may be useful here also (although my manpage says it is currently a no-op).",
+      "commit_id" : "5259c72a769eba32aabb4e61d77e9f6ef4ce9a0d",
+      "created_at" : "2018-02-27T15:53:22Z",
+      "diff_hunk" : "@@ -817,6 +808,49 @@ void AllocateFileRange(FILE *file, unsigned int offset, unsigned int length) {\n #endif\n }\n \n+FILE* AdviseSequential(FILE *file) {\n+#if _POSIX_C_SOURCE >= 200112L\n+    // Since this whole thing is advisory anyway, we can ignore any errors\n+    // encountered up to and including the posix_fadvise call. However, we must\n+    // rewind the file to the appropriate position if we've changed the seek\n+    // offset.\n+    if (file == nullptr)\n+        return nullptr;\n+    int fd = fileno(file);\n+    if (fd == -1)\n+        return file;\n+    off_t start = lseek(fd, 0, SEEK_CUR);\n+    if (start == -1)\n+        return file;\n+    off_t end = lseek(fd, 0, SEEK_END);\n+    if (end != -1) {\n+        posix_fadvise(fd, start, end - start, POSIX_FADV_WILLNEED);\n+        posix_fadvise(fd, start, end - start, POSIX_FADV_SEQUENTIAL);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12491#discussion_r170969251",
+      "id" : 170969251,
+      "original_commit_id" : "5259c72a769eba32aabb4e61d77e9f6ef4ce9a0d",
+      "original_position" : 50,
+      "path" : "src/util.cpp",
+      "position" : 50,
+      "pull_request_review_id" : 99738266,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12491",
+      "updated_at" : "2018-02-27T15:57:01Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170969251",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12491#discussion_r170969680"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12491"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170969680"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Unused labels might be a warning in some compiler versions; move inside #if block?",
+      "commit_id" : "5259c72a769eba32aabb4e61d77e9f6ef4ce9a0d",
+      "created_at" : "2018-02-27T15:54:29Z",
+      "diff_hunk" : "@@ -817,6 +808,49 @@ void AllocateFileRange(FILE *file, unsigned int offset, unsigned int length) {\n #endif\n }\n \n+FILE* AdviseSequential(FILE *file) {\n+#if _POSIX_C_SOURCE >= 200112L\n+    // Since this whole thing is advisory anyway, we can ignore any errors\n+    // encountered up to and including the posix_fadvise call. However, we must\n+    // rewind the file to the appropriate position if we've changed the seek\n+    // offset.\n+    if (file == nullptr)\n+        return nullptr;\n+    int fd = fileno(file);\n+    if (fd == -1)\n+        return file;\n+    off_t start = lseek(fd, 0, SEEK_CUR);\n+    if (start == -1)\n+        return file;\n+    off_t end = lseek(fd, 0, SEEK_END);\n+    if (end != -1) {\n+        posix_fadvise(fd, start, end - start, POSIX_FADV_WILLNEED);\n+        posix_fadvise(fd, start, end - start, POSIX_FADV_SEQUENTIAL);\n+    }\n+    lseek(fd, start, SEEK_SET);\n+#endif\n+    return file;\n+}\n+\n+int CloseAndDiscard(FILE *file) {\n+#if _POSIX_C_SOURCE >= 200112L\n+    // Ignore any errors up to and including the posix_fadvise call since it's\n+    // advisory.\n+    if (file != nullptr) {\n+        off_t end;\n+        int fd = fileno(file);\n+        if (fd == -1)\n+            goto close;\n+        end = lseek(fd, 0, SEEK_END);\n+        if (end == -1)\n+            goto close;\n+        posix_fadvise(fd, 0, end, POSIX_FADV_DONTNEED);\n+    }\n+#endif\n+ close:",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12491#discussion_r170969680",
+      "id" : 170969680,
+      "original_commit_id" : "5259c72a769eba32aabb4e61d77e9f6ef4ce9a0d",
+      "original_position" : 72,
+      "path" : "src/util.cpp",
+      "position" : 72,
+      "pull_request_review_id" : 99738266,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12491",
+      "updated_at" : "2018-02-27T15:57:01Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170969680",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12491#discussion_r172353152"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12491"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/172353152"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Agree this should be fixed. Presumably the seek shouldn't fail, but if it did, the result could be confusing.",
+      "commit_id" : "5259c72a769eba32aabb4e61d77e9f6ef4ce9a0d",
+      "created_at" : "2018-03-05T22:37:15Z",
+      "diff_hunk" : "@@ -817,6 +808,49 @@ void AllocateFileRange(FILE *file, unsigned int offset, unsigned int length) {\n #endif\n }\n \n+FILE* AdviseSequential(FILE *file) {\n+#if _POSIX_C_SOURCE >= 200112L\n+    // Since this whole thing is advisory anyway, we can ignore any errors\n+    // encountered up to and including the posix_fadvise call. However, we must\n+    // rewind the file to the appropriate position if we've changed the seek\n+    // offset.\n+    if (file == nullptr)\n+        return nullptr;\n+    int fd = fileno(file);\n+    if (fd == -1)\n+        return file;\n+    off_t start = lseek(fd, 0, SEEK_CUR);\n+    if (start == -1)\n+        return file;\n+    off_t end = lseek(fd, 0, SEEK_END);\n+    if (end != -1) {\n+        posix_fadvise(fd, start, end - start, POSIX_FADV_WILLNEED);\n+        posix_fadvise(fd, start, end - start, POSIX_FADV_SEQUENTIAL);\n+    }\n+    lseek(fd, start, SEEK_SET);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12491#discussion_r172353152",
+      "id" : 172353152,
+      "in_reply_to_id" : 170968478,
+      "original_commit_id" : "5259c72a769eba32aabb4e61d77e9f6ef4ce9a0d",
+      "original_position" : 52,
+      "path" : "src/util.cpp",
+      "position" : 52,
+      "pull_request_review_id" : 101356095,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12491",
+      "updated_at" : "2018-03-05T22:58:28Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/172353152",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12491#discussion_r172355467"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12491"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/172355467"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "I think @laanwj's comment about _POSIX_C_SOURCE at https://github.com/bitcoin/bitcoin/pull/12495#discussion_r169970767 applies here as well, so this check is not right.\r\n",
+      "commit_id" : "5259c72a769eba32aabb4e61d77e9f6ef4ce9a0d",
+      "created_at" : "2018-03-05T22:46:53Z",
+      "diff_hunk" : "@@ -798,8 +788,9 @@ void AllocateFileRange(FILE *file, unsigned int offset, unsigned int length) {\n         fcntl(fileno(file), F_PREALLOCATE, &fst);\n     }\n     ftruncate(fileno(file), fst.fst_length);\n-#elif defined(__linux__)\n-    // Version using posix_fallocate\n+#elif _POSIX_C_SOURCE >= 200112L",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12491#discussion_r172355467",
+      "id" : 172355467,
+      "original_commit_id" : "5259c72a769eba32aabb4e61d77e9f6ef4ce9a0d",
+      "original_position" : 23,
+      "path" : "src/util.cpp",
+      "position" : 23,
+      "pull_request_review_id" : 101356095,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12491",
+      "updated_at" : "2018-03-05T22:58:28Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/172355467",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12491#discussion_r172357542"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12491"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/172357542"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Might want to mention also that this advises `WILLNEED` in addition to just `SEQUENTIAL`.",
+      "commit_id" : "5259c72a769eba32aabb4e61d77e9f6ef4ce9a0d",
+      "created_at" : "2018-03-05T22:56:06Z",
+      "diff_hunk" : "@@ -175,6 +175,15 @@ void AllocateFileRange(FILE *file, unsigned int offset, unsigned int length);\n bool RenameOver(fs::path src, fs::path dest);\n bool LockDirectory(const fs::path& directory, const std::string lockfile_name, bool probe_only=false);\n \n+//! Return the original FILE* unchanged. On POSIX systems that support it,\n+//! also advise the kernel that the file will be accessed sequentially.",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12491#discussion_r172357542",
+      "id" : 172357542,
+      "original_commit_id" : "5259c72a769eba32aabb4e61d77e9f6ef4ce9a0d",
+      "original_position" : 5,
+      "path" : "src/util.h",
+      "position" : 5,
+      "pull_request_review_id" : 101356095,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12491",
+      "updated_at" : "2018-03-05T22:58:28Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/172357542",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "author_association" : "OWNER",
+      "body" : "Why close?",
+      "created_at" : "2018-03-10T16:27:11Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12491#issuecomment-372042557",
+      "id" : 372042557,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12491",
+      "updated_at" : "2018-03-10T16:27:11Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/372042557",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "> Why close?\r\n\r\nI'm also curious.\r\n\r\n\r\n\r\n",
+      "created_at" : "2018-03-15T19:07:41Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12491#issuecomment-373489665",
+      "id" : 373489665,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12491",
+      "updated_at" : "2018-03-15T19:07:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/373489665",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Also curious why this was closed.",
+      "created_at" : "2018-03-27T13:10:53Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12491#issuecomment-376519049",
+      "id" : 376519049,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12491",
+      "updated_at" : "2018-03-27T13:10:53Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/376519049",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
+      }
+   }
+]

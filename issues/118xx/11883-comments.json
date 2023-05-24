@@ -1,0 +1,897 @@
+[
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r156538344"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/156538344"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Did you mean `if **not** arg.startswith(\"-datadir\")`?",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2017-12-13T00:48:54Z",
+      "diff_hunk" : "@@ -0,0 +1,46 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import assert_raises_rpc_error\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if arg.startswith(\"-datadir\")]",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r156538344",
+      "id" : 156538344,
+      "original_commit_id" : "49bfddddebba28f7fd5e895603afcdcfabf1088b",
+      "original_position" : 20,
+      "path" : "test/functional/conf_args.py",
+      "position" : null,
+      "pull_request_review_id" : 83032320,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2017-12-19T23:25:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/156538344",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r156538430"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/156538430"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "femto-nit: missing space after assert, redundant round braces.",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2017-12-13T00:49:42Z",
+      "diff_hunk" : "@@ -0,0 +1,46 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import assert_raises_rpc_error\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if arg.startswith(\"-datadir\")]\n+\n+        default_data_dir = os.path.join(self.options.tmpdir, 'node0')\n+        new_data_dir = os.path.join(default_data_dir, 'newdatadir')\n+        new_data_dir_2 = os.path.join(default_data_dir, 'newdatadir2')\n+\n+        # Check that using -datadir argument on non-existant directory fails\n+        self.assert_start_raises_init_error(0, ['-datadir='+new_data_dir], 'Error: Specified data directory \"' + new_data_dir + '\" does not exist.')\n+\n+        # Check that using non-existant datadir in conf file fails\n+        with open(os.path.join(default_data_dir, \"bitcoin.conf\"), 'a', encoding='utf8') as f:\n+            f.write(\"datadir=\" + new_data_dir + \"\\n\")\n+        self.assert_start_raises_init_error(0, [], 'Error reading configuration file: specified data directory \"' + new_data_dir + '\" does not exist.')\n+\n+        # Create the directory and ensure the config file now works\n+        os.mkdir(new_data_dir)\n+        self.start_node(0, ['-wallet=w1'])\n+        assert(os.path.isfile(os.path.join(new_data_dir, 'wallets', 'w1')))\n+        self.stop_node(0)\n+\n+        # Ensure command line argument overrides datadir in conf\n+        os.mkdir(new_data_dir_2)\n+        self.start_node(0, ['-datadir='+new_data_dir_2, '-wallet=w2'])\n+        assert(os.path.isfile(os.path.join(new_data_dir_2, 'wallets', 'w2')))",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r156538430",
+      "id" : 156538430,
+      "original_commit_id" : "49bfddddebba28f7fd5e895603afcdcfabf1088b",
+      "original_position" : 43,
+      "path" : "test/functional/conf_args.py",
+      "position" : null,
+      "pull_request_review_id" : 83032423,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2017-12-19T23:25:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/156538430",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r156542920"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/156542920"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Doh, yes, oops :)",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2017-12-13T01:22:28Z",
+      "diff_hunk" : "@@ -0,0 +1,46 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import assert_raises_rpc_error\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if arg.startswith(\"-datadir\")]",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r156542920",
+      "id" : 156542920,
+      "in_reply_to_id" : 156538344,
+      "original_commit_id" : "49bfddddebba28f7fd5e895603afcdcfabf1088b",
+      "original_position" : 20,
+      "path" : "test/functional/conf_args.py",
+      "position" : null,
+      "pull_request_review_id" : 83037281,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2017-12-19T23:25:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/156542920",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/3211283?v=4",
+         "events_url" : "https://api.github.com/users/MeshCollider/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MeshCollider/followers",
+         "following_url" : "https://api.github.com/users/MeshCollider/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MeshCollider/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MeshCollider",
+         "id" : 3211283,
+         "login" : "MeshCollider",
+         "organizations_url" : "https://api.github.com/users/MeshCollider/orgs",
+         "received_events_url" : "https://api.github.com/users/MeshCollider/received_events",
+         "repos_url" : "https://api.github.com/users/MeshCollider/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MeshCollider/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MeshCollider/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MeshCollider"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r156755707"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/156755707"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Note that the configuration is written to the `bitcoin.conf` in the datadir that you are removing from the args. I suspect this will cause issues.",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2017-12-13T19:19:16Z",
+      "diff_hunk" : "@@ -0,0 +1,46 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if not arg.startswith(\"-datadir\")]",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r156755707",
+      "id" : 156755707,
+      "original_commit_id" : "640d5c0d8f0a8df10518c60c53545ed4e95fa84b",
+      "original_position" : 19,
+      "path" : "test/functional/conf_args.py",
+      "position" : 20,
+      "pull_request_review_id" : 83286544,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2017-12-19T23:25:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/156755707",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r156762221"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/156762221"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Hint: `git grep 'def initialize_datadir'`",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2017-12-13T19:42:57Z",
+      "diff_hunk" : "@@ -0,0 +1,46 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if not arg.startswith(\"-datadir\")]",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r156762221",
+      "id" : 156762221,
+      "in_reply_to_id" : 156755707,
+      "original_commit_id" : "640d5c0d8f0a8df10518c60c53545ed4e95fa84b",
+      "original_position" : 19,
+      "path" : "test/functional/conf_args.py",
+      "position" : 20,
+      "pull_request_review_id" : 83294071,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2017-12-19T23:25:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/156762221",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r156813184"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/156813184"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "~Yeah I've been trying to figure a way around this, if -datadir is specified on the command line it will override the conf file, but if it isn't then it can't find the conf file anyway. Still trying to think if this is possible or not.~ EDIT: Fixed",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2017-12-13T23:11:08Z",
+      "diff_hunk" : "@@ -0,0 +1,46 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if not arg.startswith(\"-datadir\")]",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r156813184",
+      "id" : 156813184,
+      "in_reply_to_id" : 156755707,
+      "original_commit_id" : "640d5c0d8f0a8df10518c60c53545ed4e95fa84b",
+      "original_position" : 19,
+      "path" : "test/functional/conf_args.py",
+      "position" : 20,
+      "pull_request_review_id" : 83352024,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2017-12-19T23:25:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/156813184",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/3211283?v=4",
+         "events_url" : "https://api.github.com/users/MeshCollider/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MeshCollider/followers",
+         "following_url" : "https://api.github.com/users/MeshCollider/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MeshCollider/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MeshCollider",
+         "id" : 3211283,
+         "login" : "MeshCollider",
+         "organizations_url" : "https://api.github.com/users/MeshCollider/orgs",
+         "received_events_url" : "https://api.github.com/users/MeshCollider/received_events",
+         "repos_url" : "https://api.github.com/users/MeshCollider/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MeshCollider/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MeshCollider/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MeshCollider"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r157488500"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/157488500"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "spelling existent",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2017-12-18T13:50:40Z",
+      "diff_hunk" : "@@ -0,0 +1,48 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if not arg.startswith(\"-datadir\")]\n+\n+        default_data_dir = os.path.join(self.options.tmpdir, 'node0')\n+        new_data_dir = os.path.join(default_data_dir, 'newdatadir')\n+        new_data_dir_2 = os.path.join(default_data_dir, 'newdatadir2')\n+\n+        # Check that using -datadir argument on non-existant directory fails",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r157488500",
+      "id" : 157488500,
+      "original_commit_id" : "7dc6a4253ea1c101b6b0591e4c9a84b9015d5891",
+      "original_position" : 25,
+      "path" : "test/functional/conf_args.py",
+      "position" : null,
+      "pull_request_review_id" : 84137281,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2017-12-19T23:25:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/157488500",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r157489836"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/157489836"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Maybe call get_datadir_path(self.options.tmpdir, 0) to avoid hardcoding this.",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2017-12-18T13:56:38Z",
+      "diff_hunk" : "@@ -0,0 +1,48 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if not arg.startswith(\"-datadir\")]\n+\n+        default_data_dir = os.path.join(self.options.tmpdir, 'node0')",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r157489836",
+      "id" : 157489836,
+      "original_commit_id" : "7dc6a4253ea1c101b6b0591e4c9a84b9015d5891",
+      "original_position" : 21,
+      "path" : "test/functional/conf_args.py",
+      "position" : null,
+      "pull_request_review_id" : 84137281,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2017-12-19T23:25:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/157489836",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Addressed @ryanofsky comments and squashed fixup commit, thanks :)",
+      "created_at" : "2017-12-19T23:26:34Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#issuecomment-352917796",
+      "id" : 352917796,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/11883",
+      "updated_at" : "2017-12-19T23:26:34Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/352917796",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/3211283?v=4",
+         "events_url" : "https://api.github.com/users/MeshCollider/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MeshCollider/followers",
+         "following_url" : "https://api.github.com/users/MeshCollider/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MeshCollider/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MeshCollider",
+         "id" : 3211283,
+         "login" : "MeshCollider",
+         "organizations_url" : "https://api.github.com/users/MeshCollider/orgs",
+         "received_events_url" : "https://api.github.com/users/MeshCollider/received_events",
+         "repos_url" : "https://api.github.com/users/MeshCollider/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MeshCollider/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MeshCollider/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MeshCollider"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r157927099"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/157927099"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Remove?",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2017-12-20T02:48:02Z",
+      "diff_hunk" : "@@ -0,0 +1,49 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import get_datadir_path\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if not arg.startswith(\"-datadir\")]\n+\n+        default_data_dir = get_datadir_path(self.options.tmpdir, 0)\n+        new_data_dir = os.path.join(default_data_dir, 'newdatadir')\n+        new_data_dir_2 = os.path.join(default_data_dir, 'newdatadir2')\n+\n+        # Check that using -datadir argument on non-existent directory fails\n+        self.nodes[0].datadir = new_data_dir",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r157927099",
+      "id" : 157927099,
+      "original_commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "original_position" : 27,
+      "path" : "test/functional/conf_args.py",
+      "position" : 27,
+      "pull_request_review_id" : 84651413,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2017-12-20T02:52:32Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/157927099",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r157927126"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/157927126"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Remove?",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2017-12-20T02:48:14Z",
+      "diff_hunk" : "@@ -0,0 +1,49 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import get_datadir_path\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if not arg.startswith(\"-datadir\")]\n+\n+        default_data_dir = get_datadir_path(self.options.tmpdir, 0)\n+        new_data_dir = os.path.join(default_data_dir, 'newdatadir')\n+        new_data_dir_2 = os.path.join(default_data_dir, 'newdatadir2')\n+\n+        # Check that using -datadir argument on non-existent directory fails\n+        self.nodes[0].datadir = new_data_dir\n+        self.assert_start_raises_init_error(0, ['-datadir='+new_data_dir], 'Error: Specified data directory \"' + new_data_dir + '\" does not exist.')\n+\n+        # Check that using non-existent datadir in conf file fails\n+        conf_file = os.path.join(default_data_dir, \"bitcoin.conf\")\n+        with open(conf_file, 'a', encoding='utf8') as f:\n+            f.write(\"datadir=\" + new_data_dir + \"\\n\")\n+        self.assert_start_raises_init_error(0, ['-conf='+conf_file], 'Error reading configuration file: specified data directory \"' + new_data_dir + '\" does not exist.')\n+\n+        # Create the directory and ensure the config file now works\n+        os.mkdir(new_data_dir)\n+        self.start_node(0, ['-conf='+conf_file, '-wallet=w1'])\n+        self.stop_node(0)\n+        assert os.path.isfile(os.path.join(new_data_dir, 'regtest', 'wallets', 'w1'))\n+\n+        # Ensure command line argument overrides datadir in conf\n+        os.mkdir(new_data_dir_2)\n+        self.nodes[0].datadir = new_data_dir_2",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r157927126",
+      "id" : 157927126,
+      "original_commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "original_position" : 44,
+      "path" : "test/functional/conf_args.py",
+      "position" : 44,
+      "pull_request_review_id" : 84651413,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2017-12-20T02:52:32Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/157927126",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r157928229"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/157928229"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Can't remove either of those, they are used by the test runner to connect to the RPC and monitor the output of debug.log and stuff I believe, otherwise it can't find it. It's set separately from any command line arguments to bitcoind",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2017-12-20T03:01:12Z",
+      "diff_hunk" : "@@ -0,0 +1,49 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import get_datadir_path\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if not arg.startswith(\"-datadir\")]\n+\n+        default_data_dir = get_datadir_path(self.options.tmpdir, 0)\n+        new_data_dir = os.path.join(default_data_dir, 'newdatadir')\n+        new_data_dir_2 = os.path.join(default_data_dir, 'newdatadir2')\n+\n+        # Check that using -datadir argument on non-existent directory fails\n+        self.nodes[0].datadir = new_data_dir\n+        self.assert_start_raises_init_error(0, ['-datadir='+new_data_dir], 'Error: Specified data directory \"' + new_data_dir + '\" does not exist.')\n+\n+        # Check that using non-existent datadir in conf file fails\n+        conf_file = os.path.join(default_data_dir, \"bitcoin.conf\")\n+        with open(conf_file, 'a', encoding='utf8') as f:\n+            f.write(\"datadir=\" + new_data_dir + \"\\n\")\n+        self.assert_start_raises_init_error(0, ['-conf='+conf_file], 'Error reading configuration file: specified data directory \"' + new_data_dir + '\" does not exist.')\n+\n+        # Create the directory and ensure the config file now works\n+        os.mkdir(new_data_dir)\n+        self.start_node(0, ['-conf='+conf_file, '-wallet=w1'])\n+        self.stop_node(0)\n+        assert os.path.isfile(os.path.join(new_data_dir, 'regtest', 'wallets', 'w1'))\n+\n+        # Ensure command line argument overrides datadir in conf\n+        os.mkdir(new_data_dir_2)\n+        self.nodes[0].datadir = new_data_dir_2",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r157928229",
+      "id" : 157928229,
+      "in_reply_to_id" : 157927126,
+      "original_commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "original_position" : 44,
+      "path" : "test/functional/conf_args.py",
+      "position" : 44,
+      "pull_request_review_id" : 84652784,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2017-12-20T03:01:12Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/157928229",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/3211283?v=4",
+         "events_url" : "https://api.github.com/users/MeshCollider/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MeshCollider/followers",
+         "following_url" : "https://api.github.com/users/MeshCollider/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MeshCollider/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MeshCollider",
+         "id" : 3211283,
+         "login" : "MeshCollider",
+         "organizations_url" : "https://api.github.com/users/MeshCollider/orgs",
+         "received_events_url" : "https://api.github.com/users/MeshCollider/received_events",
+         "repos_url" : "https://api.github.com/users/MeshCollider/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MeshCollider/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MeshCollider/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MeshCollider"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r157955029"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/157955029"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Maybe check if datadir is specified in extra_args in TestNode.start?",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2017-12-20T07:46:51Z",
+      "diff_hunk" : "@@ -0,0 +1,49 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import get_datadir_path\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if not arg.startswith(\"-datadir\")]\n+\n+        default_data_dir = get_datadir_path(self.options.tmpdir, 0)\n+        new_data_dir = os.path.join(default_data_dir, 'newdatadir')\n+        new_data_dir_2 = os.path.join(default_data_dir, 'newdatadir2')\n+\n+        # Check that using -datadir argument on non-existent directory fails\n+        self.nodes[0].datadir = new_data_dir\n+        self.assert_start_raises_init_error(0, ['-datadir='+new_data_dir], 'Error: Specified data directory \"' + new_data_dir + '\" does not exist.')\n+\n+        # Check that using non-existent datadir in conf file fails\n+        conf_file = os.path.join(default_data_dir, \"bitcoin.conf\")\n+        with open(conf_file, 'a', encoding='utf8') as f:\n+            f.write(\"datadir=\" + new_data_dir + \"\\n\")\n+        self.assert_start_raises_init_error(0, ['-conf='+conf_file], 'Error reading configuration file: specified data directory \"' + new_data_dir + '\" does not exist.')\n+\n+        # Create the directory and ensure the config file now works\n+        os.mkdir(new_data_dir)\n+        self.start_node(0, ['-conf='+conf_file, '-wallet=w1'])\n+        self.stop_node(0)\n+        assert os.path.isfile(os.path.join(new_data_dir, 'regtest', 'wallets', 'w1'))\n+\n+        # Ensure command line argument overrides datadir in conf\n+        os.mkdir(new_data_dir_2)\n+        self.nodes[0].datadir = new_data_dir_2",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r157955029",
+      "id" : 157955029,
+      "in_reply_to_id" : 157927126,
+      "original_commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "original_position" : 44,
+      "path" : "test/functional/conf_args.py",
+      "position" : 44,
+      "pull_request_review_id" : 84683304,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2017-12-20T07:46:51Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/157955029",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "author_association" : "OWNER",
+      "body" : "Thank you so much for adding tests for this!\r\nutACK be9a13c8a0f149ac219934b515399cca60bf2123\r\n",
+      "created_at" : "2017-12-20T08:37:03Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#issuecomment-352999271",
+      "id" : 352999271,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/11883",
+      "updated_at" : "2017-12-20T08:37:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/352999271",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Post-merge:\r\n\r\n```\r\n-----BEGIN PGP SIGNED MESSAGE-----\r\nHash: SHA512\r\n\r\nutACK be9a13c8a0f149ac219934b515399cca60bf2123\r\n-----BEGIN PGP SIGNATURE-----\r\n\r\niQIcBAEBCgAGBQJaOu+pAAoJENLqSFDnUoslsOcQAIiaYN2oS9TNACNr4wnYBcXW\r\nCY6i4q5Eyfr8CaENaeZNvDoYm92DH+dysVvVXjJoQetxTL+kiEU6xj1MdV24RCcd\r\nIWgqAroaLIGDFbe5DL7J9YOGwUWsO56NtSLKB5vZsaX8HocP/kNh2jvXTaq6Hq8E\r\ntvUev82IWTQQfit15yiO6ETsSiJadN7WPst0tfrj+gqIs67Acrg8hyP2VQ5Q594v\r\n8O7nt0IFUr8TWmYPf/8JrCN3odiEAwva+KSGuYYayQT4bEIBVUxy49D0vfRQMdad\r\npaTVdw7u53lFbcZKyIDzHFPKnU6FDV+wIqtCgtGPWNhFq3p6s4GCxlKHo37WbVdi\r\ncjsm4tC4v7UN0Mor9WACc79gkkooWD32ZqN9iOtkshG6aTJt0kIwLrzOVm60uR6D\r\nHkGj3yLREBYUZsvF4wSngCrdWAreHU9RePRTo8vKfPVTf7sr5LLoe+iBiSlvaviI\r\n5gUUNMxD+UG5nfotBQSNBV7I1WQ48t+wO5WjIW7SKUfVnlGk0FT6C1eNI6JDpW9i\r\nLn2Mq82pwO16aZKAn+NxXxyQe9huqs1xNNC/TtBqMLbM2Wf96MjhPjTQJTujJBrH\r\n90LAJ35nHawrrxC4RZL5ipkJUIu8ruDITchZomQmYujsO8jvBsQvdrkHmgOPZDOS\r\nRZW+i/hZ8oG1oze/BjYh\r\n=N62V\r\n-----END PGP SIGNATURE-----\r\n",
+      "created_at" : "2017-12-20T23:18:39Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#issuecomment-353211289",
+      "id" : 353211289,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/11883",
+      "updated_at" : "2017-12-20T23:18:39Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/353211289",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r166448257"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/166448257"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This is a shame. I don't think individual tests should be reaching into a TestNode object to change the datadir, since that's used by the test framework in various places.",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2018-02-06T21:30:38Z",
+      "diff_hunk" : "@@ -0,0 +1,49 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import get_datadir_path\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if not arg.startswith(\"-datadir\")]\n+\n+        default_data_dir = get_datadir_path(self.options.tmpdir, 0)\n+        new_data_dir = os.path.join(default_data_dir, 'newdatadir')\n+        new_data_dir_2 = os.path.join(default_data_dir, 'newdatadir2')\n+\n+        # Check that using -datadir argument on non-existent directory fails\n+        self.nodes[0].datadir = new_data_dir",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r166448257",
+      "id" : 166448257,
+      "original_commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "original_position" : 27,
+      "path" : "test/functional/conf_args.py",
+      "position" : 27,
+      "pull_request_review_id" : 94511792,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2018-02-06T21:30:38Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/166448257",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r166450152"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/166450152"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "@jnewbery You propose to discard the \"old\" TestNode and create a fresh one whenever the datadir is changed?",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2018-02-06T21:37:51Z",
+      "diff_hunk" : "@@ -0,0 +1,49 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import get_datadir_path\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if not arg.startswith(\"-datadir\")]\n+\n+        default_data_dir = get_datadir_path(self.options.tmpdir, 0)\n+        new_data_dir = os.path.join(default_data_dir, 'newdatadir')\n+        new_data_dir_2 = os.path.join(default_data_dir, 'newdatadir2')\n+\n+        # Check that using -datadir argument on non-existent directory fails\n+        self.nodes[0].datadir = new_data_dir",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r166450152",
+      "id" : 166450152,
+      "in_reply_to_id" : 166448257,
+      "original_commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "original_position" : 27,
+      "path" : "test/functional/conf_args.py",
+      "position" : 27,
+      "pull_request_review_id" : 94514035,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2018-02-06T21:37:51Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/166450152",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r166709078"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/166709078"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "No. The problem here is that it's useful to have a static datadir that files like debug.log and stderr are written to, since that helps with debugging failing scripts.",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2018-02-07T18:22:16Z",
+      "diff_hunk" : "@@ -0,0 +1,49 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import get_datadir_path\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if not arg.startswith(\"-datadir\")]\n+\n+        default_data_dir = get_datadir_path(self.options.tmpdir, 0)\n+        new_data_dir = os.path.join(default_data_dir, 'newdatadir')\n+        new_data_dir_2 = os.path.join(default_data_dir, 'newdatadir2')\n+\n+        # Check that using -datadir argument on non-existent directory fails\n+        self.nodes[0].datadir = new_data_dir",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r166709078",
+      "id" : 166709078,
+      "in_reply_to_id" : 166448257,
+      "original_commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "original_position" : 27,
+      "path" : "test/functional/conf_args.py",
+      "position" : 27,
+      "pull_request_review_id" : 94816125,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2018-02-07T18:22:16Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/166709078",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r166757791"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/166757791"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I agree that it's not a clean solution but it's the only thing I could come up with to make it work, how do you propose otherwise to test the datadir argument?",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2018-02-07T21:15:32Z",
+      "diff_hunk" : "@@ -0,0 +1,49 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import get_datadir_path\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if not arg.startswith(\"-datadir\")]\n+\n+        default_data_dir = get_datadir_path(self.options.tmpdir, 0)\n+        new_data_dir = os.path.join(default_data_dir, 'newdatadir')\n+        new_data_dir_2 = os.path.join(default_data_dir, 'newdatadir2')\n+\n+        # Check that using -datadir argument on non-existent directory fails\n+        self.nodes[0].datadir = new_data_dir",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r166757791",
+      "id" : 166757791,
+      "in_reply_to_id" : 166448257,
+      "original_commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "original_position" : 27,
+      "path" : "test/functional/conf_args.py",
+      "position" : 27,
+      "pull_request_review_id" : 94872947,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2018-02-07T21:15:32Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/166757791",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/3211283?v=4",
+         "events_url" : "https://api.github.com/users/MeshCollider/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MeshCollider/followers",
+         "following_url" : "https://api.github.com/users/MeshCollider/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MeshCollider/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MeshCollider",
+         "id" : 3211283,
+         "login" : "MeshCollider",
+         "organizations_url" : "https://api.github.com/users/MeshCollider/orgs",
+         "received_events_url" : "https://api.github.com/users/MeshCollider/received_events",
+         "repos_url" : "https://api.github.com/users/MeshCollider/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MeshCollider/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MeshCollider/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MeshCollider"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r176196622"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/176196622"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I think you're right. It's not ideal, but it's as good a way as any to do this.\r\n\r\nIt might be nice to have a log message at the start of the test warning that not all the node logs will be in the standard location:\r\n\r\n```\r\n        self.log.warning(\"This test uses non-default data directories. Not all node logs will be in the default location.\")\r\n```\r\n\r\nbut probably not worth a separate PR to add that at this point.",
+      "commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "created_at" : "2018-03-21T18:40:46Z",
+      "diff_hunk" : "@@ -0,0 +1,49 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2017 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test various command line arguments and configuration file parameters.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import get_datadir_path\n+\n+class ConfArgsTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.setup_clean_chain = True\n+        self.num_nodes = 1\n+\n+    def run_test(self):\n+        self.stop_node(0)\n+        # Remove the -datadir argument so it doesn't override the config file\n+        self.nodes[0].args = [arg for arg in self.nodes[0].args if not arg.startswith(\"-datadir\")]\n+\n+        default_data_dir = get_datadir_path(self.options.tmpdir, 0)\n+        new_data_dir = os.path.join(default_data_dir, 'newdatadir')\n+        new_data_dir_2 = os.path.join(default_data_dir, 'newdatadir2')\n+\n+        # Check that using -datadir argument on non-existent directory fails\n+        self.nodes[0].datadir = new_data_dir",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/11883#discussion_r176196622",
+      "id" : 176196622,
+      "in_reply_to_id" : 166448257,
+      "original_commit_id" : "be9a13c8a0f149ac219934b515399cca60bf2123",
+      "original_position" : 27,
+      "path" : "test/functional/conf_args.py",
+      "position" : 27,
+      "pull_request_review_id" : 105857798,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/11883",
+      "updated_at" : "2018-03-21T18:40:47Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/176196622",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   }
+]

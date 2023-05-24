@@ -1,0 +1,201 @@
+[
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* #19573 (Replace unused BIP 9 logic with draft BIP 8 by luke-jr)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "created_at" : "2020-11-03T11:06:09Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/20292#issuecomment-721049798",
+      "id" : 721049798,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20292",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDcyMTA0OTc5OA==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-11-03T11:06:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/721049798",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/20292#discussion_r518981640"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/20292"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/518981640"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "Where does the error get thrown if you were to send the transaction normally? And why is it too large atm? Everything in the PR looks good, but I thought I should understand this before ack, and haven't been able to figure out",
+      "commit_id" : "fab900802d74799ac1004265951be1b66e70cf76",
+      "created_at" : "2020-11-06T20:12:08Z",
+      "diff_hunk" : "@@ -1436,17 +1437,27 @@ def test_spenders(self, node, spenders, input_counts):\n         self.log.info(\"  - Done\")\n \n     def run_test(self):\n-        self.connect_nodes(0, 1)\n-\n         # Post-taproot activation tests go first (pre-taproot tests' blocks are invalid post-taproot).\n         self.log.info(\"Post-activation tests...\")\n         self.nodes[1].generate(101)\n         self.test_spenders(self.nodes[1], spenders_taproot_active(), input_counts=[1, 2, 2, 2, 2, 3])\n \n-        # Transfer % of funds to pre-taproot node.\n+        # Transfer funds to pre-taproot node.\n         addr = self.nodes[0].getnewaddress()\n-        self.nodes[1].sendtoaddress(address=addr, amount=int(self.nodes[1].getbalance() * 70000000) / 100000000)\n-        self.nodes[1].generate(1)\n+        rawtx = self.nodes[1].createrawtransaction(\n+            inputs=[{\n+                'txid': i['txid'],\n+                'vout': i['vout']\n+            } for i in self.nodes[1].listunspent()],\n+            outputs={addr: self.nodes[1].getbalance()},\n+        )\n+        rawtx = self.nodes[1].signrawtransactionwithwallet(rawtx)['hex']\n+        # Transaction is too large to fit into the mempool, so put it into a block",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/20292#discussion_r518981640",
+      "id" : 518981640,
+      "line" : 1455,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxODk4MTY0MA==",
+      "original_commit_id" : "fab900802d74799ac1004265951be1b66e70cf76",
+      "original_line" : 1455,
+      "original_position" : 50,
+      "original_start_line" : null,
+      "path" : "test/functional/feature_taproot.py",
+      "position" : 50,
+      "pull_request_review_id" : 525463722,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/20292",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-11-06T20:12:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/518981640",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/7217256?v=4",
+         "events_url" : "https://api.github.com/users/mjdietzx/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/mjdietzx/followers",
+         "following_url" : "https://api.github.com/users/mjdietzx/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/mjdietzx/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/mjdietzx",
+         "id" : 7217256,
+         "login" : "mjdietzx",
+         "node_id" : "MDQ6VXNlcjcyMTcyNTY=",
+         "organizations_url" : "https://api.github.com/users/mjdietzx/orgs",
+         "received_events_url" : "https://api.github.com/users/mjdietzx/received_events",
+         "repos_url" : "https://api.github.com/users/mjdietzx/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/mjdietzx/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/mjdietzx/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/mjdietzx"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/20292#discussion_r519130349"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/20292"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/519130349"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "You can find where it is thrown by running `git grep 'Transaction too large'`",
+      "commit_id" : "fab900802d74799ac1004265951be1b66e70cf76",
+      "created_at" : "2020-11-07T06:29:12Z",
+      "diff_hunk" : "@@ -1436,17 +1437,27 @@ def test_spenders(self, node, spenders, input_counts):\n         self.log.info(\"  - Done\")\n \n     def run_test(self):\n-        self.connect_nodes(0, 1)\n-\n         # Post-taproot activation tests go first (pre-taproot tests' blocks are invalid post-taproot).\n         self.log.info(\"Post-activation tests...\")\n         self.nodes[1].generate(101)\n         self.test_spenders(self.nodes[1], spenders_taproot_active(), input_counts=[1, 2, 2, 2, 2, 3])\n \n-        # Transfer % of funds to pre-taproot node.\n+        # Transfer funds to pre-taproot node.\n         addr = self.nodes[0].getnewaddress()\n-        self.nodes[1].sendtoaddress(address=addr, amount=int(self.nodes[1].getbalance() * 70000000) / 100000000)\n-        self.nodes[1].generate(1)\n+        rawtx = self.nodes[1].createrawtransaction(\n+            inputs=[{\n+                'txid': i['txid'],\n+                'vout': i['vout']\n+            } for i in self.nodes[1].listunspent()],\n+            outputs={addr: self.nodes[1].getbalance()},\n+        )\n+        rawtx = self.nodes[1].signrawtransactionwithwallet(rawtx)['hex']\n+        # Transaction is too large to fit into the mempool, so put it into a block",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/20292#discussion_r519130349",
+      "id" : 519130349,
+      "in_reply_to_id" : 518981640,
+      "line" : 1455,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxOTEzMDM0OQ==",
+      "original_commit_id" : "fab900802d74799ac1004265951be1b66e70cf76",
+      "original_line" : 1455,
+      "original_position" : 50,
+      "original_start_line" : null,
+      "path" : "test/functional/feature_taproot.py",
+      "position" : 50,
+      "pull_request_review_id" : 525631792,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/20292",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-11-07T06:29:13Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/519130349",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/20292#discussion_r519130606"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/20292"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/519130606"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "The transaction is too large because it has too many inputs",
+      "commit_id" : "fab900802d74799ac1004265951be1b66e70cf76",
+      "created_at" : "2020-11-07T06:29:42Z",
+      "diff_hunk" : "@@ -1436,17 +1437,27 @@ def test_spenders(self, node, spenders, input_counts):\n         self.log.info(\"  - Done\")\n \n     def run_test(self):\n-        self.connect_nodes(0, 1)\n-\n         # Post-taproot activation tests go first (pre-taproot tests' blocks are invalid post-taproot).\n         self.log.info(\"Post-activation tests...\")\n         self.nodes[1].generate(101)\n         self.test_spenders(self.nodes[1], spenders_taproot_active(), input_counts=[1, 2, 2, 2, 2, 3])\n \n-        # Transfer % of funds to pre-taproot node.\n+        # Transfer funds to pre-taproot node.\n         addr = self.nodes[0].getnewaddress()\n-        self.nodes[1].sendtoaddress(address=addr, amount=int(self.nodes[1].getbalance() * 70000000) / 100000000)\n-        self.nodes[1].generate(1)\n+        rawtx = self.nodes[1].createrawtransaction(\n+            inputs=[{\n+                'txid': i['txid'],\n+                'vout': i['vout']\n+            } for i in self.nodes[1].listunspent()],\n+            outputs={addr: self.nodes[1].getbalance()},\n+        )\n+        rawtx = self.nodes[1].signrawtransactionwithwallet(rawtx)['hex']\n+        # Transaction is too large to fit into the mempool, so put it into a block",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/20292#discussion_r519130606",
+      "id" : 519130606,
+      "in_reply_to_id" : 518981640,
+      "line" : 1455,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxOTEzMDYwNg==",
+      "original_commit_id" : "fab900802d74799ac1004265951be1b66e70cf76",
+      "original_line" : 1455,
+      "original_position" : 50,
+      "original_start_line" : null,
+      "path" : "test/functional/feature_taproot.py",
+      "position" : 50,
+      "pull_request_review_id" : 525631819,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/20292",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-11-07T06:29:42Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/519130606",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   }
+]

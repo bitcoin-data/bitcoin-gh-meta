@@ -1,0 +1,758 @@
+[
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r125434868"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/125434868"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Make these private?",
+      "commit_id" : "1887155ef22d27439307439b8c067f65d86fb463",
+      "created_at" : "2017-07-04T09:57:07Z",
+      "diff_hunk" : "@@ -174,7 +174,34 @@ class MutableTransactionSignatureChecker : public TransactionSignatureChecker\n     MutableTransactionSignatureChecker(const CMutableTransaction* txToIn, unsigned int nInIn, const CAmount& amountIn) : TransactionSignatureChecker(&txTo, nInIn, amountIn), txTo(*txToIn) {}\n };\n \n-bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& script, unsigned int flags, const BaseSignatureChecker& checker, SigVersion sigversion, ScriptError* error = NULL);\n+class ScriptExecution {\n+public:\n+    typedef std::vector<unsigned char> StackElementType;\n+    typedef std::vector<StackElementType> StackType;\n+\n+    const CScript& script;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r125434868",
+      "id" : 125434868,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDEyNTQzNDg2OA==",
+      "original_commit_id" : "0fa35e3c80cdc65e1718d7a6b7f025c332f2d742",
+      "original_position" : 10,
+      "path" : "src/script/interpreter.h",
+      "position" : 10,
+      "pull_request_review_id" : 47822820,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729",
+      "updated_at" : "2018-11-03T09:25:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/125434868",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r125442844"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/125442844"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Move `stack` to `::Eval()` for the time being as this is an output (also remove `stack` member from class)?",
+      "commit_id" : "1887155ef22d27439307439b8c067f65d86fb463",
+      "created_at" : "2017-07-04T10:35:57Z",
+      "diff_hunk" : "@@ -174,7 +174,34 @@ class MutableTransactionSignatureChecker : public TransactionSignatureChecker\n     MutableTransactionSignatureChecker(const CMutableTransaction* txToIn, unsigned int nInIn, const CAmount& amountIn) : TransactionSignatureChecker(&txTo, nInIn, amountIn), txTo(*txToIn) {}\n };\n \n-bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& script, unsigned int flags, const BaseSignatureChecker& checker, SigVersion sigversion, ScriptError* error = NULL);\n+class ScriptExecution {\n+public:\n+    typedef std::vector<unsigned char> StackElementType;\n+    typedef std::vector<StackElementType> StackType;\n+\n+    const CScript& script;\n+    StackType& stack;\n+    unsigned int flags;\n+    const BaseSignatureChecker& checker;\n+    SigVersion sigversion;\n+\n+    CScript::const_iterator pc;\n+    CScript::const_iterator pbegincodehash;\n+\n+    std::vector<bool> vfExec;\n+    StackType altstack;\n+    int nOpCount;\n+\n+    ScriptExecution(StackType& stack, const CScript&, unsigned int flags, const BaseSignatureChecker&, SigVersion);\n+\n+    bool Eval(ScriptError* error = NULL);\n+};\n+\n+inline bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& script, unsigned int flags, const BaseSignatureChecker& checker, SigVersion sigversion, ScriptError* error = NULL)\n+{\n+    return ScriptExecution(stack, script, flags, checker, sigversion).Eval(error);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r125442844",
+      "id" : 125442844,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDEyNTQ0Mjg0NA==",
+      "original_commit_id" : "0fa35e3c80cdc65e1718d7a6b7f025c332f2d742",
+      "original_position" : 30,
+      "path" : "src/script/interpreter.h",
+      "position" : 30,
+      "pull_request_review_id" : 47822820,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729",
+      "updated_at" : "2018-11-03T09:25:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/125442844",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r125442990"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/125442990"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Nit,rename to `ScriptExecuter`?",
+      "commit_id" : "1887155ef22d27439307439b8c067f65d86fb463",
+      "created_at" : "2017-07-04T10:36:46Z",
+      "diff_hunk" : "@@ -174,7 +174,34 @@ class MutableTransactionSignatureChecker : public TransactionSignatureChecker\n     MutableTransactionSignatureChecker(const CMutableTransaction* txToIn, unsigned int nInIn, const CAmount& amountIn) : TransactionSignatureChecker(&txTo, nInIn, amountIn), txTo(*txToIn) {}\n };\n \n-bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& script, unsigned int flags, const BaseSignatureChecker& checker, SigVersion sigversion, ScriptError* error = NULL);\n+class ScriptExecution {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r125442990",
+      "id" : 125442990,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDEyNTQ0Mjk5MA==",
+      "original_commit_id" : "0fa35e3c80cdc65e1718d7a6b7f025c332f2d742",
+      "original_position" : 5,
+      "path" : "src/script/interpreter.h",
+      "position" : 5,
+      "pull_request_review_id" : 47822820,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729",
+      "updated_at" : "2018-11-03T09:25:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/125442990",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r125443038"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/125443038"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Rename to Execute?",
+      "commit_id" : "1887155ef22d27439307439b8c067f65d86fb463",
+      "created_at" : "2017-07-04T10:37:04Z",
+      "diff_hunk" : "@@ -174,7 +174,34 @@ class MutableTransactionSignatureChecker : public TransactionSignatureChecker\n     MutableTransactionSignatureChecker(const CMutableTransaction* txToIn, unsigned int nInIn, const CAmount& amountIn) : TransactionSignatureChecker(&txTo, nInIn, amountIn), txTo(*txToIn) {}\n };\n \n-bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& script, unsigned int flags, const BaseSignatureChecker& checker, SigVersion sigversion, ScriptError* error = NULL);\n+class ScriptExecution {\n+public:\n+    typedef std::vector<unsigned char> StackElementType;\n+    typedef std::vector<StackElementType> StackType;\n+\n+    const CScript& script;\n+    StackType& stack;\n+    unsigned int flags;\n+    const BaseSignatureChecker& checker;\n+    SigVersion sigversion;\n+\n+    CScript::const_iterator pc;\n+    CScript::const_iterator pbegincodehash;\n+\n+    std::vector<bool> vfExec;\n+    StackType altstack;\n+    int nOpCount;\n+\n+    ScriptExecution(StackType& stack, const CScript&, unsigned int flags, const BaseSignatureChecker&, SigVersion);\n+\n+    bool Eval(ScriptError* error = NULL);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r125443038",
+      "id" : 125443038,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDEyNTQ0MzAzOA==",
+      "original_commit_id" : "0fa35e3c80cdc65e1718d7a6b7f025c332f2d742",
+      "original_position" : 25,
+      "path" : "src/script/interpreter.h",
+      "position" : null,
+      "pull_request_review_id" : 47822820,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729",
+      "updated_at" : "2018-11-03T09:25:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/125443038",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r125444317"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/125444317"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "It can only execute a single script.",
+      "commit_id" : "1887155ef22d27439307439b8c067f65d86fb463",
+      "created_at" : "2017-07-04T10:45:14Z",
+      "diff_hunk" : "@@ -174,7 +174,34 @@ class MutableTransactionSignatureChecker : public TransactionSignatureChecker\n     MutableTransactionSignatureChecker(const CMutableTransaction* txToIn, unsigned int nInIn, const CAmount& amountIn) : TransactionSignatureChecker(&txTo, nInIn, amountIn), txTo(*txToIn) {}\n };\n \n-bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& script, unsigned int flags, const BaseSignatureChecker& checker, SigVersion sigversion, ScriptError* error = NULL);\n+class ScriptExecution {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r125444317",
+      "id" : 125444317,
+      "in_reply_to_id" : 125442990,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDEyNTQ0NDMxNw==",
+      "original_commit_id" : "0fa35e3c80cdc65e1718d7a6b7f025c332f2d742",
+      "original_position" : 5,
+      "path" : "src/script/interpreter.h",
+      "position" : 5,
+      "pull_request_review_id" : 47833261,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729",
+      "updated_at" : "2018-11-03T09:25:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/125444317",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "node_id" : "MDQ6VXNlcjEwOTU2NzU=",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r125444371"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/125444371"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "They are meant for external inspection.",
+      "commit_id" : "1887155ef22d27439307439b8c067f65d86fb463",
+      "created_at" : "2017-07-04T10:45:24Z",
+      "diff_hunk" : "@@ -174,7 +174,34 @@ class MutableTransactionSignatureChecker : public TransactionSignatureChecker\n     MutableTransactionSignatureChecker(const CMutableTransaction* txToIn, unsigned int nInIn, const CAmount& amountIn) : TransactionSignatureChecker(&txTo, nInIn, amountIn), txTo(*txToIn) {}\n };\n \n-bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& script, unsigned int flags, const BaseSignatureChecker& checker, SigVersion sigversion, ScriptError* error = NULL);\n+class ScriptExecution {\n+public:\n+    typedef std::vector<unsigned char> StackElementType;\n+    typedef std::vector<StackElementType> StackType;\n+\n+    const CScript& script;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r125444371",
+      "id" : 125444371,
+      "in_reply_to_id" : 125434868,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDEyNTQ0NDM3MQ==",
+      "original_commit_id" : "0fa35e3c80cdc65e1718d7a6b7f025c332f2d742",
+      "original_position" : 10,
+      "path" : "src/script/interpreter.h",
+      "position" : 10,
+      "pull_request_review_id" : 47833314,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729",
+      "updated_at" : "2018-11-03T09:25:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/125444371",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "node_id" : "MDQ6VXNlcjEwOTU2NzU=",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r125444459"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/125444459"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "It's not only an output.",
+      "commit_id" : "1887155ef22d27439307439b8c067f65d86fb463",
+      "created_at" : "2017-07-04T10:46:01Z",
+      "diff_hunk" : "@@ -174,7 +174,34 @@ class MutableTransactionSignatureChecker : public TransactionSignatureChecker\n     MutableTransactionSignatureChecker(const CMutableTransaction* txToIn, unsigned int nInIn, const CAmount& amountIn) : TransactionSignatureChecker(&txTo, nInIn, amountIn), txTo(*txToIn) {}\n };\n \n-bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& script, unsigned int flags, const BaseSignatureChecker& checker, SigVersion sigversion, ScriptError* error = NULL);\n+class ScriptExecution {\n+public:\n+    typedef std::vector<unsigned char> StackElementType;\n+    typedef std::vector<StackElementType> StackType;\n+\n+    const CScript& script;\n+    StackType& stack;\n+    unsigned int flags;\n+    const BaseSignatureChecker& checker;\n+    SigVersion sigversion;\n+\n+    CScript::const_iterator pc;\n+    CScript::const_iterator pbegincodehash;\n+\n+    std::vector<bool> vfExec;\n+    StackType altstack;\n+    int nOpCount;\n+\n+    ScriptExecution(StackType& stack, const CScript&, unsigned int flags, const BaseSignatureChecker&, SigVersion);\n+\n+    bool Eval(ScriptError* error = NULL);\n+};\n+\n+inline bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& script, unsigned int flags, const BaseSignatureChecker& checker, SigVersion sigversion, ScriptError* error = NULL)\n+{\n+    return ScriptExecution(stack, script, flags, checker, sigversion).Eval(error);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r125444459",
+      "id" : 125444459,
+      "in_reply_to_id" : 125442844,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDEyNTQ0NDQ1OQ==",
+      "original_commit_id" : "0fa35e3c80cdc65e1718d7a6b7f025c332f2d742",
+      "original_position" : 30,
+      "path" : "src/script/interpreter.h",
+      "position" : 30,
+      "pull_request_review_id" : 47833420,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729",
+      "updated_at" : "2018-11-03T09:25:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/125444459",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "node_id" : "MDQ6VXNlcjEwOTU2NzU=",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r125446646"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/125446646"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "When that happens either make it public, create a getter or an `Inspect` method?",
+      "commit_id" : "1887155ef22d27439307439b8c067f65d86fb463",
+      "created_at" : "2017-07-04T11:00:15Z",
+      "diff_hunk" : "@@ -174,7 +174,34 @@ class MutableTransactionSignatureChecker : public TransactionSignatureChecker\n     MutableTransactionSignatureChecker(const CMutableTransaction* txToIn, unsigned int nInIn, const CAmount& amountIn) : TransactionSignatureChecker(&txTo, nInIn, amountIn), txTo(*txToIn) {}\n };\n \n-bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& script, unsigned int flags, const BaseSignatureChecker& checker, SigVersion sigversion, ScriptError* error = NULL);\n+class ScriptExecution {\n+public:\n+    typedef std::vector<unsigned char> StackElementType;\n+    typedef std::vector<StackElementType> StackType;\n+\n+    const CScript& script;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r125446646",
+      "id" : 125446646,
+      "in_reply_to_id" : 125434868,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDEyNTQ0NjY0Ng==",
+      "original_commit_id" : "0fa35e3c80cdc65e1718d7a6b7f025c332f2d742",
+      "original_position" : 10,
+      "path" : "src/script/interpreter.h",
+      "position" : 10,
+      "pull_request_review_id" : 47835891,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729",
+      "updated_at" : "2018-11-03T09:25:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/125446646",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Rebased",
+      "created_at" : "2017-09-02T05:48:29Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#issuecomment-326724099",
+      "id" : 326724099,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/10729",
+      "updated_at" : "2017-09-02T05:48:29Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/326724099",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Concept ACK, will review",
+      "created_at" : "2017-09-06T00:58:07Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#issuecomment-327343902",
+      "id" : 327343902,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/10729",
+      "updated_at" : "2017-09-06T00:58:28Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/327343902",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Rebased",
+      "created_at" : "2018-11-03T09:25:15Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#issuecomment-435573599",
+      "id" : 435573599,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/10729",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQzNTU3MzU5OQ==",
+      "updated_at" : "2018-11-03T09:25:15Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/435573599",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "node_id" : "MDQ6VXNlcjEwOTU2NzU=",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r230606523"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/230606523"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Match parameter names between declaration and definition :-)",
+      "commit_id" : "1887155ef22d27439307439b8c067f65d86fb463",
+      "created_at" : "2018-11-04T21:39:36Z",
+      "diff_hunk" : "@@ -185,7 +185,34 @@ class GenericTransactionSignatureChecker : public BaseSignatureChecker\n using TransactionSignatureChecker = GenericTransactionSignatureChecker<CTransaction>;\n using MutableTransactionSignatureChecker = GenericTransactionSignatureChecker<CMutableTransaction>;\n \n-bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& script, unsigned int flags, const BaseSignatureChecker& checker, SigVersion sigversion, ScriptError* error = nullptr);\n+class ScriptExecution {\n+public:\n+    typedef std::vector<unsigned char> StackElementType;\n+    typedef std::vector<StackElementType> StackType;\n+\n+    const CScript& script;\n+    StackType& stack;\n+    unsigned int flags;\n+    const BaseSignatureChecker& checker;\n+    SigVersion sigversion;\n+\n+    CScript::const_iterator pc;\n+    CScript::const_iterator pbegincodehash;\n+\n+    std::vector<bool> vfExec;\n+    StackType altstack;\n+    int nOpCount;\n+\n+    ScriptExecution(StackType& stack, const CScript&, unsigned int flags, const BaseSignatureChecker&, SigVersion);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r230606523",
+      "id" : 230606523,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIzMDYwNjUyMw==",
+      "original_commit_id" : "1887155ef22d27439307439b8c067f65d86fb463",
+      "original_position" : 23,
+      "path" : "src/script/interpreter.h",
+      "position" : 23,
+      "pull_request_review_id" : 171380652,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729",
+      "updated_at" : "2018-11-04T21:39:36Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/230606523",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7826565?v=4",
+         "events_url" : "https://api.github.com/users/practicalswift/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/practicalswift/followers",
+         "following_url" : "https://api.github.com/users/practicalswift/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/practicalswift/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/practicalswift",
+         "id" : 7826565,
+         "login" : "practicalswift",
+         "node_id" : "MDQ6VXNlcjc4MjY1NjU=",
+         "organizations_url" : "https://api.github.com/users/practicalswift/orgs",
+         "received_events_url" : "https://api.github.com/users/practicalswift/received_events",
+         "repos_url" : "https://api.github.com/users/practicalswift/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/practicalswift/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/practicalswift/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/practicalswift"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r230606536"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/230606536"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Same here :-)",
+      "commit_id" : "1887155ef22d27439307439b8c067f65d86fb463",
+      "created_at" : "2018-11-04T21:39:56Z",
+      "diff_hunk" : "@@ -185,7 +185,34 @@ class GenericTransactionSignatureChecker : public BaseSignatureChecker\n using TransactionSignatureChecker = GenericTransactionSignatureChecker<CTransaction>;\n using MutableTransactionSignatureChecker = GenericTransactionSignatureChecker<CMutableTransaction>;\n \n-bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& script, unsigned int flags, const BaseSignatureChecker& checker, SigVersion sigversion, ScriptError* error = nullptr);\n+class ScriptExecution {\n+public:\n+    typedef std::vector<unsigned char> StackElementType;\n+    typedef std::vector<StackElementType> StackType;\n+\n+    const CScript& script;\n+    StackType& stack;\n+    unsigned int flags;\n+    const BaseSignatureChecker& checker;\n+    SigVersion sigversion;\n+\n+    CScript::const_iterator pc;\n+    CScript::const_iterator pbegincodehash;\n+\n+    std::vector<bool> vfExec;\n+    StackType altstack;\n+    int nOpCount;\n+\n+    ScriptExecution(StackType& stack, const CScript&, unsigned int flags, const BaseSignatureChecker&, SigVersion);\n+\n+    bool Eval(ScriptError* error = nullptr);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r230606536",
+      "id" : 230606536,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIzMDYwNjUzNg==",
+      "original_commit_id" : "1887155ef22d27439307439b8c067f65d86fb463",
+      "original_position" : 25,
+      "path" : "src/script/interpreter.h",
+      "position" : 25,
+      "pull_request_review_id" : 171380662,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729",
+      "updated_at" : "2018-11-04T21:39:57Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/230606536",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7826565?v=4",
+         "events_url" : "https://api.github.com/users/practicalswift/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/practicalswift/followers",
+         "following_url" : "https://api.github.com/users/practicalswift/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/practicalswift/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/practicalswift",
+         "id" : 7826565,
+         "login" : "practicalswift",
+         "node_id" : "MDQ6VXNlcjc4MjY1NjU=",
+         "organizations_url" : "https://api.github.com/users/practicalswift/orgs",
+         "received_events_url" : "https://api.github.com/users/practicalswift/received_events",
+         "repos_url" : "https://api.github.com/users/practicalswift/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/practicalswift/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/practicalswift/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/practicalswift"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r230606587"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/230606587"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Should `vfExec` and `altstack` be initialized too?",
+      "commit_id" : "1887155ef22d27439307439b8c067f65d86fb463",
+      "created_at" : "2018-11-04T21:41:39Z",
+      "diff_hunk" : "@@ -278,7 +278,12 @@ int FindAndDelete(CScript& script, const CScript& b)\n     return nFound;\n }\n \n-bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& script, unsigned int flags, const BaseSignatureChecker& checker, SigVersion sigversion, ScriptError* serror)\n+ScriptExecution::ScriptExecution(StackType& stack_in, const CScript& script_in, unsigned int flags_in, const BaseSignatureChecker& checker_in, SigVersion sigversion_in) :\n+    script(script_in), stack(stack_in), flags(flags_in), checker(checker_in), sigversion(sigversion_in), pc(script.begin()), pbegincodehash(script.begin()), nOpCount(0)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#discussion_r230606587",
+      "id" : 230606587,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIzMDYwNjU4Nw==",
+      "original_commit_id" : "1887155ef22d27439307439b8c067f65d86fb463",
+      "original_position" : 6,
+      "path" : "src/script/interpreter.cpp",
+      "position" : 6,
+      "pull_request_review_id" : 171380724,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/10729",
+      "updated_at" : "2018-11-04T21:41:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/230606587",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7826565?v=4",
+         "events_url" : "https://api.github.com/users/practicalswift/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/practicalswift/followers",
+         "following_url" : "https://api.github.com/users/practicalswift/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/practicalswift/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/practicalswift",
+         "id" : 7826565,
+         "login" : "practicalswift",
+         "node_id" : "MDQ6VXNlcjc4MjY1NjU=",
+         "organizations_url" : "https://api.github.com/users/practicalswift/orgs",
+         "received_events_url" : "https://api.github.com/users/practicalswift/received_events",
+         "repos_url" : "https://api.github.com/users/practicalswift/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/practicalswift/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/practicalswift/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/practicalswift"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* #17977 ([WIP] Implement BIP 340-342 validation (Schnorr/taproot/tapscript) by sipa)\n* #16902 (O(1) OP_IF/NOTIF/ELSE/ENDIF script implementation by sipa)\n* #13062 (Make script interpreter independent from storage type CScript by sipa)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "created_at" : "2018-11-09T03:49:26Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#issuecomment-437241091",
+      "id" : 437241091,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/10729",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQzNzI0MTA5MQ==",
+      "updated_at" : "2020-02-12T00:14:24Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/437241091",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "utACK, unless I'm missing something, this should not change behavior at all.\r\n",
+      "created_at" : "2019-04-03T21:13:12Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#issuecomment-479661014",
+      "id" : 479661014,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/10729",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ3OTY2MTAxNA==",
+      "updated_at" : "2019-04-03T21:13:12Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/479661014",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "node_id" : "MDQ6VXNlcjEwMDg0NTg=",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--5d09a71f8925f3f132321140b44b946d-->The last travis run for this pull request was 286 days ago and is thus outdated. To trigger a fresh travis build, this pull request should be closed and re-opened.",
+      "created_at" : "2019-08-16T13:49:25Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#issuecomment-522015332",
+      "id" : 522015332,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/10729",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDUyMjAxNTMzMg==",
+      "updated_at" : "2019-08-16T13:49:25Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/522015332",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Abandoning this until there's some indication anyone cares",
+      "created_at" : "2020-02-26T20:59:47Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/10729#issuecomment-591640992",
+      "id" : 591640992,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/10729",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU5MTY0MDk5Mg==",
+      "updated_at" : "2020-02-26T20:59:47Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/591640992",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "node_id" : "MDQ6VXNlcjEwOTU2NzU=",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   }
+]

@@ -1,9 +1,11 @@
 {
    "assignee" : null,
-   "body" : "There are 3 pieces of data that are maintained on disk. The actual block and undo data, the block index (which can refer to positions on disk), and the chainstate (which refers to the best block hash).\r\n\r\nEarlier, there was no guarantee that blocks were written to disk before block index entries referring to them were written. This commit introduces dirty flags for block index data, and delays writing it until the actual block data is flushed.\r\n\r\nWith this stricter ordering in writes, it is now safe to not always flush after every block, so there is no need for the IsInitialBlockDownload() check there - instead we just write whenever enough time has passed or the cache size grows too large.\r\n\r\nIn addition, only do a write inside the block processing loop if necessary (because of cache size exceeded). Otherwise, move the writing to a point after processing is done, after relaying.\r\n\r\nThis should improve block relay speed, by not writing chainstate and index entries before announcing the new hash. \r\n\r\nFuture work: move block and undo data writing into FlushStateToDisk, and move it to a background thread.",
+   "assignees" : [],
+   "author_association" : "MEMBER",
+   "body" : "There are 3 pieces of data that are maintained on disk. The actual block and undo data, the block index (which can refer to positions on disk), and the chainstate (which refers to the best block hash).\n\nEarlier, there was no guarantee that blocks were written to disk before block index entries referring to them were written. This commit introduces dirty flags for block index data, and delays writing it until the actual block data is flushed.\n\nWith this stricter ordering in writes, it is now safe to not always flush after every block, so there is no need for the IsInitialBlockDownload() check there - instead we just write whenever enough time has passed or the cache size grows too large.\n\nIn addition, only do a write inside the block processing loop if necessary (because of cache size exceeded). Otherwise, move the writing to a point after processing is done, after relaying.\n\nThis should improve block relay speed, by not writing chainstate and index entries before announcing the new hash. \n\nFuture work: move block and undo data writing into FlushStateToDisk, and move it to a background thread.\n",
    "closed_at" : "2014-11-25T11:18:17Z",
    "closed_by" : {
-      "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+      "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
       "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
       "followers_url" : "https://api.github.com/users/laanwj/followers",
       "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
@@ -12,6 +14,7 @@
       "html_url" : "https://github.com/laanwj",
       "id" : 126646,
       "login" : "laanwj",
+      "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
       "organizations_url" : "https://api.github.com/users/laanwj/orgs",
       "received_events_url" : "https://api.github.com/users/laanwj/received_events",
       "repos_url" : "https://api.github.com/users/laanwj/repos",
@@ -30,18 +33,21 @@
    "labels" : [
       {
          "color" : "E6F6D6",
-         "name" : "Improvement",
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/Improvement"
+         "default" : false,
+         "id" : 135961,
+         "name" : "Refactoring",
+         "node_id" : "MDU6TGFiZWwxMzU5NjE=",
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/Refactoring"
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5241/labels{/name}",
    "locked" : false,
    "milestone" : {
-      "closed_at" : null,
-      "closed_issues" : 112,
+      "closed_at" : "2015-12-03T11:08:31Z",
+      "closed_issues" : 134,
       "created_at" : "2013-12-05T10:34:42Z",
       "creator" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
          "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
          "followers_url" : "https://api.github.com/users/laanwj/followers",
          "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
@@ -50,6 +56,7 @@
          "html_url" : "https://github.com/laanwj",
          "id" : 126646,
          "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
          "organizations_url" : "https://api.github.com/users/laanwj/orgs",
          "received_events_url" : "https://api.github.com/users/laanwj/received_events",
          "repos_url" : "https://api.github.com/users/laanwj/repos",
@@ -61,15 +68,18 @@
       },
       "description" : "",
       "due_on" : null,
+      "html_url" : "https://github.com/bitcoin/bitcoin/milestone/14",
       "id" : 505738,
       "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/milestones/14/labels",
+      "node_id" : "MDk6TWlsZXN0b25lNTA1NzM4",
       "number" : 14,
-      "open_issues" : 2,
-      "state" : "open",
+      "open_issues" : 0,
+      "state" : "closed",
       "title" : "0.10.0",
-      "updated_at" : "2015-01-23T15:33:09Z",
+      "updated_at" : "2015-12-03T11:08:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/milestones/14"
    },
+   "node_id" : "MDExOlB1bGxSZXF1ZXN0MjQwNjU1NjI=",
    "number" : 5241,
    "pull_request" : {
       "diff_url" : "https://github.com/bitcoin/bitcoin/pull/5241.diff",
@@ -77,12 +87,13 @@
       "patch_url" : "https://github.com/bitcoin/bitcoin/pull/5241.patch",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/5241"
    },
+   "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
    "title" : "Improve chainstate/blockindex disk writing policy",
    "updated_at" : "2014-11-25T11:18:17Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5241",
    "user" : {
-      "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+      "avatar_url" : "https://avatars1.githubusercontent.com/u/548488?v=4",
       "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
       "followers_url" : "https://api.github.com/users/sipa/followers",
       "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
@@ -91,6 +102,7 @@
       "html_url" : "https://github.com/sipa",
       "id" : 548488,
       "login" : "sipa",
+      "node_id" : "MDQ6VXNlcjU0ODQ4OA==",
       "organizations_url" : "https://api.github.com/users/sipa/orgs",
       "received_events_url" : "https://api.github.com/users/sipa/received_events",
       "repos_url" : "https://api.github.com/users/sipa/repos",

@@ -1,0 +1,428 @@
+[
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/26314#discussion_r996710046"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26314"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/996710046"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Maybe writing a single byte b'a' or so achieves the same?",
+      "commit_id" : "9eab07ecd84ad79fe91892ff4ee002831860b904",
+      "created_at" : "2022-10-17T07:41:55Z",
+      "diff_hunk" : "@@ -63,14 +63,21 @@ def run_test(self):\n         self.log.info(\"Check the addresses in anchors.dat\")\n \n         with open(node_anchors_path, \"rb\") as file_handler:\n-            anchors = file_handler.read().hex()\n+            anchors = file_handler.read()\n \n+        anchors_hex = anchors.hex()\n         for port in block_relay_nodes_port:\n             ip_port = ip + port\n-            assert ip_port in anchors\n+            assert ip_port in anchors_hex\n         for port in inbound_nodes_port:\n             ip_port = ip + port\n-            assert ip_port not in anchors\n+            assert ip_port not in anchors_hex\n+\n+        self.log.info(\"Perturb anchors.dat to test it doesn't throw an error during initialization\")\n+        with open(node_anchors_path, \"wb\") as out_file_handler:\n+            tweaked_contents = bytearray(anchors)\n+            tweaked_contents[10:20] = b'1' * 25\n+            out_file_handler.write(bytes(tweaked_contents))",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26314#discussion_r996710046",
+      "id" : 996710046,
+      "line" : 80,
+      "node_id" : "PRRC_kwDOABII5847aJae",
+      "original_commit_id" : "9eab07ecd84ad79fe91892ff4ee002831860b904",
+      "original_line" : 80,
+      "original_position" : 21,
+      "original_start_line" : null,
+      "path" : "test/functional/feature_anchors.py",
+      "position" : 21,
+      "pull_request_review_id" : 1143642135,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26314",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/996710046/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-10-17T07:41:55Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/996710046",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/26314#discussion_r997051158"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26314"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/997051158"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Yes, it achieves the same, just tested here manually btw... Do you think it's best to change it to modify a single byte ? e.g.:\r\n```diff\r\ndiff --git a/test/functional/feature_anchors.py b/test/functional/feature_anchors.py\r\nindex aa80b9f1d..322b6b177 100755\r\n--- a/test/functional/feature_anchors.py\r\n+++ b/test/functional/feature_anchors.py\r\n@@ -76,7 +76,7 @@ class AnchorsTest(BitcoinTestFramework):\r\n         self.log.info(\"Perturb anchors.dat to test it doesn't throw an error during initialization\")\r\n         with open(node_anchors_path, \"wb\") as out_file_handler:\r\n             tweaked_contents = bytearray(anchors)\r\n-            tweaked_contents[10:20] = b'1' * 25\r\n+            tweaked_contents[35:35] = b'1'\r\n             out_file_handler.write(bytes(tweaked_contents))\r\n```\r\n",
+      "commit_id" : "9eab07ecd84ad79fe91892ff4ee002831860b904",
+      "created_at" : "2022-10-17T13:18:49Z",
+      "diff_hunk" : "@@ -63,14 +63,21 @@ def run_test(self):\n         self.log.info(\"Check the addresses in anchors.dat\")\n \n         with open(node_anchors_path, \"rb\") as file_handler:\n-            anchors = file_handler.read().hex()\n+            anchors = file_handler.read()\n \n+        anchors_hex = anchors.hex()\n         for port in block_relay_nodes_port:\n             ip_port = ip + port\n-            assert ip_port in anchors\n+            assert ip_port in anchors_hex\n         for port in inbound_nodes_port:\n             ip_port = ip + port\n-            assert ip_port not in anchors\n+            assert ip_port not in anchors_hex\n+\n+        self.log.info(\"Perturb anchors.dat to test it doesn't throw an error during initialization\")\n+        with open(node_anchors_path, \"wb\") as out_file_handler:\n+            tweaked_contents = bytearray(anchors)\n+            tweaked_contents[10:20] = b'1' * 25\n+            out_file_handler.write(bytes(tweaked_contents))",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26314#discussion_r997051158",
+      "id" : 997051158,
+      "in_reply_to_id" : 996710046,
+      "line" : 80,
+      "node_id" : "PRRC_kwDOABII5847bcsW",
+      "original_commit_id" : "9eab07ecd84ad79fe91892ff4ee002831860b904",
+      "original_line" : 80,
+      "original_position" : 21,
+      "original_start_line" : null,
+      "path" : "test/functional/feature_anchors.py",
+      "position" : 21,
+      "pull_request_review_id" : 1144145834,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26314",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/997051158/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-10-17T13:18:49Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/997051158",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/19480819?v=4",
+         "events_url" : "https://api.github.com/users/brunoerg/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/brunoerg/followers",
+         "following_url" : "https://api.github.com/users/brunoerg/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/brunoerg/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/brunoerg",
+         "id" : 19480819,
+         "login" : "brunoerg",
+         "node_id" : "MDQ6VXNlcjE5NDgwODE5",
+         "organizations_url" : "https://api.github.com/users/brunoerg/orgs",
+         "received_events_url" : "https://api.github.com/users/brunoerg/received_events",
+         "repos_url" : "https://api.github.com/users/brunoerg/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/brunoerg/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/brunoerg/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/brunoerg"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Force-pushed:\r\n\r\n- Perturb file in a lighter way (e.g. single byte)\r\n- Added a `assert_debug_log ` to ensure that 0 anchors will be tried for connection.",
+      "created_at" : "2022-10-28T18:23:18Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26314#issuecomment-1295319567",
+      "id" : 1295319567,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26314",
+      "node_id" : "IC_kwDOABII585NNQIP",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1295319567/reactions"
+      },
+      "updated_at" : "2022-10-28T18:23:18Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1295319567",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/19480819?v=4",
+         "events_url" : "https://api.github.com/users/brunoerg/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/brunoerg/followers",
+         "following_url" : "https://api.github.com/users/brunoerg/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/brunoerg/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/brunoerg",
+         "id" : 19480819,
+         "login" : "brunoerg",
+         "node_id" : "MDQ6VXNlcjE5NDgwODE5",
+         "organizations_url" : "https://api.github.com/users/brunoerg/orgs",
+         "received_events_url" : "https://api.github.com/users/brunoerg/received_events",
+         "repos_url" : "https://api.github.com/users/brunoerg/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/brunoerg/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/brunoerg/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/brunoerg"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/26314#discussion_r1008665490"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26314"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1008665490"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "how do you know that the existing byte is not `b'1'` and this is not a no-op. Even if it isn't a no-op, this may still pass de-serialization?",
+      "commit_id" : "33fdfc7986455191df8ce339261bc0561115cf7f",
+      "created_at" : "2022-10-29T09:01:37Z",
+      "diff_hunk" : "@@ -63,17 +63,25 @@ def run_test(self):\n         self.log.info(\"Check the addresses in anchors.dat\")\n \n         with open(node_anchors_path, \"rb\") as file_handler:\n-            anchors = file_handler.read().hex()\n+            anchors = file_handler.read()\n \n+        anchors_hex = anchors.hex()\n         for port in block_relay_nodes_port:\n             ip_port = ip + port\n-            assert ip_port in anchors\n+            assert ip_port in anchors_hex\n         for port in inbound_nodes_port:\n             ip_port = ip + port\n-            assert ip_port not in anchors\n+            assert ip_port not in anchors_hex\n \n-        self.log.info(\"Start node\")\n-        self.start_node(0)\n+        self.log.info(\"Perturb anchors.dat to test it doesn't throw an error during initialization\")\n+        with self.nodes[0].assert_debug_log([\"0 block-relay-only anchors will be tried for connections.\"]):\n+            with open(node_anchors_path, \"wb\") as out_file_handler:\n+                tweaked_contents = bytearray(anchors)\n+                tweaked_contents[20:20] = b'1'",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26314#discussion_r1008665490",
+      "id" : 1008665490,
+      "line" : 80,
+      "node_id" : "PRRC_kwDOABII5848HwOS",
+      "original_commit_id" : "33fdfc7986455191df8ce339261bc0561115cf7f",
+      "original_line" : 80,
+      "original_position" : 23,
+      "original_start_line" : null,
+      "path" : "test/functional/feature_anchors.py",
+      "position" : 23,
+      "pull_request_review_id" : 1160950299,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26314",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1008665490/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-10-29T09:01:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1008665490",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/26314#discussion_r1009398797"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26314"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1009398797"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "I had the same question in my mind. I tested it manually, but the way I found to know it didn't pass de-serialization is checking the debug log: \"0 block-relay-only anchors will be tried for connections.\". If it had passed, it would try to connect to the 2 anchors from the file.",
+      "commit_id" : "33fdfc7986455191df8ce339261bc0561115cf7f",
+      "created_at" : "2022-10-31T13:07:29Z",
+      "diff_hunk" : "@@ -63,17 +63,25 @@ def run_test(self):\n         self.log.info(\"Check the addresses in anchors.dat\")\n \n         with open(node_anchors_path, \"rb\") as file_handler:\n-            anchors = file_handler.read().hex()\n+            anchors = file_handler.read()\n \n+        anchors_hex = anchors.hex()\n         for port in block_relay_nodes_port:\n             ip_port = ip + port\n-            assert ip_port in anchors\n+            assert ip_port in anchors_hex\n         for port in inbound_nodes_port:\n             ip_port = ip + port\n-            assert ip_port not in anchors\n+            assert ip_port not in anchors_hex\n \n-        self.log.info(\"Start node\")\n-        self.start_node(0)\n+        self.log.info(\"Perturb anchors.dat to test it doesn't throw an error during initialization\")\n+        with self.nodes[0].assert_debug_log([\"0 block-relay-only anchors will be tried for connections.\"]):\n+            with open(node_anchors_path, \"wb\") as out_file_handler:\n+                tweaked_contents = bytearray(anchors)\n+                tweaked_contents[20:20] = b'1'",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26314#discussion_r1009398797",
+      "id" : 1009398797,
+      "in_reply_to_id" : 1008665490,
+      "line" : 80,
+      "node_id" : "PRRC_kwDOABII5848KjQN",
+      "original_commit_id" : "33fdfc7986455191df8ce339261bc0561115cf7f",
+      "original_line" : 80,
+      "original_position" : 23,
+      "original_start_line" : null,
+      "path" : "test/functional/feature_anchors.py",
+      "position" : 23,
+      "pull_request_review_id" : 1161848316,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26314",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1009398797/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-10-31T13:07:29Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1009398797",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/19480819?v=4",
+         "events_url" : "https://api.github.com/users/brunoerg/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/brunoerg/followers",
+         "following_url" : "https://api.github.com/users/brunoerg/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/brunoerg/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/brunoerg",
+         "id" : 19480819,
+         "login" : "brunoerg",
+         "node_id" : "MDQ6VXNlcjE5NDgwODE5",
+         "organizations_url" : "https://api.github.com/users/brunoerg/orgs",
+         "received_events_url" : "https://api.github.com/users/brunoerg/received_events",
+         "repos_url" : "https://api.github.com/users/brunoerg/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/brunoerg/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/brunoerg/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/brunoerg"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/26314#discussion_r1039932712"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26314"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1039932712"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Any other thoughts?",
+      "commit_id" : "33fdfc7986455191df8ce339261bc0561115cf7f",
+      "created_at" : "2022-12-05T18:21:39Z",
+      "diff_hunk" : "@@ -63,17 +63,25 @@ def run_test(self):\n         self.log.info(\"Check the addresses in anchors.dat\")\n \n         with open(node_anchors_path, \"rb\") as file_handler:\n-            anchors = file_handler.read().hex()\n+            anchors = file_handler.read()\n \n+        anchors_hex = anchors.hex()\n         for port in block_relay_nodes_port:\n             ip_port = ip + port\n-            assert ip_port in anchors\n+            assert ip_port in anchors_hex\n         for port in inbound_nodes_port:\n             ip_port = ip + port\n-            assert ip_port not in anchors\n+            assert ip_port not in anchors_hex\n \n-        self.log.info(\"Start node\")\n-        self.start_node(0)\n+        self.log.info(\"Perturb anchors.dat to test it doesn't throw an error during initialization\")\n+        with self.nodes[0].assert_debug_log([\"0 block-relay-only anchors will be tried for connections.\"]):\n+            with open(node_anchors_path, \"wb\") as out_file_handler:\n+                tweaked_contents = bytearray(anchors)\n+                tweaked_contents[20:20] = b'1'",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26314#discussion_r1039932712",
+      "id" : 1039932712,
+      "in_reply_to_id" : 1008665490,
+      "line" : 80,
+      "node_id" : "PRRC_kwDOABII5849_B0o",
+      "original_commit_id" : "33fdfc7986455191df8ce339261bc0561115cf7f",
+      "original_line" : 80,
+      "original_position" : 23,
+      "original_start_line" : null,
+      "path" : "test/functional/feature_anchors.py",
+      "position" : 23,
+      "pull_request_review_id" : 1205038199,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26314",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1039932712/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-12-05T18:21:39Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1039932712",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/19480819?v=4",
+         "events_url" : "https://api.github.com/users/brunoerg/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/brunoerg/followers",
+         "following_url" : "https://api.github.com/users/brunoerg/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/brunoerg/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/brunoerg",
+         "id" : 19480819,
+         "login" : "brunoerg",
+         "node_id" : "MDQ6VXNlcjE5NDgwODE5",
+         "organizations_url" : "https://api.github.com/users/brunoerg/orgs",
+         "received_events_url" : "https://api.github.com/users/brunoerg/received_events",
+         "repos_url" : "https://api.github.com/users/brunoerg/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/brunoerg/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/brunoerg/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/brunoerg"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\nA summary of reviews will appear here.\n",
+      "created_at" : "2022-12-05T18:21:41Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26314#issuecomment-1337899179",
+      "id" : 1337899179,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26314",
+      "node_id" : "IC_kwDOABII585Pvrir",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1337899179/reactions"
+      },
+      "updated_at" : "2022-12-05T18:21:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1337899179",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   }
+]

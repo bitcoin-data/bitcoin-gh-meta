@@ -1,0 +1,712 @@
+[
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r412346223"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/412346223"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Could mine the block in the else branch as well, so that subsequent tests don't depend on conditionals?",
+      "commit_id" : "2495110012fc0cb7142a4536791dd79da5cc3e44",
+      "created_at" : "2020-04-21T17:22:36Z",
+      "diff_hunk" : "@@ -85,7 +125,7 @@ def run_test(self):\n         self.nodes[0].wait_for_cookie_credentials()  # ensure cookie file is available to avoid race condition\n         blocks = self.nodes[0].cli('-rpcwait').send_cli('getblockcount')\n         self.nodes[0].wait_for_rpc_connection()\n-        assert_equal(blocks, BLOCKS)\n+        assert_equal(blocks, BLOCKS + 1 if self.is_wallet_compiled() else BLOCKS)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r412346223",
+      "id" : 412346223,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQxMjM0NjIyMw==",
+      "original_commit_id" : "0e64fb6d87fd73f251d04a4e7e40cc43cfcbd236",
+      "original_line" : 128,
+      "original_position" : 59,
+      "original_start_line" : null,
+      "path" : "test/functional/interface_bitcoin_cli.py",
+      "position" : null,
+      "pull_request_review_id" : 397515874,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-04-24T19:51:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/412346223",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r412349807"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/412349807"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This should be `for i in range(len(wallets)):`",
+      "commit_id" : "2495110012fc0cb7142a4536791dd79da5cc3e44",
+      "created_at" : "2020-04-21T17:27:42Z",
+      "diff_hunk" : "@@ -72,6 +73,45 @@ def run_test(self):\n             assert_equal(cli_get_info['paytxfee'], wallet_info['paytxfee'])\n             assert_equal(cli_get_info['relayfee'], network_info['relayfee'])\n             assert_equal(self.nodes[0].cli.getwalletinfo(), wallet_info)\n+\n+            # Setup to test -getinfo with multiple wallets.\n+            wallets = ['', 'Encrypted', 'secret']\n+            amounts = [Decimal('59.999928'), Decimal(9), Decimal(31)]\n+            self.nodes[0].createwallet(wallet_name=wallets[1])\n+            self.nodes[0].createwallet(wallet_name=wallets[2])\n+            w1 = self.nodes[0].get_wallet_rpc(wallets[0])\n+            w2 = self.nodes[0].get_wallet_rpc(wallets[1])\n+            w3 = self.nodes[0].get_wallet_rpc(wallets[2])\n+            w1.walletpassphrase(password, 60)\n+            w1.sendtoaddress(w2.getnewaddress(), amounts[1])\n+            w1.sendtoaddress(w3.getnewaddress(), amounts[2])\n+\n+            # Mine a block to confirm; adds a block reward (50 BTC) to the default wallet.\n+            self.nodes[0].generate(1)\n+\n+            self.log.info(\"Test -getinfo with multiple wallets loaded returns no balance\")\n+            assert_equal(set(self.nodes[0].listwallets()), set(wallets))\n+            assert 'balance' not in self.nodes[0].cli('-getinfo').send_cli().keys()\n+\n+            self.log.info(\"Test -getinfo with multiple wallets and -rpcwallet returns specified wallet balance\")\n+            for i in range(len(wallets) - 1):",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r412349807",
+      "id" : 412349807,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQxMjM0OTgwNw==",
+      "original_commit_id" : "0e64fb6d87fd73f251d04a4e7e40cc43cfcbd236",
+      "original_line" : 97,
+      "original_position" : 33,
+      "original_start_line" : null,
+      "path" : "test/functional/interface_bitcoin_cli.py",
+      "position" : null,
+      "pull_request_review_id" : 397519927,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-04-24T19:51:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/412349807",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r412354011"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/412354011"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "thanks for reviewing -- done",
+      "commit_id" : "2495110012fc0cb7142a4536791dd79da5cc3e44",
+      "created_at" : "2020-04-21T17:33:30Z",
+      "diff_hunk" : "@@ -85,7 +125,7 @@ def run_test(self):\n         self.nodes[0].wait_for_cookie_credentials()  # ensure cookie file is available to avoid race condition\n         blocks = self.nodes[0].cli('-rpcwait').send_cli('getblockcount')\n         self.nodes[0].wait_for_rpc_connection()\n-        assert_equal(blocks, BLOCKS)\n+        assert_equal(blocks, BLOCKS + 1 if self.is_wallet_compiled() else BLOCKS)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r412354011",
+      "id" : 412354011,
+      "in_reply_to_id" : 412346223,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQxMjM1NDAxMQ==",
+      "original_commit_id" : "0e64fb6d87fd73f251d04a4e7e40cc43cfcbd236",
+      "original_line" : 128,
+      "original_position" : 59,
+      "original_start_line" : null,
+      "path" : "test/functional/interface_bitcoin_cli.py",
+      "position" : null,
+      "pull_request_review_id" : 397524635,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-04-24T19:51:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/412354011",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* #18594 (cli: display multiwallet balances in -getinfo by jonatack)\n* #18453 (rpc, cli: add multiwallet balances rpc and use it in -getinfo by jonatack)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "created_at" : "2020-04-21T17:41:22Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/18724#issuecomment-617311231",
+      "id" : 617311231,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18724",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDYxNzMxMTIzMQ==",
+      "updated_at" : "2020-04-21T17:41:22Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/617311231",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r414761603"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/414761603"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Just curious, how did you get this value `59.999928` (did you print out the amount to check, or is there a known fee that's listed somewhere)?",
+      "commit_id" : "2495110012fc0cb7142a4536791dd79da5cc3e44",
+      "created_at" : "2020-04-24T17:59:40Z",
+      "diff_hunk" : "@@ -72,8 +73,48 @@ def run_test(self):\n             assert_equal(cli_get_info['paytxfee'], wallet_info['paytxfee'])\n             assert_equal(cli_get_info['relayfee'], network_info['relayfee'])\n             assert_equal(self.nodes[0].cli.getwalletinfo(), wallet_info)\n+\n+            # Setup to test -getinfo and -rpcwallet= with multiple wallets.\n+            wallets = ['', 'Encrypted', 'secret']\n+            amounts = [Decimal('59.999928'), Decimal(9), Decimal(31)]",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r414761603",
+      "id" : 414761603,
+      "line" : 79,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQxNDc2MTYwMw==",
+      "original_commit_id" : "5835c4ad60f1c6507ac3953210e68ae6fd8cc81f",
+      "original_line" : 79,
+      "original_position" : 15,
+      "original_start_line" : null,
+      "path" : "test/functional/interface_bitcoin_cli.py",
+      "position" : 15,
+      "pull_request_review_id" : 400159488,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-04-24T19:51:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/414761603",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/63171930?v=4",
+         "events_url" : "https://api.github.com/users/robot-visions/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/robot-visions/followers",
+         "following_url" : "https://api.github.com/users/robot-visions/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/robot-visions/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/robot-visions",
+         "id" : 63171930,
+         "login" : "robot-visions",
+         "node_id" : "MDQ6VXNlcjYzMTcxOTMw",
+         "organizations_url" : "https://api.github.com/users/robot-visions/orgs",
+         "received_events_url" : "https://api.github.com/users/robot-visions/received_events",
+         "repos_url" : "https://api.github.com/users/robot-visions/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/robot-visions/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/robot-visions/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/robot-visions"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r414762369"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/414762369"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Just as a paranoid check, could increasing the timeout here reduce the chance of a flaky test (I'm not familiar enough with the CI framework to answer this definitively)?",
+      "commit_id" : "2495110012fc0cb7142a4536791dd79da5cc3e44",
+      "created_at" : "2020-04-24T18:00:56Z",
+      "diff_hunk" : "@@ -72,8 +73,48 @@ def run_test(self):\n             assert_equal(cli_get_info['paytxfee'], wallet_info['paytxfee'])\n             assert_equal(cli_get_info['relayfee'], network_info['relayfee'])\n             assert_equal(self.nodes[0].cli.getwalletinfo(), wallet_info)\n+\n+            # Setup to test -getinfo and -rpcwallet= with multiple wallets.\n+            wallets = ['', 'Encrypted', 'secret']\n+            amounts = [Decimal('59.999928'), Decimal(9), Decimal(31)]\n+            self.nodes[0].createwallet(wallet_name=wallets[1])\n+            self.nodes[0].createwallet(wallet_name=wallets[2])\n+            w1 = self.nodes[0].get_wallet_rpc(wallets[0])\n+            w2 = self.nodes[0].get_wallet_rpc(wallets[1])\n+            w3 = self.nodes[0].get_wallet_rpc(wallets[2])\n+            w1.walletpassphrase(password, 60)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r414762369",
+      "id" : 414762369,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQxNDc2MjM2OQ==",
+      "original_commit_id" : "5835c4ad60f1c6507ac3953210e68ae6fd8cc81f",
+      "original_line" : 85,
+      "original_position" : 21,
+      "original_start_line" : null,
+      "path" : "test/functional/interface_bitcoin_cli.py",
+      "position" : null,
+      "pull_request_review_id" : 400159488,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-04-24T19:51:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/414762369",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/63171930?v=4",
+         "events_url" : "https://api.github.com/users/robot-visions/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/robot-visions/followers",
+         "following_url" : "https://api.github.com/users/robot-visions/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/robot-visions/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/robot-visions",
+         "id" : 63171930,
+         "login" : "robot-visions",
+         "node_id" : "MDQ6VXNlcjYzMTcxOTMw",
+         "organizations_url" : "https://api.github.com/users/robot-visions/orgs",
+         "received_events_url" : "https://api.github.com/users/robot-visions/received_events",
+         "repos_url" : "https://api.github.com/users/robot-visions/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/robot-visions/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/robot-visions/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/robot-visions"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "ACK 5835c4ad60f1c6507ac3953210e68ae6fd8cc81f\r\n\r\nPasses for me locally.\r\n\r\nI remember doing a lot of this manually for your PR Review Club session a few weeks ago.  Thanks for adding all this as a test!",
+      "created_at" : "2020-04-24T18:01:39Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/18724#issuecomment-619163973",
+      "id" : 619163973,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18724",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDYxOTE2Mzk3Mw==",
+      "updated_at" : "2020-04-24T18:01:39Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/619163973",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/63171930?v=4",
+         "events_url" : "https://api.github.com/users/robot-visions/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/robot-visions/followers",
+         "following_url" : "https://api.github.com/users/robot-visions/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/robot-visions/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/robot-visions",
+         "id" : 63171930,
+         "login" : "robot-visions",
+         "node_id" : "MDQ6VXNlcjYzMTcxOTMw",
+         "organizations_url" : "https://api.github.com/users/robot-visions/orgs",
+         "received_events_url" : "https://api.github.com/users/robot-visions/received_events",
+         "repos_url" : "https://api.github.com/users/robot-visions/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/robot-visions/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/robot-visions/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/robot-visions"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r414814041"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/414814041"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I arbitrarily used the default `rpc_timeout`. But you're right to mention it; the magic value is kind of sucky and non-informative. Changed it to:\r\n```diff\r\n-            w1.walletpassphrase(password, 60)\r\n+            w1.walletpassphrase(password, self.rpc_timeout)\r\n```  ",
+      "commit_id" : "2495110012fc0cb7142a4536791dd79da5cc3e44",
+      "created_at" : "2020-04-24T19:32:24Z",
+      "diff_hunk" : "@@ -72,8 +73,48 @@ def run_test(self):\n             assert_equal(cli_get_info['paytxfee'], wallet_info['paytxfee'])\n             assert_equal(cli_get_info['relayfee'], network_info['relayfee'])\n             assert_equal(self.nodes[0].cli.getwalletinfo(), wallet_info)\n+\n+            # Setup to test -getinfo and -rpcwallet= with multiple wallets.\n+            wallets = ['', 'Encrypted', 'secret']\n+            amounts = [Decimal('59.999928'), Decimal(9), Decimal(31)]\n+            self.nodes[0].createwallet(wallet_name=wallets[1])\n+            self.nodes[0].createwallet(wallet_name=wallets[2])\n+            w1 = self.nodes[0].get_wallet_rpc(wallets[0])\n+            w2 = self.nodes[0].get_wallet_rpc(wallets[1])\n+            w3 = self.nodes[0].get_wallet_rpc(wallets[2])\n+            w1.walletpassphrase(password, 60)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r414814041",
+      "id" : 414814041,
+      "in_reply_to_id" : 414762369,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQxNDgxNDA0MQ==",
+      "original_commit_id" : "5835c4ad60f1c6507ac3953210e68ae6fd8cc81f",
+      "original_line" : 85,
+      "original_position" : 21,
+      "original_start_line" : null,
+      "path" : "test/functional/interface_bitcoin_cli.py",
+      "position" : null,
+      "pull_request_review_id" : 400217532,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-04-24T19:51:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/414814041",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r414817327"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/414817327"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Yes, I actually did that while writing tests for #18594 which most of this code comes from; `-getinfo` in that PR outputs all the wallet names and balances and I was just printing the output.",
+      "commit_id" : "2495110012fc0cb7142a4536791dd79da5cc3e44",
+      "created_at" : "2020-04-24T19:38:25Z",
+      "diff_hunk" : "@@ -72,8 +73,48 @@ def run_test(self):\n             assert_equal(cli_get_info['paytxfee'], wallet_info['paytxfee'])\n             assert_equal(cli_get_info['relayfee'], network_info['relayfee'])\n             assert_equal(self.nodes[0].cli.getwalletinfo(), wallet_info)\n+\n+            # Setup to test -getinfo and -rpcwallet= with multiple wallets.\n+            wallets = ['', 'Encrypted', 'secret']\n+            amounts = [Decimal('59.999928'), Decimal(9), Decimal(31)]",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r414817327",
+      "id" : 414817327,
+      "in_reply_to_id" : 414761603,
+      "line" : 79,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQxNDgxNzMyNw==",
+      "original_commit_id" : "5835c4ad60f1c6507ac3953210e68ae6fd8cc81f",
+      "original_line" : 79,
+      "original_position" : 15,
+      "original_start_line" : null,
+      "path" : "test/functional/interface_bitcoin_cli.py",
+      "position" : 15,
+      "pull_request_review_id" : 400221029,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-04-24T19:51:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/414817327",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Thanks @robot-visions for reviewing. I replaced the timeout magic value of 60 with `self.rpc_timeout`. IDK if there is a better value to use.",
+      "created_at" : "2020-04-24T19:46:59Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/18724#issuecomment-619208104",
+      "id" : 619208104,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18724",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDYxOTIwODEwNA==",
+      "updated_at" : "2020-04-24T19:46:59Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/619208104",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "ACK 2495110012fc0cb7142a4536791dd79da5cc3e44\r\n\r\nTests still pass.  Thanks for updating!",
+      "created_at" : "2020-04-24T19:59:45Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/18724#issuecomment-619213240",
+      "id" : 619213240,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18724",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDYxOTIxMzI0MA==",
+      "updated_at" : "2020-04-24T19:59:45Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/619213240",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/63171930?v=4",
+         "events_url" : "https://api.github.com/users/robot-visions/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/robot-visions/followers",
+         "following_url" : "https://api.github.com/users/robot-visions/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/robot-visions/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/robot-visions",
+         "id" : 63171930,
+         "login" : "robot-visions",
+         "node_id" : "MDQ6VXNlcjYzMTcxOTMw",
+         "organizations_url" : "https://api.github.com/users/robot-visions/orgs",
+         "received_events_url" : "https://api.github.com/users/robot-visions/received_events",
+         "repos_url" : "https://api.github.com/users/robot-visions/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/robot-visions/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/robot-visions/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/robot-visions"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Thanks for writing tests",
+      "created_at" : "2020-04-24T22:37:47Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/18724#issuecomment-619267307",
+      "id" : 619267307,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18724",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDYxOTI2NzMwNw==",
+      "updated_at" : "2020-04-24T22:37:47Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/619267307",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r414903308"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/414903308"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit: rcpwallet is an option, not a command",
+      "commit_id" : "2495110012fc0cb7142a4536791dd79da5cc3e44",
+      "created_at" : "2020-04-24T22:44:32Z",
+      "diff_hunk" : "@@ -72,8 +73,48 @@ def run_test(self):\n             assert_equal(cli_get_info['paytxfee'], wallet_info['paytxfee'])\n             assert_equal(cli_get_info['relayfee'], network_info['relayfee'])\n             assert_equal(self.nodes[0].cli.getwalletinfo(), wallet_info)\n+\n+            # Setup to test -getinfo and -rpcwallet= with multiple wallets.\n+            wallets = ['', 'Encrypted', 'secret']\n+            amounts = [Decimal('59.999928'), Decimal(9), Decimal(31)]\n+            self.nodes[0].createwallet(wallet_name=wallets[1])\n+            self.nodes[0].createwallet(wallet_name=wallets[2])\n+            w1 = self.nodes[0].get_wallet_rpc(wallets[0])\n+            w2 = self.nodes[0].get_wallet_rpc(wallets[1])\n+            w3 = self.nodes[0].get_wallet_rpc(wallets[2])\n+            w1.walletpassphrase(password, self.rpc_timeout)\n+            w1.sendtoaddress(w2.getnewaddress(), amounts[1])\n+            w1.sendtoaddress(w3.getnewaddress(), amounts[2])\n+\n+            # Mine a block to confirm; adds a block reward (50 BTC) to the default wallet.\n+            self.nodes[0].generate(1)\n+\n+            self.log.info(\"Test -getinfo with multiple wallets loaded returns no balance\")\n+            assert_equal(set(self.nodes[0].listwallets()), set(wallets))\n+            assert 'balance' not in self.nodes[0].cli('-getinfo').send_cli().keys()\n+\n+            self.log.info(\"Test -getinfo with multiple wallets and -rpcwallet returns specified wallet balance\")\n+            for i in range(len(wallets)):\n+                cli_get_info = self.nodes[0].cli('-getinfo').send_cli('-rpcwallet={}'.format(wallets[i]))",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r414903308",
+      "id" : 414903308,
+      "line" : 98,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQxNDkwMzMwOA==",
+      "original_commit_id" : "2495110012fc0cb7142a4536791dd79da5cc3e44",
+      "original_line" : 98,
+      "original_position" : 34,
+      "original_start_line" : null,
+      "path" : "test/functional/interface_bitcoin_cli.py",
+      "position" : 34,
+      "pull_request_review_id" : 400310876,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-04-24T22:44:33Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/414903308",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r414904629"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/414904629"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Thanks, will update in #18594 or next opportunity.",
+      "commit_id" : "2495110012fc0cb7142a4536791dd79da5cc3e44",
+      "created_at" : "2020-04-24T22:48:49Z",
+      "diff_hunk" : "@@ -72,8 +73,48 @@ def run_test(self):\n             assert_equal(cli_get_info['paytxfee'], wallet_info['paytxfee'])\n             assert_equal(cli_get_info['relayfee'], network_info['relayfee'])\n             assert_equal(self.nodes[0].cli.getwalletinfo(), wallet_info)\n+\n+            # Setup to test -getinfo and -rpcwallet= with multiple wallets.\n+            wallets = ['', 'Encrypted', 'secret']\n+            amounts = [Decimal('59.999928'), Decimal(9), Decimal(31)]\n+            self.nodes[0].createwallet(wallet_name=wallets[1])\n+            self.nodes[0].createwallet(wallet_name=wallets[2])\n+            w1 = self.nodes[0].get_wallet_rpc(wallets[0])\n+            w2 = self.nodes[0].get_wallet_rpc(wallets[1])\n+            w3 = self.nodes[0].get_wallet_rpc(wallets[2])\n+            w1.walletpassphrase(password, self.rpc_timeout)\n+            w1.sendtoaddress(w2.getnewaddress(), amounts[1])\n+            w1.sendtoaddress(w3.getnewaddress(), amounts[2])\n+\n+            # Mine a block to confirm; adds a block reward (50 BTC) to the default wallet.\n+            self.nodes[0].generate(1)\n+\n+            self.log.info(\"Test -getinfo with multiple wallets loaded returns no balance\")\n+            assert_equal(set(self.nodes[0].listwallets()), set(wallets))\n+            assert 'balance' not in self.nodes[0].cli('-getinfo').send_cli().keys()\n+\n+            self.log.info(\"Test -getinfo with multiple wallets and -rpcwallet returns specified wallet balance\")\n+            for i in range(len(wallets)):\n+                cli_get_info = self.nodes[0].cli('-getinfo').send_cli('-rpcwallet={}'.format(wallets[i]))",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r414904629",
+      "id" : 414904629,
+      "in_reply_to_id" : 414903308,
+      "line" : 98,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQxNDkwNDYyOQ==",
+      "original_commit_id" : "2495110012fc0cb7142a4536791dd79da5cc3e44",
+      "original_line" : 98,
+      "original_position" : 34,
+      "original_start_line" : null,
+      "path" : "test/functional/interface_bitcoin_cli.py",
+      "position" : 34,
+      "pull_request_review_id" : 400312070,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-04-24T22:48:49Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/414904629",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r429397878"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/429397878"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "> rpcwallet is an option, not a command\r\n\r\nTucked the cli option vs command test fixups into the last commit of #18594 adding tests for that PR.",
+      "commit_id" : "2495110012fc0cb7142a4536791dd79da5cc3e44",
+      "created_at" : "2020-05-22T18:34:31Z",
+      "diff_hunk" : "@@ -72,8 +73,48 @@ def run_test(self):\n             assert_equal(cli_get_info['paytxfee'], wallet_info['paytxfee'])\n             assert_equal(cli_get_info['relayfee'], network_info['relayfee'])\n             assert_equal(self.nodes[0].cli.getwalletinfo(), wallet_info)\n+\n+            # Setup to test -getinfo and -rpcwallet= with multiple wallets.\n+            wallets = ['', 'Encrypted', 'secret']\n+            amounts = [Decimal('59.999928'), Decimal(9), Decimal(31)]\n+            self.nodes[0].createwallet(wallet_name=wallets[1])\n+            self.nodes[0].createwallet(wallet_name=wallets[2])\n+            w1 = self.nodes[0].get_wallet_rpc(wallets[0])\n+            w2 = self.nodes[0].get_wallet_rpc(wallets[1])\n+            w3 = self.nodes[0].get_wallet_rpc(wallets[2])\n+            w1.walletpassphrase(password, self.rpc_timeout)\n+            w1.sendtoaddress(w2.getnewaddress(), amounts[1])\n+            w1.sendtoaddress(w3.getnewaddress(), amounts[2])\n+\n+            # Mine a block to confirm; adds a block reward (50 BTC) to the default wallet.\n+            self.nodes[0].generate(1)\n+\n+            self.log.info(\"Test -getinfo with multiple wallets loaded returns no balance\")\n+            assert_equal(set(self.nodes[0].listwallets()), set(wallets))\n+            assert 'balance' not in self.nodes[0].cli('-getinfo').send_cli().keys()\n+\n+            self.log.info(\"Test -getinfo with multiple wallets and -rpcwallet returns specified wallet balance\")\n+            for i in range(len(wallets)):\n+                cli_get_info = self.nodes[0].cli('-getinfo').send_cli('-rpcwallet={}'.format(wallets[i]))",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/18724#discussion_r429397878",
+      "id" : 429397878,
+      "in_reply_to_id" : 414903308,
+      "line" : 98,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyOTM5Nzg3OA==",
+      "original_commit_id" : "2495110012fc0cb7142a4536791dd79da5cc3e44",
+      "original_line" : 98,
+      "original_position" : 34,
+      "original_start_line" : null,
+      "path" : "test/functional/interface_bitcoin_cli.py",
+      "position" : 34,
+      "pull_request_review_id" : 417112159,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/18724",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-05-22T18:34:31Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/429397878",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   }
+]

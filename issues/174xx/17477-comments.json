@@ -1,0 +1,1935 @@
+[
+   {
+      "author_association" : "MEMBER",
+      "body" : "Request review from @TheBlueMatt and @morcos\r\n\r\n@TheBlueMatt - you introduced the vtxConflicted vector in BlockConnected in 461e49fee2935b1eb4d4ea7bae3023e655c0a6d8 with comment 'This change adds a parameter to BlockConnectedDisconnected which lists the transactions which were removed from mempool due to confliction as a result of this operation. While its somewhat of a shame to make block-validation-logic generate a list of mempool changes to be included in its generated callbacks, fixing this isnt too hard.'\r\n\r\n@morcos - you attempted something similar in #9240",
+      "created_at" : "2019-11-14T16:21:51Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-553963425",
+      "id" : 553963425,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1Mzk2MzQyNQ==",
+      "updated_at" : "2019-11-14T16:23:30Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/553963425",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* #18278 (interfaces: Describe and follow some code conventions by ryanofsky)\n* #17443 (Drop checkFinalTx and use Median Time Past to check finality of wallet transactions by ariard)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "created_at" : "2019-11-14T19:16:22Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-554037194",
+      "id" : 554037194,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1NDAzNzE5NA==",
+      "updated_at" : "2020-03-10T23:52:52Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/554037194",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Note that this can change the order of notifications for the wallet. If the node connects block A with conflicted txs a1 a2 and block B with conflicted txs b1 and b2 in one ActivateBestChainStep, the old ordering would be:\r\n\r\n- BlockConnected(A(conflicted=[a1,a2]))\r\n- BlockConnected(B(conflivted=[b1,b2]))\r\n\r\nand the new ordering is:\r\n\r\n- TransactionRemovedFromMempool(a1)\r\n- TransactionRemovedFromMempool(a2)\r\n- TransactionRemovedFromMempool(b1)\r\n- TransactionRemovedFromMempool(b2)\r\n- BlockConnected(A)\r\n- BlockConnected(B)\r\n\r\nI'm pretty sure that's not a problem. Take a look at how the wallet currently handles conflicted transactions in the `BlockConnected()` callback:\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/cd6cb9745e13a62e130b11f78a13bcc1d424b05e/src/wallet/wallet.cpp#L1084\r\n\r\nAll the `TransactionRemovedFromMempool` does is toggle the `fInMempool` flag to false. ",
+      "created_at" : "2019-11-14T19:27:41Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-554041672",
+      "id" : 554041672,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1NDA0MTY3Mg==",
+      "updated_at" : "2019-11-14T19:27:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/554041672",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> I'm pretty sure that's not a problem\r\n\r\nAre you sure about that? Note that change that is unconfirmed and not in the mempool is not counted toward our balance, so this would open up race conditions where a `send*` might fail when there is no reason for it to fail.",
+      "created_at" : "2019-11-14T19:39:21Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-554046319",
+      "id" : 554046319,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1NDA0NjMxOQ==",
+      "updated_at" : "2019-11-14T19:39:21Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/554046319",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> this would open up race conditions where a send* might fail when there is no reason for it to fail.\r\n\r\nI don't think that's true:\r\n\r\n- Before this change: conflicted transactions are marked as not in the mempool when the wallet hears about them in a `BlockConnected`'s `vtxConflicted` vector.\r\n- After this change: conflicted transactions are marked as not in the mempool slightly earlier when the wallet hears about them in a `TransactionRemovedFromMempool` callback.\r\n\r\nIn both of those cases, the change output is unspendable because it conflicts with a transaction included in the block, but in the current code the wallet doesn't know about it until slightly later. So arguably there's a window condition in the existing code where the wallet might try to spend change that it thinks is in the mempool, but is actually conflicted with the latest block (although in practice this doesn't matter - it's always the case that there might be a better block that conflicts our transactions that we just don't know about yet).\r\n\r\n(If this PR was changing the way we notify the wallet about transactions removed from the mempool because they're included in a block, then I'd agree with you. We don't want to introduce a window where the wallet knows the transaction is no longer in the mempool but doesn't yet know that it's in a block.)",
+      "created_at" : "2019-11-15T02:38:54Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-554184168",
+      "id" : 554184168,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1NDE4NDE2OA==",
+      "updated_at" : "2019-11-15T02:38:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/554184168",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> So arguably there's a window condition in the existing code where the wallet might try to spend change that it thinks is in the mempool, but is actually conflicted with the latest block (although in practice this doesn't matter - it's always the case that there might be a better block that conflicts our transactions that we just don't know about yet).\r\n\r\nWhat if the user set min_conf to 1000 and rbf to false for that tx that spends the change that is only available for a short time erroneously? With those settings, the user should expect to create a transaction that could never possibly fail, no?",
+      "created_at" : "2019-11-15T13:29:36Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-554358670",
+      "id" : 554358670,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1NDM1ODY3MA==",
+      "updated_at" : "2019-11-15T13:29:36Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/554358670",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> What if the user set min_conf to 1000 and rbf to false for that tx that spends the change that is only available for a short time erroneously? With those settings, the user should expect to create a transaction that could never possibly fail, no?\r\n\r\nMaybe I don't fully understand the scenario you're describing, but if the tx is spending change that has been conflicted out of the mempool but the wallet has not yet been notified then that transaction will definitely fail, since it's spending an output that doesn't exist in the main chain.\r\n\r\nEssentially, the difference for the wallet in this PR is that it'll get notified slightly earlier about transactions (and therefore possibly unconfirmed change outputs that it owns) that have been conflicted out of the mempool slightly before it is notified about the block that conflicts them. I can't think of any way that would cause windows of undesirable behaviour.",
+      "created_at" : "2019-11-15T13:51:20Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-554365732",
+      "id" : 554365732,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1NDM2NTczMg==",
+      "updated_at" : "2019-11-15T13:51:20Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/554365732",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346937589"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346937589"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Commit 0f17fd9. I think after this one CTxMemPool member is no more of any use as it was used by ConnecTrace to connect to mempool signal, can you remove it ?",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-15T17:45:09Z",
+      "diff_hunk" : "@@ -2477,28 +2477,16 @@ struct PerBlockConnectTrace {\n  * Used to track blocks whose transactions were applied to the UTXO state as a\n  * part of a single ActivateBestChainStep call.\n  *\n- * This class also tracks transactions that are removed from the mempool as\n- * conflicts (per block) and can be used to pass all those transactions\n- * through SyncTransaction.\n- *\n- * This class assumes (and asserts) that the conflicted transactions for a given\n- * block are added via mempool callbacks prior to the BlockConnected() associated\n- * with those transactions. If any transactions are marked conflicted, it is\n- * assumed that an associated block will always be added.\n- *\n  * This class is single-use, once you call GetBlocksConnected() you have to throw\n  * it away and make a new one.\n  */\n class ConnectTrace {\n private:\n     std::vector<PerBlockConnectTrace> blocksConnected;\n     CTxMemPool &pool;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346937589",
+      "id" : 346937589,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NjkzNzU4OQ==",
+      "original_commit_id" : "0f17fd9bd5c32eb6c6f4b648f5209f1a223f9e3e",
+      "original_position" : 19,
+      "path" : "src/validation.cpp",
+      "position" : null,
+      "pull_request_review_id" : 317770827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346937589",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/23310655?v=4",
+         "events_url" : "https://api.github.com/users/ariard/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ariard/followers",
+         "following_url" : "https://api.github.com/users/ariard/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ariard/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ariard",
+         "id" : 23310655,
+         "login" : "ariard",
+         "node_id" : "MDQ6VXNlcjIzMzEwNjU1",
+         "organizations_url" : "https://api.github.com/users/ariard/orgs",
+         "received_events_url" : "https://api.github.com/users/ariard/received_events",
+         "repos_url" : "https://api.github.com/users/ariard/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ariard/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ariard/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ariard"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346943451"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346943451"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "nit: \"removed txn non-final anymore due to a reorg\"",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-15T18:00:42Z",
+      "diff_hunk" : "@@ -92,10 +92,17 @@ class CValidationInterface {\n     /**\n      * Notifies listeners of a transaction leaving mempool.\n      *\n-     * This only fires for transactions which leave mempool because of expiry,\n-     * size limiting, reorg (changes in lock times/coinbase maturity), or\n-     * replacement. This does not include any transactions which are included\n-     * in BlockConnectedDisconnected either in block->vtx or in txnConflicted.\n+     * This notification fires for transactions that are removed from the\n+     * mempool for the following reasons:\n+     *\n+     * - EXPIRY (expired from mempool after -mempoolexpiry hours)\n+     * - SIZELIMIT (removed in size limiting if the mempool exceeds -maxmempool megabytes)\n+     * - REORG (removed during a reorg)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346943451",
+      "id" : 346943451,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Njk0MzQ1MQ==",
+      "original_commit_id" : "ef6f6ae651b9a9bdbb925b4d7aa46d9ca931d4e7",
+      "original_position" : 13,
+      "path" : "src/validationinterface.h",
+      "position" : 13,
+      "pull_request_review_id" : 317770827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346943451",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/23310655?v=4",
+         "events_url" : "https://api.github.com/users/ariard/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ariard/followers",
+         "following_url" : "https://api.github.com/users/ariard/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ariard/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ariard",
+         "id" : 23310655,
+         "login" : "ariard",
+         "node_id" : "MDQ6VXNlcjIzMzEwNjU1",
+         "organizations_url" : "https://api.github.com/users/ariard/orgs",
+         "received_events_url" : "https://api.github.com/users/ariard/received_events",
+         "repos_url" : "https://api.github.com/users/ariard/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ariard/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ariard/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ariard"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346950264"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346950264"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Commit 0f17fd9. Shoulnd't be more logic to remove both comments in previous commit (141f971) as it's the one where you effectively removed conflicted txn insertion and struct, Just looking at this commit atomically you can't make sense of \"This class assumes (and asserts) that the conflicted transactions for a given block are added via mempool callbacks\"",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-15T18:19:21Z",
+      "diff_hunk" : "@@ -2477,28 +2477,16 @@ struct PerBlockConnectTrace {\n  * Used to track blocks whose transactions were applied to the UTXO state as a\n  * part of a single ActivateBestChainStep call.\n  *\n- * This class also tracks transactions that are removed from the mempool as\n- * conflicts (per block) and can be used to pass all those transactions\n- * through SyncTransaction.\n- *\n- * This class assumes (and asserts) that the conflicted transactions for a given\n- * block are added via mempool callbacks prior to the BlockConnected() associated\n- * with those transactions. If any transactions are marked conflicted, it is\n- * assumed that an associated block will always be added.\n- *",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346950264",
+      "id" : 346950264,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Njk1MDI2NA==",
+      "original_commit_id" : "0f17fd9bd5c32eb6c6f4b648f5209f1a223f9e3e",
+      "original_position" : 12,
+      "path" : "src/validation.cpp",
+      "position" : 20,
+      "pull_request_review_id" : 317770827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346950264",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/23310655?v=4",
+         "events_url" : "https://api.github.com/users/ariard/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ariard/followers",
+         "following_url" : "https://api.github.com/users/ariard/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ariard/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ariard",
+         "id" : 23310655,
+         "login" : "ariard",
+         "node_id" : "MDQ6VXNlcjIzMzEwNjU1",
+         "organizations_url" : "https://api.github.com/users/ariard/orgs",
+         "received_events_url" : "https://api.github.com/users/ariard/received_events",
+         "repos_url" : "https://api.github.com/users/ariard/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ariard/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ariard/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ariard"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346952184"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346952184"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "super-nit: signal before thread?",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-15T18:24:18Z",
+      "diff_hunk" : "@@ -70,6 +70,7 @@\n #include <boost/algorithm/string/replace.hpp>\n #include <boost/algorithm/string/split.hpp>\n #include <boost/thread.hpp>\n+#include <boost/signals2/signal.hpp>",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346952184",
+      "id" : 346952184,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Njk1MjE4NA==",
+      "original_commit_id" : "f959e4a00304fb4beea3ecd8894ac7cfd74742e3",
+      "original_position" : 4,
+      "path" : "src/init.cpp",
+      "position" : 4,
+      "pull_request_review_id" : 317770827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346952184",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/23310655?v=4",
+         "events_url" : "https://api.github.com/users/ariard/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ariard/followers",
+         "following_url" : "https://api.github.com/users/ariard/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ariard/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ariard",
+         "id" : 23310655,
+         "login" : "ariard",
+         "node_id" : "MDQ6VXNlcjIzMzEwNjU1",
+         "organizations_url" : "https://api.github.com/users/ariard/orgs",
+         "received_events_url" : "https://api.github.com/users/ariard/received_events",
+         "repos_url" : "https://api.github.com/users/ariard/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ariard/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ariard/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ariard"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346953291"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346953291"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "I think it can be noted in commit message than `NotifiyEntryAdded` signal didn't have any slot connected to and so was already useless",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-15T18:27:03Z",
+      "diff_hunk" : "@@ -698,9 +697,6 @@ class CTxMemPool\n \n     size_t DynamicMemoryUsage() const;\n \n-    boost::signals2::signal<void (CTransactionRef)> NotifyEntryAdded;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346953291",
+      "id" : 346953291,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Njk1MzI5MQ==",
+      "original_commit_id" : "f959e4a00304fb4beea3ecd8894ac7cfd74742e3",
+      "original_position" : 12,
+      "path" : "src/txmempool.h",
+      "position" : 12,
+      "pull_request_review_id" : 317770827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346953291",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/23310655?v=4",
+         "events_url" : "https://api.github.com/users/ariard/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ariard/followers",
+         "following_url" : "https://api.github.com/users/ariard/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ariard/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ariard",
+         "id" : 23310655,
+         "login" : "ariard",
+         "node_id" : "MDQ6VXNlcjIzMzEwNjU1",
+         "organizations_url" : "https://api.github.com/users/ariard/orgs",
+         "received_events_url" : "https://api.github.com/users/ariard/received_events",
+         "repos_url" : "https://api.github.com/users/ariard/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ariard/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ariard/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ariard"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346958305"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346958305"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Commit 793b45c. I think this comment, assert and pop should also be removed in commit 141f971 as this is the last commit were their logic make sense. Also in `BlockConnected`, the removed assert and emplace_back belonged to same logic.",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-15T18:39:47Z",
+      "diff_hunk" : "@@ -2486,25 +2486,15 @@ class ConnectTrace {\n     CTxMemPool &pool;\n \n public:\n-    explicit ConnectTrace(CTxMemPool &_pool) : blocksConnected(1), pool(_pool) {}\n+    explicit ConnectTrace(CTxMemPool &_pool) : pool(_pool) {}\n \n     void BlockConnected(CBlockIndex* pindex, std::shared_ptr<const CBlock> pblock) {\n-        assert(!blocksConnected.back().pindex);\n         assert(pindex);\n         assert(pblock);\n-        blocksConnected.back().pindex = pindex;\n-        blocksConnected.back().pblock = std::move(pblock);\n-        blocksConnected.emplace_back();\n+        blocksConnected.emplace_back(pindex, std::move(pblock));\n     }\n \n     std::vector<PerBlockConnectTrace>& GetBlocksConnected() {\n-        // We always keep one extra block at the end of our list because\n-        // blocks are added after all the conflicted transactions have\n-        // been filled in. Thus, the last entry should always be an empty\n-        // one waiting for the transactions from the next block. We pop\n-        // the last entry here to make sure the list we return is sane.\n-        assert(!blocksConnected.back().pindex);\n-        blocksConnected.pop_back();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346958305",
+      "id" : 346958305,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Njk1ODMwNQ==",
+      "original_commit_id" : "793b45c39a1ba80408d293bdec0d313af50f14c0",
+      "original_position" : 33,
+      "path" : "src/validation.cpp",
+      "position" : 43,
+      "pull_request_review_id" : 317770827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346958305",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/23310655?v=4",
+         "events_url" : "https://api.github.com/users/ariard/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ariard/followers",
+         "following_url" : "https://api.github.com/users/ariard/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ariard/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ariard",
+         "id" : 23310655,
+         "login" : "ariard",
+         "node_id" : "MDQ6VXNlcjIzMzEwNjU1",
+         "organizations_url" : "https://api.github.com/users/ariard/orgs",
+         "received_events_url" : "https://api.github.com/users/ariard/received_events",
+         "repos_url" : "https://api.github.com/users/ariard/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ariard/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ariard/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ariard"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346958873"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346958873"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Should you keep this comment ? The class is still single-use. ",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-15T18:41:14Z",
+      "diff_hunk" : "@@ -2468,21 +2468,13 @@ static int64_t nTimeFlush = 0;\n static int64_t nTimeChainState = 0;\n static int64_t nTimePostConnect = 0;\n \n-struct PerBlockConnectTrace {\n-    CBlockIndex* pindex = nullptr;\n-    std::shared_ptr<const CBlock> pblock;\n-    PerBlockConnectTrace(CBlockIndex* pindexIn, std::shared_ptr<const CBlock> pblockIn) : pindex(pindexIn), pblock(pblockIn) {}\n-};\n /**\n- * Used to track blocks whose transactions were applied to the UTXO state as a\n- * part of a single ActivateBestChainStep call.\n- *\n- * This class is single-use, once you call GetBlocksConnected() you have to throw",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346958873",
+      "id" : 346958873,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Njk1ODg3Mw==",
+      "original_commit_id" : "906b478640918b4a2e734499c81c0a0ffb5fe8de",
+      "original_position" : 13,
+      "path" : "src/validation.cpp",
+      "position" : 21,
+      "pull_request_review_id" : 317770827,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346958873",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/23310655?v=4",
+         "events_url" : "https://api.github.com/users/ariard/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ariard/followers",
+         "following_url" : "https://api.github.com/users/ariard/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ariard/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ariard",
+         "id" : 23310655,
+         "login" : "ariard",
+         "node_id" : "MDQ6VXNlcjIzMzEwNjU1",
+         "organizations_url" : "https://api.github.com/users/ariard/orgs",
+         "received_events_url" : "https://api.github.com/users/ariard/received_events",
+         "repos_url" : "https://api.github.com/users/ariard/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ariard/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ariard/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ariard"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346996128"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346996128"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "There are several other reasons a tx could be removed for REORG:\r\n\r\n- a spend from a coinbase output that is no longer mature (>100 confirmations)\r\n- a descendants of non-final and non-mature outputs.\r\n- if the re-org has been deep enough that the disconnect pool has filled up\r\n- if the standardness or consensus rules have changed across the reorg\r\n\r\nI'd rather leave this high level than try to enumerate all the possible reasons for this here.",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-15T20:20:57Z",
+      "diff_hunk" : "@@ -92,10 +92,17 @@ class CValidationInterface {\n     /**\n      * Notifies listeners of a transaction leaving mempool.\n      *\n-     * This only fires for transactions which leave mempool because of expiry,\n-     * size limiting, reorg (changes in lock times/coinbase maturity), or\n-     * replacement. This does not include any transactions which are included\n-     * in BlockConnectedDisconnected either in block->vtx or in txnConflicted.\n+     * This notification fires for transactions that are removed from the\n+     * mempool for the following reasons:\n+     *\n+     * - EXPIRY (expired from mempool after -mempoolexpiry hours)\n+     * - SIZELIMIT (removed in size limiting if the mempool exceeds -maxmempool megabytes)\n+     * - REORG (removed during a reorg)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346996128",
+      "id" : 346996128,
+      "in_reply_to_id" : 346943451,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Njk5NjEyOA==",
+      "original_commit_id" : "ef6f6ae651b9a9bdbb925b4d7aa46d9ca931d4e7",
+      "original_position" : 13,
+      "path" : "src/validationinterface.h",
+      "position" : 13,
+      "pull_request_review_id" : 317849482,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346996128",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346996854"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346996854"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "done",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-15T20:23:11Z",
+      "diff_hunk" : "@@ -2477,28 +2477,16 @@ struct PerBlockConnectTrace {\n  * Used to track blocks whose transactions were applied to the UTXO state as a\n  * part of a single ActivateBestChainStep call.\n  *\n- * This class also tracks transactions that are removed from the mempool as\n- * conflicts (per block) and can be used to pass all those transactions\n- * through SyncTransaction.\n- *\n- * This class assumes (and asserts) that the conflicted transactions for a given\n- * block are added via mempool callbacks prior to the BlockConnected() associated\n- * with those transactions. If any transactions are marked conflicted, it is\n- * assumed that an associated block will always be added.\n- *",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346996854",
+      "id" : 346996854,
+      "in_reply_to_id" : 346950264,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Njk5Njg1NA==",
+      "original_commit_id" : "0f17fd9bd5c32eb6c6f4b648f5209f1a223f9e3e",
+      "original_position" : 12,
+      "path" : "src/validation.cpp",
+      "position" : 20,
+      "pull_request_review_id" : 317850433,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346996854",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346996883"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346996883"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "done",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-15T20:23:15Z",
+      "diff_hunk" : "@@ -70,6 +70,7 @@\n #include <boost/algorithm/string/replace.hpp>\n #include <boost/algorithm/string/split.hpp>\n #include <boost/thread.hpp>\n+#include <boost/signals2/signal.hpp>",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346996883",
+      "id" : 346996883,
+      "in_reply_to_id" : 346952184,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Njk5Njg4Mw==",
+      "original_commit_id" : "f959e4a00304fb4beea3ecd8894ac7cfd74742e3",
+      "original_position" : 4,
+      "path" : "src/init.cpp",
+      "position" : 4,
+      "pull_request_review_id" : 317850477,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346996883",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346996906"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346996906"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "done",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-15T20:23:20Z",
+      "diff_hunk" : "@@ -698,9 +697,6 @@ class CTxMemPool\n \n     size_t DynamicMemoryUsage() const;\n \n-    boost::signals2::signal<void (CTransactionRef)> NotifyEntryAdded;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346996906",
+      "id" : 346996906,
+      "in_reply_to_id" : 346953291,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Njk5NjkwNg==",
+      "original_commit_id" : "f959e4a00304fb4beea3ecd8894ac7cfd74742e3",
+      "original_position" : 12,
+      "path" : "src/txmempool.h",
+      "position" : 12,
+      "pull_request_review_id" : 317850501,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346996906",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346997355"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346997355"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I prefer to leave this as a separate commit since I think it's easier to review removing the logic piece-by-piece. If other reviewers agree with you, then I'm happy to squash the commits.",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-15T20:24:39Z",
+      "diff_hunk" : "@@ -2486,25 +2486,15 @@ class ConnectTrace {\n     CTxMemPool &pool;\n \n public:\n-    explicit ConnectTrace(CTxMemPool &_pool) : blocksConnected(1), pool(_pool) {}\n+    explicit ConnectTrace(CTxMemPool &_pool) : pool(_pool) {}\n \n     void BlockConnected(CBlockIndex* pindex, std::shared_ptr<const CBlock> pblock) {\n-        assert(!blocksConnected.back().pindex);\n         assert(pindex);\n         assert(pblock);\n-        blocksConnected.back().pindex = pindex;\n-        blocksConnected.back().pblock = std::move(pblock);\n-        blocksConnected.emplace_back();\n+        blocksConnected.emplace_back(pindex, std::move(pblock));\n     }\n \n     std::vector<PerBlockConnectTrace>& GetBlocksConnected() {\n-        // We always keep one extra block at the end of our list because\n-        // blocks are added after all the conflicted transactions have\n-        // been filled in. Thus, the last entry should always be an empty\n-        // one waiting for the transactions from the next block. We pop\n-        // the last entry here to make sure the list we return is sane.\n-        assert(!blocksConnected.back().pindex);\n-        blocksConnected.pop_back();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346997355",
+      "id" : 346997355,
+      "in_reply_to_id" : 346958305,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Njk5NzM1NQ==",
+      "original_commit_id" : "793b45c39a1ba80408d293bdec0d313af50f14c0",
+      "original_position" : 33,
+      "path" : "src/validation.cpp",
+      "position" : 43,
+      "pull_request_review_id" : 317851061,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346997355",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346997548"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346997548"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "restored",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-15T20:25:16Z",
+      "diff_hunk" : "@@ -2468,21 +2468,13 @@ static int64_t nTimeFlush = 0;\n static int64_t nTimeChainState = 0;\n static int64_t nTimePostConnect = 0;\n \n-struct PerBlockConnectTrace {\n-    CBlockIndex* pindex = nullptr;\n-    std::shared_ptr<const CBlock> pblock;\n-    PerBlockConnectTrace(CBlockIndex* pindexIn, std::shared_ptr<const CBlock> pblockIn) : pindex(pindexIn), pblock(pblockIn) {}\n-};\n /**\n- * Used to track blocks whose transactions were applied to the UTXO state as a\n- * part of a single ActivateBestChainStep call.\n- *\n- * This class is single-use, once you call GetBlocksConnected() you have to throw",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r346997548",
+      "id" : 346997548,
+      "in_reply_to_id" : 346958873,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Njk5NzU0OA==",
+      "original_commit_id" : "906b478640918b4a2e734499c81c0a0ffb5fe8de",
+      "original_position" : 13,
+      "path" : "src/validation.cpp",
+      "position" : 21,
+      "pull_request_review_id" : 317851310,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/346997548",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r347001539"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/347001539"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "done",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-15T20:37:29Z",
+      "diff_hunk" : "@@ -2477,28 +2477,16 @@ struct PerBlockConnectTrace {\n  * Used to track blocks whose transactions were applied to the UTXO state as a\n  * part of a single ActivateBestChainStep call.\n  *\n- * This class also tracks transactions that are removed from the mempool as\n- * conflicts (per block) and can be used to pass all those transactions\n- * through SyncTransaction.\n- *\n- * This class assumes (and asserts) that the conflicted transactions for a given\n- * block are added via mempool callbacks prior to the BlockConnected() associated\n- * with those transactions. If any transactions are marked conflicted, it is\n- * assumed that an associated block will always be added.\n- *\n  * This class is single-use, once you call GetBlocksConnected() you have to throw\n  * it away and make a new one.\n  */\n class ConnectTrace {\n private:\n     std::vector<PerBlockConnectTrace> blocksConnected;\n     CTxMemPool &pool;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r347001539",
+      "id" : 347001539,
+      "in_reply_to_id" : 346937589,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NzAwMTUzOQ==",
+      "original_commit_id" : "0f17fd9bd5c32eb6c6f4b648f5209f1a223f9e3e",
+      "original_position" : 19,
+      "path" : "src/validation.cpp",
+      "position" : null,
+      "pull_request_review_id" : 317856519,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/347001539",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@ariard - thanks for the review. I've taken all of your comment suggestions and some of the changes in your branch. I've gone back on changing the `PerBlockConnectTrace` to a `std::pair`. Using `auto` and `std::pair`'s `first` and `second` members makes it difficult to work out what's being done at the call site, so I've just changed `PerBlockConnectTrace` to be a struct with two members and `ConnectTrace` to be a `std::vector`. Take a look and let me know what you think.",
+      "created_at" : "2019-11-15T21:29:42Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-554535859",
+      "id" : 554535859,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1NDUzNTg1OQ==",
+      "updated_at" : "2019-11-15T21:29:42Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/554535859",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@ariard : I think it's possible to actually remove `ConnectTrace` entirely now that it's not necessary to release `cs_main` before firing validation interface signals. Take a look at the branch here: https://github.com/jnewbery/bitcoin/tree/2019-11-remove-connect-trace.\r\n\r\nIf you agree, I'll remove the last two commits from this PR, and then just remove `ConnectTrace` entirely in a follow-up PR.",
+      "created_at" : "2019-11-18T17:59:20Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-555134603",
+      "id" : 555134603,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1NTEzNDYwMw==",
+      "updated_at" : "2019-11-18T17:59:20Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/555134603",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->Needs rebase",
+      "created_at" : "2019-11-21T19:11:22Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-557229694",
+      "id" : 557229694,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1NzIyOTY5NA==",
+      "updated_at" : "2019-11-21T19:11:22Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/557229694",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "rebased on master",
+      "created_at" : "2019-11-22T17:04:40Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-557612869",
+      "id" : 557612869,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1NzYxMjg2OQ==",
+      "updated_at" : "2019-11-22T17:04:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/557612869",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "I've removed the final two commits (which tidied up the `ConnectTrace` class) since I remove that class entirely in PR #17562.",
+      "created_at" : "2019-11-22T19:23:32Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-557660785",
+      "id" : 557660785,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1NzY2MDc4NQ==",
+      "updated_at" : "2019-11-22T20:42:20Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/557660785",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "@jnewbery - your approach is better than the one tried in my aforementioned branch, because you avoid passing back and forth a `std::vector` between `ActivateBestChain`, `ActivateBestChainStep`, `ConnectTip`. Furthermore, it's pretty straightforward on the lock reasoning, given we already do this for `BlockDisconnected` in `DisconnectTip` where we hold `cs_main`",
+      "created_at" : "2019-11-25T20:18:17Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-558323117",
+      "id" : 558323117,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1ODMyMzExNw==",
+      "updated_at" : "2019-11-25T20:18:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/558323117",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/23310655?v=4",
+         "events_url" : "https://api.github.com/users/ariard/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ariard/followers",
+         "following_url" : "https://api.github.com/users/ariard/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ariard/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ariard",
+         "id" : 23310655,
+         "login" : "ariard",
+         "node_id" : "MDQ6VXNlcjIzMzEwNjU1",
+         "organizations_url" : "https://api.github.com/users/ariard/orgs",
+         "received_events_url" : "https://api.github.com/users/ariard/received_events",
+         "repos_url" : "https://api.github.com/users/ariard/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ariard/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ariard/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ariard"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r350463184"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/350463184"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit, just drop the constructor?",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-25T22:47:47Z",
+      "diff_hunk" : "@@ -2468,35 +2468,21 @@ static int64_t nTimePostConnect = 0;\n struct PerBlockConnectTrace {\n     CBlockIndex* pindex = nullptr;\n     std::shared_ptr<const CBlock> pblock;\n-    std::shared_ptr<std::vector<CTransactionRef>> conflictedTxs;\n-    PerBlockConnectTrace() : conflictedTxs(std::make_shared<std::vector<CTransactionRef>>()) {}\n+    PerBlockConnectTrace() {}",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r350463184",
+      "id" : 350463184,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDQ2MzE4NA==",
+      "original_commit_id" : "a3526626773b3a90d8865cb35acd03f584a15216",
+      "original_position" : 6,
+      "path" : "src/validation.cpp",
+      "position" : 6,
+      "pull_request_review_id" : 322629415,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/350463184",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Force-pushed a fix for a typo in a commit message. No code change.",
+      "created_at" : "2019-11-25T23:26:10Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-558387414",
+      "id" : 558387414,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1ODM4NzQxNA==",
+      "updated_at" : "2019-11-25T23:26:10Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/558387414",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r350481254"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/350481254"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I plan to remove `PerBlockConnectTrace()` entirely in #17562.",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-25T23:49:31Z",
+      "diff_hunk" : "@@ -2468,35 +2468,21 @@ static int64_t nTimePostConnect = 0;\n struct PerBlockConnectTrace {\n     CBlockIndex* pindex = nullptr;\n     std::shared_ptr<const CBlock> pblock;\n-    std::shared_ptr<std::vector<CTransactionRef>> conflictedTxs;\n-    PerBlockConnectTrace() : conflictedTxs(std::make_shared<std::vector<CTransactionRef>>()) {}\n+    PerBlockConnectTrace() {}",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r350481254",
+      "id" : 350481254,
+      "in_reply_to_id" : 350463184,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDQ4MTI1NA==",
+      "original_commit_id" : "a3526626773b3a90d8865cb35acd03f584a15216",
+      "original_position" : 6,
+      "path" : "src/validation.cpp",
+      "position" : 6,
+      "pull_request_review_id" : 322652136,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/350481254",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r350725914"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/350725914"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Sure, but if you happen to push again I still think you could remove this line. ",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2019-11-26T13:00:07Z",
+      "diff_hunk" : "@@ -2468,35 +2468,21 @@ static int64_t nTimePostConnect = 0;\n struct PerBlockConnectTrace {\n     CBlockIndex* pindex = nullptr;\n     std::shared_ptr<const CBlock> pblock;\n-    std::shared_ptr<std::vector<CTransactionRef>> conflictedTxs;\n-    PerBlockConnectTrace() : conflictedTxs(std::make_shared<std::vector<CTransactionRef>>()) {}\n+    PerBlockConnectTrace() {}",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r350725914",
+      "id" : 350725914,
+      "in_reply_to_id" : 350463184,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDcyNTkxNA==",
+      "original_commit_id" : "a3526626773b3a90d8865cb35acd03f584a15216",
+      "original_position" : 6,
+      "path" : "src/validation.cpp",
+      "position" : 6,
+      "pull_request_review_id" : 322959498,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/350725914",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "In master `CWallet::BlockConnected` is \"atomic\" - adds new transactions and updates transaction states and nothing can can \"use\" the wallet in between.\r\n\r\nWith this change \"lots of stuff\" can happen while the wallet state (transactions state really) is updated. So I was checking what can happen and one is: https://github.com/bitcoin/bitcoin/blob/0ee914ba9e5960763c7bb380b566ee481446f97a/src/wallet/wallet.cpp#L1747-L1748\r\n\r\nSo it looks like a transaction can be broadcast again if this runs between `TransactionRemovedFromMempool` and `BlockConnected`. But then I've realised that `BroadcastTransaction` checks this first:\r\nhttps://github.com/bitcoin/bitcoin/blob/0ee914ba9e5960763c7bb380b566ee481446f97a/src/node/transaction.cpp#L28-L38\r\n\r\nSo I think there's no issue in this case.\r\n",
+      "created_at" : "2019-11-26T13:17:09Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-558623499",
+      "id" : 558623499,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1ODYyMzQ5OQ==",
+      "updated_at" : "2019-11-26T13:17:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/558623499",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> So I think there's no issue in this case.\r\n\r\nI agree, and I think this is similar to Marco's concern earlier and my response: https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-554365732.\r\n\r\nThis PR allows the wallet to be used in a small window between being notified of conflicted transactions from the block and the block itself. However, I don't think it opens any new window conditions in the wallet that don't already exist. Imagine the following scenario in master branch:\r\n\r\n1. a wallet's transaction is removed from the mempool for expiry or size limiting reasons. The wallet is notified via `TransactionRemovedFromMempool`\r\n2. a new block gets mined that contains a transaction that conflicted with the removed transaction and the `BlockConnected` callback is added to the Validation Interface queue (but not fired in the wallet yet)\r\n3. some action happens in the wallet before the `BlockConnected` callback is fired.\r\n\r\nThis is _exactly_ the same behaviour as you describe above, and can already happen in the existing code. The only difference is the mempool removal reason, which is not reported to the wallet.",
+      "created_at" : "2019-11-26T14:15:21Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-558647936",
+      "id" : 558647936,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1ODY0NzkzNg==",
+      "updated_at" : "2019-11-26T14:15:21Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/558647936",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->Needs rebase",
+      "created_at" : "2020-01-09T21:25:00Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-572763259",
+      "id" : 572763259,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU3Mjc2MzI1OQ==",
+      "updated_at" : "2020-01-09T21:25:00Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/572763259",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "rebased",
+      "created_at" : "2020-01-10T18:25:07Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-573150763",
+      "id" : 573150763,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU3MzE1MDc2Mw==",
+      "updated_at" : "2020-01-10T18:25:07Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/573150763",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r369614511"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/369614511"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Would this line be better in `src/ui_interface.h` instead? It seems to be where it's used. Build and tests green.",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2020-01-22T15:06:32Z",
+      "diff_hunk" : "@@ -70,6 +70,7 @@\n #include <boost/algorithm/string/classification.hpp>\n #include <boost/algorithm/string/replace.hpp>\n #include <boost/algorithm/string/split.hpp>\n+#include <boost/signals2/signal.hpp>",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r369614511",
+      "id" : 369614511,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2OTYxNDUxMQ==",
+      "original_commit_id" : "100d5d03f7629e0c4be14239c6c6c3e542c3f34e",
+      "original_position" : 4,
+      "path" : "src/init.cpp",
+      "position" : 4,
+      "pull_request_review_id" : 346658390,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/369614511",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Code review ACK 100d5d03f7629e0c4be14239c6c6c3e542c3f34e\r\n\r\nI spent some time thinking about the \"window issue\" and the worst scenario I could come up with is if there are high fees, a full mempool, and we do some automatic RBF-ing, so we replace a tx with a higher fee one immediately if our original is evicted from the Mempool because of low fees. We might try to RBF again although it is already in the block. That's the only scenario I could come up with and it is an edge case with the only bad effect of sending out an RBF tx that gets rejected from every mempool. And fairly easy to prevent on the user side as well. Additionally, developers will be mindful of the window when implementing further changes, but I think that is also not a real argument against the change as it is simplifying things overall.",
+      "created_at" : "2020-01-23T00:19:59Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-577448372",
+      "id" : 577448372,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU3NzQ0ODM3Mg==",
+      "updated_at" : "2020-01-23T00:19:59Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/577448372",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1322187?v=4",
+         "events_url" : "https://api.github.com/users/fjahr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/fjahr/followers",
+         "following_url" : "https://api.github.com/users/fjahr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/fjahr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/fjahr",
+         "id" : 1322187,
+         "login" : "fjahr",
+         "node_id" : "MDQ6VXNlcjEzMjIxODc=",
+         "organizations_url" : "https://api.github.com/users/fjahr/orgs",
+         "received_events_url" : "https://api.github.com/users/fjahr/received_events",
+         "repos_url" : "https://api.github.com/users/fjahr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/fjahr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/fjahr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/fjahr"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "FWIW if anyone is looking at tests, I reverted this change and built\r\n```diff\r\n--- a/src/txmempool.cpp\r\n+++ b/src/txmempool.cpp\r\n@@ -403,7 +403,7 @@ void CTxMemPool::addUnchecked(const CTxMemPoolEntry &entry, setEntries &setAnces\r\n \r\n void CTxMemPool::removeUnchecked(txiter it, MemPoolRemovalReason reason)\r\n {\r\n-    if (reason != MemPoolRemovalReason::BLOCK) {\r\n+    if (reason != MemPoolRemovalReason::BLOCK && reason != MemPoolRemovalReason::CONFLICT) {\r\n         GetMainSignals().TransactionRemovedFromMempool(it->GetSharedTx());\r\n     }\r\n```\r\nand all the unit and functional tests pass except\r\n```\r\n2020-01-23T14:46:58.142000Z TestFramework (INFO): Initializing test directory /dev/shm/bitcoin_func_test_rjrhubgl\r\n2020-01-23T14:46:59.277000Z TestFramework (INFO): Mining blocks...\r\n2020-01-23T14:47:04.035000Z TestFramework (INFO): Running tests\r\n2020-01-23T14:47:16.692000Z TestFramework (ERROR): JSONRPC error\r\nTraceback (most recent call last):\r\n  File \"/home/jon/projects/bitcoin/bitcoin/test/functional/test_framework/test_framework.py\", line 112, in main\r\n    self.run_test()\r\n  File \"test/functional/wallet_bumpfee.py\", line 84, in run_test\r\n    test_unconfirmed_not_spendable(rbf_node, rbf_node_address)\r\n  File \"test/functional/wallet_bumpfee.py\", line 405, in test_unconfirmed_not_spendable\r\n    rbf_node.abandontransaction(bumpid)\r\n  File \"/home/jon/projects/bitcoin/bitcoin/test/functional/test_framework/coverage.py\", line 47, in __call__\r\n    return_val = self.auth_service_proxy_instance.__call__(*args, **kwargs)\r\n  File \"/home/jon/projects/bitcoin/bitcoin/test/functional/test_framework/authproxy.py\", line 141, in __call__\r\n    raise JSONRPCException(response['error'], status)\r\ntest_framework.authproxy.JSONRPCException: Transaction not eligible for abandonment (-5)\r\n```",
+      "created_at" : "2020-01-23T14:56:21Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-577716934",
+      "id" : 577716934,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU3NzcxNjkzNA==",
+      "updated_at" : "2020-01-23T14:56:21Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/577716934",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r370223948"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/370223948"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"[wallet] Notify conflicted transactions in TransactionRemovedFromMempool\" (3529e0bc2cba7a9d502de2c0fe9b17ec94a7fd0c)\r\n\r\nCould you add a comment about why notifications are skipped for BLOCK? I believe it's just for performance because BlockConnected notification provides the same information.",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2020-01-23T16:30:36Z",
+      "diff_hunk" : "@@ -406,7 +406,7 @@ void CTxMemPool::removeUnchecked(txiter it, MemPoolRemovalReason reason)\n {\n     CTransactionRef ptx = it->GetSharedTx();\n     NotifyEntryRemoved(ptx, reason);\n-    if (reason != MemPoolRemovalReason::BLOCK && reason != MemPoolRemovalReason::CONFLICT) {\n+    if (reason != MemPoolRemovalReason::BLOCK) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r370223948",
+      "id" : 370223948,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM3MDIyMzk0OA==",
+      "original_commit_id" : "3529e0bc2cba7a9d502de2c0fe9b17ec94a7fd0c",
+      "original_position" : 5,
+      "path" : "src/txmempool.cpp",
+      "position" : 16,
+      "pull_request_review_id" : 347437447,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/370223948",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->Needs rebase",
+      "created_at" : "2020-01-31T15:27:20Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-580778810",
+      "id" : 580778810,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU4MDc3ODgxMA==",
+      "updated_at" : "2020-01-31T15:27:20Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/580778810",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Rebase, please :)",
+      "created_at" : "2020-02-19T19:23:19Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-588401106",
+      "id" : 588401106,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU4ODQwMTEwNg==",
+      "updated_at" : "2020-02-19T19:23:19Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/588401106",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r386567904"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/386567904"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"[wallet] Notify conflicted transactions in TransactionRemovedFromMempool\" (72d17a293e32bcf8d4cf9b7744bb67a0a886fb42)\r\n\r\nIt'd be good to add information here from https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-554041672 about order of TransactionRemovedFromMempool and BlockConnected notifications",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2020-03-02T18:25:56Z",
+      "diff_hunk" : "@@ -92,10 +92,17 @@ class CValidationInterface {\n     /**\n      * Notifies listeners of a transaction leaving mempool.\n      *\n-     * This only fires for transactions which leave mempool because of expiry,\n-     * size limiting, reorg (changes in lock times/coinbase maturity), or\n-     * replacement. This does not include any transactions which are included\n-     * in BlockConnectedDisconnected either in block->vtx or in txnConflicted.\n+     * This notification fires for transactions that are removed from the\n+     * mempool for the following reasons:\n+     *\n+     * - EXPIRY (expired from mempool after -mempoolexpiry hours)\n+     * - SIZELIMIT (removed in size limiting if the mempool exceeds -maxmempool megabytes)\n+     * - REORG (removed during a reorg)\n+     * - CONFLICT (removed because it conflicts with in-block transaction)\n+     * - REPLACED (removed due to RBF replacement)\n+     *\n+     * This does not fire for transactions that are removed from the mempool",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r386567904",
+      "id" : 386567904,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM4NjU2NzkwNA==",
+      "original_commit_id" : "b75fada45e99dac388e9501b76eba6fe7191520f",
+      "original_position" : 17,
+      "path" : "src/validationinterface.h",
+      "position" : 17,
+      "pull_request_review_id" : 367423847,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/386567904",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r387326230"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/387326230"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "it's used in init.cpp:366: `static boost::signals2::connection rpc_notify_block_change_connection;`\r\n",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2020-03-03T22:13:05Z",
+      "diff_hunk" : "@@ -70,6 +70,7 @@\n #include <boost/algorithm/string/classification.hpp>\n #include <boost/algorithm/string/replace.hpp>\n #include <boost/algorithm/string/split.hpp>\n+#include <boost/signals2/signal.hpp>",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r387326230",
+      "id" : 387326230,
+      "in_reply_to_id" : 369614511,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM4NzMyNjIzMA==",
+      "original_commit_id" : "100d5d03f7629e0c4be14239c6c6c3e542c3f34e",
+      "original_position" : 4,
+      "path" : "src/init.cpp",
+      "position" : 4,
+      "pull_request_review_id" : 368364709,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/387326230",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r387335176"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/387335176"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "done",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2020-03-03T22:33:03Z",
+      "diff_hunk" : "@@ -406,7 +406,7 @@ void CTxMemPool::removeUnchecked(txiter it, MemPoolRemovalReason reason)\n {\n     CTransactionRef ptx = it->GetSharedTx();\n     NotifyEntryRemoved(ptx, reason);\n-    if (reason != MemPoolRemovalReason::BLOCK && reason != MemPoolRemovalReason::CONFLICT) {\n+    if (reason != MemPoolRemovalReason::BLOCK) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r387335176",
+      "id" : 387335176,
+      "in_reply_to_id" : 370223948,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM4NzMzNTE3Ng==",
+      "original_commit_id" : "3529e0bc2cba7a9d502de2c0fe9b17ec94a7fd0c",
+      "original_position" : 5,
+      "path" : "src/txmempool.cpp",
+      "position" : 16,
+      "pull_request_review_id" : 368375593,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:38:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/387335176",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Pushed a fix to https://github.com/bitcoin/bitcoin/pull/17477#discussion_r370223948.\r\n\r\nThanks for the re-review @ryanofsky . I intend to address your other comments soon.",
+      "created_at" : "2020-03-03T22:34:00Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-594206041",
+      "id" : 594206041,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU5NDIwNjA0MQ==",
+      "updated_at" : "2020-03-03T22:34:00Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/594206041",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r391310332"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/391310332"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "done",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2020-03-11T22:39:08Z",
+      "diff_hunk" : "@@ -92,10 +92,17 @@ class CValidationInterface {\n     /**\n      * Notifies listeners of a transaction leaving mempool.\n      *\n-     * This only fires for transactions which leave mempool because of expiry,\n-     * size limiting, reorg (changes in lock times/coinbase maturity), or\n-     * replacement. This does not include any transactions which are included\n-     * in BlockConnectedDisconnected either in block->vtx or in txnConflicted.\n+     * This notification fires for transactions that are removed from the\n+     * mempool for the following reasons:\n+     *\n+     * - EXPIRY (expired from mempool after -mempoolexpiry hours)\n+     * - SIZELIMIT (removed in size limiting if the mempool exceeds -maxmempool megabytes)\n+     * - REORG (removed during a reorg)\n+     * - CONFLICT (removed because it conflicts with in-block transaction)\n+     * - REPLACED (removed due to RBF replacement)\n+     *\n+     * This does not fire for transactions that are removed from the mempool",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r391310332",
+      "id" : 391310332,
+      "in_reply_to_id" : 386567904,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM5MTMxMDMzMg==",
+      "original_commit_id" : "b75fada45e99dac388e9501b76eba6fe7191520f",
+      "original_position" : 17,
+      "path" : "src/validationinterface.h",
+      "position" : 17,
+      "pull_request_review_id" : 373174283,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-11T22:39:08Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/391310332",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> It would still be nice to clean up the PR description\r\n\r\n@ryanofsky - done. I've also addressed your inline comment. Let me know what you think.\r\n@kallewoof @fjahr : do you mind rereviewing? It's just a rebase/comment change since your previous ACKs.",
+      "created_at" : "2020-03-11T22:40:40Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#issuecomment-597915505",
+      "id" : 597915505,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17477",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU5NzkxNTUwNQ==",
+      "updated_at" : "2020-03-11T22:40:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/597915505",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r391418753"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/391418753"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "d'oh, thanks -- not sure how I missed that.",
+      "commit_id" : "e57980b4738c10344baf136de3e050a3cb958ca5",
+      "created_at" : "2020-03-12T06:12:52Z",
+      "diff_hunk" : "@@ -70,6 +70,7 @@\n #include <boost/algorithm/string/classification.hpp>\n #include <boost/algorithm/string/replace.hpp>\n #include <boost/algorithm/string/split.hpp>\n+#include <boost/signals2/signal.hpp>",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17477#discussion_r391418753",
+      "id" : 391418753,
+      "in_reply_to_id" : 369614511,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM5MTQxODc1Mw==",
+      "original_commit_id" : "100d5d03f7629e0c4be14239c6c6c3e542c3f34e",
+      "original_position" : 4,
+      "path" : "src/init.cpp",
+      "position" : 4,
+      "pull_request_review_id" : 373299318,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17477",
+      "updated_at" : "2020-03-12T06:12:53Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/391418753",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   }
+]

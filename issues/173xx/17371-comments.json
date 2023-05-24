@@ -1,0 +1,1313 @@
+[
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#17369](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/17369.html) (Refactor: Move encryption code between KeyMan and Wallet by achow101)\n* [#17283](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/17283.html) (rpc: improve getaddressinfo test coverage, help, code docs by jonatack)\n* [#17211](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/17211.html) (Allow fundrawtransaction and walletcreatefundedpsbt to take external inputs by achow101)\n* [#12911](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/12911.html) (wallet: Show fee in results for signrawtransaction* for segwit inputs by kallewoof)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "created_at" : "2019-11-04T23:27:28Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#issuecomment-549594143",
+      "id" : 549594143,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17371",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU0OTU5NDE0Mw==",
+      "updated_at" : "2019-11-21T02:57:01Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/549594143",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342585216"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342585216"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Adding `complete = false` would seem more consistent with previous behavior which sets `complete` to false if it can't sign one of the inputs.",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-05T14:15:54Z",
+      "diff_hunk" : "@@ -39,12 +39,33 @@ TransactionError FillPSBT(const CWallet* pwallet, PartiallySignedTransaction& ps\n             return TransactionError::SIGHASH_MISMATCH;\n         }\n \n-        complete &= SignPSBTInput(HidingSigningProvider(pwallet->GetSigningProvider(), !sign, !bip32derivs), psbtx, i, sighash_type);\n+        // Get the scriptPubKey to know which SigningProvider to use\n+        CScript script;\n+        if (input.non_witness_utxo) {\n+            script = input.non_witness_utxo->vout[txin.prevout.n].scriptPubKey;\n+        } else if (!input.witness_utxo.IsNull()) {\n+            script = input.witness_utxo.scriptPubKey;\n+        } else {\n+            // There's no UTXO so we can just skip this now\n+            continue;\n+        }\n+        SignatureData sigdata;\n+        input.FillSignatureData(sigdata);\n+        const SigningProvider* provider = pwallet->GetSigningProvider(script, sigdata);\n+        if (!provider) {\n+            continue;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342585216",
+      "id" : 342585216,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MjU4NTIxNg==",
+      "original_commit_id" : "fd8ab05148da9dfba37aa5fb7314c67d471ea5ea",
+      "original_position" : 19,
+      "path" : "src/wallet/psbtwallet.cpp",
+      "position" : 21,
+      "pull_request_review_id" : 311762109,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-18T20:42:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342585216",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/10217?v=4",
+         "events_url" : "https://api.github.com/users/Sjors/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Sjors/followers",
+         "following_url" : "https://api.github.com/users/Sjors/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Sjors/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Sjors",
+         "id" : 10217,
+         "login" : "Sjors",
+         "node_id" : "MDQ6VXNlcjEwMjE3",
+         "organizations_url" : "https://api.github.com/users/Sjors/orgs",
+         "received_events_url" : "https://api.github.com/users/Sjors/received_events",
+         "repos_url" : "https://api.github.com/users/Sjors/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Sjors/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Sjors"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342588205"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342588205"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Add `complete = false`?",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-05T14:21:15Z",
+      "diff_hunk" : "@@ -39,12 +39,33 @@ TransactionError FillPSBT(const CWallet* pwallet, PartiallySignedTransaction& ps\n             return TransactionError::SIGHASH_MISMATCH;\n         }\n \n-        complete &= SignPSBTInput(HidingSigningProvider(pwallet->GetSigningProvider(), !sign, !bip32derivs), psbtx, i, sighash_type);\n+        // Get the scriptPubKey to know which SigningProvider to use\n+        CScript script;\n+        if (input.non_witness_utxo) {\n+            script = input.non_witness_utxo->vout[txin.prevout.n].scriptPubKey;\n+        } else if (!input.witness_utxo.IsNull()) {\n+            script = input.witness_utxo.scriptPubKey;\n+        } else {\n+            // There's no UTXO so we can just skip this now",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342588205",
+      "id" : 342588205,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MjU4ODIwNQ==",
+      "original_commit_id" : "fd8ab05148da9dfba37aa5fb7314c67d471ea5ea",
+      "original_position" : 12,
+      "path" : "src/wallet/psbtwallet.cpp",
+      "position" : 12,
+      "pull_request_review_id" : 311762109,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-18T20:42:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342588205",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/10217?v=4",
+         "events_url" : "https://api.github.com/users/Sjors/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Sjors/followers",
+         "following_url" : "https://api.github.com/users/Sjors/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Sjors/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Sjors",
+         "id" : 10217,
+         "login" : "Sjors",
+         "node_id" : "MDQ6VXNlcjEwMjE3",
+         "organizations_url" : "https://api.github.com/users/Sjors/orgs",
+         "received_events_url" : "https://api.github.com/users/Sjors/received_events",
+         "repos_url" : "https://api.github.com/users/Sjors/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Sjors/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Sjors"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342588280"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342588280"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Check for the witness UTXO first? (given the above `The signing code will switch to the smaller witness_utxo if this is ok.`). It seems unlikely they'd have different signing providers, but still.\r\n\r\n",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-05T14:21:23Z",
+      "diff_hunk" : "@@ -39,12 +39,33 @@ TransactionError FillPSBT(const CWallet* pwallet, PartiallySignedTransaction& ps\n             return TransactionError::SIGHASH_MISMATCH;\n         }\n \n-        complete &= SignPSBTInput(HidingSigningProvider(pwallet->GetSigningProvider(), !sign, !bip32derivs), psbtx, i, sighash_type);\n+        // Get the scriptPubKey to know which SigningProvider to use\n+        CScript script;\n+        if (input.non_witness_utxo) {\n+            script = input.non_witness_utxo->vout[txin.prevout.n].scriptPubKey;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342588280",
+      "id" : 342588280,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MjU4ODI4MA==",
+      "original_commit_id" : "fd8ab05148da9dfba37aa5fb7314c67d471ea5ea",
+      "original_position" : 8,
+      "path" : "src/wallet/psbtwallet.cpp",
+      "position" : null,
+      "pull_request_review_id" : 311762109,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-18T20:42:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342588280",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/10217?v=4",
+         "events_url" : "https://api.github.com/users/Sjors/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Sjors/followers",
+         "following_url" : "https://api.github.com/users/Sjors/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Sjors/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Sjors",
+         "id" : 10217,
+         "login" : "Sjors",
+         "node_id" : "MDQ6VXNlcjEwMjE3",
+         "organizations_url" : "https://api.github.com/users/Sjors/orgs",
+         "received_events_url" : "https://api.github.com/users/Sjors/received_events",
+         "repos_url" : "https://api.github.com/users/Sjors/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Sjors/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Sjors"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342597291"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342597291"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This seems brittle. I'm assuming the goal, if multiple signing providers match, is to have them all sign (part of) the transaction? What if the first signer succeeds, but the second returns an error object because it didn't have the key (in which it shouldn't have matched, but still...)?",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-05T14:37:47Z",
+      "diff_hunk" : "@@ -3281,7 +3290,23 @@ UniValue signrawtransactionwithwallet(const JSONRPCRequest& request)\n     // Parse the prevtxs array\n     ParsePrevouts(request.params[1], nullptr, coins);\n \n-    return SignTransaction(mtx, &*pwallet->GetLegacyScriptPubKeyMan(), coins, request.params[2]);\n+    std::set<const SigningProvider*> providers;\n+    for (const std::pair<COutPoint, Coin> coin_pair : coins) {\n+        const SigningProvider* provider = pwallet->GetSigningProvider(coin_pair.second.out.scriptPubKey);\n+        if (provider) {\n+            providers.insert(std::move(provider));\n+        }\n+    }\n+    if (providers.size() == 0) {\n+        // When there are no available providers, use DUMMY_SIGNING_PROVIDER so we can check if the tx is complete\n+        providers.insert(&DUMMY_SIGNING_PROVIDER);\n+    }\n+\n+    UniValue result;\n+    for (const SigningProvider* provider : providers) {\n+        result = SignTransaction(mtx, provider, coins, request.params[2]);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342597291",
+      "id" : 342597291,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MjU5NzI5MQ==",
+      "original_commit_id" : "fd8ab05148da9dfba37aa5fb7314c67d471ea5ea",
+      "original_position" : 109,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : null,
+      "pull_request_review_id" : 311762109,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-18T20:42:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342597291",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/10217?v=4",
+         "events_url" : "https://api.github.com/users/Sjors/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Sjors/followers",
+         "following_url" : "https://api.github.com/users/Sjors/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Sjors/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Sjors",
+         "id" : 10217,
+         "login" : "Sjors",
+         "node_id" : "MDQ6VXNlcjEwMjE3",
+         "organizations_url" : "https://api.github.com/users/Sjors/orgs",
+         "received_events_url" : "https://api.github.com/users/Sjors/received_events",
+         "repos_url" : "https://api.github.com/users/Sjors/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Sjors/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Sjors"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342689536"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342689536"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"Refactor: Require scriptPubKey to get wallet SigningProvider\" (f7510c144b2262e1ee114eaa740b889c24ec7abb)\r\n\r\nIt would seem more direct to replace `*pkhash` with `dest` here and call `GetScriptForDestination(dest)`",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-05T17:18:59Z",
+      "diff_hunk" : "@@ -550,7 +550,11 @@ static UniValue signmessage(const JSONRPCRequest& request)\n         throw JSONRPCError(RPC_TYPE_ERROR, \"Address does not refer to key\");\n     }\n \n-    const SigningProvider* provider = pwallet->GetSigningProvider();\n+    CScript script_pub_key = GetScriptForDestination(*pkhash);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342689536",
+      "id" : 342689536,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MjY4OTUzNg==",
+      "original_commit_id" : "fd8ab05148da9dfba37aa5fb7314c67d471ea5ea",
+      "original_position" : 5,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : 5,
+      "pull_request_review_id" : 311898109,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-18T20:42:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342689536",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342752069"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342752069"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "There shouldn't ever be a SigningProvider that doesn't match. ",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-05T19:23:32Z",
+      "diff_hunk" : "@@ -3281,7 +3290,23 @@ UniValue signrawtransactionwithwallet(const JSONRPCRequest& request)\n     // Parse the prevtxs array\n     ParsePrevouts(request.params[1], nullptr, coins);\n \n-    return SignTransaction(mtx, &*pwallet->GetLegacyScriptPubKeyMan(), coins, request.params[2]);\n+    std::set<const SigningProvider*> providers;\n+    for (const std::pair<COutPoint, Coin> coin_pair : coins) {\n+        const SigningProvider* provider = pwallet->GetSigningProvider(coin_pair.second.out.scriptPubKey);\n+        if (provider) {\n+            providers.insert(std::move(provider));\n+        }\n+    }\n+    if (providers.size() == 0) {\n+        // When there are no available providers, use DUMMY_SIGNING_PROVIDER so we can check if the tx is complete\n+        providers.insert(&DUMMY_SIGNING_PROVIDER);\n+    }\n+\n+    UniValue result;\n+    for (const SigningProvider* provider : providers) {\n+        result = SignTransaction(mtx, provider, coins, request.params[2]);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342752069",
+      "id" : 342752069,
+      "in_reply_to_id" : 342597291,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Mjc1MjA2OQ==",
+      "original_commit_id" : "fd8ab05148da9dfba37aa5fb7314c67d471ea5ea",
+      "original_position" : 109,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : null,
+      "pull_request_review_id" : 311982202,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-18T20:42:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342752069",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342752241"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342752241"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Done",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-05T19:23:51Z",
+      "diff_hunk" : "@@ -39,12 +39,33 @@ TransactionError FillPSBT(const CWallet* pwallet, PartiallySignedTransaction& ps\n             return TransactionError::SIGHASH_MISMATCH;\n         }\n \n-        complete &= SignPSBTInput(HidingSigningProvider(pwallet->GetSigningProvider(), !sign, !bip32derivs), psbtx, i, sighash_type);\n+        // Get the scriptPubKey to know which SigningProvider to use\n+        CScript script;\n+        if (input.non_witness_utxo) {\n+            script = input.non_witness_utxo->vout[txin.prevout.n].scriptPubKey;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342752241",
+      "id" : 342752241,
+      "in_reply_to_id" : 342588280,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Mjc1MjI0MQ==",
+      "original_commit_id" : "fd8ab05148da9dfba37aa5fb7314c67d471ea5ea",
+      "original_position" : 8,
+      "path" : "src/wallet/psbtwallet.cpp",
+      "position" : null,
+      "pull_request_review_id" : 311982417,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-18T20:42:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342752241",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342752261"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342752261"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Done",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-05T19:23:54Z",
+      "diff_hunk" : "@@ -39,12 +39,33 @@ TransactionError FillPSBT(const CWallet* pwallet, PartiallySignedTransaction& ps\n             return TransactionError::SIGHASH_MISMATCH;\n         }\n \n-        complete &= SignPSBTInput(HidingSigningProvider(pwallet->GetSigningProvider(), !sign, !bip32derivs), psbtx, i, sighash_type);\n+        // Get the scriptPubKey to know which SigningProvider to use\n+        CScript script;\n+        if (input.non_witness_utxo) {\n+            script = input.non_witness_utxo->vout[txin.prevout.n].scriptPubKey;\n+        } else if (!input.witness_utxo.IsNull()) {\n+            script = input.witness_utxo.scriptPubKey;\n+        } else {\n+            // There's no UTXO so we can just skip this now",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342752261",
+      "id" : 342752261,
+      "in_reply_to_id" : 342588205,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Mjc1MjI2MQ==",
+      "original_commit_id" : "fd8ab05148da9dfba37aa5fb7314c67d471ea5ea",
+      "original_position" : 12,
+      "path" : "src/wallet/psbtwallet.cpp",
+      "position" : 12,
+      "pull_request_review_id" : 311982441,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-18T20:42:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342752261",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342752282"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342752282"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Done",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-05T19:23:56Z",
+      "diff_hunk" : "@@ -39,12 +39,33 @@ TransactionError FillPSBT(const CWallet* pwallet, PartiallySignedTransaction& ps\n             return TransactionError::SIGHASH_MISMATCH;\n         }\n \n-        complete &= SignPSBTInput(HidingSigningProvider(pwallet->GetSigningProvider(), !sign, !bip32derivs), psbtx, i, sighash_type);\n+        // Get the scriptPubKey to know which SigningProvider to use\n+        CScript script;\n+        if (input.non_witness_utxo) {\n+            script = input.non_witness_utxo->vout[txin.prevout.n].scriptPubKey;\n+        } else if (!input.witness_utxo.IsNull()) {\n+            script = input.witness_utxo.scriptPubKey;\n+        } else {\n+            // There's no UTXO so we can just skip this now\n+            continue;\n+        }\n+        SignatureData sigdata;\n+        input.FillSignatureData(sigdata);\n+        const SigningProvider* provider = pwallet->GetSigningProvider(script, sigdata);\n+        if (!provider) {\n+            continue;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r342752282",
+      "id" : 342752282,
+      "in_reply_to_id" : 342585216,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Mjc1MjI4Mg==",
+      "original_commit_id" : "fd8ab05148da9dfba37aa5fb7314c67d471ea5ea",
+      "original_position" : 19,
+      "path" : "src/wallet/psbtwallet.cpp",
+      "position" : 21,
+      "pull_request_review_id" : 311982460,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-18T20:42:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/342752282",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r347567723"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/347567723"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"Refactor: Require scriptPubKey to get wallet SigningProvider\" (f7510c144b2262e1ee114eaa740b889c24ec7abb)\r\n\r\nAccording to RPC documentation result has three fields: \"hex\" \"complete\" and \"errors\". I guess for \"hex\" and \"complete\" fields it makes sense to take the last values, but errors field should probably accumulate? In any case, this code is not very future proof in case new fields are added. Would suggest changing SignTransaction to take a `UniValue& result` input/output parameter, so it can be responsible for updating the result at each step, and this code isn't just blindly overwriting previous results.",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-18T19:29:58Z",
+      "diff_hunk" : "@@ -3281,7 +3290,23 @@ UniValue signrawtransactionwithwallet(const JSONRPCRequest& request)\n     // Parse the prevtxs array\n     ParsePrevouts(request.params[1], nullptr, coins);\n \n-    return SignTransaction(mtx, &*pwallet->GetLegacyScriptPubKeyMan(), coins, request.params[2]);\n+    std::set<const SigningProvider*> providers;\n+    for (const std::pair<COutPoint, Coin> coin_pair : coins) {\n+        const SigningProvider* provider = pwallet->GetSigningProvider(coin_pair.second.out.scriptPubKey);\n+        if (provider) {\n+            providers.insert(std::move(provider));\n+        }\n+    }\n+    if (providers.size() == 0) {\n+        // When there are no available providers, use DUMMY_SIGNING_PROVIDER so we can check if the tx is complete\n+        providers.insert(&DUMMY_SIGNING_PROVIDER);\n+    }\n+\n+    UniValue result;\n+    for (const SigningProvider* provider : providers) {\n+        result = SignTransaction(mtx, provider, coins, request.params[2]);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r347567723",
+      "id" : 347567723,
+      "in_reply_to_id" : 342597291,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NzU2NzcyMw==",
+      "original_commit_id" : "fd8ab05148da9dfba37aa5fb7314c67d471ea5ea",
+      "original_position" : 109,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : null,
+      "pull_request_review_id" : 311898109,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-18T20:42:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/347567723",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r347568781"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/347568781"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In commit \"Refactor: Require scriptPubKey to get wallet SigningProvider\" (f7510c144b2262e1ee114eaa740b889c24ec7abb)\r\n\r\nWould be slightly simpler to replace ternary with `solvable = provider && IsSolvable(*provider)`",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-18T19:32:16Z",
+      "diff_hunk" : "@@ -3740,11 +3766,11 @@ UniValue getaddressinfo(const JSONRPCRequest& request)\n \n     CScript scriptPubKey = GetScriptForDestination(dest);\n     ret.pushKV(\"scriptPubKey\", HexStr(scriptPubKey.begin(), scriptPubKey.end()));\n-    const SigningProvider* provider = pwallet->GetSigningProvider();\n+    const SigningProvider* provider = pwallet->GetSigningProvider(scriptPubKey);\n \n     isminetype mine = pwallet->IsMine(dest);\n     ret.pushKV(\"ismine\", bool(mine & ISMINE_SPENDABLE));\n-    bool solvable = IsSolvable(*provider, scriptPubKey);\n+    bool solvable = provider ? IsSolvable(*provider, scriptPubKey) : false;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r347568781",
+      "id" : 347568781,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NzU2ODc4MQ==",
+      "original_commit_id" : "f7510c144b2262e1ee114eaa740b889c24ec7abb",
+      "original_position" : 137,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : null,
+      "pull_request_review_id" : 311898109,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-18T20:42:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/347568781",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r347576440"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/347576440"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I don't think it really matters as we still need `pkhash` since `signmessage` is supposed to only work on p2pkh addresses.",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-18T19:49:11Z",
+      "diff_hunk" : "@@ -550,7 +550,11 @@ static UniValue signmessage(const JSONRPCRequest& request)\n         throw JSONRPCError(RPC_TYPE_ERROR, \"Address does not refer to key\");\n     }\n \n-    const SigningProvider* provider = pwallet->GetSigningProvider();\n+    CScript script_pub_key = GetScriptForDestination(*pkhash);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r347576440",
+      "id" : 347576440,
+      "in_reply_to_id" : 342689536,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NzU3NjQ0MA==",
+      "original_commit_id" : "fd8ab05148da9dfba37aa5fb7314c67d471ea5ea",
+      "original_position" : 5,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : 5,
+      "pull_request_review_id" : 318586457,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-18T20:42:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/347576440",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r347598676"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/347598676"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Done",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-18T20:42:13Z",
+      "diff_hunk" : "@@ -3740,11 +3766,11 @@ UniValue getaddressinfo(const JSONRPCRequest& request)\n \n     CScript scriptPubKey = GetScriptForDestination(dest);\n     ret.pushKV(\"scriptPubKey\", HexStr(scriptPubKey.begin(), scriptPubKey.end()));\n-    const SigningProvider* provider = pwallet->GetSigningProvider();\n+    const SigningProvider* provider = pwallet->GetSigningProvider(scriptPubKey);\n \n     isminetype mine = pwallet->IsMine(dest);\n     ret.pushKV(\"ismine\", bool(mine & ISMINE_SPENDABLE));\n-    bool solvable = IsSolvable(*provider, scriptPubKey);\n+    bool solvable = provider ? IsSolvable(*provider, scriptPubKey) : false;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r347598676",
+      "id" : 347598676,
+      "in_reply_to_id" : 347568781,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NzU5ODY3Ng==",
+      "original_commit_id" : "f7510c144b2262e1ee114eaa740b889c24ec7abb",
+      "original_position" : 137,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : null,
+      "pull_request_review_id" : 318615654,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-18T20:42:13Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/347598676",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r347599081"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/347599081"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I've added a commit which changes `SignTransaction` to `void` and has a `result` parameter to accumulate the errors array.",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-18T20:43:17Z",
+      "diff_hunk" : "@@ -3281,7 +3290,23 @@ UniValue signrawtransactionwithwallet(const JSONRPCRequest& request)\n     // Parse the prevtxs array\n     ParsePrevouts(request.params[1], nullptr, coins);\n \n-    return SignTransaction(mtx, &*pwallet->GetLegacyScriptPubKeyMan(), coins, request.params[2]);\n+    std::set<const SigningProvider*> providers;\n+    for (const std::pair<COutPoint, Coin> coin_pair : coins) {\n+        const SigningProvider* provider = pwallet->GetSigningProvider(coin_pair.second.out.scriptPubKey);\n+        if (provider) {\n+            providers.insert(std::move(provider));\n+        }\n+    }\n+    if (providers.size() == 0) {\n+        // When there are no available providers, use DUMMY_SIGNING_PROVIDER so we can check if the tx is complete\n+        providers.insert(&DUMMY_SIGNING_PROVIDER);\n+    }\n+\n+    UniValue result;\n+    for (const SigningProvider* provider : providers) {\n+        result = SignTransaction(mtx, provider, coins, request.params[2]);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r347599081",
+      "id" : 347599081,
+      "in_reply_to_id" : 342597291,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0NzU5OTA4MQ==",
+      "original_commit_id" : "fd8ab05148da9dfba37aa5fb7314c67d471ea5ea",
+      "original_position" : 109,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : null,
+      "pull_request_review_id" : 318616182,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-18T20:43:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/347599081",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r347877547"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/347877547"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "> we still need `pkhash` since `signmessage` is supposed to only work on `p2pkh` addresses\r\n\r\nThat will change in https://github.com/bitcoin/bitcoin/pull/16440/files#diff-df7d84ff2f53fcb2a0dc15a3a51e55ceR559",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-19T11:45:17Z",
+      "diff_hunk" : "@@ -550,7 +550,11 @@ static UniValue signmessage(const JSONRPCRequest& request)\n         throw JSONRPCError(RPC_TYPE_ERROR, \"Address does not refer to key\");\n     }\n \n-    const SigningProvider* provider = pwallet->GetSigningProvider();\n+    CScript script_pub_key = GetScriptForDestination(*pkhash);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r347877547",
+      "id" : 347877547,
+      "in_reply_to_id" : 342689536,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0Nzg3NzU0Nw==",
+      "original_commit_id" : "fd8ab05148da9dfba37aa5fb7314c67d471ea5ea",
+      "original_position" : 5,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : 5,
+      "pull_request_review_id" : 318974083,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-19T11:50:27Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/347877547",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/10217?v=4",
+         "events_url" : "https://api.github.com/users/Sjors/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Sjors/followers",
+         "following_url" : "https://api.github.com/users/Sjors/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Sjors/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Sjors",
+         "id" : 10217,
+         "login" : "Sjors",
+         "node_id" : "MDQ6VXNlcjEwMjE3",
+         "organizations_url" : "https://api.github.com/users/Sjors/orgs",
+         "received_events_url" : "https://api.github.com/users/Sjors/received_events",
+         "repos_url" : "https://api.github.com/users/Sjors/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Sjors/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Sjors"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "@instagibbs and @meshcollider, you may be interested to review this. This is code you previously acked when it was part of #16341",
+      "created_at" : "2019-11-21T15:27:47Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#issuecomment-557135296",
+      "id" : 557135296,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17371",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1NzEzNTI5Ng==",
+      "updated_at" : "2019-11-21T15:27:47Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/557135296",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349166587"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349166587"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "4b0c718f8f48c678cbe4575e9a9cf9e62a30f0da\r\n\r\nAn overload could be added, like\r\n```cpp\r\nUniValue SignTransaction(CMutableTransaction& mtx, const SigningProvider* keystore, const std::map<COutPoint, Coin>& coins, const UniValue& hashType)\r\n{\r\n    UniValue result(UniValue::VOBJ);\r\n    SignTransaction(mtx, &keystore, coins, hashType, result);\r\n    return result;\r\n}\r\n```\r\n\r\nBut I see that in the next commit this refactor is handy in `signrawtransactionwithwallet` RPC.",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-21T15:52:51Z",
+      "diff_hunk" : "@@ -21,9 +21,9 @@ class SigningProvider;\n  * @param  keystore      Temporary keystore containing signing keys\n  * @param  coins         Map of unspent outputs\n  * @param  hashType      The signature hash type\n- * @returns JSON object with details of signed transaction\n+ * @param result         JSON object where signed transaction results accumulate\n  */\n-UniValue SignTransaction(CMutableTransaction& mtx, const SigningProvider* keystore, const std::map<COutPoint, Coin>& coins, const UniValue& hashType);\n+void SignTransaction(CMutableTransaction& mtx, const SigningProvider* keystore, const std::map<COutPoint, Coin>& coins, const UniValue& hashType, UniValue& result);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349166587",
+      "id" : 349166587,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0OTE2NjU4Nw==",
+      "original_commit_id" : "4b0c718f8f48c678cbe4575e9a9cf9e62a30f0da",
+      "original_position" : 8,
+      "path" : "src/rpc/rawtransaction_util.h",
+      "position" : 8,
+      "pull_request_review_id" : 320990033,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-21T16:07:22Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349166587",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349687735"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349687735"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "note for future work(TM): `address` is a horrible name for this argument",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-22T16:36:36Z",
+      "diff_hunk" : "@@ -117,8 +117,22 @@ class WalletImpl : public Wallet\n         std::string error;\n         return m_wallet->GetNewDestination(type, label, dest, error);\n     }\n-    bool getPubKey(const CKeyID& address, CPubKey& pub_key) override { return m_wallet->GetLegacyScriptPubKeyMan()->GetPubKey(address, pub_key); }\n-    bool getPrivKey(const CKeyID& address, CKey& key) override { return m_wallet->GetLegacyScriptPubKeyMan()->GetKey(address, key); }\n+    bool getPubKey(const CScript& script, const CKeyID& address, CPubKey& pub_key) override",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349687735",
+      "id" : 349687735,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0OTY4NzczNQ==",
+      "original_commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "original_position" : 6,
+      "path" : "src/interfaces/wallet.cpp",
+      "position" : 6,
+      "pull_request_review_id" : 321667779,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-22T16:41:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349687735",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "node_id" : "MDQ6VXNlcjU3Njc4OTE=",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349688588"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349688588"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "~~do we need to check for knowledge of provider here?~~",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-22T16:38:15Z",
+      "diff_hunk" : "@@ -2096,7 +2100,7 @@ void CWallet::AvailableCoins(interfaces::Chain::Lock& locked_chain, std::vector<\n                 continue;\n             }\n \n-            const SigningProvider* provider = GetSigningProvider();\n+            const SigningProvider* provider = GetSigningProvider(wtx.tx->vout[i].scriptPubKey);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349688588",
+      "id" : 349688588,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0OTY4ODU4OA==",
+      "original_commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "original_position" : 18,
+      "path" : "src/wallet/wallet.cpp",
+      "position" : 18,
+      "pull_request_review_id" : 321667779,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-22T16:43:02Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349688588",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "node_id" : "MDQ6VXNlcjU3Njc4OTE=",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349689300"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349689300"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "non-blocking-nit: `.empty()`",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-22T16:39:54Z",
+      "diff_hunk" : "@@ -3281,9 +3290,23 @@ UniValue signrawtransactionwithwallet(const JSONRPCRequest& request)\n     // Parse the prevtxs array\n     ParsePrevouts(request.params[1], nullptr, coins);\n \n+    std::set<const SigningProvider*> providers;\n+    for (const std::pair<COutPoint, Coin> coin_pair : coins) {\n+        const SigningProvider* provider = pwallet->GetSigningProvider(coin_pair.second.out.scriptPubKey);\n+        if (provider) {\n+            providers.insert(std::move(provider));\n+        }\n+    }\n+    if (providers.size() == 0) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349689300",
+      "id" : 349689300,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0OTY4OTMwMA==",
+      "original_commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "original_position" : 101,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : 102,
+      "pull_request_review_id" : 321667779,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-22T16:41:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349689300",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "node_id" : "MDQ6VXNlcjU3Njc4OTE=",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349690549"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349690549"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "oh i cannot read.",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-22T16:42:49Z",
+      "diff_hunk" : "@@ -2096,7 +2100,7 @@ void CWallet::AvailableCoins(interfaces::Chain::Lock& locked_chain, std::vector<\n                 continue;\n             }\n \n-            const SigningProvider* provider = GetSigningProvider();\n+            const SigningProvider* provider = GetSigningProvider(wtx.tx->vout[i].scriptPubKey);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349690549",
+      "id" : 349690549,
+      "in_reply_to_id" : 349688588,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0OTY5MDU0OQ==",
+      "original_commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "original_position" : 18,
+      "path" : "src/wallet/wallet.cpp",
+      "position" : 18,
+      "pull_request_review_id" : 321671571,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-22T16:42:49Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349690549",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "node_id" : "MDQ6VXNlcjU3Njc4OTE=",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "utACK https://github.com/bitcoin/bitcoin/pull/17371/commits/d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-22T16:43:07Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#issuecomment-557605102",
+      "id" : 557605102,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17371",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1NzYwNTEwMg==",
+      "updated_at" : "2019-11-22T16:43:07Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/557605102",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "node_id" : "MDQ6VXNlcjU3Njc4OTE=",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349697530"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349697530"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Not fixing to avoid invalidating ACKs.",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-22T16:58:11Z",
+      "diff_hunk" : "@@ -3281,9 +3290,23 @@ UniValue signrawtransactionwithwallet(const JSONRPCRequest& request)\n     // Parse the prevtxs array\n     ParsePrevouts(request.params[1], nullptr, coins);\n \n+    std::set<const SigningProvider*> providers;\n+    for (const std::pair<COutPoint, Coin> coin_pair : coins) {\n+        const SigningProvider* provider = pwallet->GetSigningProvider(coin_pair.second.out.scriptPubKey);\n+        if (provider) {\n+            providers.insert(std::move(provider));\n+        }\n+    }\n+    if (providers.size() == 0) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349697530",
+      "id" : 349697530,
+      "in_reply_to_id" : 349689300,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0OTY5NzUzMA==",
+      "original_commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "original_position" : 101,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : 102,
+      "pull_request_review_id" : 321680941,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-22T16:58:11Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349697530",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "ready for merge? @meshcollider ",
+      "created_at" : "2019-11-22T17:13:21Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#issuecomment-557615902",
+      "id" : 557615902,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17371",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU1NzYxNTkwMg==",
+      "updated_at" : "2019-11-22T17:13:21Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/557615902",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "node_id" : "MDQ6VXNlcjU3Njc4OTE=",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349754354"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349754354"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Its kinda not that nice that there is no check the `script` and `address` have anything to do with each other. You could end up requesting the wrong SPKM for an address quite easily. Maybe move some of the ExtractDestination stuff inside here instead?",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-22T19:18:45Z",
+      "diff_hunk" : "@@ -117,8 +117,22 @@ class WalletImpl : public Wallet\n         std::string error;\n         return m_wallet->GetNewDestination(type, label, dest, error);\n     }\n-    bool getPubKey(const CKeyID& address, CPubKey& pub_key) override { return m_wallet->GetLegacyScriptPubKeyMan()->GetPubKey(address, pub_key); }\n-    bool getPrivKey(const CKeyID& address, CKey& key) override { return m_wallet->GetLegacyScriptPubKeyMan()->GetKey(address, key); }\n+    bool getPubKey(const CScript& script, const CKeyID& address, CPubKey& pub_key) override\n+    {\n+        const SigningProvider* provider = m_wallet->GetSigningProvider(script);\n+        if (provider) {\n+            return provider->GetPubKey(address, pub_key);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349754354",
+      "id" : 349754354,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0OTc1NDM1NA==",
+      "original_commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "original_position" : 10,
+      "path" : "src/interfaces/wallet.cpp",
+      "position" : 10,
+      "pull_request_review_id" : 321756612,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-22T19:32:42Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349754354",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/3211283?v=4",
+         "events_url" : "https://api.github.com/users/meshcollider/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/meshcollider/followers",
+         "following_url" : "https://api.github.com/users/meshcollider/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/meshcollider/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/meshcollider",
+         "id" : 3211283,
+         "login" : "meshcollider",
+         "node_id" : "MDQ6VXNlcjMyMTEyODM=",
+         "organizations_url" : "https://api.github.com/users/meshcollider/orgs",
+         "received_events_url" : "https://api.github.com/users/meshcollider/received_events",
+         "repos_url" : "https://api.github.com/users/meshcollider/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/meshcollider/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/meshcollider/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/meshcollider"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349758605"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349758605"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit: typo (same below)",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-22T19:29:01Z",
+      "diff_hunk" : "@@ -1342,7 +1342,11 @@ bool CWallet::DummySignInput(CTxIn &tx_in, const CTxOut &txout, bool use_max_sig\n     const CScript& scriptPubKey = txout.scriptPubKey;\n     SignatureData sigdata;\n \n-    const SigningProvider* provider = GetSigningProvider();\n+    const SigningProvider* provider = GetSigningProvider(scriptPubKey);\n+    if (!provider) {\n+        // We don't know about this scriptpbuKey;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349758605",
+      "id" : 349758605,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0OTc1ODYwNQ==",
+      "original_commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "original_position" : 7,
+      "path" : "src/wallet/wallet.cpp",
+      "position" : 7,
+      "pull_request_review_id" : 321756612,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-22T19:32:42Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349758605",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/3211283?v=4",
+         "events_url" : "https://api.github.com/users/meshcollider/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/meshcollider/followers",
+         "following_url" : "https://api.github.com/users/meshcollider/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/meshcollider/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/meshcollider",
+         "id" : 3211283,
+         "login" : "meshcollider",
+         "node_id" : "MDQ6VXNlcjMyMTEyODM=",
+         "organizations_url" : "https://api.github.com/users/meshcollider/orgs",
+         "received_events_url" : "https://api.github.com/users/meshcollider/received_events",
+         "repos_url" : "https://api.github.com/users/meshcollider/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/meshcollider/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/meshcollider/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/meshcollider"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349760073"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349760073"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This can probably be combined with above to simplify",
+      "commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "created_at" : "2019-11-22T19:32:26Z",
+      "diff_hunk" : "@@ -2971,8 +2977,11 @@ static UniValue listunspent(const JSONRPCRequest& request)\n         entry.pushKV(\"spendable\", out.fSpendable);\n         entry.pushKV(\"solvable\", out.fSolvable);\n         if (out.fSolvable) {\n-            auto descriptor = InferDescriptor(scriptPubKey, *pwallet->GetLegacyScriptPubKeyMan());\n-            entry.pushKV(\"desc\", descriptor->ToString());\n+            const SigningProvider* provider = pwallet->GetSigningProvider(scriptPubKey);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17371#discussion_r349760073",
+      "id" : 349760073,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0OTc2MDA3Mw==",
+      "original_commit_id" : "d0dab897afaac0a18aa47d3ce673a4a43a69178a",
+      "original_position" : 82,
+      "path" : "src/wallet/rpcwallet.cpp",
+      "position" : 82,
+      "pull_request_review_id" : 321756612,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17371",
+      "updated_at" : "2019-11-22T19:32:42Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/349760073",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/3211283?v=4",
+         "events_url" : "https://api.github.com/users/meshcollider/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/meshcollider/followers",
+         "following_url" : "https://api.github.com/users/meshcollider/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/meshcollider/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/meshcollider",
+         "id" : 3211283,
+         "login" : "meshcollider",
+         "node_id" : "MDQ6VXNlcjMyMTEyODM=",
+         "organizations_url" : "https://api.github.com/users/meshcollider/orgs",
+         "received_events_url" : "https://api.github.com/users/meshcollider/received_events",
+         "repos_url" : "https://api.github.com/users/meshcollider/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/meshcollider/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/meshcollider/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/meshcollider"
+      }
+   }
+]

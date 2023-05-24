@@ -1,0 +1,2313 @@
+[
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r468500108"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/468500108"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This seems like a slight layer violation, with network and socket details bleeding up into net_processing. Did you consider just passing a `CNode&` reference down to CConnMan and allowing it to get the bind address and network?",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-11T11:06:50Z",
+      "diff_hunk" : "@@ -3531,7 +3531,9 @@ void ProcessMessage(\n         if (pfrom.HasPermission(PF_ADDR)) {\n             vAddr = connman.GetAddresses();\n         } else {\n-            vAddr = connman.GetAddresses(pfrom.addr.GetNetwork());\n+            LOCK(pfrom.cs_hSocket);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r468500108",
+      "id" : 468500108,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2ODUwMDEwOA==",
+      "original_commit_id" : "96cd22cd3204b35b9f863ada93a99dcfac178d13",
+      "original_line" : 3534,
+      "original_position" : 5,
+      "original_start_line" : null,
+      "path" : "src/net_processing.cpp",
+      "position" : null,
+      "pull_request_review_id" : 464963826,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/468500108",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r468527127"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/468527127"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "e3ec66f1322154e84176ac06311cc0c570f38e23\r\n\r\nnit, const.",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-11T12:01:18Z",
+      "diff_hunk" : "@@ -2539,12 +2539,17 @@ std::vector<CAddress> CConnman::GetAddresses()\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network)\n+std::vector<CAddress> CConnman::GetAddresses(Network requestor_network, CAddress local_socket_address)\n {\n+    auto local_socket_bytes = local_socket_address.GetAddrBytes();\n+    uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_LOCALHOSTNONCE)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r468527127",
+      "id" : 468527127,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2ODUyNzEyNw==",
+      "original_commit_id" : "e3ec66f1322154e84176ac06311cc0c570f38e23",
+      "original_line" : 2545,
+      "original_position" : 17,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 464996854,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/468527127",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r468531749"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/468531749"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "96cd22cd3204b35b9f863ada93a99dcfac178d13\r\n\r\nYou have 4 `m_addr_response_caches` lookups. How about (untested):\r\n```\r\nauto r = m_addr_response_caches.emplace(cache_id, {}};\r\nif (e.second || e.first->m_cache_expiration_time < current_time) {\r\n    r.first->m_addrs_response_cache = GetAddresses());\r\n    r.first->m_cache_expiration_time = ...;\r\n}\r\nreturn r.first->m_addrs_response_cache;",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-11T12:09:47Z",
+      "diff_hunk" : "@@ -2539,16 +2539,15 @@ std::vector<CAddress> CConnman::GetAddresses()\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network, CAddress local_socket_address)\n+const std::vector<CAddress>& CConnman::GetAddresses(Network requestor_network, CAddress local_socket_address)\n {\n     auto local_socket_bytes = local_socket_address.GetAddrBytes();\n     uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_LOCALHOSTNONCE)\n         .Write(requestor_network)\n         .Write(local_socket_bytes.data(), local_socket_bytes.size())\n         .Finalize();\n     const auto current_time = GetTime<std::chrono::microseconds>();\n-    if (m_addr_response_caches.find(cache_id) == m_addr_response_caches.end() ||\n-        m_addr_response_caches[cache_id].m_update_addr_response < current_time) {\n+    if (m_addr_response_caches.count(cache_id) == 0 || m_addr_response_caches[cache_id].m_cache_expiration_time < current_time) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r468531749",
+      "id" : 468531749,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2ODUzMTc0OQ==",
+      "original_commit_id" : "96cd22cd3204b35b9f863ada93a99dcfac178d13",
+      "original_line" : 2550,
+      "original_position" : 15,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 464996854,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/468531749",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r468891022"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/468891022"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Is there any scenario where CAddress does not imply a Network?",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-11T22:05:20Z",
+      "diff_hunk" : "@@ -2539,15 +2539,44 @@ std::vector<CAddress> CConnman::GetAddresses()\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network)\n+const std::vector<CAddress>& CConnman::GetAddresses(Network requestor_network, CAddress local_socket_address)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r468891022",
+      "id" : 468891022,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2ODg5MTAyMg==",
+      "original_commit_id" : "96cd22cd3204b35b9f863ada93a99dcfac178d13",
+      "original_line" : 2542,
+      "original_position" : 14,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 465460955,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/468891022",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "node_id" : "MDQ6VXNlcjEwOTU2NzU=",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r468891768"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/468891768"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Ever overlapping caches sounds dangerous. Why not just index a unique cache per bind address?",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-11T22:07:19Z",
+      "diff_hunk" : "@@ -2539,15 +2539,44 @@ std::vector<CAddress> CConnman::GetAddresses()\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network)\n+const std::vector<CAddress>& CConnman::GetAddresses(Network requestor_network, CAddress local_socket_address)\n {\n+    auto local_socket_bytes = local_socket_address.GetAddrBytes();\n+    uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_LOCALHOSTNONCE)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r468891768",
+      "id" : 468891768,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2ODg5MTc2OA==",
+      "original_commit_id" : "96cd22cd3204b35b9f863ada93a99dcfac178d13",
+      "original_line" : 2545,
+      "original_position" : 17,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 465460955,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/468891768",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "node_id" : "MDQ6VXNlcjEwOTU2NzU=",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r469072167"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/469072167"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "nit: `s/lifetime a/lifetime is a/`",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-12T07:51:25Z",
+      "diff_hunk" : "@@ -2539,15 +2539,44 @@ std::vector<CAddress> CConnman::GetAddresses()\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network)\n+const std::vector<CAddress>& CConnman::GetAddresses(Network requestor_network, CAddress local_socket_address)\n {\n+    auto local_socket_bytes = local_socket_address.GetAddrBytes();\n+    uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_LOCALHOSTNONCE)\n+        .Write(requestor_network)\n+        .Write(local_socket_bytes.data(), local_socket_bytes.size())\n+        .Finalize();\n     const auto current_time = GetTime<std::chrono::microseconds>();\n-    if (m_addr_response_caches.find(requestor_network) == m_addr_response_caches.end() ||\n-        m_addr_response_caches[requestor_network].m_update_addr_response < current_time) {\n-        m_addr_response_caches[requestor_network].m_addrs_response_cache = GetAddresses();\n-        m_addr_response_caches[requestor_network].m_update_addr_response = current_time + std::chrono::hours(21) + GetRandMillis(std::chrono::hours(6));\n+    if (m_addr_response_caches.count(cache_id) == 0 || m_addr_response_caches[cache_id].m_cache_expiration_time < current_time) {\n+        m_addr_response_caches[cache_id].m_addrs_response_cache = GetAddresses();\n+\n+        // Choosing a proper cache lifetime a trade-off between the privacy leak minimization",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r469072167",
+      "id" : 469072167,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2OTA3MjE2Nw==",
+      "original_commit_id" : "96cd22cd3204b35b9f863ada93a99dcfac178d13",
+      "original_line" : 2553,
+      "original_position" : 29,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 465672059,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/469072167",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/266751?v=4",
+         "events_url" : "https://api.github.com/users/vasild/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vasild/followers",
+         "following_url" : "https://api.github.com/users/vasild/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vasild/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vasild",
+         "id" : 266751,
+         "login" : "vasild",
+         "node_id" : "MDQ6VXNlcjI2Njc1MQ==",
+         "organizations_url" : "https://api.github.com/users/vasild/orgs",
+         "received_events_url" : "https://api.github.com/users/vasild/received_events",
+         "repos_url" : "https://api.github.com/users/vasild/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vasild/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vasild"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r469077095"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/469077095"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "nit: `s/of requests/requests/`",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-12T08:00:22Z",
+      "diff_hunk" : "@@ -2539,15 +2539,44 @@ std::vector<CAddress> CConnman::GetAddresses()\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network)\n+const std::vector<CAddress>& CConnman::GetAddresses(Network requestor_network, CAddress local_socket_address)\n {\n+    auto local_socket_bytes = local_socket_address.GetAddrBytes();\n+    uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_LOCALHOSTNONCE)\n+        .Write(requestor_network)\n+        .Write(local_socket_bytes.data(), local_socket_bytes.size())\n+        .Finalize();\n     const auto current_time = GetTime<std::chrono::microseconds>();\n-    if (m_addr_response_caches.find(requestor_network) == m_addr_response_caches.end() ||\n-        m_addr_response_caches[requestor_network].m_update_addr_response < current_time) {\n-        m_addr_response_caches[requestor_network].m_addrs_response_cache = GetAddresses();\n-        m_addr_response_caches[requestor_network].m_update_addr_response = current_time + std::chrono::hours(21) + GetRandMillis(std::chrono::hours(6));\n+    if (m_addr_response_caches.count(cache_id) == 0 || m_addr_response_caches[cache_id].m_cache_expiration_time < current_time) {\n+        m_addr_response_caches[cache_id].m_addrs_response_cache = GetAddresses();\n+\n+        // Choosing a proper cache lifetime a trade-off between the privacy leak minimization\n+        // and the usefulness of ADDR responses to honest users.\n+        //\n+        // Longer cache lifetime makes it more difficult for an attacker to scrape\n+        // enough AddrMan data to maliciously infer something useful.\n+        // By the time an attacker scraped enough AddrMan records, most of\n+        // the records should be old enough to not leak topology info by\n+        // e.g. analyzing real-time changes in timestamps.\n+        //\n+        // It takes ~100 of requests to scrape everything from an AddrMan containing 100,000 nodes,",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r469077095",
+      "id" : 469077095,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2OTA3NzA5NQ==",
+      "original_commit_id" : "96cd22cd3204b35b9f863ada93a99dcfac178d13",
+      "original_line" : 2562,
+      "original_position" : 38,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 465672059,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/469077095",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/266751?v=4",
+         "events_url" : "https://api.github.com/users/vasild/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vasild/followers",
+         "following_url" : "https://api.github.com/users/vasild/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vasild/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vasild",
+         "id" : 266751,
+         "login" : "vasild",
+         "node_id" : "MDQ6VXNlcjI2Njc1MQ==",
+         "organizations_url" : "https://api.github.com/users/vasild/orgs",
+         "received_events_url" : "https://api.github.com/users/vasild/received_events",
+         "repos_url" : "https://api.github.com/users/vasild/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vasild/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vasild"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r469094434"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/469094434"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "I am not sure if it would make any practical difference in this case, but in general it is a good practice to minimize the time the mutex is being held (may also be relevant if you decide to move the code to connman as per @jnewbery):\r\n\r\n```suggestion\r\n            SOCKET socket;\r\n            WITH_LOCK(pfrom.cs_hSocket, socket = pfrom.hSocket);\r\n            CAddress local_socket_address = CConnman::GetBindAddress(socket);\r\n            vAddr = connman.GetAddresses(pfrom.addr.GetNetwork(), local_socket_address);\r\n```",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-12T08:30:08Z",
+      "diff_hunk" : "@@ -3531,7 +3531,9 @@ void ProcessMessage(\n         if (pfrom.HasPermission(PF_ADDR)) {\n             vAddr = connman.GetAddresses();\n         } else {\n-            vAddr = connman.GetAddresses(pfrom.addr.GetNetwork());\n+            LOCK(pfrom.cs_hSocket);\n+            CAddress local_socket_address = CConnman::GetBindAddress(pfrom.hSocket);\n+            vAddr = connman.GetAddresses(pfrom.addr.GetNetwork(), local_socket_address);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r469094434",
+      "id" : 469094434,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2OTA5NDQzNA==",
+      "original_commit_id" : "96cd22cd3204b35b9f863ada93a99dcfac178d13",
+      "original_line" : 3536,
+      "original_position" : 7,
+      "original_start_line" : 3534,
+      "path" : "src/net_processing.cpp",
+      "position" : null,
+      "pull_request_review_id" : 465672059,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : "RIGHT",
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/469094434",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/266751?v=4",
+         "events_url" : "https://api.github.com/users/vasild/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vasild/followers",
+         "following_url" : "https://api.github.com/users/vasild/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vasild/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vasild",
+         "id" : 266751,
+         "login" : "vasild",
+         "node_id" : "MDQ6VXNlcjI2Njc1MQ==",
+         "organizations_url" : "https://api.github.com/users/vasild/orgs",
+         "received_events_url" : "https://api.github.com/users/vasild/received_events",
+         "repos_url" : "https://api.github.com/users/vasild/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vasild/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vasild"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r469103181"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/469103181"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "nit: there is no need for the elements in this container to be ordered. Change to `std::unordered_map` to make lookup and insertion `O(1)`.\r\n\r\nEdit: changed to \"nit\" because I realized we are going to have about dozen entries here, map vs unordered_map will not make any practical difference.",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-12T08:45:19Z",
+      "diff_hunk" : "@@ -434,20 +436,24 @@ class CConnman\n      */\n     struct CachedAddrResponse {\n         std::vector<CAddress> m_addrs_response_cache;\n-        std::chrono::microseconds m_update_addr_response{0};\n+        std::chrono::microseconds m_cache_expiration_time{0};\n     };\n \n     /**\n      * Addr responses stored in different caches\n-     * per network prevent cross-network node identification.\n+     * per (network, local socket) prevent cross-network node identification.\n      * If a node for example is multi-homed under Tor and IPv6,\n      * a single cache (or no cache at all) would let an attacker\n      * to easily detect that it is the same node by comparing responses.\n+     * Indexing by local socket prevents leakage when a node has multiple\n+     * listening addresses on the same network.\n+     *\n      * The used memory equals to 1000 CAddress records (or around 32 bytes) per\n      * distinct Network (up to 5) we have/had an inbound peer from,\n-     * resulting in at most ~160 KB.\n+     * resulting in at most ~160 KB. Every separate local socket may\n+     * add up to ~160 KB extra.\n      */\n-    std::map<Network, CachedAddrResponse> m_addr_response_caches;\n+    std::map<uint64_t, CachedAddrResponse> m_addr_response_caches;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r469103181",
+      "id" : 469103181,
+      "line" : 462,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2OTEwMzE4MQ==",
+      "original_commit_id" : "96cd22cd3204b35b9f863ada93a99dcfac178d13",
+      "original_line" : 462,
+      "original_position" : 43,
+      "original_start_line" : 450,
+      "path" : "src/net.h",
+      "position" : 35,
+      "pull_request_review_id" : 465672059,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : 458,
+      "start_side" : "LEFT",
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/469103181",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/266751?v=4",
+         "events_url" : "https://api.github.com/users/vasild/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vasild/followers",
+         "following_url" : "https://api.github.com/users/vasild/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vasild/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vasild",
+         "id" : 266751,
+         "login" : "vasild",
+         "node_id" : "MDQ6VXNlcjI2Njc1MQ==",
+         "organizations_url" : "https://api.github.com/users/vasild/orgs",
+         "received_events_url" : "https://api.github.com/users/vasild/received_events",
+         "repos_url" : "https://api.github.com/users/vasild/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vasild/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vasild"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r469121542"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/469121542"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<details>\r\n<summary>diff</summary>\r\n\r\n```diff\r\ndiff --git i/src/net.cpp w/src/net.cpp\r\nindex eb462d108..169c4cd1c 100644\r\n--- i/src/net.cpp\r\n+++ w/src/net.cpp\r\n@@ -2544,14 +2544,16 @@ const std::vector<CAddress>& CConnman::GetAddresses(Network requestor_network, C\r\n     auto local_socket_bytes = local_socket_address.GetAddrBytes();\r\n     uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_LOCALHOSTNONCE)\r\n         .Write(requestor_network)\r\n         .Write(local_socket_bytes.data(), local_socket_bytes.size())\r\n         .Finalize();\r\n     const auto current_time = GetTime<std::chrono::microseconds>();\r\n-    if (m_addr_response_caches.count(cache_id) == 0 || m_addr_response_caches[cache_id].m_cache_expiration_time < current_time) {\r\n-        m_addr_response_caches[cache_id].m_addrs_response_cache = GetAddresses();\r\n+    auto r = m_addr_response_caches.emplace(cache_id, CachedAddrResponse{});\r\n+    auto& cache = r.first->second;\r\n+    if (cache.m_cache_expiration_time < current_time) { // If emplace() added new one it has expiration 0.\r\n+        cache.m_addrs_response_cache = GetAddresses();\r\n \r\n         // Choosing a proper cache lifetime a trade-off between the privacy leak minimization\r\n         // and the usefulness of ADDR responses to honest users.\r\n         //\r\n         // Longer cache lifetime makes it more difficult for an attacker to scrape\r\n         // enough AddrMan data to maliciously infer something useful.\r\n@@ -2571,15 +2573,15 @@ const std::vector<CAddress>& CConnman::GetAddresses(Network requestor_network, C\r\n         // in the ADDR response are no longer active.\r\n         //\r\n         // However, the churn in the network is known to be rather low. Since we consider\r\n         // nodes to be \"terrible\" (see IsTerrible()) if the timestamps are older than 30 days,\r\n         // max. 24 hours of \"penalty\" due to cache shouldn't make any meaningful difference\r\n         // in terms of the freshness of the response.\r\n-        m_addr_response_caches[cache_id].m_cache_expiration_time = current_time + std::chrono::hours(21) + GetRandMillis(std::chrono::hours(6));\r\n+        cache.m_cache_expiration_time = current_time + std::chrono::hours(21) + GetRandMillis(std::chrono::hours(6));\r\n     }\r\n-    return m_addr_response_caches[cache_id].m_addrs_response_cache;\r\n+    return cache.m_addrs_response_cache;\r\n }\r\n \r\n bool CConnman::AddNode(const std::string& strNode)\r\n {\r\n     LOCK(cs_vAddedNodes);\r\n     for (const std::string& it : vAddedNodes) {\r\n```\r\n</details>",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-12T09:16:13Z",
+      "diff_hunk" : "@@ -2539,16 +2539,15 @@ std::vector<CAddress> CConnman::GetAddresses()\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network, CAddress local_socket_address)\n+const std::vector<CAddress>& CConnman::GetAddresses(Network requestor_network, CAddress local_socket_address)\n {\n     auto local_socket_bytes = local_socket_address.GetAddrBytes();\n     uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_LOCALHOSTNONCE)\n         .Write(requestor_network)\n         .Write(local_socket_bytes.data(), local_socket_bytes.size())\n         .Finalize();\n     const auto current_time = GetTime<std::chrono::microseconds>();\n-    if (m_addr_response_caches.find(cache_id) == m_addr_response_caches.end() ||\n-        m_addr_response_caches[cache_id].m_update_addr_response < current_time) {\n+    if (m_addr_response_caches.count(cache_id) == 0 || m_addr_response_caches[cache_id].m_cache_expiration_time < current_time) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r469121542",
+      "id" : 469121542,
+      "in_reply_to_id" : 468531749,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2OTEyMTU0Mg==",
+      "original_commit_id" : "96cd22cd3204b35b9f863ada93a99dcfac178d13",
+      "original_line" : 2550,
+      "original_position" : 15,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 465736042,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/469121542",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/266751?v=4",
+         "events_url" : "https://api.github.com/users/vasild/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vasild/followers",
+         "following_url" : "https://api.github.com/users/vasild/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vasild/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vasild",
+         "id" : 266751,
+         "login" : "vasild",
+         "node_id" : "MDQ6VXNlcjI2Njc1MQ==",
+         "organizations_url" : "https://api.github.com/users/vasild/orgs",
+         "received_events_url" : "https://api.github.com/users/vasild/received_events",
+         "repos_url" : "https://api.github.com/users/vasild/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vasild/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vasild"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r469301389"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/469301389"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "With Tor we may be seeing an IPv4 connection between Bitcoin Core and the Tor proxy (with IPv4 addresses) but the \"requestor network\" should be Tor, not IPv4.",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-12T14:27:59Z",
+      "diff_hunk" : "@@ -2539,15 +2539,44 @@ std::vector<CAddress> CConnman::GetAddresses()\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network)\n+const std::vector<CAddress>& CConnman::GetAddresses(Network requestor_network, CAddress local_socket_address)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r469301389",
+      "id" : 469301389,
+      "in_reply_to_id" : 468891022,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2OTMwMTM4OQ==",
+      "original_commit_id" : "96cd22cd3204b35b9f863ada93a99dcfac178d13",
+      "original_line" : 2542,
+      "original_position" : 14,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 465971630,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/469301389",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/266751?v=4",
+         "events_url" : "https://api.github.com/users/vasild/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vasild/followers",
+         "following_url" : "https://api.github.com/users/vasild/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vasild/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vasild",
+         "id" : 266751,
+         "login" : "vasild",
+         "node_id" : "MDQ6VXNlcjI2Njc1MQ==",
+         "organizations_url" : "https://api.github.com/users/vasild/orgs",
+         "received_events_url" : "https://api.github.com/users/vasild/received_events",
+         "repos_url" : "https://api.github.com/users/vasild/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vasild/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vasild"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r469303754"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/469303754"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "`CAddress` is actually 48 bytes (or 40 if https://github.com/bitcoin/bitcoin/pull/19705 gets merged).",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-12T14:31:13Z",
+      "diff_hunk" : "@@ -434,20 +436,24 @@ class CConnman\n      */\n     struct CachedAddrResponse {\n         std::vector<CAddress> m_addrs_response_cache;\n-        std::chrono::microseconds m_update_addr_response{0};\n+        std::chrono::microseconds m_cache_expiration_time{0};\n     };\n \n     /**\n      * Addr responses stored in different caches\n-     * per network prevent cross-network node identification.\n+     * per (network, local socket) prevent cross-network node identification.\n      * If a node for example is multi-homed under Tor and IPv6,\n      * a single cache (or no cache at all) would let an attacker\n      * to easily detect that it is the same node by comparing responses.\n+     * Indexing by local socket prevents leakage when a node has multiple\n+     * listening addresses on the same network.\n+     *\n      * The used memory equals to 1000 CAddress records (or around 32 bytes) per",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r469303754",
+      "id" : 469303754,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2OTMwMzc1NA==",
+      "original_commit_id" : "96cd22cd3204b35b9f863ada93a99dcfac178d13",
+      "original_line" : 451,
+      "original_position" : 36,
+      "original_start_line" : null,
+      "path" : "src/net.h",
+      "position" : null,
+      "pull_request_review_id" : 465974919,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/469303754",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/266751?v=4",
+         "events_url" : "https://api.github.com/users/vasild/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vasild/followers",
+         "following_url" : "https://api.github.com/users/vasild/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vasild/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vasild",
+         "id" : 266751,
+         "login" : "vasild",
+         "node_id" : "MDQ6VXNlcjI2Njc1MQ==",
+         "organizations_url" : "https://api.github.com/users/vasild/orgs",
+         "received_events_url" : "https://api.github.com/users/vasild/received_events",
+         "repos_url" : "https://api.github.com/users/vasild/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vasild/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vasild"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
+      "created_at" : "2020-08-12T15:10:21Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#issuecomment-672932651",
+      "id" : 672932651,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19697",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDY3MjkzMjY1MQ==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-08-12T15:10:21Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/672932651",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Concept ACK",
+      "created_at" : "2020-08-14T15:17:43Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#issuecomment-674124741",
+      "id" : 674124741,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19697",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDY3NDEyNDc0MQ==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-08-14T15:17:43Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/674124741",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7826565?v=4",
+         "events_url" : "https://api.github.com/users/practicalswift/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/practicalswift/followers",
+         "following_url" : "https://api.github.com/users/practicalswift/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/practicalswift/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/practicalswift",
+         "id" : 7826565,
+         "login" : "practicalswift",
+         "node_id" : "MDQ6VXNlcjc4MjY1NjU=",
+         "organizations_url" : "https://api.github.com/users/practicalswift/orgs",
+         "received_events_url" : "https://api.github.com/users/practicalswift/received_events",
+         "repos_url" : "https://api.github.com/users/practicalswift/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/practicalswift/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/practicalswift/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/practicalswift"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475233646"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475233646"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I can't grasp your concern, could you rephrase?\r\nI believe the caches won't overlap across nodes because seeds inside `GetDeterministicRandomizer` are unique. Or perhaps you are concerned with something else?",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-23T15:40:01Z",
+      "diff_hunk" : "@@ -2539,15 +2539,44 @@ std::vector<CAddress> CConnman::GetAddresses()\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network)\n+const std::vector<CAddress>& CConnman::GetAddresses(Network requestor_network, CAddress local_socket_address)\n {\n+    auto local_socket_bytes = local_socket_address.GetAddrBytes();\n+    uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_LOCALHOSTNONCE)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475233646",
+      "id" : 475233646,
+      "in_reply_to_id" : 468891768,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3NTIzMzY0Ng==",
+      "original_commit_id" : "96cd22cd3204b35b9f863ada93a99dcfac178d13",
+      "original_line" : 2545,
+      "original_position" : 17,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 473021394,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475233646",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7975071?v=4",
+         "events_url" : "https://api.github.com/users/naumenkogs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/naumenkogs/followers",
+         "following_url" : "https://api.github.com/users/naumenkogs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/naumenkogs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/naumenkogs",
+         "id" : 7975071,
+         "login" : "naumenkogs",
+         "node_id" : "MDQ6VXNlcjc5NzUwNzE=",
+         "organizations_url" : "https://api.github.com/users/naumenkogs/orgs",
+         "received_events_url" : "https://api.github.com/users/naumenkogs/received_events",
+         "repos_url" : "https://api.github.com/users/naumenkogs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/naumenkogs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/naumenkogs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/naumenkogs"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Ready for re-review :)",
+      "created_at" : "2020-08-23T15:43:02Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#issuecomment-678789592",
+      "id" : 678789592,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19697",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDY3ODc4OTU5Mg==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-08-23T15:43:02Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/678789592",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7975071?v=4",
+         "events_url" : "https://api.github.com/users/naumenkogs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/naumenkogs/followers",
+         "following_url" : "https://api.github.com/users/naumenkogs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/naumenkogs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/naumenkogs",
+         "id" : 7975071,
+         "login" : "naumenkogs",
+         "node_id" : "MDQ6VXNlcjc5NzUwNzE=",
+         "organizations_url" : "https://api.github.com/users/naumenkogs/orgs",
+         "received_events_url" : "https://api.github.com/users/naumenkogs/received_events",
+         "repos_url" : "https://api.github.com/users/naumenkogs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/naumenkogs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/naumenkogs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/naumenkogs"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* #17428 (p2p: Try to preserve outbound block-relay-only connections during restart by hebasto)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "created_at" : "2020-08-24T02:03:55Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#issuecomment-678866037",
+      "id" : 678866037,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19697",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDY3ODg2NjAzNw==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-09-19T14:40:34Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/678866037",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475404561"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475404561"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This isn't true. Addresses are chosen at random, so each subsequent getaddr request yields fewer new records for the spy (eg a spy who's already scraped 50,000 records will only learn 500 new records on average from a getaddr request).",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-24T07:49:35Z",
+      "diff_hunk" : "@@ -2537,15 +2538,47 @@ std::vector<CAddress> CConnman::GetAddresses(size_t max_addresses, size_t max_pc\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network, size_t max_addresses, size_t max_pct)\n+const std::vector<CAddress>& CConnman::GetAddresses(CNode& requestor, size_t max_addresses, size_t max_pct)\n {\n+    SOCKET socket;\n+    WITH_LOCK(requestor.cs_hSocket, socket = requestor.hSocket);\n+    auto local_socket_bytes = CConnman::GetBindAddress(socket).GetAddrBytes();\n+    uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_ADDRCACHE)\n+        .Write(requestor.addr.GetNetwork())\n+        .Write(local_socket_bytes.data(), local_socket_bytes.size())\n+        .Finalize();\n     const auto current_time = GetTime<std::chrono::microseconds>();\n-    if (m_addr_response_caches.find(requestor_network) == m_addr_response_caches.end() ||\n-        m_addr_response_caches[requestor_network].m_update_addr_response < current_time) {\n-        m_addr_response_caches[requestor_network].m_addrs_response_cache = GetAddresses(max_addresses, max_pct);\n-        m_addr_response_caches[requestor_network].m_update_addr_response = current_time + std::chrono::hours(21) + GetRandMillis(std::chrono::hours(6));\n+    auto r = m_addr_response_caches.emplace(cache_id, CachedAddrResponse{});\n+    auto& cache = r.first->second;\n+    if (cache.m_cache_expiration_time < current_time) { // If emplace() added new one it has expiration 0.\n+        cache.m_addrs_response_cache = GetAddresses(max_addresses, max_pct);\n+        // Choosing a proper cache lifetime is a trade-off between the privacy leak minimization\n+        // and the usefulness of ADDR responses to honest users.\n+        //\n+        // Longer cache lifetime makes it more difficult for an attacker to scrape\n+        // enough AddrMan data to maliciously infer something useful.\n+        // By the time an attacker scraped enough AddrMan records, most of\n+        // the records should be old enough to not leak topology info by\n+        // e.g. analyzing real-time changes in timestamps.\n+        //\n+        // It takes ~100 requests to scrape everything from an AddrMan containing 100,000 nodes,",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475404561",
+      "id" : 475404561,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3NTQwNDU2MQ==",
+      "original_commit_id" : "213bd3b214e65488bd15271c0e6621a785b95406",
+      "original_line" : 2564,
+      "original_position" : 49,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 473195592,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475404561",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475406755"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475406755"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This doesn't need to move into `CConnman`",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-24T07:53:50Z",
+      "diff_hunk" : "@@ -353,7 +354,7 @@ bool CConnman::CheckIncomingNonce(uint64_t nonce)\n }\n \n /** Get the bind address for a socket as CAddress */\n-static CAddress GetBindAddress(SOCKET sock)\n+CAddress CConnman::GetBindAddress(SOCKET sock)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475406755",
+      "id" : 475406755,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3NTQwNjc1NQ==",
+      "original_commit_id" : "213bd3b214e65488bd15271c0e6621a785b95406",
+      "original_line" : 357,
+      "original_position" : 13,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 473195592,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475406755",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475423892"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475423892"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Changing the return type to a const reference doesn't actually make any difference here. The caller assigns a local variable `vAddr` to this function's return, so the vector needs to be copied in the calling function. Compare that to the current behavior of returning by value, where the vector is copied inside this function, but can be move-assigned in the caller.\r\n\r\nThis _would_ make a difference if we directly iterated over the return value, eg:\r\n\r\n```\r\nfor (const CAddress &addr : connman.GetAddresses(pfrom, MAX_ADDR_TO_SEND, MAX_PCT_ADDR_TO_SEND)) {\r\n    ...\r\n```\r\n\r\nor assigned the return of this function to a const reference and then iterated over it:\r\n\r\n```\r\nconst std::vector<CAddress>& vAddr{connman.GetAddresses(pfrom, MAX_ADDR_TO_SEND, MAX_PCT_ADDR_TO_SEND)};\r\nFastRandomContext insecure_rand;\r\nfor (const CAddress &addr : vAddr) {\r\n    ...\r\n```\r\n\r\nbut because `vAddr` can come from one of two places, I don't think it's worth doing that. Let's just keep this as return by value for simplicity.",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-24T08:26:33Z",
+      "diff_hunk" : "@@ -269,7 +269,7 @@ class CConnman\n      * A non-malicious call (from RPC or a peer with addr permission) should\n      * call the function without a parameter to avoid using the cache.\n      */\n-    std::vector<CAddress> GetAddresses(Network requestor_network, size_t max_addresses, size_t max_pct);\n+    const std::vector<CAddress>& GetAddresses(CNode& requestor, size_t max_addresses, size_t max_pct);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475423892",
+      "id" : 475423892,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3NTQyMzg5Mg==",
+      "original_commit_id" : "213bd3b214e65488bd15271c0e6621a785b95406",
+      "original_line" : 272,
+      "original_position" : 5,
+      "original_start_line" : null,
+      "path" : "src/net.h",
+      "position" : null,
+      "pull_request_review_id" : 473195592,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475423892",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475424477"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475424477"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I think this is a place where `auto` makes things less clear. Can you change this to explicitly name the `CachedAddrResponse` type? Also, `cached_response` or `cache_entry` would be a more accurate name than `cache`.",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-24T08:27:28Z",
+      "diff_hunk" : "@@ -2537,15 +2538,47 @@ std::vector<CAddress> CConnman::GetAddresses(size_t max_addresses, size_t max_pc\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network, size_t max_addresses, size_t max_pct)\n+const std::vector<CAddress>& CConnman::GetAddresses(CNode& requestor, size_t max_addresses, size_t max_pct)\n {\n+    SOCKET socket;\n+    WITH_LOCK(requestor.cs_hSocket, socket = requestor.hSocket);\n+    auto local_socket_bytes = CConnman::GetBindAddress(socket).GetAddrBytes();\n+    uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_ADDRCACHE)\n+        .Write(requestor.addr.GetNetwork())\n+        .Write(local_socket_bytes.data(), local_socket_bytes.size())\n+        .Finalize();\n     const auto current_time = GetTime<std::chrono::microseconds>();\n-    if (m_addr_response_caches.find(requestor_network) == m_addr_response_caches.end() ||\n-        m_addr_response_caches[requestor_network].m_update_addr_response < current_time) {\n-        m_addr_response_caches[requestor_network].m_addrs_response_cache = GetAddresses(max_addresses, max_pct);\n-        m_addr_response_caches[requestor_network].m_update_addr_response = current_time + std::chrono::hours(21) + GetRandMillis(std::chrono::hours(6));\n+    auto r = m_addr_response_caches.emplace(cache_id, CachedAddrResponse{});\n+    auto& cache = r.first->second;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475424477",
+      "id" : 475424477,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3NTQyNDQ3Nw==",
+      "original_commit_id" : "213bd3b214e65488bd15271c0e6621a785b95406",
+      "original_line" : 2552,
+      "original_position" : 37,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 473195592,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475424477",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475426219"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475426219"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "`m_cache_entry_expiration` ?",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-24T08:30:20Z",
+      "diff_hunk" : "@@ -442,20 +444,24 @@ class CConnman\n      */\n     struct CachedAddrResponse {\n         std::vector<CAddress> m_addrs_response_cache;\n-        std::chrono::microseconds m_update_addr_response{0};\n+        std::chrono::microseconds m_cache_expiration_time{0};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475426219",
+      "id" : 475426219,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3NTQyNjIxOQ==",
+      "original_commit_id" : "213bd3b214e65488bd15271c0e6621a785b95406",
+      "original_line" : 447,
+      "original_position" : 23,
+      "original_start_line" : null,
+      "path" : "src/net.h",
+      "position" : null,
+      "pull_request_review_id" : 473195592,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475426219",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475426906"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475426906"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This comment is no longer true.",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-24T08:31:35Z",
+      "diff_hunk" : "@@ -63,17 +41,16 @@ def set_test_params(self):\n \n     def run_test(self):\n         self.log.info('Create connection that sends and requests addr messages')\n-        addr_source = self.nodes[0].add_p2p_connection(P2PInterface())\n+        self.nodes[0].add_p2p_connection(P2PInterface())\n \n-        msg_send_addrs = msg_addr()\n         self.log.info('Fill peer AddrMan with a lot of records')\n         # Since these addrs are sent from the same source, not all of them will be stored,",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475426906",
+      "id" : 475426906,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3NTQyNjkwNg==",
+      "original_commit_id" : "213bd3b214e65488bd15271c0e6621a785b95406",
+      "original_line" : 47,
+      "original_position" : 47,
+      "original_start_line" : null,
+      "path" : "test/functional/p2p_getaddr_caching.py",
+      "position" : null,
+      "pull_request_review_id" : 473195592,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475426906",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475430823"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475430823"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "You can assert that response is exactly 1000 here.",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-24T08:38:56Z",
+      "diff_hunk" : "@@ -89,7 +66,7 @@ def run_test(self):\n             responses.append(addr_receiver.get_received_addrs())\n         for response in responses[1:]:\n             assert_equal(response, responses[0])\n-        assert(len(response) < MAX_ADDR_TO_SEND)\n+        assert(len(response) <= 1000)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475430823",
+      "id" : 475430823,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3NTQzMDgyMw==",
+      "original_commit_id" : "213bd3b214e65488bd15271c0e6621a785b95406",
+      "original_line" : 69,
+      "original_position" : 67,
+      "original_start_line" : null,
+      "path" : "test/functional/p2p_getaddr_caching.py",
+      "position" : null,
+      "pull_request_review_id" : 473195592,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475430823",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475431397"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475431397"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Perhaps assert that `len(self.nodes[0].getnodeaddresses(0))` is > 4000 here (to ensure that a getaddr response has at least 1000 records in it)",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-24T08:39:54Z",
+      "diff_hunk" : "@@ -63,17 +41,16 @@ def set_test_params(self):\n \n     def run_test(self):\n         self.log.info('Create connection that sends and requests addr messages')\n-        addr_source = self.nodes[0].add_p2p_connection(P2PInterface())\n+        self.nodes[0].add_p2p_connection(P2PInterface())\n \n-        msg_send_addrs = msg_addr()\n         self.log.info('Fill peer AddrMan with a lot of records')\n         # Since these addrs are sent from the same source, not all of them will be stored,\n         # because we allocate a limited number of AddrMan buckets per addr source.\n-        total_addrs = 10000\n-        addrs = gen_addrs(total_addrs)\n-        for i in range(int(total_addrs/MAX_ADDR_TO_SEND)):\n-            msg_send_addrs.addrs = addrs[i * MAX_ADDR_TO_SEND:(i + 1) * MAX_ADDR_TO_SEND]\n-            addr_source.send_and_ping(msg_send_addrs)\n+        for i in range(10000):\n+            first_octet = i >> 8\n+            second_octet = i % 256\n+            a = \"{}.{}.1.1\".format(first_octet, second_octet)\n+            self.nodes[0].addpeeraddress(a, 8333)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r475431397",
+      "id" : 475431397,
+      "line" : 53,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3NTQzMTM5Nw==",
+      "original_commit_id" : "213bd3b214e65488bd15271c0e6621a785b95406",
+      "original_line" : 53,
+      "original_position" : 58,
+      "original_start_line" : null,
+      "path" : "test/functional/p2p_getaddr_caching.py",
+      "position" : 60,
+      "pull_request_review_id" : 473195592,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/475431397",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
+      "created_at" : "2020-08-24T15:09:59Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#issuecomment-679185922",
+      "id" : 679185922,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19697",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDY3OTE4NTkyMg==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-08-24T15:09:59Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/679185922",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r476295660"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/476295660"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Oh, true. I was originally intending to put \"several hundreds\" there. Unless you have an exact (probabilistic) formula, I would put \"several hundreds\".",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-25T09:04:13Z",
+      "diff_hunk" : "@@ -2537,15 +2538,47 @@ std::vector<CAddress> CConnman::GetAddresses(size_t max_addresses, size_t max_pc\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network, size_t max_addresses, size_t max_pct)\n+const std::vector<CAddress>& CConnman::GetAddresses(CNode& requestor, size_t max_addresses, size_t max_pct)\n {\n+    SOCKET socket;\n+    WITH_LOCK(requestor.cs_hSocket, socket = requestor.hSocket);\n+    auto local_socket_bytes = CConnman::GetBindAddress(socket).GetAddrBytes();\n+    uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_ADDRCACHE)\n+        .Write(requestor.addr.GetNetwork())\n+        .Write(local_socket_bytes.data(), local_socket_bytes.size())\n+        .Finalize();\n     const auto current_time = GetTime<std::chrono::microseconds>();\n-    if (m_addr_response_caches.find(requestor_network) == m_addr_response_caches.end() ||\n-        m_addr_response_caches[requestor_network].m_update_addr_response < current_time) {\n-        m_addr_response_caches[requestor_network].m_addrs_response_cache = GetAddresses(max_addresses, max_pct);\n-        m_addr_response_caches[requestor_network].m_update_addr_response = current_time + std::chrono::hours(21) + GetRandMillis(std::chrono::hours(6));\n+    auto r = m_addr_response_caches.emplace(cache_id, CachedAddrResponse{});\n+    auto& cache = r.first->second;\n+    if (cache.m_cache_expiration_time < current_time) { // If emplace() added new one it has expiration 0.\n+        cache.m_addrs_response_cache = GetAddresses(max_addresses, max_pct);\n+        // Choosing a proper cache lifetime is a trade-off between the privacy leak minimization\n+        // and the usefulness of ADDR responses to honest users.\n+        //\n+        // Longer cache lifetime makes it more difficult for an attacker to scrape\n+        // enough AddrMan data to maliciously infer something useful.\n+        // By the time an attacker scraped enough AddrMan records, most of\n+        // the records should be old enough to not leak topology info by\n+        // e.g. analyzing real-time changes in timestamps.\n+        //\n+        // It takes ~100 requests to scrape everything from an AddrMan containing 100,000 nodes,",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r476295660",
+      "id" : 476295660,
+      "in_reply_to_id" : 475404561,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3NjI5NTY2MA==",
+      "original_commit_id" : "213bd3b214e65488bd15271c0e6621a785b95406",
+      "original_line" : 2564,
+      "original_position" : 49,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 474283752,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/476295660",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7975071?v=4",
+         "events_url" : "https://api.github.com/users/naumenkogs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/naumenkogs/followers",
+         "following_url" : "https://api.github.com/users/naumenkogs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/naumenkogs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/naumenkogs",
+         "id" : 7975071,
+         "login" : "naumenkogs",
+         "node_id" : "MDQ6VXNlcjc5NzUwNzE=",
+         "organizations_url" : "https://api.github.com/users/naumenkogs/orgs",
+         "received_events_url" : "https://api.github.com/users/naumenkogs/received_events",
+         "repos_url" : "https://api.github.com/users/naumenkogs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/naumenkogs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/naumenkogs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/naumenkogs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r476319594"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/476319594"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Thanks for the thorough explanation :)\r\nI'm fine with keeping this as return by value for simplicity.",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-25T09:42:40Z",
+      "diff_hunk" : "@@ -269,7 +269,7 @@ class CConnman\n      * A non-malicious call (from RPC or a peer with addr permission) should\n      * call the function without a parameter to avoid using the cache.\n      */\n-    std::vector<CAddress> GetAddresses(Network requestor_network, size_t max_addresses, size_t max_pct);\n+    const std::vector<CAddress>& GetAddresses(CNode& requestor, size_t max_addresses, size_t max_pct);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r476319594",
+      "id" : 476319594,
+      "in_reply_to_id" : 475423892,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3NjMxOTU5NA==",
+      "original_commit_id" : "213bd3b214e65488bd15271c0e6621a785b95406",
+      "original_line" : 272,
+      "original_position" : 5,
+      "original_start_line" : null,
+      "path" : "src/net.h",
+      "position" : null,
+      "pull_request_review_id" : 474313231,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/476319594",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7975071?v=4",
+         "events_url" : "https://api.github.com/users/naumenkogs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/naumenkogs/followers",
+         "following_url" : "https://api.github.com/users/naumenkogs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/naumenkogs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/naumenkogs",
+         "id" : 7975071,
+         "login" : "naumenkogs",
+         "node_id" : "MDQ6VXNlcjc5NzUwNzE=",
+         "organizations_url" : "https://api.github.com/users/naumenkogs/orgs",
+         "received_events_url" : "https://api.github.com/users/naumenkogs/received_events",
+         "repos_url" : "https://api.github.com/users/naumenkogs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/naumenkogs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/naumenkogs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/naumenkogs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r476339352"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/476339352"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "\"several hundred\" sounds fine to me",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-25T10:17:04Z",
+      "diff_hunk" : "@@ -2537,15 +2538,47 @@ std::vector<CAddress> CConnman::GetAddresses(size_t max_addresses, size_t max_pc\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network, size_t max_addresses, size_t max_pct)\n+const std::vector<CAddress>& CConnman::GetAddresses(CNode& requestor, size_t max_addresses, size_t max_pct)\n {\n+    SOCKET socket;\n+    WITH_LOCK(requestor.cs_hSocket, socket = requestor.hSocket);\n+    auto local_socket_bytes = CConnman::GetBindAddress(socket).GetAddrBytes();\n+    uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_ADDRCACHE)\n+        .Write(requestor.addr.GetNetwork())\n+        .Write(local_socket_bytes.data(), local_socket_bytes.size())\n+        .Finalize();\n     const auto current_time = GetTime<std::chrono::microseconds>();\n-    if (m_addr_response_caches.find(requestor_network) == m_addr_response_caches.end() ||\n-        m_addr_response_caches[requestor_network].m_update_addr_response < current_time) {\n-        m_addr_response_caches[requestor_network].m_addrs_response_cache = GetAddresses(max_addresses, max_pct);\n-        m_addr_response_caches[requestor_network].m_update_addr_response = current_time + std::chrono::hours(21) + GetRandMillis(std::chrono::hours(6));\n+    auto r = m_addr_response_caches.emplace(cache_id, CachedAddrResponse{});\n+    auto& cache = r.first->second;\n+    if (cache.m_cache_expiration_time < current_time) { // If emplace() added new one it has expiration 0.\n+        cache.m_addrs_response_cache = GetAddresses(max_addresses, max_pct);\n+        // Choosing a proper cache lifetime is a trade-off between the privacy leak minimization\n+        // and the usefulness of ADDR responses to honest users.\n+        //\n+        // Longer cache lifetime makes it more difficult for an attacker to scrape\n+        // enough AddrMan data to maliciously infer something useful.\n+        // By the time an attacker scraped enough AddrMan records, most of\n+        // the records should be old enough to not leak topology info by\n+        // e.g. analyzing real-time changes in timestamps.\n+        //\n+        // It takes ~100 requests to scrape everything from an AddrMan containing 100,000 nodes,",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r476339352",
+      "id" : 476339352,
+      "in_reply_to_id" : 475404561,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3NjMzOTM1Mg==",
+      "original_commit_id" : "213bd3b214e65488bd15271c0e6621a785b95406",
+      "original_line" : 2564,
+      "original_position" : 49,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 474338249,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/476339352",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r476349842"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/476349842"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Very minor style: consider defining `MAX_ADDR_TO_SEND` and `MAX_PCT_ADDR_TO_SEND` as constants rather than these magic numbers (if someone changes those values in the bitcoind code, it'll be easier to see where to change them here at the same time).\r\n\r\n",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-25T10:37:11Z",
+      "diff_hunk" : "@@ -63,17 +41,18 @@ def set_test_params(self):\n \n     def run_test(self):\n         self.log.info('Create connection that sends and requests addr messages')\n-        addr_source = self.nodes[0].add_p2p_connection(P2PInterface())\n+        self.nodes[0].add_p2p_connection(P2PInterface())\n \n-        msg_send_addrs = msg_addr()\n         self.log.info('Fill peer AddrMan with a lot of records')\n-        # Since these addrs are sent from the same source, not all of them will be stored,\n-        # because we allocate a limited number of AddrMan buckets per addr source.\n-        total_addrs = 10000\n-        addrs = gen_addrs(total_addrs)\n-        for i in range(int(total_addrs/MAX_ADDR_TO_SEND)):\n-            msg_send_addrs.addrs = addrs[i * MAX_ADDR_TO_SEND:(i + 1) * MAX_ADDR_TO_SEND]\n-            addr_source.send_and_ping(msg_send_addrs)\n+        for i in range(10000):\n+            first_octet = i >> 8\n+            second_octet = i % 256\n+            a = \"{}.{}.1.1\".format(first_octet, second_octet)\n+            self.nodes[0].addpeeraddress(a, 8333)\n+\n+        # Need to make sure we hit 1000 records in the addr response later because\n+        # only a fraction of all known addresses can be cached and returned.\n+        assert(len(self.nodes[0].getnodeaddresses(0)) > int(1000 / 0.23))",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r476349842",
+      "id" : 476349842,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3NjM0OTg0Mg==",
+      "original_commit_id" : "49ce8761c832b034bcc5f6560da5f0f9623251e4",
+      "original_line" : 55,
+      "original_position" : 62,
+      "original_start_line" : null,
+      "path" : "test/functional/p2p_getaddr_caching.py",
+      "position" : null,
+      "pull_request_review_id" : 474351872,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/476349842",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r476350377"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/476350377"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "grammar: s/several hundreds of requests/several hundred requests/",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-25T10:38:20Z",
+      "diff_hunk" : "@@ -2537,15 +2538,47 @@ std::vector<CAddress> CConnman::GetAddresses(size_t max_addresses, size_t max_pc\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network, size_t max_addresses, size_t max_pct)\n+std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addresses, size_t max_pct)\n {\n+    SOCKET socket;\n+    WITH_LOCK(requestor.cs_hSocket, socket = requestor.hSocket);\n+    auto local_socket_bytes = GetBindAddress(socket).GetAddrBytes();\n+    uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_ADDRCACHE)\n+        .Write(requestor.addr.GetNetwork())\n+        .Write(local_socket_bytes.data(), local_socket_bytes.size())\n+        .Finalize();\n     const auto current_time = GetTime<std::chrono::microseconds>();\n-    if (m_addr_response_caches.find(requestor_network) == m_addr_response_caches.end() ||\n-        m_addr_response_caches[requestor_network].m_update_addr_response < current_time) {\n-        m_addr_response_caches[requestor_network].m_addrs_response_cache = GetAddresses(max_addresses, max_pct);\n-        m_addr_response_caches[requestor_network].m_update_addr_response = current_time + std::chrono::hours(21) + GetRandMillis(std::chrono::hours(6));\n+    auto r = m_addr_response_caches.emplace(cache_id, CachedAddrResponse{});\n+    CachedAddrResponse& cache_entry = r.first->second;\n+    if (cache_entry.m_cache_entry_expiration < current_time) { // If emplace() added new one it has expiration 0.\n+        cache_entry.m_addrs_response_cache = GetAddresses(max_addresses, max_pct);\n+        // Choosing a proper cache lifetime is a trade-off between the privacy leak minimization\n+        // and the usefulness of ADDR responses to honest users.\n+        //\n+        // Longer cache lifetime makes it more difficult for an attacker to scrape\n+        // enough AddrMan data to maliciously infer something useful.\n+        // By the time an attacker scraped enough AddrMan records, most of\n+        // the records should be old enough to not leak topology info by\n+        // e.g. analyzing real-time changes in timestamps.\n+        //\n+        // It takes only several hundreds of requests to scrape everything from an AddrMan containing 100,000 nodes,",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r476350377",
+      "id" : 476350377,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3NjM1MDM3Nw==",
+      "original_commit_id" : "49ce8761c832b034bcc5f6560da5f0f9623251e4",
+      "original_line" : 2564,
+      "original_position" : 40,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 474351872,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/476350377",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r476353105"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/476353105"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This line (and the log line above) can be removed entirely.",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-08-25T10:43:49Z",
+      "diff_hunk" : "@@ -63,17 +41,18 @@ def set_test_params(self):\n \n     def run_test(self):\n         self.log.info('Create connection that sends and requests addr messages')\n-        addr_source = self.nodes[0].add_p2p_connection(P2PInterface())\n+        self.nodes[0].add_p2p_connection(P2PInterface())",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r476353105",
+      "id" : 476353105,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3NjM1MzEwNQ==",
+      "original_commit_id" : "49ce8761c832b034bcc5f6560da5f0f9623251e4",
+      "original_line" : 44,
+      "original_position" : 43,
+      "original_start_line" : null,
+      "path" : "test/functional/p2p_getaddr_caching.py",
+      "position" : null,
+      "pull_request_review_id" : 474351872,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/476353105",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "utACK a3f1c2f56e6425f64cb05a4bcba6cf1465bf128f but needs rebase",
+      "created_at" : "2020-08-25T11:52:52Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#issuecomment-679977986",
+      "id" : 679977986,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19697",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDY3OTk3Nzk4Ng==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-08-25T11:52:52Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/679977986",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
+      "created_at" : "2020-08-26T09:02:02Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#issuecomment-680754655",
+      "id" : 680754655,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19697",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDY4MDc1NDY1NQ==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-08-26T09:02:02Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/680754655",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r481148662"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/481148662"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "`s/around  bytes/around 40 bytes/`",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-09-01T13:44:58Z",
+      "diff_hunk" : "@@ -454,10 +454,10 @@ class CConnman\n      * Indexing by local socket prevents leakage when a node has multiple\n      * listening addresses on the same network.\n      *\n-     * The used memory equals to 1000 CAddress records (or around 32 bytes) per\n+     * The used memory equals to 1000 CAddress records (or around  bytes) per",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r481148662",
+      "id" : 481148662,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ4MTE0ODY2Mg==",
+      "original_commit_id" : "4208cf8c41510faae1c66edc85304db39c40654e",
+      "original_line" : 457,
+      "original_position" : 14,
+      "original_start_line" : null,
+      "path" : "src/net.h",
+      "position" : null,
+      "pull_request_review_id" : 479755778,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-02T07:34:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/481148662",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/266751?v=4",
+         "events_url" : "https://api.github.com/users/vasild/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vasild/followers",
+         "following_url" : "https://api.github.com/users/vasild/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vasild/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vasild",
+         "id" : 266751,
+         "login" : "vasild",
+         "node_id" : "MDQ6VXNlcjI2Njc1MQ==",
+         "organizations_url" : "https://api.github.com/users/vasild/orgs",
+         "received_events_url" : "https://api.github.com/users/vasild/received_events",
+         "repos_url" : "https://api.github.com/users/vasild/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vasild/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vasild"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@vasild Fixed the comment issue you pointed out!\r\n\r\n>Perhaps the commit `Address nits in ADDR caching` should be squashed into the previous commit `Add indexing ADDR cache by local socket addr`?\r\n\r\nI would leave it as is, that stuff doesn't have to do with indexing by local socket...",
+      "created_at" : "2020-09-02T07:33:59Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#issuecomment-685412204",
+      "id" : 685412204,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19697",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDY4NTQxMjIwNA==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-09-02T07:33:59Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/685412204",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7975071?v=4",
+         "events_url" : "https://api.github.com/users/naumenkogs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/naumenkogs/followers",
+         "following_url" : "https://api.github.com/users/naumenkogs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/naumenkogs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/naumenkogs",
+         "id" : 7975071,
+         "login" : "naumenkogs",
+         "node_id" : "MDQ6VXNlcjc5NzUwNzE=",
+         "organizations_url" : "https://api.github.com/users/naumenkogs/orgs",
+         "received_events_url" : "https://api.github.com/users/naumenkogs/received_events",
+         "repos_url" : "https://api.github.com/users/naumenkogs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/naumenkogs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/naumenkogs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/naumenkogs"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "utACK 0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-09-02T07:56:11Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#issuecomment-685423787",
+      "id" : 685423787,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19697",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDY4NTQyMzc4Nw==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-09-02T07:56:11Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/685423787",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r491732205"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/491732205"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "81b00f87800f40cb14f2131ff27668bd2bb9e551\r\n\r\nNot really sure what is the purpose of `cs_hSocket`, but looks like this should be\r\n```cpp\r\nvector<unsigned char> local_socket_bytes = WITH_LOCK(requestor.cs_hSocket, return GetBindAddress(requestor.hSocket).GetAddrBytes())",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-09-20T20:42:33Z",
+      "diff_hunk" : "@@ -2539,12 +2540,19 @@ std::vector<CAddress> CConnman::GetAddresses(size_t max_addresses, size_t max_pc\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network, size_t max_addresses, size_t max_pct)\n+std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addresses, size_t max_pct)\n {\n+    SOCKET socket;\n+    WITH_LOCK(requestor.cs_hSocket, socket = requestor.hSocket);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r491732205",
+      "id" : 491732205,
+      "line" : 2546,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTczMjIwNQ==",
+      "original_commit_id" : "81b00f87800f40cb14f2131ff27668bd2bb9e551",
+      "original_line" : 2546,
+      "original_position" : 16,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : 16,
+      "pull_request_review_id" : 492221607,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-20T20:43:49Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/491732205",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r491815438"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/491815438"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "True, this looks better.\r\nI'd keep it the way it is for now to save the review energy if you don't mind.\r\nI will update these lines if I have other reasons to update the PR.\r\n",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-09-21T06:28:39Z",
+      "diff_hunk" : "@@ -2539,12 +2540,19 @@ std::vector<CAddress> CConnman::GetAddresses(size_t max_addresses, size_t max_pc\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network, size_t max_addresses, size_t max_pct)\n+std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addresses, size_t max_pct)\n {\n+    SOCKET socket;\n+    WITH_LOCK(requestor.cs_hSocket, socket = requestor.hSocket);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r491815438",
+      "id" : 491815438,
+      "in_reply_to_id" : 491732205,
+      "line" : 2546,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTgxNTQzOA==",
+      "original_commit_id" : "81b00f87800f40cb14f2131ff27668bd2bb9e551",
+      "original_line" : 2546,
+      "original_position" : 16,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : 16,
+      "pull_request_review_id" : 492304801,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-21T06:28:39Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/491815438",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7975071?v=4",
+         "events_url" : "https://api.github.com/users/naumenkogs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/naumenkogs/followers",
+         "following_url" : "https://api.github.com/users/naumenkogs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/naumenkogs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/naumenkogs",
+         "id" : 7975071,
+         "login" : "naumenkogs",
+         "node_id" : "MDQ6VXNlcjc5NzUwNzE=",
+         "organizations_url" : "https://api.github.com/users/naumenkogs/orgs",
+         "received_events_url" : "https://api.github.com/users/naumenkogs/received_events",
+         "repos_url" : "https://api.github.com/users/naumenkogs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/naumenkogs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/naumenkogs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/naumenkogs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r491825476"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/491825476"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "It's fine, can come next too if it's the only thing that needs to be addressed.",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-09-21T06:57:02Z",
+      "diff_hunk" : "@@ -2539,12 +2540,19 @@ std::vector<CAddress> CConnman::GetAddresses(size_t max_addresses, size_t max_pc\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network, size_t max_addresses, size_t max_pct)\n+std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addresses, size_t max_pct)\n {\n+    SOCKET socket;\n+    WITH_LOCK(requestor.cs_hSocket, socket = requestor.hSocket);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r491825476",
+      "id" : 491825476,
+      "in_reply_to_id" : 491732205,
+      "line" : 2546,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTgyNTQ3Ng==",
+      "original_commit_id" : "81b00f87800f40cb14f2131ff27668bd2bb9e551",
+      "original_line" : 2546,
+      "original_position" : 16,
+      "original_start_line" : null,
+      "path" : "src/net.cpp",
+      "position" : 16,
+      "pull_request_review_id" : 492318083,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-21T06:57:02Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/491825476",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r491873043"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/491873043"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "0d04784af\r\n```diff\r\n-# As defined in net_processing.\r\n-MAX_ADDR_TO_SEND = 1000\r\n-MAX_PCT_ADDR_TO_SEND = 23\r\n+MAX_ADDR_TO_SEND = 1000  # As defined in net.h\r\n+MAX_PCT_ADDR_TO_SEND = 23  # As defined in net_processing.cpp\r\n```",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-09-21T08:35:23Z",
+      "diff_hunk" : "@@ -21,21 +16,9 @@\n     assert_equal,\n )\n \n+# As defined in net_processing.",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r491873043",
+      "id" : 491873043,
+      "line" : 19,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTg3MzA0Mw==",
+      "original_commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "original_line" : 19,
+      "original_position" : 20,
+      "original_start_line" : null,
+      "path" : "test/functional/p2p_getaddr_caching.py",
+      "position" : 20,
+      "pull_request_review_id" : 492380070,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-21T08:54:08Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/491873043",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Concept ACK.",
+      "created_at" : "2020-09-21T10:00:09Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#issuecomment-696017476",
+      "id" : 696017476,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19697",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDY5NjAxNzQ3Ng==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-09-21T10:00:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/696017476",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r492237781"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/492237781"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Looks like a good suggestion,, but we can add more documentation later, didn't want to hold up the PR on this",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-09-21T17:44:03Z",
+      "diff_hunk" : "@@ -21,21 +16,9 @@\n     assert_equal,\n )\n \n+# As defined in net_processing.",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r492237781",
+      "id" : 492237781,
+      "in_reply_to_id" : 491873043,
+      "line" : 19,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MjIzNzc4MQ==",
+      "original_commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "original_line" : 19,
+      "original_position" : 20,
+      "original_start_line" : null,
+      "path" : "test/functional/p2p_getaddr_caching.py",
+      "position" : 20,
+      "pull_request_review_id" : 492843624,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-09-21T17:44:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/492237781",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r529591076"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/529591076"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Can this be simplified like:\r\n\r\n```suggestion\r\n    auto local_socket_bytes = requestor.addrBind.GetAddrBytes();\r\n```\r\n\r\nOur local address is already saved in `CNode::addrBind`.",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-11-24T14:34:50Z",
+      "diff_hunk" : "@@ -2539,15 +2540,47 @@ std::vector<CAddress> CConnman::GetAddresses(size_t max_addresses, size_t max_pc\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network, size_t max_addresses, size_t max_pct)\n+std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addresses, size_t max_pct)\n {\n+    SOCKET socket;\n+    WITH_LOCK(requestor.cs_hSocket, socket = requestor.hSocket);\n+    auto local_socket_bytes = GetBindAddress(socket).GetAddrBytes();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r529591076",
+      "id" : 529591076,
+      "line" : 2547,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUyOTU5MTA3Ng==",
+      "original_commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "original_line" : 2547,
+      "original_position" : 17,
+      "original_start_line" : 2545,
+      "path" : "src/net.cpp",
+      "position" : 17,
+      "pull_request_review_id" : 537552227,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : 2545,
+      "start_side" : "RIGHT",
+      "updated_at" : "2020-11-24T14:34:51Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/529591076",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/266751?v=4",
+         "events_url" : "https://api.github.com/users/vasild/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vasild/followers",
+         "following_url" : "https://api.github.com/users/vasild/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vasild/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vasild",
+         "id" : 266751,
+         "login" : "vasild",
+         "node_id" : "MDQ6VXNlcjI2Njc1MQ==",
+         "organizations_url" : "https://api.github.com/users/vasild/orgs",
+         "received_events_url" : "https://api.github.com/users/vasild/received_events",
+         "repos_url" : "https://api.github.com/users/vasild/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vasild/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vasild"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r529596676"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/529596676"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I think you're right?",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-11-24T14:42:22Z",
+      "diff_hunk" : "@@ -2539,15 +2540,47 @@ std::vector<CAddress> CConnman::GetAddresses(size_t max_addresses, size_t max_pc\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network, size_t max_addresses, size_t max_pct)\n+std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addresses, size_t max_pct)\n {\n+    SOCKET socket;\n+    WITH_LOCK(requestor.cs_hSocket, socket = requestor.hSocket);\n+    auto local_socket_bytes = GetBindAddress(socket).GetAddrBytes();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r529596676",
+      "id" : 529596676,
+      "in_reply_to_id" : 529591076,
+      "line" : 2547,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUyOTU5NjY3Ng==",
+      "original_commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "original_line" : 2547,
+      "original_position" : 17,
+      "original_start_line" : 2545,
+      "path" : "src/net.cpp",
+      "position" : 17,
+      "pull_request_review_id" : 537559784,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : 2545,
+      "start_side" : "RIGHT",
+      "updated_at" : "2020-11-24T14:42:22Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/529596676",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7975071?v=4",
+         "events_url" : "https://api.github.com/users/naumenkogs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/naumenkogs/followers",
+         "following_url" : "https://api.github.com/users/naumenkogs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/naumenkogs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/naumenkogs",
+         "id" : 7975071,
+         "login" : "naumenkogs",
+         "node_id" : "MDQ6VXNlcjc5NzUwNzE=",
+         "organizations_url" : "https://api.github.com/users/naumenkogs/orgs",
+         "received_events_url" : "https://api.github.com/users/naumenkogs/received_events",
+         "repos_url" : "https://api.github.com/users/naumenkogs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/naumenkogs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/naumenkogs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/naumenkogs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r529602900"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/529602900"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Ok, will include this tiny change in another PR:\r\n\r\n<details>\r\n<summary>net: avoid unnecessary GetBindAddress() call</summary>\r\n\r\n```diff\r\ncommit 15ba60e9a\r\nParent: 25dcd4ad9\r\nAuthor:     Vasil Dimov <vd@FreeBSD.org>\r\nAuthorDate: Tue Nov 24 15:36:27 2020 +0100\r\nCommit:     Vasil Dimov <vd@FreeBSD.org>\r\nCommitDate: Tue Nov 24 15:36:27 2020 +0100\r\n\r\n    net: avoid unnecessary GetBindAddress() call\r\n    \r\n    Our local (bind) address is already saved in `CNode::addrBind` and there\r\n    is no need to re-retrieve it again with `GetBindAddress()`.\r\n    \r\n    Also, for I2P connections `CNode::addrBind` would contain our I2P\r\n    address, but `GetBindAddress()` would return something like\r\n    `127.0.0.1:RANDOM_PORT`.\r\n\r\ndiff --git a/src/net.cpp b/src/net.cpp\r\nindex a811732e2..94a424ca3 100644\r\n--- a/src/net.cpp\r\n+++ b/src/net.cpp\r\n@@ -2601,15 +2601,13 @@ std::vector<CAddress> CConnman::GetAddresses(size_t max_addresses, size_t max_pc\r\n     }\r\n     return addresses;\r\n }\r\n \r\n std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addresses, size_t max_pct)\r\n {\r\n-    SOCKET socket;\r\n-    WITH_LOCK(requestor.cs_hSocket, socket = requestor.hSocket);\r\n-    auto local_socket_bytes = GetBindAddress(socket).GetAddrBytes();\r\n+    auto local_socket_bytes = requestor.addrBind.GetAddrBytes();\r\n     uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_ADDRCACHE)\r\n         .Write(requestor.addr.GetNetwork())\r\n         .Write(local_socket_bytes.data(), local_socket_bytes.size())\r\n         .Finalize();\r\n     const auto current_time = GetTime<std::chrono::microseconds>();\r\n     auto r = m_addr_response_caches.emplace(cache_id, CachedAddrResponse{});\r\n```\r\n</details>\r\n\r\nYou just reviewed that! :partying_face: ",
+      "commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "created_at" : "2020-11-24T14:50:26Z",
+      "diff_hunk" : "@@ -2539,15 +2540,47 @@ std::vector<CAddress> CConnman::GetAddresses(size_t max_addresses, size_t max_pc\n     return addresses;\n }\n \n-std::vector<CAddress> CConnman::GetAddresses(Network requestor_network, size_t max_addresses, size_t max_pct)\n+std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addresses, size_t max_pct)\n {\n+    SOCKET socket;\n+    WITH_LOCK(requestor.cs_hSocket, socket = requestor.hSocket);\n+    auto local_socket_bytes = GetBindAddress(socket).GetAddrBytes();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19697#discussion_r529602900",
+      "id" : 529602900,
+      "in_reply_to_id" : 529591076,
+      "line" : 2547,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUyOTYwMjkwMA==",
+      "original_commit_id" : "0d04784af151de249bbbcbad51e6e8ad9af8f5a3",
+      "original_line" : 2547,
+      "original_position" : 17,
+      "original_start_line" : 2545,
+      "path" : "src/net.cpp",
+      "position" : 17,
+      "pull_request_review_id" : 537568068,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19697",
+      "side" : "RIGHT",
+      "start_line" : 2545,
+      "start_side" : "RIGHT",
+      "updated_at" : "2020-11-24T14:50:26Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/529602900",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/266751?v=4",
+         "events_url" : "https://api.github.com/users/vasild/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vasild/followers",
+         "following_url" : "https://api.github.com/users/vasild/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vasild/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vasild",
+         "id" : 266751,
+         "login" : "vasild",
+         "node_id" : "MDQ6VXNlcjI2Njc1MQ==",
+         "organizations_url" : "https://api.github.com/users/vasild/orgs",
+         "received_events_url" : "https://api.github.com/users/vasild/received_events",
+         "repos_url" : "https://api.github.com/users/vasild/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vasild/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vasild"
+      }
+   }
+]

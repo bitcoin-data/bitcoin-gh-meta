@@ -1,0 +1,2259 @@
+[
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161328064"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161328064"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "this also cannot complete when `-persistmempool` is false, yes? Might want to add that to RPC notes, or set it to true always if persist is false.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-12T21:21:14Z",
+      "diff_hunk" : "@@ -1583,14 +1583,14 @@ UniValue savemempool(const JSONRPCRequest& request)\n     if (request.fHelp || request.params.size() != 0) {\n         throw std::runtime_error(\n             \"savemempool\\n\"\n-            \"\\nDumps the mempool to disk.\\n\"\n+            \"\\nDumps the mempool to disk. It will fail until the previous dump is fully loaded.\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161328064",
+      "id" : 161328064,
+      "original_commit_id" : "f70efa5d16c2dafa028e2504006ca9246331c0f3",
+      "original_position" : 5,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88606854,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161328064",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161328744"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161328744"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "is this test essentially racing the mempool acceptance? ",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-12T21:24:55Z",
+      "diff_hunk" : "@@ -112,5 +112,17 @@ def run_test(self):\n         assert_raises_rpc_error(-1, \"Unable to dump mempool to disk\", self.nodes[1].savemempool)\n         os.remove(mempooldotnew1)\n \n+        NUM_TXS_IN_MEMPOOL = 900\n+        self.log.debug(\"Send %d transactions from node0 (to its own address)\" % NUM_TXS_IN_MEMPOOL)\n+        self.stop_nodes()\n+        self.start_node(0)\n+        self.nodes[0].generate(12)\n+        for i in range(NUM_TXS_IN_MEMPOOL):\n+            self.nodes[0].sendtoaddress(self.nodes[0].getnewaddress(), Decimal(\"0.00001\"))\n+        self.stop_nodes()\n+        self.start_node(0)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161328744",
+      "id" : 161328744,
+      "original_commit_id" : "e2b17a5822d194d206508e66d97c4786043af9b8",
+      "original_position" : 12,
+      "path" : "test/functional/mempool_persist.py",
+      "position" : null,
+      "pull_request_review_id" : 88606854,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161328744",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161329824"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161329824"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "stopping the node the mempool is dumped and starting the node, LoadMempool gets called again, hopefully with enough work ahead to catch the error when calling savemempool on the next line.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-12T21:30:19Z",
+      "diff_hunk" : "@@ -112,5 +112,17 @@ def run_test(self):\n         assert_raises_rpc_error(-1, \"Unable to dump mempool to disk\", self.nodes[1].savemempool)\n         os.remove(mempooldotnew1)\n \n+        NUM_TXS_IN_MEMPOOL = 900\n+        self.log.debug(\"Send %d transactions from node0 (to its own address)\" % NUM_TXS_IN_MEMPOOL)\n+        self.stop_nodes()\n+        self.start_node(0)\n+        self.nodes[0].generate(12)\n+        for i in range(NUM_TXS_IN_MEMPOOL):\n+            self.nodes[0].sendtoaddress(self.nodes[0].getnewaddress(), Decimal(\"0.00001\"))\n+        self.stop_nodes()\n+        self.start_node(0)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161329824",
+      "id" : 161329824,
+      "in_reply_to_id" : 161328744,
+      "original_commit_id" : "e2b17a5822d194d206508e66d97c4786043af9b8",
+      "original_position" : 12,
+      "path" : "test/functional/mempool_persist.py",
+      "position" : null,
+      "pull_request_review_id" : 88609081,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161329824",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161330398"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161330398"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I think it's probably important that this works if `-persistmempool` is false.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-12T21:32:44Z",
+      "diff_hunk" : "@@ -1583,14 +1583,14 @@ UniValue savemempool(const JSONRPCRequest& request)\n     if (request.fHelp || request.params.size() != 0) {\n         throw std::runtime_error(\n             \"savemempool\\n\"\n-            \"\\nDumps the mempool to disk.\\n\"\n+            \"\\nDumps the mempool to disk. It will fail until the previous dump is fully loaded.\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161330398",
+      "id" : 161330398,
+      "in_reply_to_id" : 161328064,
+      "original_commit_id" : "f70efa5d16c2dafa028e2504006ca9246331c0f3",
+      "original_position" : 5,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88609648,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161330398",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161332774"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161332774"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I don't see a reason to make it fail when `nopersistmempool`",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-12T21:45:20Z",
+      "diff_hunk" : "@@ -1583,14 +1583,14 @@ UniValue savemempool(const JSONRPCRequest& request)\n     if (request.fHelp || request.params.size() != 0) {\n         throw std::runtime_error(\n             \"savemempool\\n\"\n-            \"\\nDumps the mempool to disk.\\n\"\n+            \"\\nDumps the mempool to disk. It will fail until the previous dump is fully loaded or when -persistmempool=0.\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161332774",
+      "id" : 161332774,
+      "original_commit_id" : "4b30711566f907ac88ec07518bfed360de78adc8",
+      "original_position" : 5,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88612602,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161332774",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161333000"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161333000"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Move down two lines to break out of this scope?",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-12T21:46:26Z",
+      "diff_hunk" : "@@ -679,6 +679,7 @@ void ThreadImport(std::vector<fs::path> vImportFiles)\n     } // End scope of CImportingNow\n     if (gArgs.GetArg(\"-persistmempool\", DEFAULT_PERSIST_MEMPOOL)) {\n         LoadMempool();\n+        g_is_mempool_loaded = true;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161333000",
+      "id" : 161333000,
+      "original_commit_id" : "4b30711566f907ac88ec07518bfed360de78adc8",
+      "original_position" : 4,
+      "path" : "src/init.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88612852,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161333000",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Modified so that savemempool keeps working when -persistmempool=0 as discussed.",
+      "created_at" : "2018-01-12T21:55:44Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-357365395",
+      "id" : 357365395,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-01-12T21:56:04Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/357365395",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161344980"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161344980"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "style-nit: Might use `g_is_mempool_loaded{false}` for compile-time narrowing check.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-12T22:58:25Z",
+      "diff_hunk" : "@@ -227,6 +227,7 @@ CAmount maxTxFee = DEFAULT_TRANSACTION_MAXFEE;\n \n CBlockPolicyEstimator feeEstimator;\n CTxMemPool mempool(&feeEstimator);\n+std::atomic_bool g_is_mempool_loaded(false);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161344980",
+      "id" : 161344980,
+      "original_commit_id" : "d494001d7959b254366f3fcf2fcfdebc0be6b6c7",
+      "original_position" : 4,
+      "path" : "src/validation.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88627219,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161344980",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161347691"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161347691"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Fixed",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-12T23:19:25Z",
+      "diff_hunk" : "@@ -227,6 +227,7 @@ CAmount maxTxFee = DEFAULT_TRANSACTION_MAXFEE;\n \n CBlockPolicyEstimator feeEstimator;\n CTxMemPool mempool(&feeEstimator);\n+std::atomic_bool g_is_mempool_loaded(false);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161347691",
+      "id" : 161347691,
+      "in_reply_to_id" : 161344980,
+      "original_commit_id" : "d494001d7959b254366f3fcf2fcfdebc0be6b6c7",
+      "original_position" : 4,
+      "path" : "src/validation.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88630448,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161347691",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161406148"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161406148"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "It would be nice to drop fDumpMempoolLater and only have one global for \"mempool was loaded\". Should be able to set g_is_mempool_loaded to !fRequestShutdown here, and then check -persistmempool before flushing during shutdown to avoid changing behavior without adding another boolean.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-14T18:37:29Z",
+      "diff_hunk" : "@@ -681,6 +681,7 @@ void ThreadImport(std::vector<fs::path> vImportFiles)\n         LoadMempool();\n         fDumpMempoolLater = !fRequestShutdown;\n     }\n+    g_is_mempool_loaded = true;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161406148",
+      "id" : 161406148,
+      "original_commit_id" : "e685d0b7ea6493f8942301f505012e5aac845980",
+      "original_position" : 4,
+      "path" : "src/init.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88690760,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161406148",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/649246?v=4",
+         "events_url" : "https://api.github.com/users/TheBlueMatt/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/TheBlueMatt/followers",
+         "following_url" : "https://api.github.com/users/TheBlueMatt/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/TheBlueMatt/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/TheBlueMatt",
+         "id" : 649246,
+         "login" : "TheBlueMatt",
+         "organizations_url" : "https://api.github.com/users/TheBlueMatt/orgs",
+         "received_events_url" : "https://api.github.com/users/TheBlueMatt/received_events",
+         "repos_url" : "https://api.github.com/users/TheBlueMatt/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/TheBlueMatt/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/TheBlueMatt/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/TheBlueMatt"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161406155"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161406155"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Would be nice to give a different error message here.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-14T18:37:53Z",
+      "diff_hunk" : "@@ -1583,14 +1583,14 @@ UniValue savemempool(const JSONRPCRequest& request)\n     if (request.fHelp || request.params.size() != 0) {\n         throw std::runtime_error(\n             \"savemempool\\n\"\n-            \"\\nDumps the mempool to disk.\\n\"\n+            \"\\nDumps the mempool to disk. It will fail until the previous dump is fully loaded.\\n\"\n             \"\\nExamples:\\n\"\n             + HelpExampleCli(\"savemempool\", \"\")\n             + HelpExampleRpc(\"savemempool\", \"\")\n         );\n     }\n \n-    if (!DumpMempool()) {\n+    if (!g_is_mempool_loaded || !DumpMempool()) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161406155",
+      "id" : 161406155,
+      "original_commit_id" : "e685d0b7ea6493f8942301f505012e5aac845980",
+      "original_position" : 13,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88690760,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161406155",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/649246?v=4",
+         "events_url" : "https://api.github.com/users/TheBlueMatt/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/TheBlueMatt/followers",
+         "following_url" : "https://api.github.com/users/TheBlueMatt/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/TheBlueMatt/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/TheBlueMatt",
+         "id" : 649246,
+         "login" : "TheBlueMatt",
+         "organizations_url" : "https://api.github.com/users/TheBlueMatt/orgs",
+         "received_events_url" : "https://api.github.com/users/TheBlueMatt/received_events",
+         "repos_url" : "https://api.github.com/users/TheBlueMatt/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/TheBlueMatt/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/TheBlueMatt/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/TheBlueMatt"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161406167"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161406167"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Indeed, definitely needs to work with -persistmempool false, that's the whole point of the savemempool command. AFAICT the current implementation does work in that case.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-14T18:38:24Z",
+      "diff_hunk" : "@@ -1583,14 +1583,14 @@ UniValue savemempool(const JSONRPCRequest& request)\n     if (request.fHelp || request.params.size() != 0) {\n         throw std::runtime_error(\n             \"savemempool\\n\"\n-            \"\\nDumps the mempool to disk.\\n\"\n+            \"\\nDumps the mempool to disk. It will fail until the previous dump is fully loaded.\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161406167",
+      "id" : 161406167,
+      "in_reply_to_id" : 161328064,
+      "original_commit_id" : "f70efa5d16c2dafa028e2504006ca9246331c0f3",
+      "original_position" : 5,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88690760,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161406167",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/649246?v=4",
+         "events_url" : "https://api.github.com/users/TheBlueMatt/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/TheBlueMatt/followers",
+         "following_url" : "https://api.github.com/users/TheBlueMatt/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/TheBlueMatt/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/TheBlueMatt",
+         "id" : 649246,
+         "login" : "TheBlueMatt",
+         "organizations_url" : "https://api.github.com/users/TheBlueMatt/orgs",
+         "received_events_url" : "https://api.github.com/users/TheBlueMatt/received_events",
+         "repos_url" : "https://api.github.com/users/TheBlueMatt/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/TheBlueMatt/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/TheBlueMatt/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/TheBlueMatt"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161533052"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161533052"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I agree it's best it works in that case, just didn't thought about it initially. But for the record, I'm using savemempool with -persistmempool to true, because I want to read it on restart too!\r\nI think the whole point of savemempool is to cover use cases where for whatever reason (in my case, an insufficient knowledge of docker-compose) you can't or don't always let the daemon exit gracefully. ",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-15T14:29:44Z",
+      "diff_hunk" : "@@ -1583,14 +1583,14 @@ UniValue savemempool(const JSONRPCRequest& request)\n     if (request.fHelp || request.params.size() != 0) {\n         throw std::runtime_error(\n             \"savemempool\\n\"\n-            \"\\nDumps the mempool to disk.\\n\"\n+            \"\\nDumps the mempool to disk. It will fail until the previous dump is fully loaded.\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161533052",
+      "id" : 161533052,
+      "in_reply_to_id" : 161328064,
+      "original_commit_id" : "f70efa5d16c2dafa028e2504006ca9246331c0f3",
+      "original_position" : 5,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88836847,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161533052",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161533756"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161533756"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Perhaps I'm not understanding the code, but what I assumed is that fDumpMempoolLater is set to !fRequestShutdown instead of true to avoid more than one thread dumping the mempool. But in this case we want all threads to work with savemempool once the mempool is loaded.\r\nAm I confused about this or missing something?\r\n",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-15T14:32:29Z",
+      "diff_hunk" : "@@ -681,6 +681,7 @@ void ThreadImport(std::vector<fs::path> vImportFiles)\n         LoadMempool();\n         fDumpMempoolLater = !fRequestShutdown;\n     }\n+    g_is_mempool_loaded = true;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161533756",
+      "id" : 161533756,
+      "in_reply_to_id" : 161406148,
+      "original_commit_id" : "e685d0b7ea6493f8942301f505012e5aac845980",
+      "original_position" : 4,
+      "path" : "src/init.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88837719,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161533756",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161537441"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161537441"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Agree, with the corresponding test.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-15T14:46:20Z",
+      "diff_hunk" : "@@ -1583,14 +1583,14 @@ UniValue savemempool(const JSONRPCRequest& request)\n     if (request.fHelp || request.params.size() != 0) {\n         throw std::runtime_error(\n             \"savemempool\\n\"\n-            \"\\nDumps the mempool to disk.\\n\"\n+            \"\\nDumps the mempool to disk. It will fail until the previous dump is fully loaded.\\n\"\n             \"\\nExamples:\\n\"\n             + HelpExampleCli(\"savemempool\", \"\")\n             + HelpExampleRpc(\"savemempool\", \"\")\n         );\n     }\n \n-    if (!DumpMempool()) {\n+    if (!g_is_mempool_loaded || !DumpMempool()) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161537441",
+      "id" : 161537441,
+      "in_reply_to_id" : 161406155,
+      "original_commit_id" : "e685d0b7ea6493f8942301f505012e5aac845980",
+      "original_position" : 13,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88842006,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161537441",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161537657"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161537657"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Should the `g_is_mempool_loaded` check be inside of `DumpMempool`? No need to see `g_is_mempool_loaded` in the RPC code.\r\n\r\nNote that with this change there is no need for a functional test, just a c++ test `DumpMempool`.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-15T14:46:58Z",
+      "diff_hunk" : "@@ -1583,14 +1583,14 @@ UniValue savemempool(const JSONRPCRequest& request)\n     if (request.fHelp || request.params.size() != 0) {\n         throw std::runtime_error(\n             \"savemempool\\n\"\n-            \"\\nDumps the mempool to disk.\\n\"\n+            \"\\nDumps the mempool to disk. It will fail until the previous dump is fully loaded.\\n\"\n             \"\\nExamples:\\n\"\n             + HelpExampleCli(\"savemempool\", \"\")\n             + HelpExampleRpc(\"savemempool\", \"\")\n         );\n     }\n \n-    if (!DumpMempool()) {\n+    if (!g_is_mempool_loaded || !DumpMempool()) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161537657",
+      "id" : 161537657,
+      "in_reply_to_id" : 161406155,
+      "original_commit_id" : "e685d0b7ea6493f8942301f505012e5aac845980",
+      "original_position" : 13,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88842006,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161537657",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161595231"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161595231"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "There is only one shutdown thread, not sure what you mean \"more than one thread dumping the mempool\". !fRequestShutdown is a check to make sure LoadMempool() didn't quit early, but its also safe to re-use that in RPC as if fRequestShutdown is set we'll be shutting down soon anyway, so RPCs can fail.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-15T19:00:57Z",
+      "diff_hunk" : "@@ -681,6 +681,7 @@ void ThreadImport(std::vector<fs::path> vImportFiles)\n         LoadMempool();\n         fDumpMempoolLater = !fRequestShutdown;\n     }\n+    g_is_mempool_loaded = true;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161595231",
+      "id" : 161595231,
+      "in_reply_to_id" : 161406148,
+      "original_commit_id" : "e685d0b7ea6493f8942301f505012e5aac845980",
+      "original_position" : 4,
+      "path" : "src/init.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88909655,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161595231",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/649246?v=4",
+         "events_url" : "https://api.github.com/users/TheBlueMatt/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/TheBlueMatt/followers",
+         "following_url" : "https://api.github.com/users/TheBlueMatt/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/TheBlueMatt/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/TheBlueMatt",
+         "id" : 649246,
+         "login" : "TheBlueMatt",
+         "organizations_url" : "https://api.github.com/users/TheBlueMatt/orgs",
+         "received_events_url" : "https://api.github.com/users/TheBlueMatt/received_events",
+         "repos_url" : "https://api.github.com/users/TheBlueMatt/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/TheBlueMatt/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/TheBlueMatt/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/TheBlueMatt"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161611530"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161611530"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Alright, I wasn't understanding why !fRequestShutdown was set, it seems we can have a single boolean then and drop fDumpMempoolLater. ",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-15T20:42:38Z",
+      "diff_hunk" : "@@ -681,6 +681,7 @@ void ThreadImport(std::vector<fs::path> vImportFiles)\n         LoadMempool();\n         fDumpMempoolLater = !fRequestShutdown;\n     }\n+    g_is_mempool_loaded = true;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161611530",
+      "id" : 161611530,
+      "in_reply_to_id" : 161406148,
+      "original_commit_id" : "e685d0b7ea6493f8942301f505012e5aac845980",
+      "original_position" : 4,
+      "path" : "src/init.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88928598,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161611530",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161611956"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161611956"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Well, if I put it inside DumpMempool() then I can't have the different meesage, right?\r\nI don't have a strong opinion about putting it inside and removing the functional test, I would like to hear what others think before doing it. I'll change the error message for now.\r\n",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-15T20:45:49Z",
+      "diff_hunk" : "@@ -1583,14 +1583,14 @@ UniValue savemempool(const JSONRPCRequest& request)\n     if (request.fHelp || request.params.size() != 0) {\n         throw std::runtime_error(\n             \"savemempool\\n\"\n-            \"\\nDumps the mempool to disk.\\n\"\n+            \"\\nDumps the mempool to disk. It will fail until the previous dump is fully loaded.\\n\"\n             \"\\nExamples:\\n\"\n             + HelpExampleCli(\"savemempool\", \"\")\n             + HelpExampleRpc(\"savemempool\", \"\")\n         );\n     }\n \n-    if (!DumpMempool()) {\n+    if (!g_is_mempool_loaded || !DumpMempool()) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161611956",
+      "id" : 161611956,
+      "in_reply_to_id" : 161406155,
+      "original_commit_id" : "e685d0b7ea6493f8942301f505012e5aac845980",
+      "original_position" : 13,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88929148,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161611956",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "I guess starting the rpc server only after the mempool is loaded is another solution, but I'm not sure it is better.\r\nUnified the 2 bool globals and separated the error message.\r\n",
+      "created_at" : "2018-01-15T21:09:35Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-357789693",
+      "id" : 357789693,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-01-15T21:09:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/357789693",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161661280"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161661280"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Why is there still an argument check here?  The setting of g_is_mempool_loaded appears to me to be unconditional now.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-16T05:01:11Z",
+      "diff_hunk" : "@@ -1583,13 +1583,17 @@ UniValue savemempool(const JSONRPCRequest& request)\n     if (request.fHelp || request.params.size() != 0) {\n         throw std::runtime_error(\n             \"savemempool\\n\"\n-            \"\\nDumps the mempool to disk.\\n\"\n+            \"\\nDumps the mempool to disk. It will fail until the previous dump is fully loaded.\\n\"\n             \"\\nExamples:\\n\"\n             + HelpExampleCli(\"savemempool\", \"\")\n             + HelpExampleRpc(\"savemempool\", \"\")\n         );\n     }\n \n+    if (!g_is_mempool_loaded && gArgs.GetArg(\"-persistmempool\", DEFAULT_PERSIST_MEMPOOL)) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161661280",
+      "id" : 161661280,
+      "original_commit_id" : "4e9f522fd95985cdeb4188f52d761cda9994a4f0",
+      "original_position" : 12,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 88986093,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161661280",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/858454?v=4",
+         "events_url" : "https://api.github.com/users/gmaxwell/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/gmaxwell/followers",
+         "following_url" : "https://api.github.com/users/gmaxwell/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/gmaxwell/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/gmaxwell",
+         "id" : 858454,
+         "login" : "gmaxwell",
+         "organizations_url" : "https://api.github.com/users/gmaxwell/orgs",
+         "received_events_url" : "https://api.github.com/users/gmaxwell/received_events",
+         "repos_url" : "https://api.github.com/users/gmaxwell/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/gmaxwell/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/gmaxwell/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/gmaxwell"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161816279"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161816279"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "The code seems correct, but is just badly documented.\r\n\r\nWhat about\r\n\r\n```cpp\r\nconst bool is_supposed_to_load_mempool{gArgs.GetArg(\"-persistmempool\", DEFAULT_PERSIST_MEMPOOL)};\r\nif (!g_is_mempool_loaded && is_supposed_to_load_mempool) {",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-16T16:44:00Z",
+      "diff_hunk" : "@@ -1583,13 +1583,17 @@ UniValue savemempool(const JSONRPCRequest& request)\n     if (request.fHelp || request.params.size() != 0) {\n         throw std::runtime_error(\n             \"savemempool\\n\"\n-            \"\\nDumps the mempool to disk.\\n\"\n+            \"\\nDumps the mempool to disk. It will fail until the previous dump is fully loaded.\\n\"\n             \"\\nExamples:\\n\"\n             + HelpExampleCli(\"savemempool\", \"\")\n             + HelpExampleRpc(\"savemempool\", \"\")\n         );\n     }\n \n+    if (!g_is_mempool_loaded && gArgs.GetArg(\"-persistmempool\", DEFAULT_PERSIST_MEMPOOL)) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161816279",
+      "id" : 161816279,
+      "in_reply_to_id" : 161661280,
+      "original_commit_id" : "4e9f522fd95985cdeb4188f52d761cda9994a4f0",
+      "original_position" : 12,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 89165295,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161816279",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161825981"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161825981"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Well, it is now not needed since the g_is_mempool_loaded is set out of the ```if  gArgs.GetArg(\"-persistmempool\"...```. I was thinking that perhaps we should allow to dump even before g_is_mempool_loaded is set if -persistmempool=0 (since in that case it's not loading it anyway).\r\nBut perhaps it's better that it waits for that line to be run when -persistmempool=0 too.\r\n Or perhaps the we can set g_is_mempool_loaded only conditionally like fDumpMempoolLater was.\r\n\r\nNo strong opinion, I'm happy with any of the possible variations on this. But I don't think it's a matter of documentation. It's just choosing what we want here.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-16T17:16:21Z",
+      "diff_hunk" : "@@ -1583,13 +1583,17 @@ UniValue savemempool(const JSONRPCRequest& request)\n     if (request.fHelp || request.params.size() != 0) {\n         throw std::runtime_error(\n             \"savemempool\\n\"\n-            \"\\nDumps the mempool to disk.\\n\"\n+            \"\\nDumps the mempool to disk. It will fail until the previous dump is fully loaded.\\n\"\n             \"\\nExamples:\\n\"\n             + HelpExampleCli(\"savemempool\", \"\")\n             + HelpExampleRpc(\"savemempool\", \"\")\n         );\n     }\n \n+    if (!g_is_mempool_loaded && gArgs.GetArg(\"-persistmempool\", DEFAULT_PERSIST_MEMPOOL)) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161825981",
+      "id" : 161825981,
+      "in_reply_to_id" : 161661280,
+      "original_commit_id" : "4e9f522fd95985cdeb4188f52d761cda9994a4f0",
+      "original_position" : 12,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 89177105,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161825981",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161843533"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161843533"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Why would there be anything in mempool, when -persistmempool=0 and you are not yet connected to any peers? So there wouldn't be any need to allow `savemempool`.\r\n\r\nWe are mostly nitpicking here, and I don't care too much what variation you pick, but the current code seems confusion/hard to read, otherwise we woulnd't have this conversation.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-16T18:22:18Z",
+      "diff_hunk" : "@@ -1583,13 +1583,17 @@ UniValue savemempool(const JSONRPCRequest& request)\n     if (request.fHelp || request.params.size() != 0) {\n         throw std::runtime_error(\n             \"savemempool\\n\"\n-            \"\\nDumps the mempool to disk.\\n\"\n+            \"\\nDumps the mempool to disk. It will fail until the previous dump is fully loaded.\\n\"\n             \"\\nExamples:\\n\"\n             + HelpExampleCli(\"savemempool\", \"\")\n             + HelpExampleRpc(\"savemempool\", \"\")\n         );\n     }\n \n+    if (!g_is_mempool_loaded && gArgs.GetArg(\"-persistmempool\", DEFAULT_PERSIST_MEMPOOL)) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161843533",
+      "id" : 161843533,
+      "in_reply_to_id" : 161661280,
+      "original_commit_id" : "4e9f522fd95985cdeb4188f52d761cda9994a4f0",
+      "original_position" : 12,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 89197764,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161843533",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161886855"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161886855"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Alright, I'll just remove the gArgs.GetArg(\"-persistmempool\", DEFAULT_PERSIST_MEMPOOL) condition from here and leave it as it was right before.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-16T21:08:59Z",
+      "diff_hunk" : "@@ -1583,13 +1583,17 @@ UniValue savemempool(const JSONRPCRequest& request)\n     if (request.fHelp || request.params.size() != 0) {\n         throw std::runtime_error(\n             \"savemempool\\n\"\n-            \"\\nDumps the mempool to disk.\\n\"\n+            \"\\nDumps the mempool to disk. It will fail until the previous dump is fully loaded.\\n\"\n             \"\\nExamples:\\n\"\n             + HelpExampleCli(\"savemempool\", \"\")\n             + HelpExampleRpc(\"savemempool\", \"\")\n         );\n     }\n \n+    if (!g_is_mempool_loaded && gArgs.GetArg(\"-persistmempool\", DEFAULT_PERSIST_MEMPOOL)) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161886855",
+      "id" : 161886855,
+      "in_reply_to_id" : 161661280,
+      "original_commit_id" : "4e9f522fd95985cdeb4188f52d761cda9994a4f0",
+      "original_position" : 12,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 89248987,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161886855",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161888074"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161888074"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Fixed.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-16T21:14:18Z",
+      "diff_hunk" : "@@ -1583,13 +1583,17 @@ UniValue savemempool(const JSONRPCRequest& request)\n     if (request.fHelp || request.params.size() != 0) {\n         throw std::runtime_error(\n             \"savemempool\\n\"\n-            \"\\nDumps the mempool to disk.\\n\"\n+            \"\\nDumps the mempool to disk. It will fail until the previous dump is fully loaded.\\n\"\n             \"\\nExamples:\\n\"\n             + HelpExampleCli(\"savemempool\", \"\")\n             + HelpExampleRpc(\"savemempool\", \"\")\n         );\n     }\n \n+    if (!g_is_mempool_loaded && gArgs.GetArg(\"-persistmempool\", DEFAULT_PERSIST_MEMPOOL)) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r161888074",
+      "id" : 161888074,
+      "in_reply_to_id" : 161661280,
+      "original_commit_id" : "4e9f522fd95985cdeb4188f52d761cda9994a4f0",
+      "original_position" : 12,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 89250445,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/161888074",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "utACK 5b80af6322036c141ffce8fb7f10f5d40b8bc0f0 (didn't look at tests)",
+      "created_at" : "2018-01-17T00:26:48Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-358153572",
+      "id" : 358153572,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-01-17T00:26:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/358153572",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r162507018"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/162507018"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "A comment explaining why this is needed?",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-19T00:11:01Z",
+      "diff_hunk" : "@@ -112,5 +112,17 @@ def run_test(self):\n         assert_raises_rpc_error(-1, \"Unable to dump mempool to disk\", self.nodes[1].savemempool)\n         os.remove(mempooldotnew1)\n \n+        NUM_TXS_IN_MEMPOOL = 900\n+        self.log.debug(\"Send %d transactions from node0 (to its own address)\" % NUM_TXS_IN_MEMPOOL)\n+        self.stop_nodes()",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r162507018",
+      "id" : 162507018,
+      "original_commit_id" : "733315992af87296657d270fbbb295f80d554c98",
+      "original_position" : 6,
+      "path" : "test/functional/mempool_persist.py",
+      "position" : null,
+      "pull_request_review_id" : 89977620,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/162507018",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r162507077"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/162507077"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "How will this not create too long mempool chains?",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-19T00:11:23Z",
+      "diff_hunk" : "@@ -112,5 +112,17 @@ def run_test(self):\n         assert_raises_rpc_error(-1, \"Unable to dump mempool to disk\", self.nodes[1].savemempool)\n         os.remove(mempooldotnew1)\n \n+        NUM_TXS_IN_MEMPOOL = 900\n+        self.log.debug(\"Send %d transactions from node0 (to its own address)\" % NUM_TXS_IN_MEMPOOL)\n+        self.stop_nodes()\n+        self.start_node(0)\n+        self.nodes[0].generate(12)\n+        for i in range(NUM_TXS_IN_MEMPOOL):\n+            self.nodes[0].sendtoaddress(self.nodes[0].getnewaddress(), Decimal(\"0.00001\"))",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r162507077",
+      "id" : 162507077,
+      "original_commit_id" : "733315992af87296657d270fbbb295f80d554c98",
+      "original_position" : 10,
+      "path" : "test/functional/mempool_persist.py",
+      "position" : null,
+      "pull_request_review_id" : 89977686,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/162507077",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r162825441"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/162825441"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I guess perhaps it is not needed...",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-21T21:04:04Z",
+      "diff_hunk" : "@@ -112,5 +112,17 @@ def run_test(self):\n         assert_raises_rpc_error(-1, \"Unable to dump mempool to disk\", self.nodes[1].savemempool)\n         os.remove(mempooldotnew1)\n \n+        NUM_TXS_IN_MEMPOOL = 900\n+        self.log.debug(\"Send %d transactions from node0 (to its own address)\" % NUM_TXS_IN_MEMPOOL)\n+        self.stop_nodes()",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r162825441",
+      "id" : 162825441,
+      "in_reply_to_id" : 162507018,
+      "original_commit_id" : "733315992af87296657d270fbbb295f80d554c98",
+      "original_position" : 6,
+      "path" : "test/functional/mempool_persist.py",
+      "position" : null,
+      "pull_request_review_id" : 90344431,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/162825441",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r162825455"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/162825455"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I'm not sure I understand the question. What's the problem?",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-21T21:04:31Z",
+      "diff_hunk" : "@@ -112,5 +112,17 @@ def run_test(self):\n         assert_raises_rpc_error(-1, \"Unable to dump mempool to disk\", self.nodes[1].savemempool)\n         os.remove(mempooldotnew1)\n \n+        NUM_TXS_IN_MEMPOOL = 900\n+        self.log.debug(\"Send %d transactions from node0 (to its own address)\" % NUM_TXS_IN_MEMPOOL)\n+        self.stop_nodes()\n+        self.start_node(0)\n+        self.nodes[0].generate(12)\n+        for i in range(NUM_TXS_IN_MEMPOOL):\n+            self.nodes[0].sendtoaddress(self.nodes[0].getnewaddress(), Decimal(\"0.00001\"))",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r162825455",
+      "id" : 162825455,
+      "in_reply_to_id" : 162507077,
+      "original_commit_id" : "733315992af87296657d270fbbb295f80d554c98",
+      "original_position" : 10,
+      "path" : "test/functional/mempool_persist.py",
+      "position" : null,
+      "pull_request_review_id" : 90344447,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/162825455",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r162826265"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/162826265"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Please remove it, when it is not needed. Starting and stopping nodes is where a ton of time is wasted in the test framework.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-21T21:31:47Z",
+      "diff_hunk" : "@@ -112,5 +112,17 @@ def run_test(self):\n         assert_raises_rpc_error(-1, \"Unable to dump mempool to disk\", self.nodes[1].savemempool)\n         os.remove(mempooldotnew1)\n \n+        NUM_TXS_IN_MEMPOOL = 900\n+        self.log.debug(\"Send %d transactions from node0 (to its own address)\" % NUM_TXS_IN_MEMPOOL)\n+        self.stop_nodes()",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r162826265",
+      "id" : 162826265,
+      "in_reply_to_id" : 162507018,
+      "original_commit_id" : "733315992af87296657d270fbbb295f80d554c98",
+      "original_position" : 6,
+      "path" : "test/functional/mempool_persist.py",
+      "position" : null,
+      "pull_request_review_id" : 90345244,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/162826265",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r162826693"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/162826693"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I assume you can modify the `self.stop_nodes()` a few lines above to say `self.stop_node(1)`",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-21T21:47:06Z",
+      "diff_hunk" : "@@ -112,5 +112,17 @@ def run_test(self):\n         assert_raises_rpc_error(-1, \"Unable to dump mempool to disk\", self.nodes[1].savemempool)\n         os.remove(mempooldotnew1)\n \n+        NUM_TXS_IN_MEMPOOL = 900\n+        self.log.debug(\"Send %d transactions from node0 (to its own address)\" % NUM_TXS_IN_MEMPOOL)\n+        self.stop_nodes()",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r162826693",
+      "id" : 162826693,
+      "in_reply_to_id" : 162507018,
+      "original_commit_id" : "733315992af87296657d270fbbb295f80d554c98",
+      "original_position" : 6,
+      "path" : "test/functional/mempool_persist.py",
+      "position" : null,
+      "pull_request_review_id" : 90345717,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/162826693",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r162826841"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/162826841"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Currently the mempool only accepts a chain of up to 26 unconfirmed transactions, since coin selection is not deterministic, I assume we will run into travis failures at some point.\r\n\r\nAlso, IIRC the wallet is extremely slow with coin selection, when a lot of the coins are unconfirmed change. There might be some helper functions in the test framework that can create a ton of spam transactions.",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-01-21T21:52:50Z",
+      "diff_hunk" : "@@ -112,5 +112,17 @@ def run_test(self):\n         assert_raises_rpc_error(-1, \"Unable to dump mempool to disk\", self.nodes[1].savemempool)\n         os.remove(mempooldotnew1)\n \n+        NUM_TXS_IN_MEMPOOL = 900\n+        self.log.debug(\"Send %d transactions from node0 (to its own address)\" % NUM_TXS_IN_MEMPOOL)\n+        self.stop_nodes()\n+        self.start_node(0)\n+        self.nodes[0].generate(12)\n+        for i in range(NUM_TXS_IN_MEMPOOL):\n+            self.nodes[0].sendtoaddress(self.nodes[0].getnewaddress(), Decimal(\"0.00001\"))",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r162826841",
+      "id" : 162826841,
+      "in_reply_to_id" : 162507077,
+      "original_commit_id" : "733315992af87296657d270fbbb295f80d554c98",
+      "original_position" : 10,
+      "path" : "test/functional/mempool_persist.py",
+      "position" : null,
+      "pull_request_review_id" : 90345897,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/162826841",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Test takes 7-8 Minutes on travis. Should be fixed before merge.",
+      "created_at" : "2018-01-21T21:54:24Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-359284422",
+      "id" : 359284422,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-01-21T21:54:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/359284422",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Test is failing for me locally. You might as well leave out the test and ask for some Tested ACKs instead.",
+      "created_at" : "2018-01-21T21:56:09Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-359284581",
+      "id" : 359284581,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-01-21T21:56:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/359284581",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@MarcoFalke Sure, I'm happy to leave out the test if I get some tested acks. It's an edge case anyway and seems expensive to test this way, filling the mempool enough so that the loading takes long enough to get the error (plus that varies with the machine and machine load [this seems close to the minimum in my machine but it's not enough on yours and it's too much on travis]).  \r\nAdditionally it is quite simple IMO to see this is correct without the tests with very little grep since it's only +9-4 without the tests.\r\n",
+      "created_at" : "2018-01-23T02:22:12Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-359651893",
+      "id" : 359651893,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-01-23T02:22:12Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/359651893",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Needed rebase",
+      "created_at" : "2018-01-31T22:09:20Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-362087755",
+      "id" : 362087755,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-01-31T22:09:20Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/362087755",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "I am guessing you wouldn't have to rebase if you just dropped the test commit. Since I am going to NACK on merging the test commit for the reasons provided above, you might as well remove it.",
+      "created_at" : "2018-01-31T22:17:10Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-362089773",
+      "id" : 362089773,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-01-31T22:17:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/362089773",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Yes, I'm also for removing it. I was just waiting for more people to agree with us and some tested ACKs as you said.\r\n\r\nEDIT: but, no, it needed rebase and not for the tests, new code close to the one I was changing was changed in https://github.com/bitcoin/bitcoin/pull/12266/files#diff-c865a8939105e6350a50af02766291b7R204",
+      "created_at" : "2018-01-31T22:24:17Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-362091549",
+      "id" : 362091549,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-01-31T22:27:50Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/362091549",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "> BTW, Should the RPC server start after the mempool is loaded?\r\n\r\nSeems to me this issue is not just about saving mempool but also about any RPC that interacts with the mempool like fetching raw transactions and so on - thus I also think it may be a good idea to not start the rpc server until the service is up and loaded the mempool - am I missing something?",
+      "created_at" : "2018-02-04T10:37:41Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-362897215",
+      "id" : 362897215,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-02-04T10:37:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/362897215",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/5269298?v=4",
+         "events_url" : "https://api.github.com/users/greenaddress/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/greenaddress/followers",
+         "following_url" : "https://api.github.com/users/greenaddress/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/greenaddress/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/greenaddress",
+         "id" : 5269298,
+         "login" : "greenaddress",
+         "organizations_url" : "https://api.github.com/users/greenaddress/orgs",
+         "received_events_url" : "https://api.github.com/users/greenaddress/received_events",
+         "repos_url" : "https://api.github.com/users/greenaddress/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/greenaddress/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/greenaddress/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/greenaddress"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@greenaddress Loading the mempool takes several minutes or hours (c.f. https://github.com/bitcoin/bitcoin/issues/12106#issuecomment-355815732).",
+      "created_at" : "2018-02-04T17:51:14Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-362925461",
+      "id" : 362925461,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-02-04T17:51:14Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/362925461",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@greenaddress Other calls interacting with the mempool, already give their errors asociated to the mempool not being fully loaded from disk (or don't need to give errors at all). getrawmempool, for example, starts returning an empty list and then more items as the mempool is loaded. getmempoolentry will give you an error if you ask for a tx that has not been loaded yet.\r\nThis is simply to solve the issue #12142 which is specific to savemempool, I don't see why would we want to block the rpc server until the mempool loads and it is clearly not needed to solve this issue specific to savemempool.\r\n ",
+      "created_at" : "2018-02-04T18:19:03Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-362927405",
+      "id" : 362927405,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-02-04T18:19:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/362927405",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Test removed",
+      "created_at" : "2018-02-08T21:26:08Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-364253421",
+      "id" : 364253421,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-02-08T21:26:08Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/364253421",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "re-utACK ab8329601ceba739d5ea86f2713216659153dd25",
+      "created_at" : "2018-02-08T21:29:47Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-364254397",
+      "id" : 364254397,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-02-08T21:29:47Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/364254397",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r167106835"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/167106835"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Is it me or after the above `StartShutdown()` calls we should return?",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-02-09T00:08:41Z",
+      "diff_hunk" : "@@ -687,8 +686,8 @@ void ThreadImport(std::vector<fs::path> vImportFiles)\n     } // End scope of CImportingNow\n     if (gArgs.GetArg(\"-persistmempool\", DEFAULT_PERSIST_MEMPOOL)) {\n         LoadMempool();\n-        fDumpMempoolLater = !fRequestShutdown;\n     }\n+    g_is_mempool_loaded = !fRequestShutdown;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r167106835",
+      "id" : 167106835,
+      "original_commit_id" : "ab8329601ceba739d5ea86f2713216659153dd25",
+      "original_position" : 23,
+      "path" : "src/init.cpp",
+      "position" : null,
+      "pull_request_review_id" : 95276954,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/167106835",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r167107431"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/167107431"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "IMO we should do this instead:\r\n```cpp\r\ng_is_mempool_loaded = LoadMempool();\r\n```\r\nbecause, for instance, in `LoadMempool()`:\r\nhttps://github.com/bitcoin/bitcoin/blob/67447ba06057b8e83f962c82491d2fe6c5211f50/src/validation.cpp#L4592-L4593",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-02-09T00:12:29Z",
+      "diff_hunk" : "@@ -687,8 +686,8 @@ void ThreadImport(std::vector<fs::path> vImportFiles)\n     } // End scope of CImportingNow\n     if (gArgs.GetArg(\"-persistmempool\", DEFAULT_PERSIST_MEMPOOL)) {\n         LoadMempool();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r167107431",
+      "id" : 167107431,
+      "original_commit_id" : "ab8329601ceba739d5ea86f2713216659153dd25",
+      "original_position" : 20,
+      "path" : "src/init.cpp",
+      "position" : null,
+      "pull_request_review_id" : 95276954,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-02-21T06:57:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/167107431",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Rebased and added several commits inspired by @promag 's last suggestion but without looking much at WalletRescanReserver::reserver() and trying to do things with atomic booleans in mempool instead.\r\n\r\nWe can squash, leave for later PRs or reject forever each of the newly proposed commits. \r\n\r\nI wish I could go as far as s/LoadMempool(/mempool.Load(/ and s/DumpMempool(/mempool.Dump(/ , moving code from validation.cpp to txmempool.cpp, but at some point we need to just fix #12142 and leave later improvements for later PRs.\r\n",
+      "created_at" : "2018-02-21T04:42:38Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-367211881",
+      "id" : 367211881,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-02-21T06:39:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/367211881",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "> without looking much at WalletRescanReserver::reserver() and trying to do things with atomic booleans in mempool instead.\r\n\r\nAny reason to do differently?\r\n\r\nNot sure about representing the state with 2 atomic booleans. Will review later.",
+      "created_at" : "2018-02-21T10:42:12Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-367285094",
+      "id" : 367285094,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-02-21T10:42:12Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/367285094",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@promag Yeah, sorry for pushing a half-baked thought. Please, let me come back to this again before you review it, perhaps I can convince myself it doesn't make sense and I save you some time.\r\n\r\nEDIT: Or perhaps we can just leave it as it previously was and leave your request for a following PR, but I think it makes a lot of sense and it shouldn't be that hard if I hadn't tried to simplify the wheel.",
+      "created_at" : "2018-02-28T04:33:46Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-369118640",
+      "id" : 369118640,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-02-28T04:41:30Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/369118640",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r175311958"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/175311958"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Please remove unrelated move of variables from a bug fix pull request",
+      "commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "created_at" : "2018-03-19T00:30:10Z",
+      "diff_hunk" : "@@ -452,6 +455,7 @@ class CTxMemPool\n public:\n \n     static const int ROLLING_FEE_HALFLIFE = 60 * 60 * 12; // public only for testing\n+    static const uint64_t MEMPOOL_DUMP_VERSION = 1;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#discussion_r175311958",
+      "id" : 175311958,
+      "original_commit_id" : "f2c13eb6f6120fef540a1c6b22273f1f0ec8c5c4",
+      "original_position" : 14,
+      "path" : "src/txmempool.h",
+      "position" : 14,
+      "pull_request_review_id" : 104819256,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12172",
+      "updated_at" : "2018-03-19T00:30:10Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/175311958",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "What is the status of this? Seems stale and can be closed?",
+      "created_at" : "2018-03-19T00:42:57Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-374071778",
+      "id" : 374071778,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-03-19T00:42:57Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/374071778",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "I'm sorry @MarcoFalke IIRC the status is that the first commit has been around for long and tested by myself many times (but I'm trusting my rebases on the same ting now), but then after @promag 's review and test (he gave a tested ack for the first commit), I got very excited about a suggestion he made to upgrade this PR to fix more related things. I think he is totally right in his suggestion of apart from not allowing saving the mempool until it has been loaded, also just return an error as suggested when you call the rpc to save the mempool and it's already in the process of saving.\r\n\r\nBut instead of listening to @promag and copy a part of the codebase that already works for the same king of thing, I tried to re-invent the wheel because I thought I could implement it simpler and I failed so far.\r\n\r\nI suggest that we merge the first commit which is very simple and even has had tests in the past (until people asked them to be removed for being slow and non-deterministic) and also been tested manually (not very hard to test manually, btw). Then someone (ehem, promag) could create another so that no thread dares to save the mempool while already saving it. Please ping me to test that second part, since it's as easy to test manually as this one,\r\n\r\nAs a user that never gives more the daemon more than 60 secs to gracefully exit and thus depends on this rpc call to persist the mempool, I can just always wait longer for the first save, I can at most miss mempool data while re-deploying too often. Being prevented from calling savemempool twice is I think a cool improvement but not that much for users that are calling savemempool with a cron process like me (and I imagine, most savemempool users).\r\n",
+      "created_at" : "2018-03-22T09:25:00Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-375231140",
+      "id" : 375231140,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-03-22T09:25:00Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/375231140",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "I'm fine with @jtimon suggestion to move the fix forward. I can then submit a PR to improve concurrency.",
+      "created_at" : "2018-03-22T11:12:23Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-375267390",
+      "id" : 375267390,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-03-22T11:12:23Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/375267390",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "I'm assuming an agreement from @MarcoFalke 's lack of response.\r\nJust in case, the branch that is not tested and that is trying to solve @promag 's very legitimate concern is in https://github.com/jtimon/bitcoin/tree/b16-bugfix-savemempool-extend. I will review or at a minimum test his more reasonable future proposal. But I tried to make it in an unorthodox way I would like to study more than I know the way @promag 's knows how to do it.\r\nBut please let's fix this first.\r\n\r\n",
+      "created_at" : "2018-03-29T04:30:04Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-377118065",
+      "id" : 377118065,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-03-29T04:32:45Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/377118065",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1008458?v=4",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "author_association" : "OWNER",
+      "body" : "utACK cb1e319",
+      "created_at" : "2018-03-29T22:25:56Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12172#issuecomment-377391294",
+      "id" : 377391294,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12172",
+      "updated_at" : "2018-03-29T22:25:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/377391294",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   }
+]

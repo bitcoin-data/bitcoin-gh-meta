@@ -1,0 +1,1026 @@
+[
+   {
+      "author_association" : "MEMBER",
+      "body" : "To test, apply this and run with logging to stdout, without this patch it will make the entire log turn yellow:\r\n```patch\r\ndiff --git a/src/init.cpp b/src/init.cpp\r\nindex 035725b0908ebddae882583d489bdd8ad82c4857..26f4c7b906be959aa3ebaa1a2a657028c95b0f49 100644\r\n--- a/src/init.cpp\r\n+++ b/src/init.cpp\r\n@@ -1231,6 +1231,7 @@ bool AppInitMain(InitInterfaces& interfaces)\r\n         LogPrintf(\"Startup time: %s\\n\", FormatISO8601DateTime(GetTime()));\r\n     LogPrintf(\"Default data directory %s\\n\", GetDefaultDataDir().string());\r\n     LogPrintf(\"Using data directory %s\\n\", GetDataDir().string());\r\n+    LogPrintf(\"\\x1b[1;33mIn yellowwwww\\n\");\r\n \r\n     // Only log conf file usage message if conf file actually exists.\r\n     fs::path config_file_path = GetConfigFile(gArgs.GetArg(\"-conf\", BITCOIN_CONF_FILENAME));\r\n```\r\nwith patch, it will just print:\r\n```\r\n2019-10-10T11:37:40Z \\x1b[1;33mIn yellowwwww\r\n```\r\n",
+      "created_at" : "2019-10-10T11:35:08Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#issuecomment-540529466",
+      "id" : 540529466,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17095",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU0MDUyOTQ2Ng==",
+      "updated_at" : "2019-10-10T11:37:51Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/540529466",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333472719"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333472719"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "It seems impossible to distinguish between a literal \"\\\\x00\" and \"\\x00\" after this transformation.\r\n\r\nSuggest using `SanitizeString` perhaps with a new rule.",
+      "commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "created_at" : "2019-10-10T11:45:09Z",
+      "diff_hunk" : "@@ -224,10 +224,32 @@ std::string BCLog::Logger::LogTimestampStr(const std::string& str)\n     return strStamped;\n }\n \n+namespace {\n+    /** Belts and suspenders: make sure outgoing log messages don't contain\n+     * potentially suspicious characters, such as terminal control codes.\n+     *\n+     * This escapes control characters except newline ('\\n') in C syntax.\n+     * It escapes instead of removes them to still allow for troubleshooting\n+     * issues where they accidentally end up in strings.\n+     */\n+    std::string LogEscapeMessage(const std::string& str) {\n+        std::string ret;\n+        for (char ch_in: str) {\n+            uint8_t ch = (uint8_t)ch_in;\n+            if (ch >= 32 || ch == '\\n') {\n+                ret += ch_in;\n+            } else {\n+                ret += strprintf(\"\\\\x%02x\", ch);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333472719",
+      "id" : 333472719,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMzQ3MjcxOQ==",
+      "original_commit_id" : "f2f1365805c7a0c3828129a714aac726cc4f46b8",
+      "original_position" : 19,
+      "path" : "src/logging.cpp",
+      "position" : 19,
+      "pull_request_review_id" : 300004014,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095",
+      "updated_at" : "2019-10-10T18:27:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333472719",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "node_id" : "MDQ6VXNlcjEwOTU2NzU=",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333473363"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333473363"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I don't think that matters much. `\\x00` (as in, the code-point 0) is not supposed to end up in a log string at all, if it does that's an error (not serious enough to stop the program, though).\r\nCould add some more apparent warning I guess?\r\n",
+      "commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "created_at" : "2019-10-10T11:46:47Z",
+      "diff_hunk" : "@@ -224,10 +224,32 @@ std::string BCLog::Logger::LogTimestampStr(const std::string& str)\n     return strStamped;\n }\n \n+namespace {\n+    /** Belts and suspenders: make sure outgoing log messages don't contain\n+     * potentially suspicious characters, such as terminal control codes.\n+     *\n+     * This escapes control characters except newline ('\\n') in C syntax.\n+     * It escapes instead of removes them to still allow for troubleshooting\n+     * issues where they accidentally end up in strings.\n+     */\n+    std::string LogEscapeMessage(const std::string& str) {\n+        std::string ret;\n+        for (char ch_in: str) {\n+            uint8_t ch = (uint8_t)ch_in;\n+            if (ch >= 32 || ch == '\\n') {\n+                ret += ch_in;\n+            } else {\n+                ret += strprintf(\"\\\\x%02x\", ch);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333473363",
+      "id" : 333473363,
+      "in_reply_to_id" : 333472719,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMzQ3MzM2Mw==",
+      "original_commit_id" : "f2f1365805c7a0c3828129a714aac726cc4f46b8",
+      "original_position" : 19,
+      "path" : "src/logging.cpp",
+      "position" : 19,
+      "pull_request_review_id" : 300004851,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095",
+      "updated_at" : "2019-10-10T18:27:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333473363",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333474030"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333474030"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I'm very much against using SanitizeString's methodology here. I don't want to make any characters entirely disappear. If anything this should make them very visible.",
+      "commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "created_at" : "2019-10-10T11:48:31Z",
+      "diff_hunk" : "@@ -224,10 +224,32 @@ std::string BCLog::Logger::LogTimestampStr(const std::string& str)\n     return strStamped;\n }\n \n+namespace {\n+    /** Belts and suspenders: make sure outgoing log messages don't contain\n+     * potentially suspicious characters, such as terminal control codes.\n+     *\n+     * This escapes control characters except newline ('\\n') in C syntax.\n+     * It escapes instead of removes them to still allow for troubleshooting\n+     * issues where they accidentally end up in strings.\n+     */\n+    std::string LogEscapeMessage(const std::string& str) {\n+        std::string ret;\n+        for (char ch_in: str) {\n+            uint8_t ch = (uint8_t)ch_in;\n+            if (ch >= 32 || ch == '\\n') {\n+                ret += ch_in;\n+            } else {\n+                ret += strprintf(\"\\\\x%02x\", ch);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333474030",
+      "id" : 333474030,
+      "in_reply_to_id" : 333472719,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMzQ3NDAzMA==",
+      "original_commit_id" : "f2f1365805c7a0c3828129a714aac726cc4f46b8",
+      "original_position" : 19,
+      "path" : "src/logging.cpp",
+      "position" : 19,
+      "pull_request_review_id" : 300005738,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095",
+      "updated_at" : "2019-10-10T18:27:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333474030",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333475660"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333475660"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Cherry-pick 7cbc72b93740a5c7e14d1fb1a9f45fd78ff24700?",
+      "commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "created_at" : "2019-10-10T11:52:54Z",
+      "diff_hunk" : "@@ -224,10 +224,32 @@ std::string BCLog::Logger::LogTimestampStr(const std::string& str)\n     return strStamped;\n }\n \n+namespace {\n+    /** Belts and suspenders: make sure outgoing log messages don't contain\n+     * potentially suspicious characters, such as terminal control codes.\n+     *\n+     * This escapes control characters except newline ('\\n') in C syntax.\n+     * It escapes instead of removes them to still allow for troubleshooting\n+     * issues where they accidentally end up in strings.\n+     */\n+    std::string LogEscapeMessage(const std::string& str) {\n+        std::string ret;\n+        for (char ch_in: str) {\n+            uint8_t ch = (uint8_t)ch_in;\n+            if (ch >= 32 || ch == '\\n') {\n+                ret += ch_in;\n+            } else {\n+                ret += strprintf(\"\\\\x%02x\", ch);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333475660",
+      "id" : 333475660,
+      "in_reply_to_id" : 333472719,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMzQ3NTY2MA==",
+      "original_commit_id" : "f2f1365805c7a0c3828129a714aac726cc4f46b8",
+      "original_position" : 19,
+      "path" : "src/logging.cpp",
+      "position" : 19,
+      "pull_request_review_id" : 300007936,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095",
+      "updated_at" : "2019-10-10T18:27:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333475660",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "node_id" : "MDQ6VXNlcjEwOTU2NzU=",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333476842"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333476842"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I prefer to keep this simple code specific and self-contained, TBH. Also, escaping with '%%' seems to have exactly the same \"issue\"? (if you regard it as an issue)",
+      "commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "created_at" : "2019-10-10T11:56:02Z",
+      "diff_hunk" : "@@ -224,10 +224,32 @@ std::string BCLog::Logger::LogTimestampStr(const std::string& str)\n     return strStamped;\n }\n \n+namespace {\n+    /** Belts and suspenders: make sure outgoing log messages don't contain\n+     * potentially suspicious characters, such as terminal control codes.\n+     *\n+     * This escapes control characters except newline ('\\n') in C syntax.\n+     * It escapes instead of removes them to still allow for troubleshooting\n+     * issues where they accidentally end up in strings.\n+     */\n+    std::string LogEscapeMessage(const std::string& str) {\n+        std::string ret;\n+        for (char ch_in: str) {\n+            uint8_t ch = (uint8_t)ch_in;\n+            if (ch >= 32 || ch == '\\n') {\n+                ret += ch_in;\n+            } else {\n+                ret += strprintf(\"\\\\x%02x\", ch);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333476842",
+      "id" : 333476842,
+      "in_reply_to_id" : 333472719,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMzQ3Njg0Mg==",
+      "original_commit_id" : "f2f1365805c7a0c3828129a714aac726cc4f46b8",
+      "original_position" : 19,
+      "path" : "src/logging.cpp",
+      "position" : 19,
+      "pull_request_review_id" : 300009490,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095",
+      "updated_at" : "2019-10-10T18:27:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333476842",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333487251"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333487251"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Note to self: add a space before `:`",
+      "commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "created_at" : "2019-10-10T12:22:43Z",
+      "diff_hunk" : "@@ -224,10 +224,32 @@ std::string BCLog::Logger::LogTimestampStr(const std::string& str)\n     return strStamped;\n }\n \n+namespace {\n+    /** Belts and suspenders: make sure outgoing log messages don't contain\n+     * potentially suspicious characters, such as terminal control codes.\n+     *\n+     * This escapes control characters except newline ('\\n') in C syntax.\n+     * It escapes instead of removes them to still allow for troubleshooting\n+     * issues where they accidentally end up in strings.\n+     */\n+    std::string LogEscapeMessage(const std::string& str) {\n+        std::string ret;\n+        for (char ch_in: str) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333487251",
+      "id" : 333487251,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMzQ4NzI1MQ==",
+      "original_commit_id" : "f2f1365805c7a0c3828129a714aac726cc4f46b8",
+      "original_position" : 14,
+      "path" : "src/logging.cpp",
+      "position" : null,
+      "pull_request_review_id" : 300023328,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095",
+      "updated_at" : "2019-10-10T18:27:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333487251",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "ACK f2f1365805c7a0c3828129a714aac726cc4f46b8 -- diff looks correct and I've tested it lightly with expected results\r\n\r\nWe can tighten the allowed range (`ch >= 32 || ch == '\\n'`) later on, but this is a good start.\r\n\r\n(The only (theoretical) issue I can think of with this fix is that the size of the log payload is increased by a factor of four when escaping. An attacker trying to fill the disk of a node by repeated log injection can then fill the disk four times as fast by using escape characters in the the injected log payload. I still think this change is worth doing as suggested though: rate limiting logging and/or limiting the length of log messages can be handled in a follow-up PR.)",
+      "created_at" : "2019-10-10T13:44:12Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#issuecomment-540590139",
+      "id" : 540590139,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17095",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU0MDU5MDEzOQ==",
+      "updated_at" : "2019-10-10T13:46:33Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/540590139",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7826565?v=4",
+         "events_url" : "https://api.github.com/users/practicalswift/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/practicalswift/followers",
+         "following_url" : "https://api.github.com/users/practicalswift/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/practicalswift/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/practicalswift",
+         "id" : 7826565,
+         "login" : "practicalswift",
+         "node_id" : "MDQ6VXNlcjc4MjY1NjU=",
+         "organizations_url" : "https://api.github.com/users/practicalswift/orgs",
+         "received_events_url" : "https://api.github.com/users/practicalswift/received_events",
+         "repos_url" : "https://api.github.com/users/practicalswift/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/practicalswift/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/practicalswift/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/practicalswift"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333583789"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333583789"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "The escaping code there always escapes '%'",
+      "commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "created_at" : "2019-10-10T15:20:28Z",
+      "diff_hunk" : "@@ -224,10 +224,32 @@ std::string BCLog::Logger::LogTimestampStr(const std::string& str)\n     return strStamped;\n }\n \n+namespace {\n+    /** Belts and suspenders: make sure outgoing log messages don't contain\n+     * potentially suspicious characters, such as terminal control codes.\n+     *\n+     * This escapes control characters except newline ('\\n') in C syntax.\n+     * It escapes instead of removes them to still allow for troubleshooting\n+     * issues where they accidentally end up in strings.\n+     */\n+    std::string LogEscapeMessage(const std::string& str) {\n+        std::string ret;\n+        for (char ch_in: str) {\n+            uint8_t ch = (uint8_t)ch_in;\n+            if (ch >= 32 || ch == '\\n') {\n+                ret += ch_in;\n+            } else {\n+                ret += strprintf(\"\\\\x%02x\", ch);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333583789",
+      "id" : 333583789,
+      "in_reply_to_id" : 333472719,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMzU4Mzc4OQ==",
+      "original_commit_id" : "f2f1365805c7a0c3828129a714aac726cc4f46b8",
+      "original_position" : 19,
+      "path" : "src/logging.cpp",
+      "position" : 19,
+      "pull_request_review_id" : 300152567,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095",
+      "updated_at" : "2019-10-10T18:27:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333583789",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/1095675?v=4",
+         "events_url" : "https://api.github.com/users/luke-jr/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/luke-jr/followers",
+         "following_url" : "https://api.github.com/users/luke-jr/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/luke-jr/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/luke-jr",
+         "id" : 1095675,
+         "login" : "luke-jr",
+         "node_id" : "MDQ6VXNlcjEwOTU2NzU=",
+         "organizations_url" : "https://api.github.com/users/luke-jr/orgs",
+         "received_events_url" : "https://api.github.com/users/luke-jr/received_events",
+         "repos_url" : "https://api.github.com/users/luke-jr/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/luke-jr/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/luke-jr/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/luke-jr"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#16889](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/16889.html) (Add some general std::vector utility functions by sipa)\n* [#16673](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/16673.html) (Relog configuration args on debug.log rotation by LarryRuane)\n* [#12833](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/12833.html) ([qt] move QSettings to bitcoin_rw.conf where possible by Sjors)\n* [#11082](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/11082.html) (Add new bitcoin_rw.conf file that is used for settings modified by this software itself by luke-jr)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "created_at" : "2019-10-10T16:12:02Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#issuecomment-540659974",
+      "id" : 540659974,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17095",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU0MDY1OTk3NA==",
+      "updated_at" : "2019-10-15T11:45:38Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/540659974",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> We can tighten the allowed range (ch >= 32 || ch == '\\n') later on, but this is a good start.\r\n\r\nI don't think we should do that without parsing UTF-8. It definitely should be possible to log Russian and Chinese wallet names, or even emoji.\r\n\r\nEdit : OK I guess \\x7f is, strictly, a control code too, and we could easily exclude that.\r\n\r\n> The only (theoretical) issue I can think of with this fix is that the size of the log payload is increased by a factor of four when escaping\r\n\r\nYes, true, to be honest I'm not worried about disk filling attacks here.",
+      "created_at" : "2019-10-10T17:45:38Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#issuecomment-540696320",
+      "id" : 540696320,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17095",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU0MDY5NjMyMA==",
+      "updated_at" : "2019-10-10T18:03:47Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/540696320",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333661821"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333661821"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Could add a `DCHECK(false)` (#16136) to the else branch, maybe only run once?",
+      "commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "created_at" : "2019-10-10T18:07:06Z",
+      "diff_hunk" : "@@ -224,10 +224,32 @@ std::string BCLog::Logger::LogTimestampStr(const std::string& str)\n     return strStamped;\n }\n \n+namespace {\n+    /** Belts and suspenders: make sure outgoing log messages don't contain\n+     * potentially suspicious characters, such as terminal control codes.\n+     *\n+     * This escapes control characters except newline ('\\n') in C syntax.\n+     * It escapes instead of removes them to still allow for troubleshooting\n+     * issues where they accidentally end up in strings.\n+     */\n+    std::string LogEscapeMessage(const std::string& str) {\n+        std::string ret;\n+        for (char ch_in: str) {\n+            uint8_t ch = (uint8_t)ch_in;\n+            if (ch >= 32 || ch == '\\n') {\n+                ret += ch_in;\n+            } else {\n+                ret += strprintf(\"\\\\x%02x\", ch);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333661821",
+      "id" : 333661821,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMzY2MTgyMQ==",
+      "original_commit_id" : "f2f1365805c7a0c3828129a714aac726cc4f46b8",
+      "original_position" : 19,
+      "path" : "src/logging.cpp",
+      "position" : 19,
+      "pull_request_review_id" : 300255048,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095",
+      "updated_at" : "2019-10-10T18:27:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333661821",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333665118"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333665118"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I think crashing the executable on an assertion error is a bad idea here. After all, if the character was injected somehow, that changes a log injection to a live DoS.",
+      "commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "created_at" : "2019-10-10T18:14:23Z",
+      "diff_hunk" : "@@ -224,10 +224,32 @@ std::string BCLog::Logger::LogTimestampStr(const std::string& str)\n     return strStamped;\n }\n \n+namespace {\n+    /** Belts and suspenders: make sure outgoing log messages don't contain\n+     * potentially suspicious characters, such as terminal control codes.\n+     *\n+     * This escapes control characters except newline ('\\n') in C syntax.\n+     * It escapes instead of removes them to still allow for troubleshooting\n+     * issues where they accidentally end up in strings.\n+     */\n+    std::string LogEscapeMessage(const std::string& str) {\n+        std::string ret;\n+        for (char ch_in: str) {\n+            uint8_t ch = (uint8_t)ch_in;\n+            if (ch >= 32 || ch == '\\n') {\n+                ret += ch_in;\n+            } else {\n+                ret += strprintf(\"\\\\x%02x\", ch);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333665118",
+      "id" : 333665118,
+      "in_reply_to_id" : 333661821,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMzY2NTExOA==",
+      "original_commit_id" : "f2f1365805c7a0c3828129a714aac726cc4f46b8",
+      "original_position" : 19,
+      "path" : "src/logging.cpp",
+      "position" : 19,
+      "pull_request_review_id" : 300259370,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095",
+      "updated_at" : "2019-10-10T18:27:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333665118",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333667852"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333667852"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I assumed it was only enabled by `--enable-debug`, which also turns potential lock issues into crashes.",
+      "commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "created_at" : "2019-10-10T18:20:28Z",
+      "diff_hunk" : "@@ -224,10 +224,32 @@ std::string BCLog::Logger::LogTimestampStr(const std::string& str)\n     return strStamped;\n }\n \n+namespace {\n+    /** Belts and suspenders: make sure outgoing log messages don't contain\n+     * potentially suspicious characters, such as terminal control codes.\n+     *\n+     * This escapes control characters except newline ('\\n') in C syntax.\n+     * It escapes instead of removes them to still allow for troubleshooting\n+     * issues where they accidentally end up in strings.\n+     */\n+    std::string LogEscapeMessage(const std::string& str) {\n+        std::string ret;\n+        for (char ch_in: str) {\n+            uint8_t ch = (uint8_t)ch_in;\n+            if (ch >= 32 || ch == '\\n') {\n+                ret += ch_in;\n+            } else {\n+                ret += strprintf(\"\\\\x%02x\", ch);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333667852",
+      "id" : 333667852,
+      "in_reply_to_id" : 333661821,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMzY2Nzg1Mg==",
+      "original_commit_id" : "f2f1365805c7a0c3828129a714aac726cc4f46b8",
+      "original_position" : 19,
+      "path" : "src/logging.cpp",
+      "position" : 19,
+      "pull_request_review_id" : 300263068,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095",
+      "updated_at" : "2019-10-10T18:27:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333667852",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333669669"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333669669"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Only running the else branch once is fine with me though, not sure. It's a compromise between precise troubleshooting and the fear that this would generate very long strings.",
+      "commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "created_at" : "2019-10-10T18:24:21Z",
+      "diff_hunk" : "@@ -224,10 +224,32 @@ std::string BCLog::Logger::LogTimestampStr(const std::string& str)\n     return strStamped;\n }\n \n+namespace {\n+    /** Belts and suspenders: make sure outgoing log messages don't contain\n+     * potentially suspicious characters, such as terminal control codes.\n+     *\n+     * This escapes control characters except newline ('\\n') in C syntax.\n+     * It escapes instead of removes them to still allow for troubleshooting\n+     * issues where they accidentally end up in strings.\n+     */\n+    std::string LogEscapeMessage(const std::string& str) {\n+        std::string ret;\n+        for (char ch_in: str) {\n+            uint8_t ch = (uint8_t)ch_in;\n+            if (ch >= 32 || ch == '\\n') {\n+                ret += ch_in;\n+            } else {\n+                ret += strprintf(\"\\\\x%02x\", ch);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333669669",
+      "id" : 333669669,
+      "in_reply_to_id" : 333661821,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMzY2OTY2OQ==",
+      "original_commit_id" : "f2f1365805c7a0c3828129a714aac726cc4f46b8",
+      "original_position" : 19,
+      "path" : "src/logging.cpp",
+      "position" : 19,
+      "pull_request_review_id" : 300265414,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095",
+      "updated_at" : "2019-10-10T18:27:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333669669",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333670054"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333670054"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "BTW: I wasn't sure what the fashion of the day is for calling `.reserve` or not, here. The expected (99.9%) outcome here is that the output is exactly the same length as the input.",
+      "commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "created_at" : "2019-10-10T18:25:09Z",
+      "diff_hunk" : "@@ -224,10 +224,32 @@ std::string BCLog::Logger::LogTimestampStr(const std::string& str)\n     return strStamped;\n }\n \n+namespace {\n+    /** Belts and suspenders: make sure outgoing log messages don't contain\n+     * potentially suspicious characters, such as terminal control codes.\n+     *\n+     * This escapes control characters except newline ('\\n') in C syntax.\n+     * It escapes instead of removes them to still allow for troubleshooting\n+     * issues where they accidentally end up in strings.\n+     */\n+    std::string LogEscapeMessage(const std::string& str) {\n+        std::string ret;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r333670054",
+      "id" : 333670054,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMzY3MDA1NA==",
+      "original_commit_id" : "51dbfcf7c23821278f62721cb7ef511cbea8ea8f",
+      "original_position" : 13,
+      "path" : "src/logging.cpp",
+      "position" : 13,
+      "pull_request_review_id" : 300265892,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095",
+      "updated_at" : "2019-10-10T18:27:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/333670054",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "utACK 8c45e33c07783828ea78489edf680a67bc491377",
+      "created_at" : "2019-10-11T15:31:49Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#issuecomment-541112703",
+      "id" : 541112703,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17095",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU0MTExMjcwMw==",
+      "updated_at" : "2019-10-11T15:31:49Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/541112703",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/178464?v=4",
+         "events_url" : "https://api.github.com/users/jonasschnelli/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonasschnelli/followers",
+         "following_url" : "https://api.github.com/users/jonasschnelli/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonasschnelli/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonasschnelli",
+         "id" : 178464,
+         "login" : "jonasschnelli",
+         "node_id" : "MDQ6VXNlcjE3ODQ2NA==",
+         "organizations_url" : "https://api.github.com/users/jonasschnelli/orgs",
+         "received_events_url" : "https://api.github.com/users/jonasschnelli/received_events",
+         "repos_url" : "https://api.github.com/users/jonasschnelli/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonasschnelli/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonasschnelli/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonasschnelli"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r334279706"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/334279706"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "`if (!iscntrl(ch) || ch == '\\n') {`?",
+      "commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "created_at" : "2019-10-13T14:17:21Z",
+      "diff_hunk" : "@@ -224,10 +224,32 @@ std::string BCLog::Logger::LogTimestampStr(const std::string& str)\n     return strStamped;\n }\n \n+namespace {\n+    /** Belts and suspenders: make sure outgoing log messages don't contain\n+     * potentially suspicious characters, such as terminal control codes.\n+     *\n+     * This escapes control characters except newline ('\\n') in C syntax.\n+     * It escapes instead of removes them to still allow for troubleshooting\n+     * issues where they accidentally end up in strings.\n+     */\n+    std::string LogEscapeMessage(const std::string& str) {\n+        std::string ret;\n+        for (char ch_in : str) {\n+            uint8_t ch = (uint8_t)ch_in;\n+            if ((ch >= 32 || ch == '\\n') && ch != '\\x7f') {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r334279706",
+      "id" : 334279706,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzNDI3OTcwNg==",
+      "original_commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "original_position" : 16,
+      "path" : "src/logging.cpp",
+      "position" : 16,
+      "pull_request_review_id" : 301050347,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095",
+      "updated_at" : "2019-10-13T14:17:32Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/334279706",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/4500994?v=4",
+         "events_url" : "https://api.github.com/users/kristapsk/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kristapsk/followers",
+         "following_url" : "https://api.github.com/users/kristapsk/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kristapsk/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kristapsk",
+         "id" : 4500994,
+         "login" : "kristapsk",
+         "node_id" : "MDQ6VXNlcjQ1MDA5OTQ=",
+         "organizations_url" : "https://api.github.com/users/kristapsk/orgs",
+         "received_events_url" : "https://api.github.com/users/kristapsk/received_events",
+         "repos_url" : "https://api.github.com/users/kristapsk/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kristapsk/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kristapsk/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kristapsk"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Maybe it's possible to add some functional test? (not sure we can generate such log messages without changing source code, so just an idea)",
+      "created_at" : "2019-10-13T14:27:06Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#issuecomment-541422840",
+      "id" : 541422840,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17095",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU0MTQyMjg0MA==",
+      "updated_at" : "2019-10-13T14:27:06Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/541422840",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/4500994?v=4",
+         "events_url" : "https://api.github.com/users/kristapsk/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kristapsk/followers",
+         "following_url" : "https://api.github.com/users/kristapsk/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kristapsk/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kristapsk",
+         "id" : 4500994,
+         "login" : "kristapsk",
+         "node_id" : "MDQ6VXNlcjQ1MDA5OTQ=",
+         "organizations_url" : "https://api.github.com/users/kristapsk/orgs",
+         "received_events_url" : "https://api.github.com/users/kristapsk/received_events",
+         "repos_url" : "https://api.github.com/users/kristapsk/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kristapsk/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kristapsk/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kristapsk"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r334291548"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/334291548"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "`iscntrl` is locale dependent and we try to avoid using locale dependent functions.\r\n\r\nSee the following section in the developer notes:\r\n\r\n> - Avoid using locale dependent functions if possible. You can use the provided [`lint-locale-dependence.sh`](/test/lint/lint-locale-dependence.sh) to check for accidental use of locale dependent functions.\r\n> \r\n>   - *Rationale*: Unnecessary locale dependence can cause bugs that are very tricky to isolate and fix.\r\n> \r\n>   - These functions are known to be locale dependent:\r\n>     `alphasort`, `asctime`, `asprintf`, `atof`, `atoi`, `atol`, `atoll`, `atoq`,\r\n>     `btowc`, `ctime`, `dprintf`, `fgetwc`, `fgetws`, `fprintf`, `fputwc`,\r\n>     `fputws`, `fscanf`, `fwprintf`, `getdate`, `getwc`, `getwchar`, `isalnum`,\r\n>     `isalpha`, `isblank`, `iscntrl`, `isdigit`, `isgraph`, `islower`, `isprint`,\r\n>     `ispunct`, `isspace`, `isupper`, `iswalnum`, `iswalpha`, `iswblank`,\r\n>     `iswcntrl`, `iswctype`, `iswdigit`, `iswgraph`, `iswlower`, `iswprint`,\r\n>     `iswpunct`, `iswspace`, `iswupper`, `iswxdigit`, `isxdigit`, `mblen`,\r\n>     `mbrlen`, `mbrtowc`, `mbsinit`, `mbsnrtowcs`, `mbsrtowcs`, `mbstowcs`,\r\n>     `mbtowc`, `mktime`, `putwc`, `putwchar`, `scanf`, `snprintf`, `sprintf`,\r\n>     `sscanf`, `stoi`, `stol`, `stoll`, `strcasecmp`, `strcasestr`, `strcoll`,\r\n>     `strfmon`, `strftime`, `strncasecmp`, `strptime`, `strtod`, `strtof`,\r\n>     `strtoimax`, `strtol`, `strtold`, `strtoll`, `strtoq`, `strtoul`,\r\n>     `strtoull`, `strtoumax`, `strtouq`, `strxfrm`, `swprintf`, `tolower`,\r\n>     `toupper`, `towctrans`, `towlower`, `towupper`, `ungetwc`, `vasprintf`,\r\n>     `vdprintf`, `versionsort`, `vfprintf`, `vfscanf`, `vfwprintf`, `vprintf`,\r\n>     `vscanf`, `vsnprintf`, `vsprintf`, `vsscanf`, `vswprintf`, `vwprintf`,\r\n>     `wcrtomb`, `wcscasecmp`, `wcscoll`, `wcsftime`, `wcsncasecmp`, `wcsnrtombs`,\r\n>     `wcsrtombs`, `wcstod`, `wcstof`, `wcstoimax`, `wcstol`, `wcstold`,\r\n>     `wcstoll`, `wcstombs`, `wcstoul`, `wcstoull`, `wcstoumax`, `wcswidth`,\r\n>     `wcsxfrm`, `wctob`, `wctomb`, `wctrans`, `wctype`, `wcwidth`, `wprintf`",
+      "commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "created_at" : "2019-10-13T19:06:32Z",
+      "diff_hunk" : "@@ -224,10 +224,32 @@ std::string BCLog::Logger::LogTimestampStr(const std::string& str)\n     return strStamped;\n }\n \n+namespace {\n+    /** Belts and suspenders: make sure outgoing log messages don't contain\n+     * potentially suspicious characters, such as terminal control codes.\n+     *\n+     * This escapes control characters except newline ('\\n') in C syntax.\n+     * It escapes instead of removes them to still allow for troubleshooting\n+     * issues where they accidentally end up in strings.\n+     */\n+    std::string LogEscapeMessage(const std::string& str) {\n+        std::string ret;\n+        for (char ch_in : str) {\n+            uint8_t ch = (uint8_t)ch_in;\n+            if ((ch >= 32 || ch == '\\n') && ch != '\\x7f') {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r334291548",
+      "id" : 334291548,
+      "in_reply_to_id" : 334279706,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzNDI5MTU0OA==",
+      "original_commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "original_position" : 16,
+      "path" : "src/logging.cpp",
+      "position" : 16,
+      "pull_request_review_id" : 301061855,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095",
+      "updated_at" : "2019-10-13T19:06:32Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/334291548",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7826565?v=4",
+         "events_url" : "https://api.github.com/users/practicalswift/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/practicalswift/followers",
+         "following_url" : "https://api.github.com/users/practicalswift/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/practicalswift/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/practicalswift",
+         "id" : 7826565,
+         "login" : "practicalswift",
+         "node_id" : "MDQ6VXNlcjc4MjY1NjU=",
+         "organizations_url" : "https://api.github.com/users/practicalswift/orgs",
+         "received_events_url" : "https://api.github.com/users/practicalswift/received_events",
+         "repos_url" : "https://api.github.com/users/practicalswift/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/practicalswift/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/practicalswift/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/practicalswift"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> Maybe it's possible to add some functional test?\r\n\r\nWellâthe idea behind preventing log injection is that it's not possible to inject arbitrary log messages through the network. I don't think we'd want to add any code to encourage it.\r\n\r\nCould add a unit test for the filter function, though.",
+      "created_at" : "2019-10-14T08:09:49Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#issuecomment-541543549",
+      "id" : 541543549,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17095",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU0MTU0MzU0OQ==",
+      "updated_at" : "2019-10-14T09:42:59Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/541543549",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r334364702"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/334364702"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Right, I don't want to rely on any C functions here which may or may not have the same view of the character set. The log is file always regarded as UTF-8 anyhow.",
+      "commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "created_at" : "2019-10-14T08:11:07Z",
+      "diff_hunk" : "@@ -224,10 +224,32 @@ std::string BCLog::Logger::LogTimestampStr(const std::string& str)\n     return strStamped;\n }\n \n+namespace {\n+    /** Belts and suspenders: make sure outgoing log messages don't contain\n+     * potentially suspicious characters, such as terminal control codes.\n+     *\n+     * This escapes control characters except newline ('\\n') in C syntax.\n+     * It escapes instead of removes them to still allow for troubleshooting\n+     * issues where they accidentally end up in strings.\n+     */\n+    std::string LogEscapeMessage(const std::string& str) {\n+        std::string ret;\n+        for (char ch_in : str) {\n+            uint8_t ch = (uint8_t)ch_in;\n+            if ((ch >= 32 || ch == '\\n') && ch != '\\x7f') {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#discussion_r334364702",
+      "id" : 334364702,
+      "in_reply_to_id" : 334279706,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzNDM2NDcwMg==",
+      "original_commit_id" : "8c45e33c07783828ea78489edf680a67bc491377",
+      "original_position" : 16,
+      "path" : "src/logging.cpp",
+      "position" : 16,
+      "pull_request_review_id" : 301153420,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17095",
+      "updated_at" : "2019-10-14T08:11:08Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/334364702",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Added unit test. Had to rebase to do this (conflict with the spans test), so also squashed the fixups. Should be ready for merge.",
+      "created_at" : "2019-10-15T08:53:53Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#issuecomment-542110434",
+      "id" : 542110434,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17095",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU0MjExMDQzNA==",
+      "updated_at" : "2019-10-15T08:53:53Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/542110434",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "ACK d7820a1250070f3640246ae497e049bee0b3516f - tested and works as expected :)",
+      "created_at" : "2019-10-15T15:16:11Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17095#issuecomment-542264285",
+      "id" : 542264285,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17095",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU0MjI2NDI4NQ==",
+      "updated_at" : "2019-10-15T15:16:11Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/542264285",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/7826565?v=4",
+         "events_url" : "https://api.github.com/users/practicalswift/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/practicalswift/followers",
+         "following_url" : "https://api.github.com/users/practicalswift/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/practicalswift/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/practicalswift",
+         "id" : 7826565,
+         "login" : "practicalswift",
+         "node_id" : "MDQ6VXNlcjc4MjY1NjU=",
+         "organizations_url" : "https://api.github.com/users/practicalswift/orgs",
+         "received_events_url" : "https://api.github.com/users/practicalswift/received_events",
+         "repos_url" : "https://api.github.com/users/practicalswift/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/practicalswift/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/practicalswift/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/practicalswift"
+      }
+   }
+]

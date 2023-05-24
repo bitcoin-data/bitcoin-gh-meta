@@ -1,0 +1,262 @@
+[
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.",
+      "created_at" : "2019-03-26T20:27:49Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15670#issuecomment-476835953",
+      "id" : 476835953,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15670",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ3NjgzNTk1Mw==",
+      "updated_at" : "2019-04-03T17:16:57Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/476835953",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15670#discussion_r269746878"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15670"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/269746878"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "It seems like this should say || not &&. If either the time is to low or the height is too small, the block is too early?",
+      "commit_id" : "765c0b364d41e9a251c3f88cbe203645854fd790",
+      "created_at" : "2019-03-27T20:06:33Z",
+      "diff_hunk" : "@@ -59,10 +59,11 @@ const CBlockIndex *CChain::FindFork(const CBlockIndex *pindex) const {\n     return pindex;\n }\n \n-CBlockIndex* CChain::FindEarliestAtLeast(int64_t nTime) const\n+CBlockIndex* CChain::FindEarliestAtLeast(int64_t nTime, int height) const\n {\n-    std::vector<CBlockIndex*>::const_iterator lower = std::lower_bound(vChain.begin(), vChain.end(), nTime,\n-        [](CBlockIndex* pBlock, const int64_t& time) -> bool { return pBlock->GetBlockTimeMax() < time; });\n+    std::pair<int64_t, int> blockparams = std::make_pair(nTime, height);\n+    std::vector<CBlockIndex*>::const_iterator lower = std::lower_bound(vChain.begin(), vChain.end(), blockparams,\n+        [](CBlockIndex* pBlock, const std::pair<int64_t, int>& blockparams) -> bool { return pBlock->GetBlockTimeMax() < blockparams.first && pBlock->nHeight < blockparams.second; });",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15670#discussion_r269746878",
+      "id" : 269746878,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI2OTc0Njg3OA==",
+      "original_commit_id" : "d43bff5e297603d2d6da34cb3db8933c23570fd5",
+      "original_position" : 11,
+      "path" : "src/chain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 219697513,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15670",
+      "updated_at" : "2019-03-27T22:32:00Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/269746878",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15670#discussion_r269747486"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15670"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/269747486"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "This decreases test coverage for bisecting based on time.\r\n\r\nIt would be better if this PR just added a few new tests for nonzero heights, and left the existing tests alone (by passing 0 minimum heights).",
+      "commit_id" : "765c0b364d41e9a251c3f88cbe203645854fd790",
+      "created_at" : "2019-03-27T20:08:08Z",
+      "diff_hunk" : "@@ -158,22 +158,22 @@ BOOST_AUTO_TEST_CASE(findearliestatleast_edge_test)\n     CChain chain;\n     chain.SetTip(&blocks.back());\n \n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(50)->nHeight, 0);\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(100)->nHeight, 0);\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(150)->nHeight, 3);\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(200)->nHeight, 3);\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(250)->nHeight, 6);\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(300)->nHeight, 6);\n-    BOOST_CHECK(!chain.FindEarliestAtLeast(350));\n-\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(0)->nHeight, 0);\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(-1)->nHeight, 0);\n-\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(std::numeric_limits<int64_t>::min())->nHeight, 0);\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(-int64_t(std::numeric_limits<unsigned int>::max()) - 1)->nHeight, 0);\n-    BOOST_CHECK(!chain.FindEarliestAtLeast(std::numeric_limits<int64_t>::max()));\n-    BOOST_CHECK(!chain.FindEarliestAtLeast(std::numeric_limits<unsigned int>::max()));\n-    BOOST_CHECK(!chain.FindEarliestAtLeast(int64_t(std::numeric_limits<unsigned int>::max()) + 1));\n+    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(50, 0)->nHeight, 0);\n+    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(100, 0)->nHeight, 0);\n+    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(150, 3)->nHeight, 3);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15670#discussion_r269747486",
+      "id" : 269747486,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI2OTc0NzQ4Ng==",
+      "original_commit_id" : "d43bff5e297603d2d6da34cb3db8933c23570fd5",
+      "original_position" : 31,
+      "path" : "src/test/skiplist_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 219697513,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15670",
+      "updated_at" : "2019-03-27T22:32:00Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/269747486",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15670#discussion_r269779726"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15670"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/269779726"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Yes, already corrected locally and tests seem ok, wasn't sure of std:lower_bound behavior at first",
+      "commit_id" : "765c0b364d41e9a251c3f88cbe203645854fd790",
+      "created_at" : "2019-03-27T21:33:24Z",
+      "diff_hunk" : "@@ -59,10 +59,11 @@ const CBlockIndex *CChain::FindFork(const CBlockIndex *pindex) const {\n     return pindex;\n }\n \n-CBlockIndex* CChain::FindEarliestAtLeast(int64_t nTime) const\n+CBlockIndex* CChain::FindEarliestAtLeast(int64_t nTime, int height) const\n {\n-    std::vector<CBlockIndex*>::const_iterator lower = std::lower_bound(vChain.begin(), vChain.end(), nTime,\n-        [](CBlockIndex* pBlock, const int64_t& time) -> bool { return pBlock->GetBlockTimeMax() < time; });\n+    std::pair<int64_t, int> blockparams = std::make_pair(nTime, height);\n+    std::vector<CBlockIndex*>::const_iterator lower = std::lower_bound(vChain.begin(), vChain.end(), blockparams,\n+        [](CBlockIndex* pBlock, const std::pair<int64_t, int>& blockparams) -> bool { return pBlock->GetBlockTimeMax() < blockparams.first && pBlock->nHeight < blockparams.second; });",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15670#discussion_r269779726",
+      "id" : 269779726,
+      "in_reply_to_id" : 269746878,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI2OTc3OTcyNg==",
+      "original_commit_id" : "d43bff5e297603d2d6da34cb3db8933c23570fd5",
+      "original_position" : 11,
+      "path" : "src/chain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 219737902,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15670",
+      "updated_at" : "2019-03-27T22:32:00Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/269779726",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/23310655?v=4",
+         "events_url" : "https://api.github.com/users/ariard/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ariard/followers",
+         "following_url" : "https://api.github.com/users/ariard/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ariard/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ariard",
+         "id" : 23310655,
+         "login" : "ariard",
+         "node_id" : "MDQ6VXNlcjIzMzEwNjU1",
+         "organizations_url" : "https://api.github.com/users/ariard/orgs",
+         "received_events_url" : "https://api.github.com/users/ariard/received_events",
+         "repos_url" : "https://api.github.com/users/ariard/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ariard/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ariard/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ariard"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/15670#discussion_r269796884"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15670"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/269796884"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Done, also few tests covering both block attributes.",
+      "commit_id" : "765c0b364d41e9a251c3f88cbe203645854fd790",
+      "created_at" : "2019-03-27T22:32:55Z",
+      "diff_hunk" : "@@ -158,22 +158,22 @@ BOOST_AUTO_TEST_CASE(findearliestatleast_edge_test)\n     CChain chain;\n     chain.SetTip(&blocks.back());\n \n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(50)->nHeight, 0);\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(100)->nHeight, 0);\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(150)->nHeight, 3);\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(200)->nHeight, 3);\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(250)->nHeight, 6);\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(300)->nHeight, 6);\n-    BOOST_CHECK(!chain.FindEarliestAtLeast(350));\n-\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(0)->nHeight, 0);\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(-1)->nHeight, 0);\n-\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(std::numeric_limits<int64_t>::min())->nHeight, 0);\n-    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(-int64_t(std::numeric_limits<unsigned int>::max()) - 1)->nHeight, 0);\n-    BOOST_CHECK(!chain.FindEarliestAtLeast(std::numeric_limits<int64_t>::max()));\n-    BOOST_CHECK(!chain.FindEarliestAtLeast(std::numeric_limits<unsigned int>::max()));\n-    BOOST_CHECK(!chain.FindEarliestAtLeast(int64_t(std::numeric_limits<unsigned int>::max()) + 1));\n+    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(50, 0)->nHeight, 0);\n+    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(100, 0)->nHeight, 0);\n+    BOOST_CHECK_EQUAL(chain.FindEarliestAtLeast(150, 3)->nHeight, 3);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15670#discussion_r269796884",
+      "id" : 269796884,
+      "in_reply_to_id" : 269747486,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI2OTc5Njg4NA==",
+      "original_commit_id" : "d43bff5e297603d2d6da34cb3db8933c23570fd5",
+      "original_position" : 31,
+      "path" : "src/test/skiplist_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 219758972,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/15670",
+      "updated_at" : "2019-03-27T22:32:55Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/269796884",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/23310655?v=4",
+         "events_url" : "https://api.github.com/users/ariard/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ariard/followers",
+         "following_url" : "https://api.github.com/users/ariard/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ariard/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ariard",
+         "id" : 23310655,
+         "login" : "ariard",
+         "node_id" : "MDQ6VXNlcjIzMzEwNjU1",
+         "organizations_url" : "https://api.github.com/users/ariard/orgs",
+         "received_events_url" : "https://api.github.com/users/ariard/received_events",
+         "repos_url" : "https://api.github.com/users/ariard/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ariard/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ariard/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ariard"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "utACK 765c0b364d41e9a251c3f88cbe203645854fd790. Nice work @ariard!",
+      "created_at" : "2019-03-29T21:29:21Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/15670#issuecomment-478155603",
+      "id" : 478155603,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/15670",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ3ODE1NTYwMw==",
+      "updated_at" : "2019-03-29T21:29:21Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/478155603",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   }
+]

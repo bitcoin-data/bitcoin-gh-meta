@@ -1,0 +1,494 @@
+[
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25057#discussion_r863496440"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25057"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/863496440"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "```suggestion\r\n            std::vector<std::string> whitelist_split = SplitString(strWhitelist, \", \");\r\n```\r\n\r\nnit: for new code snake_case ?",
+      "commit_id" : "8976d15bb0089290c6ea8f39a967c8c63a0d0548",
+      "created_at" : "2022-05-03T06:02:03Z",
+      "diff_hunk" : "@@ -276,8 +274,10 @@ static bool InitRPCAuthentication()\n         std::set<std::string>& whitelist = g_rpc_whitelist[strUser];\n         if (pos != std::string::npos) {\n             std::string strWhitelist = strRPCWhitelist.substr(pos + 1);\n-            std::set<std::string> new_whitelist;\n-            boost::split(new_whitelist, strWhitelist, boost::is_any_of(\", \"));\n+            std::vector<std::string> whitelistSplit = SplitString(strWhitelist, \", \");",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25057#discussion_r863496440",
+      "id" : 863496440,
+      "line" : 277,
+      "node_id" : "PRRC_kwDOABII584zd-j4",
+      "original_commit_id" : "8976d15bb0089290c6ea8f39a967c8c63a0d0548",
+      "original_line" : 277,
+      "original_position" : 15,
+      "original_start_line" : null,
+      "path" : "src/httprpc.cpp",
+      "position" : 15,
+      "pull_request_review_id" : 959969029,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25057",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/863496440/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-05-03T06:03:39Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/863496440",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25057#discussion_r863496668"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25057"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/863496668"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit: Maybe also fuzz this? Untested diff:\r\n\r\n\r\n```diff\r\ndiff --git a/src/test/fuzz/string.cpp b/src/test/fuzz/string.cpp\r\nindex e6064d19b6..94399faf04 100644\r\n--- a/src/test/fuzz/string.cpp\r\n+++ b/src/test/fuzz/string.cpp\r\n@@ -224,7 +224,12 @@ FUZZ_TARGET(string)\r\n         int64_t amount_out;\r\n         (void)ParseFixedPoint(random_string_1, fuzzed_data_provider.ConsumeIntegralInRange<int>(0, 1024), &amount_out);\r\n     }\r\n-    (void)SplitString(random_string_1, fuzzed_data_provider.ConsumeIntegral<char>());\r\n+    {\r\n+        const auto single_split{SplitString(random_string_1, fuzzed_data_provider.ConsumeIntegral<char>())};\r\n+        assert(single_split.size() >= 1);\r\n+        const auto any_split{SplitString(random_string_1, random_string_2)};\r\n+        assert(any_split.size() >= 1);\r\n+    }\r\n     {\r\n         (void)Untranslated(random_string_1);\r\n         const bilingual_str bs1{random_string_1, random_string_2};\r\n",
+      "commit_id" : "8976d15bb0089290c6ea8f39a967c8c63a0d0548",
+      "created_at" : "2022-05-03T06:02:54Z",
+      "diff_hunk" : "@@ -21,6 +21,11 @@\n     return spanparsing::Split<std::string>(str, sep);\n }\n \n+[[nodiscard]] inline std::vector<std::string> SplitString(std::string_view str, std::string_view separators)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25057#discussion_r863496668",
+      "id" : 863496668,
+      "line" : 24,
+      "node_id" : "PRRC_kwDOABII584zd-nc",
+      "original_commit_id" : "8976d15bb0089290c6ea8f39a967c8c63a0d0548",
+      "original_line" : 24,
+      "original_position" : 4,
+      "original_start_line" : null,
+      "path" : "src/util/string.h",
+      "position" : 4,
+      "pull_request_review_id" : 959969029,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25057",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/863496668/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-05-03T06:03:39Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/863496668",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25057#discussion_r863496770"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25057"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/863496770"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit: Add include for string_view",
+      "commit_id" : "8976d15bb0089290c6ea8f39a967c8c63a0d0548",
+      "created_at" : "2022-05-03T06:03:12Z",
+      "diff_hunk" : "@@ -21,6 +21,11 @@\n     return spanparsing::Split<std::string>(str, sep);\n }\n \n+[[nodiscard]] inline std::vector<std::string> SplitString(std::string_view str, std::string_view separators)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25057#discussion_r863496770",
+      "id" : 863496770,
+      "line" : 24,
+      "node_id" : "PRRC_kwDOABII584zd-pC",
+      "original_commit_id" : "8976d15bb0089290c6ea8f39a967c8c63a0d0548",
+      "original_line" : 24,
+      "original_position" : 4,
+      "original_start_line" : null,
+      "path" : "src/util/string.h",
+      "position" : 4,
+      "pull_request_review_id" : 959969029,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25057",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/863496770/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-05-03T06:03:39Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/863496770",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Concept ACK",
+      "created_at" : "2022-05-03T08:29:30Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25057#issuecomment-1115854229",
+      "id" : 1115854229,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25057",
+      "node_id" : "IC_kwDOABII585CgpWV",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1115854229/reactions"
+      },
+      "updated_at" : "2022-05-03T08:29:30Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1115854229",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/863730?v=4",
+         "events_url" : "https://api.github.com/users/fanquake/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/fanquake/followers",
+         "following_url" : "https://api.github.com/users/fanquake/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/fanquake/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/fanquake",
+         "id" : 863730,
+         "login" : "fanquake",
+         "node_id" : "MDQ6VXNlcjg2MzczMA==",
+         "organizations_url" : "https://api.github.com/users/fanquake/orgs",
+         "received_events_url" : "https://api.github.com/users/fanquake/received_events",
+         "repos_url" : "https://api.github.com/users/fanquake/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/fanquake/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/fanquake/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/fanquake"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25057#discussion_r864126721"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25057"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/864126721"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "I have no experience with fuzzing, would it make sense to add stronger asserts? E.g. check that the sum of all split string length plus number of splits minus 1 should give exactly the input string length:\r\n```cpp\r\nconst auto single_split{SplitString(random_string_1, fuzzed_data_provider.ConsumeIntegral<char>())};\r\nsize_t sum = 0;\r\nfor (auto const& split : single_split) {\r\n    sum += split.size();\r\n}\r\nassert(sum + single_split.size() - 1 == random_string_1.size());\r\n\r\nconst auto any_split{SplitString(random_string_1, random_string_2)};\r\nsum = 0;\r\nfor (auto const& split : any_split) {\r\n    sum += split.size();\r\n}\r\nassert(sum + any_split.size() - 1 == random_string_1.size());\r\n```",
+      "commit_id" : "8976d15bb0089290c6ea8f39a967c8c63a0d0548",
+      "created_at" : "2022-05-03T19:29:22Z",
+      "diff_hunk" : "@@ -21,6 +21,11 @@\n     return spanparsing::Split<std::string>(str, sep);\n }\n \n+[[nodiscard]] inline std::vector<std::string> SplitString(std::string_view str, std::string_view separators)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25057#discussion_r864126721",
+      "id" : 864126721,
+      "in_reply_to_id" : 863496668,
+      "line" : 24,
+      "node_id" : "PRRC_kwDOABII584zgYcB",
+      "original_commit_id" : "8976d15bb0089290c6ea8f39a967c8c63a0d0548",
+      "original_line" : 24,
+      "original_position" : 4,
+      "original_start_line" : null,
+      "path" : "src/util/string.h",
+      "position" : 4,
+      "pull_request_review_id" : 960904310,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25057",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/864126721/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-05-03T19:29:22Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/864126721",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/14386?v=4",
+         "events_url" : "https://api.github.com/users/martinus/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/martinus/followers",
+         "following_url" : "https://api.github.com/users/martinus/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/martinus/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/martinus",
+         "id" : 14386,
+         "login" : "martinus",
+         "node_id" : "MDQ6VXNlcjE0Mzg2",
+         "organizations_url" : "https://api.github.com/users/martinus/orgs",
+         "received_events_url" : "https://api.github.com/users/martinus/received_events",
+         "repos_url" : "https://api.github.com/users/martinus/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/martinus/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/martinus/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/martinus"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Rebased with fixing nits and adding fuzzing",
+      "created_at" : "2022-05-04T05:56:06Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25057#issuecomment-1116954042",
+      "id" : 1116954042,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25057",
+      "node_id" : "IC_kwDOABII585Ck126",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1116954042/reactions"
+      },
+      "updated_at" : "2022-05-04T05:56:06Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1116954042",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/14386?v=4",
+         "events_url" : "https://api.github.com/users/martinus/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/martinus/followers",
+         "following_url" : "https://api.github.com/users/martinus/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/martinus/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/martinus",
+         "id" : 14386,
+         "login" : "martinus",
+         "node_id" : "MDQ6VXNlcjE0Mzg2",
+         "organizations_url" : "https://api.github.com/users/martinus/orgs",
+         "received_events_url" : "https://api.github.com/users/martinus/received_events",
+         "repos_url" : "https://api.github.com/users/martinus/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/martinus/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/martinus/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/martinus"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25057#discussion_r864533540"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25057"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/864533540"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Sure, just like with other tests, there is no limit to how much can be tested",
+      "commit_id" : "f849e63bad963b8717d4bc45efdad9b08567a36e",
+      "created_at" : "2022-05-04T07:38:22Z",
+      "diff_hunk" : "@@ -21,6 +21,11 @@\n     return spanparsing::Split<std::string>(str, sep);\n }\n \n+[[nodiscard]] inline std::vector<std::string> SplitString(std::string_view str, std::string_view separators)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25057#discussion_r864533540",
+      "id" : 864533540,
+      "in_reply_to_id" : 863496668,
+      "line" : 25,
+      "node_id" : "PRRC_kwDOABII584zh7wk",
+      "original_commit_id" : "8976d15bb0089290c6ea8f39a967c8c63a0d0548",
+      "original_line" : 25,
+      "original_position" : 4,
+      "original_start_line" : null,
+      "path" : "src/util/string.h",
+      "position" : 12,
+      "pull_request_review_id" : 961439921,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25057",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/864533540/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-05-04T07:38:22Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/864533540",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25057#discussion_r865613458"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25057"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/865613458"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "This is doing full scan of the iterators for each input character, thus the overall complexity is `O(input_length * number_of_separators)`. It can be optimized to `O(input_length + number_of_separators)` if a map of the separators is built beforehand that would allow checking whether a given character is a separator in a constant time.\r\n\r\nThis is mostly theoretical because it would matter if lots of separators are used and currently we only use a few. Anyway, out of curiosity, I tried that and compared the performance - in the current variant it is 734 ns/op while with the map it is 130 ns/op for 10 separators.\r\n\r\n<details>\r\n<summary>optimize Split()</summary>\r\n\r\n```diff\r\n template <typename T = Span<const char>>\r\n std::vector<T> Split(const Span<const char>& sp, std::string_view separators)\r\n {\r\n+    std::bitset<256> m;\r\n+    for (const auto& sep : separators) {\r\n+        m[static_cast<unsigned char>(sep)] = true;\r\n+    }\r\n     std::vector<T> ret;\r\n     auto it = sp.begin();\r\n     auto start = it;\r\n     while (it != sp.end()) {\r\n-        if (separators.find(*it) != std::string::npos) {\r\n+        if (m[static_cast<unsigned char>(*it)]) {\r\n             ret.emplace_back(start, it);\r\n             start = it + 1;\r\n         }\r\n         ++it;\r\n     }\r\n     ret.emplace_back(start, it);\r\n```\r\n</details>\r\n\r\n<details>\r\n<summary>benchmark</summary>\r\n\r\n```cpp\r\nstatic void Split(benchmark::Bench& bench)\r\n{\r\n    bench.run([&] {\r\n        (void)spanparsing::Split(\r\n            \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\r\n            \"bcdefghijk\"\r\n        );\r\n    });\r\n}\r\n\r\nBENCHMARK(Split);\r\n```\r\n</details>\r\n\r\nFeel free to ignore.",
+      "commit_id" : "f849e63bad963b8717d4bc45efdad9b08567a36e",
+      "created_at" : "2022-05-05T07:15:13Z",
+      "diff_hunk" : "@@ -36,21 +37,21 @@ bool Func(const std::string& str, Span<const char>& sp);\n  */\n Span<const char> Expr(Span<const char>& sp);\n \n-/** Split a string on every instance of sep, returning a vector.\n+/** Split a string on any char found in separators, returning a vector.\n  *\n  * If sep does not occur in sp, a singleton with the entirety of sp is returned.\n  *\n  * Note that this function does not care about braces, so splitting\n  * \"foo(bar(1),2),3) on ',' will return {\"foo(bar(1)\", \"2)\", \"3)\"}.\n  */\n template <typename T = Span<const char>>\n-std::vector<T> Split(const Span<const char>& sp, char sep)\n+std::vector<T> Split(const Span<const char>& sp, std::string_view separators)\n {\n     std::vector<T> ret;\n     auto it = sp.begin();\n     auto start = it;\n     while (it != sp.end()) {\n-        if (*it == sep) {\n+        if (separators.find(*it) != std::string::npos) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25057#discussion_r865613458",
+      "id" : 865613458,
+      "line" : 54,
+      "node_id" : "PRRC_kwDOABII584zmDaS",
+      "original_commit_id" : "f849e63bad963b8717d4bc45efdad9b08567a36e",
+      "original_line" : 54,
+      "original_position" : 29,
+      "original_start_line" : null,
+      "path" : "src/util/spanparsing.h",
+      "position" : 29,
+      "pull_request_review_id" : 962937240,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25057",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/865613458/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-05-05T07:16:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/865613458",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/266751?v=4",
+         "events_url" : "https://api.github.com/users/vasild/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vasild/followers",
+         "following_url" : "https://api.github.com/users/vasild/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vasild/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vasild",
+         "id" : 266751,
+         "login" : "vasild",
+         "node_id" : "MDQ6VXNlcjI2Njc1MQ==",
+         "organizations_url" : "https://api.github.com/users/vasild/orgs",
+         "received_events_url" : "https://api.github.com/users/vasild/received_events",
+         "repos_url" : "https://api.github.com/users/vasild/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vasild/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vasild"
+      }
+   }
+]

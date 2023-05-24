@@ -1,0 +1,918 @@
+[
+   {
+      "body" : "Seems fairly trivial and clean.  Tested on regtest, testnet and mainnet.",
+      "created_at" : "2015-07-07T06:56:17Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#issuecomment-119094051",
+      "id" : 119094051,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6381",
+      "updated_at" : "2015-07-07T06:56:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/119094051",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/775844?v=3",
+         "events_url" : "https://api.github.com/users/rustyrussell/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/rustyrussell/followers",
+         "following_url" : "https://api.github.com/users/rustyrussell/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/rustyrussell/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/rustyrussell",
+         "id" : 775844,
+         "login" : "rustyrussell",
+         "organizations_url" : "https://api.github.com/users/rustyrussell/orgs",
+         "received_events_url" : "https://api.github.com/users/rustyrussell/received_events",
+         "repos_url" : "https://api.github.com/users/rustyrussell/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/rustyrussell/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/rustyrussell/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/rustyrussell"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34273250"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34273250"
+         }
+      },
+      "body" : "I'd rather not see the 'data' (the actual prefix bytes) move to code. Can you pass them in as parameters instead, and call this function from each of the constructors?",
+      "commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "created_at" : "2015-07-09T16:21:28Z",
+      "diff_hunk" : "@@ -16,6 +16,63 @@ using namespace std;\n \n #include \"chainparamsseeds.h\"\n \n+static CBlock CreateGenesisBlock(const char* pszTimestamp, CScript genesisOutputScript, uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    CMutableTransaction txNew;\n+    txNew.nVersion = 1;\n+    txNew.vin.resize(1);\n+    txNew.vout.resize(1);\n+    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));\n+    txNew.vout[0].nValue = genesisReward;\n+    txNew.vout[0].scriptPubKey = genesisOutputScript;\n+\n+    CBlock genesis;\n+    genesis.nTime    = nTime;\n+    genesis.nBits    = nBits;\n+    genesis.nNonce   = nNonce;\n+    genesis.nVersion = nVersion;\n+    genesis.vtx.push_back(txNew);\n+    genesis.hashPrevBlock.SetNull();\n+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();\n+    return genesis;\n+}\n+\n+/**\n+ * Build the genesis block. Note that the output of its generation\n+ * transaction cannot be spent since it did not originally exist in the\n+ * database.\n+ *\n+ * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n+ *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n+ *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n+ *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n+ *   vMerkleTree: 4a5e1e\n+ */\n+static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n+    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n+}\n+\n+static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34273250",
+      "id" : 34273250,
+      "original_commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "original_position" : 43,
+      "path" : "src/chainparams.cpp",
+      "position" : 43,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381",
+      "updated_at" : "2015-07-09T16:21:28Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34273250",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34295857"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34295857"
+         }
+      },
+      "body" : "I think we should only keep a base58PrefixStyle here and move everything else to base58.o in a later PR.",
+      "commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "created_at" : "2015-07-09T19:52:32Z",
+      "diff_hunk" : "@@ -16,6 +16,63 @@ using namespace std;\n \n #include \"chainparamsseeds.h\"\n \n+static CBlock CreateGenesisBlock(const char* pszTimestamp, CScript genesisOutputScript, uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    CMutableTransaction txNew;\n+    txNew.nVersion = 1;\n+    txNew.vin.resize(1);\n+    txNew.vout.resize(1);\n+    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));\n+    txNew.vout[0].nValue = genesisReward;\n+    txNew.vout[0].scriptPubKey = genesisOutputScript;\n+\n+    CBlock genesis;\n+    genesis.nTime    = nTime;\n+    genesis.nBits    = nBits;\n+    genesis.nNonce   = nNonce;\n+    genesis.nVersion = nVersion;\n+    genesis.vtx.push_back(txNew);\n+    genesis.hashPrevBlock.SetNull();\n+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();\n+    return genesis;\n+}\n+\n+/**\n+ * Build the genesis block. Note that the output of its generation\n+ * transaction cannot be spent since it did not originally exist in the\n+ * database.\n+ *\n+ * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n+ *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n+ *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n+ *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n+ *   vMerkleTree: 4a5e1e\n+ */\n+static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n+    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n+}\n+\n+static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34295857",
+      "id" : 34295857,
+      "original_commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "original_position" : 43,
+      "path" : "src/chainparams.cpp",
+      "position" : 43,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381",
+      "updated_at" : "2015-07-09T19:52:32Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34295857",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1008458?v=3",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34298216"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34298216"
+         }
+      },
+      "body" : "I don't think that's a good idea. All chain-specific data should be here, IMHO. Minimize the number of places where code needs to be changed to add a new chain.",
+      "commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "created_at" : "2015-07-09T20:13:59Z",
+      "diff_hunk" : "@@ -16,6 +16,63 @@ using namespace std;\n \n #include \"chainparamsseeds.h\"\n \n+static CBlock CreateGenesisBlock(const char* pszTimestamp, CScript genesisOutputScript, uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    CMutableTransaction txNew;\n+    txNew.nVersion = 1;\n+    txNew.vin.resize(1);\n+    txNew.vout.resize(1);\n+    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));\n+    txNew.vout[0].nValue = genesisReward;\n+    txNew.vout[0].scriptPubKey = genesisOutputScript;\n+\n+    CBlock genesis;\n+    genesis.nTime    = nTime;\n+    genesis.nBits    = nBits;\n+    genesis.nNonce   = nNonce;\n+    genesis.nVersion = nVersion;\n+    genesis.vtx.push_back(txNew);\n+    genesis.hashPrevBlock.SetNull();\n+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();\n+    return genesis;\n+}\n+\n+/**\n+ * Build the genesis block. Note that the output of its generation\n+ * transaction cannot be spent since it did not originally exist in the\n+ * database.\n+ *\n+ * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n+ *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n+ *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n+ *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n+ *   vMerkleTree: 4a5e1e\n+ */\n+static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n+    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n+}\n+\n+static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34298216",
+      "id" : 34298216,
+      "original_commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "original_position" : 43,
+      "path" : "src/chainparams.cpp",
+      "position" : 43,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381",
+      "updated_at" : "2015-07-09T20:13:59Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34298216",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34299528"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34299528"
+         }
+      },
+      "body" : "Exactly, that's what I'm doing in #6382.\r\nTo create a new chain you just choose one of the existing base58Prefix styles and you're good to go.\r\nUnless you need to create a new base58Prefix style...when is that a good idea anyway?\r\nIn any case, it seems you're not against anything I'm doing here (which reduces the number of places where code needs to be changed to add a new chain), but you would prefer that I go beyond this with respect to base58 prefixes.\r\nTo me the next step is decoupling base58 from Params() global-like function, but that's not as simple as it may seem.\r\nThings can be improved in later PRs: here I'm doing the minimum to eliminate inheritance between the different CChainParams implementations.",
+      "commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "created_at" : "2015-07-09T20:24:53Z",
+      "diff_hunk" : "@@ -16,6 +16,63 @@ using namespace std;\n \n #include \"chainparamsseeds.h\"\n \n+static CBlock CreateGenesisBlock(const char* pszTimestamp, CScript genesisOutputScript, uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    CMutableTransaction txNew;\n+    txNew.nVersion = 1;\n+    txNew.vin.resize(1);\n+    txNew.vout.resize(1);\n+    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));\n+    txNew.vout[0].nValue = genesisReward;\n+    txNew.vout[0].scriptPubKey = genesisOutputScript;\n+\n+    CBlock genesis;\n+    genesis.nTime    = nTime;\n+    genesis.nBits    = nBits;\n+    genesis.nNonce   = nNonce;\n+    genesis.nVersion = nVersion;\n+    genesis.vtx.push_back(txNew);\n+    genesis.hashPrevBlock.SetNull();\n+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();\n+    return genesis;\n+}\n+\n+/**\n+ * Build the genesis block. Note that the output of its generation\n+ * transaction cannot be spent since it did not originally exist in the\n+ * database.\n+ *\n+ * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n+ *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n+ *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n+ *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n+ *   vMerkleTree: 4a5e1e\n+ */\n+static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n+    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n+}\n+\n+static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34299528",
+      "id" : 34299528,
+      "original_commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "original_position" : 43,
+      "path" : "src/chainparams.cpp",
+      "position" : 43,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381",
+      "updated_at" : "2015-07-09T20:25:12Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34299528",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1008458?v=3",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34299773"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34299773"
+         }
+      },
+      "body" : "I consider the base58 prefixes to be a property of a chain, and something that should be unique to it. I don't see why a new chain should keep using the base58 style of another chain.\r\n\r\nSo, no, I think the actual prefixes should stay right where they are. Moving them to a different function feels like unnecessarily changing data into code, and moving it to a different file is even worse.",
+      "commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "created_at" : "2015-07-09T20:27:24Z",
+      "diff_hunk" : "@@ -16,6 +16,63 @@ using namespace std;\n \n #include \"chainparamsseeds.h\"\n \n+static CBlock CreateGenesisBlock(const char* pszTimestamp, CScript genesisOutputScript, uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    CMutableTransaction txNew;\n+    txNew.nVersion = 1;\n+    txNew.vin.resize(1);\n+    txNew.vout.resize(1);\n+    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));\n+    txNew.vout[0].nValue = genesisReward;\n+    txNew.vout[0].scriptPubKey = genesisOutputScript;\n+\n+    CBlock genesis;\n+    genesis.nTime    = nTime;\n+    genesis.nBits    = nBits;\n+    genesis.nNonce   = nNonce;\n+    genesis.nVersion = nVersion;\n+    genesis.vtx.push_back(txNew);\n+    genesis.hashPrevBlock.SetNull();\n+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();\n+    return genesis;\n+}\n+\n+/**\n+ * Build the genesis block. Note that the output of its generation\n+ * transaction cannot be spent since it did not originally exist in the\n+ * database.\n+ *\n+ * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n+ *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n+ *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n+ *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n+ *   vMerkleTree: 4a5e1e\n+ */\n+static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n+    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n+}\n+\n+static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34299773",
+      "id" : 34299773,
+      "original_commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "original_position" : 43,
+      "path" : "src/chainparams.cpp",
+      "position" : 43,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381",
+      "updated_at" : "2015-07-09T20:28:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34299773",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34300649"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34300649"
+         }
+      },
+      "body" : "Then the only way to decouple base58 from the Params globals is passing a CChainParams const reference (not as easy as it may seem either).\r\n\r\nBut I still don't understand why a new chain should have new prefixes (doesn't seem to scale to many chains anyway). Neither Freicoin nor Alpha have new prefixes, what can go wrong with that?\r\nSpecially assuming payment protocol increases in usage.\r\n",
+      "commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "created_at" : "2015-07-09T20:36:20Z",
+      "diff_hunk" : "@@ -16,6 +16,63 @@ using namespace std;\n \n #include \"chainparamsseeds.h\"\n \n+static CBlock CreateGenesisBlock(const char* pszTimestamp, CScript genesisOutputScript, uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    CMutableTransaction txNew;\n+    txNew.nVersion = 1;\n+    txNew.vin.resize(1);\n+    txNew.vout.resize(1);\n+    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));\n+    txNew.vout[0].nValue = genesisReward;\n+    txNew.vout[0].scriptPubKey = genesisOutputScript;\n+\n+    CBlock genesis;\n+    genesis.nTime    = nTime;\n+    genesis.nBits    = nBits;\n+    genesis.nNonce   = nNonce;\n+    genesis.nVersion = nVersion;\n+    genesis.vtx.push_back(txNew);\n+    genesis.hashPrevBlock.SetNull();\n+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();\n+    return genesis;\n+}\n+\n+/**\n+ * Build the genesis block. Note that the output of its generation\n+ * transaction cannot be spent since it did not originally exist in the\n+ * database.\n+ *\n+ * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n+ *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n+ *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n+ *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n+ *   vMerkleTree: 4a5e1e\n+ */\n+static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n+    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n+}\n+\n+static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34300649",
+      "id" : 34300649,
+      "original_commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "original_position" : 43,
+      "path" : "src/chainparams.cpp",
+      "position" : 43,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381",
+      "updated_at" : "2015-07-09T20:37:04Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34300649",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1008458?v=3",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34301983"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34301983"
+         }
+      },
+      "body" : "Whether they should or not doesn't really matter... the fact is that base58 prefixes are chain-specific property. Moving the base58 prefixes out seems like a hack to avoid the dependency.\r\n\r\nYou could create a Base58Prefixes object, defined based base58.h, but constructed and kept inside CChainParams, and retrievable using Params().GetBase58Prefixes(), and pass that to the necessary base58 functions?",
+      "commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "created_at" : "2015-07-09T20:49:42Z",
+      "diff_hunk" : "@@ -16,6 +16,63 @@ using namespace std;\n \n #include \"chainparamsseeds.h\"\n \n+static CBlock CreateGenesisBlock(const char* pszTimestamp, CScript genesisOutputScript, uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    CMutableTransaction txNew;\n+    txNew.nVersion = 1;\n+    txNew.vin.resize(1);\n+    txNew.vout.resize(1);\n+    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));\n+    txNew.vout[0].nValue = genesisReward;\n+    txNew.vout[0].scriptPubKey = genesisOutputScript;\n+\n+    CBlock genesis;\n+    genesis.nTime    = nTime;\n+    genesis.nBits    = nBits;\n+    genesis.nNonce   = nNonce;\n+    genesis.nVersion = nVersion;\n+    genesis.vtx.push_back(txNew);\n+    genesis.hashPrevBlock.SetNull();\n+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();\n+    return genesis;\n+}\n+\n+/**\n+ * Build the genesis block. Note that the output of its generation\n+ * transaction cannot be spent since it did not originally exist in the\n+ * database.\n+ *\n+ * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n+ *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n+ *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n+ *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n+ *   vMerkleTree: 4a5e1e\n+ */\n+static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n+    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n+}\n+\n+static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34301983",
+      "id" : 34301983,
+      "original_commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "original_position" : 43,
+      "path" : "src/chainparams.cpp",
+      "position" : 43,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381",
+      "updated_at" : "2015-07-09T20:49:42Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34301983",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34303179"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34303179"
+         }
+      },
+      "body" : "I'm not insisting on moving them to base58, I just want base58 decoupled from the chainparams' globals, not so important that it's also decoupled from chainparams.\r\n\r\n> You could create a Base58Prefixes object, defined based base58.h, but constructed and kept inside CChainParams, and retrievable using Params().GetBase58Prefixes(), and pass that to the necessary base58 functions?\r\n\r\nThat sounds good to me and would also fully decouple base58 from chainparams.\r\nBut as said that would greatly increase the total diff of this PR: this can be improved further later.",
+      "commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "created_at" : "2015-07-09T21:01:13Z",
+      "diff_hunk" : "@@ -16,6 +16,63 @@ using namespace std;\n \n #include \"chainparamsseeds.h\"\n \n+static CBlock CreateGenesisBlock(const char* pszTimestamp, CScript genesisOutputScript, uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    CMutableTransaction txNew;\n+    txNew.nVersion = 1;\n+    txNew.vin.resize(1);\n+    txNew.vout.resize(1);\n+    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));\n+    txNew.vout[0].nValue = genesisReward;\n+    txNew.vout[0].scriptPubKey = genesisOutputScript;\n+\n+    CBlock genesis;\n+    genesis.nTime    = nTime;\n+    genesis.nBits    = nBits;\n+    genesis.nNonce   = nNonce;\n+    genesis.nVersion = nVersion;\n+    genesis.vtx.push_back(txNew);\n+    genesis.hashPrevBlock.SetNull();\n+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();\n+    return genesis;\n+}\n+\n+/**\n+ * Build the genesis block. Note that the output of its generation\n+ * transaction cannot be spent since it did not originally exist in the\n+ * database.\n+ *\n+ * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n+ *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n+ *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n+ *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n+ *   vMerkleTree: 4a5e1e\n+ */\n+static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n+    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n+}\n+\n+static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34303179",
+      "id" : 34303179,
+      "original_commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "original_position" : 43,
+      "path" : "src/chainparams.cpp",
+      "position" : 43,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381",
+      "updated_at" : "2015-07-09T21:01:48Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34303179",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1008458?v=3",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34305638"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34305638"
+         }
+      },
+      "body" : "In my opinion, this PR makes the situation worse. It moves chain-specific data into a shared function. I agree with the goal you're trying to reach, but I don't think we should make the code uglier (even temporarily) in order to achieve a non-urgent goal?",
+      "commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "created_at" : "2015-07-09T21:26:06Z",
+      "diff_hunk" : "@@ -16,6 +16,63 @@ using namespace std;\n \n #include \"chainparamsseeds.h\"\n \n+static CBlock CreateGenesisBlock(const char* pszTimestamp, CScript genesisOutputScript, uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    CMutableTransaction txNew;\n+    txNew.nVersion = 1;\n+    txNew.vin.resize(1);\n+    txNew.vout.resize(1);\n+    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));\n+    txNew.vout[0].nValue = genesisReward;\n+    txNew.vout[0].scriptPubKey = genesisOutputScript;\n+\n+    CBlock genesis;\n+    genesis.nTime    = nTime;\n+    genesis.nBits    = nBits;\n+    genesis.nNonce   = nNonce;\n+    genesis.nVersion = nVersion;\n+    genesis.vtx.push_back(txNew);\n+    genesis.hashPrevBlock.SetNull();\n+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();\n+    return genesis;\n+}\n+\n+/**\n+ * Build the genesis block. Note that the output of its generation\n+ * transaction cannot be spent since it did not originally exist in the\n+ * database.\n+ *\n+ * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n+ *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n+ *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n+ *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n+ *   vMerkleTree: 4a5e1e\n+ */\n+static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n+    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n+}\n+\n+static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34305638",
+      "id" : 34305638,
+      "original_commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "original_position" : 43,
+      "path" : "src/chainparams.cpp",
+      "position" : 43,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381",
+      "updated_at" : "2015-07-09T21:26:06Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34305638",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34307278"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34307278"
+         }
+      },
+      "body" : "I disagree. You need to reuse, at least, the test style for regtest. If you don't have an external function like this you will need CMainBase58Prefixes and CTestBase58Prefixes or something equivalent. I think this is the simplest way to reuse that code and I disagree it's ugly. But if you have another proposal that doesn't involve touching base58 I'm happy to replace this. But remember, being able to reuse the testnet's code in regtest is important, os the data simply can't be on each chainparams constructor (or you would repeat yourself). This is simple DRY, I don't understand why we're wasting so much time on this. I can't understand how this \"makes the situation worse\".",
+      "commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "created_at" : "2015-07-09T21:42:55Z",
+      "diff_hunk" : "@@ -16,6 +16,63 @@ using namespace std;\n \n #include \"chainparamsseeds.h\"\n \n+static CBlock CreateGenesisBlock(const char* pszTimestamp, CScript genesisOutputScript, uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    CMutableTransaction txNew;\n+    txNew.nVersion = 1;\n+    txNew.vin.resize(1);\n+    txNew.vout.resize(1);\n+    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));\n+    txNew.vout[0].nValue = genesisReward;\n+    txNew.vout[0].scriptPubKey = genesisOutputScript;\n+\n+    CBlock genesis;\n+    genesis.nTime    = nTime;\n+    genesis.nBits    = nBits;\n+    genesis.nNonce   = nNonce;\n+    genesis.nVersion = nVersion;\n+    genesis.vtx.push_back(txNew);\n+    genesis.hashPrevBlock.SetNull();\n+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();\n+    return genesis;\n+}\n+\n+/**\n+ * Build the genesis block. Note that the output of its generation\n+ * transaction cannot be spent since it did not originally exist in the\n+ * database.\n+ *\n+ * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n+ *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n+ *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n+ *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n+ *   vMerkleTree: 4a5e1e\n+ */\n+static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n+    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n+}\n+\n+static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34307278",
+      "id" : 34307278,
+      "original_commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "original_position" : 43,
+      "path" : "src/chainparams.cpp",
+      "position" : 43,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381",
+      "updated_at" : "2015-07-09T21:42:55Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34307278",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1008458?v=3",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34309159"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34309159"
+         }
+      },
+      "body" : "The fact that regtest and testnet use the same style addresses is historical IMHO. There is nothing wrong with copying the values - they just happen to have the values, for unrelated reasons. Maybe some day we want to change the regtest ones without changing the testnet one.",
+      "commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "created_at" : "2015-07-09T22:02:50Z",
+      "diff_hunk" : "@@ -16,6 +16,63 @@ using namespace std;\n \n #include \"chainparamsseeds.h\"\n \n+static CBlock CreateGenesisBlock(const char* pszTimestamp, CScript genesisOutputScript, uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    CMutableTransaction txNew;\n+    txNew.nVersion = 1;\n+    txNew.vin.resize(1);\n+    txNew.vout.resize(1);\n+    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));\n+    txNew.vout[0].nValue = genesisReward;\n+    txNew.vout[0].scriptPubKey = genesisOutputScript;\n+\n+    CBlock genesis;\n+    genesis.nTime    = nTime;\n+    genesis.nBits    = nBits;\n+    genesis.nNonce   = nNonce;\n+    genesis.nVersion = nVersion;\n+    genesis.vtx.push_back(txNew);\n+    genesis.hashPrevBlock.SetNull();\n+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();\n+    return genesis;\n+}\n+\n+/**\n+ * Build the genesis block. Note that the output of its generation\n+ * transaction cannot be spent since it did not originally exist in the\n+ * database.\n+ *\n+ * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n+ *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n+ *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n+ *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n+ *   vMerkleTree: 4a5e1e\n+ */\n+static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n+    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n+}\n+\n+static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34309159",
+      "id" : 34309159,
+      "original_commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "original_position" : 43,
+      "path" : "src/chainparams.cpp",
+      "position" : 43,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381",
+      "updated_at" : "2015-07-09T22:02:50Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34309159",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34309639"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34309639"
+         }
+      },
+      "body" : "I think you're too focussed on DRY to see the bigger picture: the reason you don't want to repeat yourself is because if the same logic is implemented in several places, you don't want to change two things when improving one. But this is not the case here: it's simple data that happens to be the same for both chains.",
+      "commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "created_at" : "2015-07-09T22:08:35Z",
+      "diff_hunk" : "@@ -16,6 +16,63 @@ using namespace std;\n \n #include \"chainparamsseeds.h\"\n \n+static CBlock CreateGenesisBlock(const char* pszTimestamp, CScript genesisOutputScript, uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    CMutableTransaction txNew;\n+    txNew.nVersion = 1;\n+    txNew.vin.resize(1);\n+    txNew.vout.resize(1);\n+    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));\n+    txNew.vout[0].nValue = genesisReward;\n+    txNew.vout[0].scriptPubKey = genesisOutputScript;\n+\n+    CBlock genesis;\n+    genesis.nTime    = nTime;\n+    genesis.nBits    = nBits;\n+    genesis.nNonce   = nNonce;\n+    genesis.nVersion = nVersion;\n+    genesis.vtx.push_back(txNew);\n+    genesis.hashPrevBlock.SetNull();\n+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();\n+    return genesis;\n+}\n+\n+/**\n+ * Build the genesis block. Note that the output of its generation\n+ * transaction cannot be spent since it did not originally exist in the\n+ * database.\n+ *\n+ * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n+ *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n+ *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n+ *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n+ *   vMerkleTree: 4a5e1e\n+ */\n+static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n+    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n+}\n+\n+static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34309639",
+      "id" : 34309639,
+      "original_commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "original_position" : 43,
+      "path" : "src/chainparams.cpp",
+      "position" : 43,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381",
+      "updated_at" : "2015-07-09T22:10:45Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34309639",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34309781"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34309781"
+         }
+      },
+      "body" : "What I find worse is the fact that chain-specific data used to be nicely grouped per chain. This breaks that for no good reason.",
+      "commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "created_at" : "2015-07-09T22:10:20Z",
+      "diff_hunk" : "@@ -16,6 +16,63 @@ using namespace std;\n \n #include \"chainparamsseeds.h\"\n \n+static CBlock CreateGenesisBlock(const char* pszTimestamp, CScript genesisOutputScript, uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    CMutableTransaction txNew;\n+    txNew.nVersion = 1;\n+    txNew.vin.resize(1);\n+    txNew.vout.resize(1);\n+    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));\n+    txNew.vout[0].nValue = genesisReward;\n+    txNew.vout[0].scriptPubKey = genesisOutputScript;\n+\n+    CBlock genesis;\n+    genesis.nTime    = nTime;\n+    genesis.nBits    = nBits;\n+    genesis.nNonce   = nNonce;\n+    genesis.nVersion = nVersion;\n+    genesis.vtx.push_back(txNew);\n+    genesis.hashPrevBlock.SetNull();\n+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();\n+    return genesis;\n+}\n+\n+/**\n+ * Build the genesis block. Note that the output of its generation\n+ * transaction cannot be spent since it did not originally exist in the\n+ * database.\n+ *\n+ * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n+ *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n+ *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n+ *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n+ *   vMerkleTree: 4a5e1e\n+ */\n+static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n+    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n+}\n+\n+static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34309781",
+      "id" : 34309781,
+      "original_commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "original_position" : 43,
+      "path" : "src/chainparams.cpp",
+      "position" : 43,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381",
+      "updated_at" : "2015-07-09T22:10:20Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34309781",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34309954"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34309954"
+         }
+      },
+      "body" : "There's nothing wrong with not repeating yourself either (or I've failed to\nunderstand what is wrong with it. I think that the fact that testnet and\nregtest is what is historical and there's no need to have different\nprefixes with each chain. In fact, as said, it doesn't scale. For example,\nI'm creating N new chains for sizetest, should they have different\nprefixes? IMO either main or test prefixes are fine for it, there's really\nno good reason to ever introduce a third one (or I haven't hear it yet).\nOn Jul 10, 2015 12:03 AM, \"Pieter Wuille\" <notifications@github.com> wrote:\n\n> In src/chainparams.cpp\n> <https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34309159>:\n>\n> > + * database.\n> > + *\n> > + * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n> > + *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n> > + *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n> > + *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n> > + *   vMerkleTree: 4a5e1e\n> > + */\n> > +static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n> > +{\n> > +    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n> > +    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n> > +    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n> > +}\n> > +\n> > +static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)\n>\n> The fact that regtest and testnet use the same style addresses is\n> historical IMHO. There is nothing wrong with copying the values - they just\n> happen to have the values, for unrelated reasons. Maybe some day we want to\n> change the regtest ones without changing the testnet one.\n>\n> Ã¢ÂÂ\n> Reply to this email directly or view it on GitHub\n> <https://github.com/bitcoin/bitcoin/pull/6381/files#r34309159>.\n>\n",
+      "commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "created_at" : "2015-07-09T22:12:23Z",
+      "diff_hunk" : "@@ -16,6 +16,63 @@ using namespace std;\n \n #include \"chainparamsseeds.h\"\n \n+static CBlock CreateGenesisBlock(const char* pszTimestamp, CScript genesisOutputScript, uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    CMutableTransaction txNew;\n+    txNew.nVersion = 1;\n+    txNew.vin.resize(1);\n+    txNew.vout.resize(1);\n+    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));\n+    txNew.vout[0].nValue = genesisReward;\n+    txNew.vout[0].scriptPubKey = genesisOutputScript;\n+\n+    CBlock genesis;\n+    genesis.nTime    = nTime;\n+    genesis.nBits    = nBits;\n+    genesis.nNonce   = nNonce;\n+    genesis.nVersion = nVersion;\n+    genesis.vtx.push_back(txNew);\n+    genesis.hashPrevBlock.SetNull();\n+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();\n+    return genesis;\n+}\n+\n+/**\n+ * Build the genesis block. Note that the output of its generation\n+ * transaction cannot be spent since it did not originally exist in the\n+ * database.\n+ *\n+ * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n+ *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n+ *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n+ *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n+ *   vMerkleTree: 4a5e1e\n+ */\n+static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n+    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n+}\n+\n+static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34309954",
+      "id" : 34309954,
+      "original_commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "original_position" : 43,
+      "path" : "src/chainparams.cpp",
+      "position" : 43,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381",
+      "updated_at" : "2015-07-09T22:12:23Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34309954",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1008458?v=3",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34311076"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34311076"
+         }
+      },
+      "body" : "That seems odd to me. I think different network should have different prefixes. Otherwise you risk using the wrong address on the wrong chain...",
+      "commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "created_at" : "2015-07-09T22:25:27Z",
+      "diff_hunk" : "@@ -16,6 +16,63 @@ using namespace std;\n \n #include \"chainparamsseeds.h\"\n \n+static CBlock CreateGenesisBlock(const char* pszTimestamp, CScript genesisOutputScript, uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    CMutableTransaction txNew;\n+    txNew.nVersion = 1;\n+    txNew.vin.resize(1);\n+    txNew.vout.resize(1);\n+    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));\n+    txNew.vout[0].nValue = genesisReward;\n+    txNew.vout[0].scriptPubKey = genesisOutputScript;\n+\n+    CBlock genesis;\n+    genesis.nTime    = nTime;\n+    genesis.nBits    = nBits;\n+    genesis.nNonce   = nNonce;\n+    genesis.nVersion = nVersion;\n+    genesis.vtx.push_back(txNew);\n+    genesis.hashPrevBlock.SetNull();\n+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();\n+    return genesis;\n+}\n+\n+/**\n+ * Build the genesis block. Note that the output of its generation\n+ * transaction cannot be spent since it did not originally exist in the\n+ * database.\n+ *\n+ * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n+ *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n+ *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n+ *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n+ *   vMerkleTree: 4a5e1e\n+ */\n+static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n+    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n+}\n+\n+static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34311076",
+      "id" : 34311076,
+      "original_commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "original_position" : 43,
+      "path" : "src/chainparams.cpp",
+      "position" : 43,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381",
+      "updated_at" : "2015-07-09T22:25:27Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34311076",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "body" : "Sorry for the rant above, @jtimon \r\n\r\nIt took me a while to see your point of view. If you think that there is no need for more than 2 base58 styles, I fully agree with the approach you're taking. You see \"use mainnet or testnet style addresses\" as the chain property. I see \"what prefix byte to use\" as the chain property.",
+      "created_at" : "2015-07-09T22:27:31Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#issuecomment-120165186",
+      "id" : 120165186,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6381",
+      "updated_at" : "2015-07-09T22:27:31Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/120165186",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34311499"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34311499"
+         }
+      },
+      "body" : "If you always use the same prfix there's no such risk. Again, what could go\nwrong with Alpha or Freicoin for not having unique (again, this doesn't\nscale) prefixes?\n\nIn any case, I'm not only focusing on DRY: I just don't understand what's\nwrong with the static function (assuming there's going to be prefixes\nreuse).\nOn Jul 10, 2015 12:26 AM, \"Pieter Wuille\" <notifications@github.com> wrote:\n\n> In src/chainparams.cpp\n> <https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34311076>:\n>\n> > + * database.\n> > + *\n> > + * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n> > + *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n> > + *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n> > + *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n> > + *   vMerkleTree: 4a5e1e\n> > + */\n> > +static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n> > +{\n> > +    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n> > +    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n> > +    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n> > +}\n> > +\n> > +static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)\n>\n> That seems odd to me. I think different network should have different\n> prefixes. Otherwise you risk using the wrong address on the wrong chain...\n>\n> Ã¢ÂÂ\n> Reply to this email directly or view it on GitHub\n> <https://github.com/bitcoin/bitcoin/pull/6381/files#r34311076>.\n>\n",
+      "commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "created_at" : "2015-07-09T22:30:44Z",
+      "diff_hunk" : "@@ -16,6 +16,63 @@ using namespace std;\n \n #include \"chainparamsseeds.h\"\n \n+static CBlock CreateGenesisBlock(const char* pszTimestamp, CScript genesisOutputScript, uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    CMutableTransaction txNew;\n+    txNew.nVersion = 1;\n+    txNew.vin.resize(1);\n+    txNew.vout.resize(1);\n+    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));\n+    txNew.vout[0].nValue = genesisReward;\n+    txNew.vout[0].scriptPubKey = genesisOutputScript;\n+\n+    CBlock genesis;\n+    genesis.nTime    = nTime;\n+    genesis.nBits    = nBits;\n+    genesis.nNonce   = nNonce;\n+    genesis.nVersion = nVersion;\n+    genesis.vtx.push_back(txNew);\n+    genesis.hashPrevBlock.SetNull();\n+    genesis.hashMerkleRoot = genesis.BuildMerkleTree();\n+    return genesis;\n+}\n+\n+/**\n+ * Build the genesis block. Note that the output of its generation\n+ * transaction cannot be spent since it did not originally exist in the\n+ * database.\n+ *\n+ * CBlock(hash=000000000019d6, ver=1, hashPrevBlock=00000000000000, hashMerkleRoot=4a5e1e, nTime=1231006505, nBits=1d00ffff, nNonce=2083236893, vtx=1)\n+ *   CTransaction(hash=4a5e1e, ver=1, vin.size=1, vout.size=1, nLockTime=0)\n+ *     CTxIn(COutPoint(000000, -1), coinbase 04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73)\n+ *     CTxOut(nValue=50.00000000, scriptPubKey=0x5F1DF16B2B704C8A578D0B)\n+ *   vMerkleTree: 4a5e1e\n+ */\n+static CBlock CreateGenesisBlock(uint32_t nTime=1231006505, uint32_t nNonce=2083236893, uint32_t nBits=0x1d00ffff, int32_t nVersion=1, const CAmount& genesisReward=50 * COIN)\n+{\n+    const char* pszTimestamp = \"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks\";\n+    CScript genesisOutputScript = CScript() << ParseHex(\"04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f\") << OP_CHECKSIG;\n+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);\n+}\n+\n+static void AssignBase58PrefixStyle(std::vector<unsigned char>* base58Prefixes, Base58PrefixStyle base58PrefixStyle)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#discussion_r34311499",
+      "id" : 34311499,
+      "original_commit_id" : "7cc689ee6d7f4f8e9a3ca0f017d5ae48700a3c1b",
+      "original_position" : 43,
+      "path" : "src/chainparams.cpp",
+      "position" : 43,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6381",
+      "updated_at" : "2015-07-09T22:30:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/34311499",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1008458?v=3",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "body" : "Needed rebase.\r\nYes, I don't think there's any need for more than a few styles (ie production, testing). Even just one would be ok IMO.\r\nAnyway, since it is not essential to achieve its main goal, I've left the polemic static function AssignBase58PrefixStyle() out of this PR (it's still in #6382 for further discussion) .\r\n",
+      "created_at" : "2015-07-12T09:28:31Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#issuecomment-120703406",
+      "id" : 120703406,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6381",
+      "updated_at" : "2015-07-12T09:28:31Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/120703406",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1008458?v=3",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "body" : "Untested ACK.",
+      "created_at" : "2015-07-14T21:33:36Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#issuecomment-121397475",
+      "id" : 121397475,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6381",
+      "updated_at" : "2015-07-14T21:33:36Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/121397475",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "body" : "utACK.\r\n\r\n> As mentioned by @theuni on #6359 , the hierarchy between the different chainparam implementations is not necessary. \r\n\r\nThat has always been a gripe of me, too.\r\nDo we need a class hierarchy at all? There is no network-specific code anymore - only the constructor differs. We could move a step further and make it completely data-driven. \r\n",
+      "created_at" : "2015-07-20T16:49:39Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#issuecomment-122947019",
+      "id" : 122947019,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6381",
+      "updated_at" : "2015-07-20T16:50:19Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/122947019",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "body" : "Yeah, I tried just using parametrized constructors for the factory in an alternate version of #6382 but the code didn't look better but actually worse (even using https://github.com/jtimon/bitcoin/commit/25e99a045138ba25d21fa028144d729fb94ebaf3 in the unified constructor).\r\nI think the only next step in \"data-driven-ness\" that it's worth taking is to directly load the values from files (ie main.dat, testnet3.dat, regtest.dat [maybe .json or something instead of .dat]).\r\n\r\nAnyway, feel free to improve things later: this is just good enough for something like #6382.\r\n",
+      "created_at" : "2015-07-21T09:32:20Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#issuecomment-123237913",
+      "id" : 123237913,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6381",
+      "updated_at" : "2015-07-21T09:34:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/123237913",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1008458?v=3",
+         "events_url" : "https://api.github.com/users/jtimon/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jtimon/followers",
+         "following_url" : "https://api.github.com/users/jtimon/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jtimon/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jtimon",
+         "id" : 1008458,
+         "login" : "jtimon",
+         "organizations_url" : "https://api.github.com/users/jtimon/orgs",
+         "received_events_url" : "https://api.github.com/users/jtimon/received_events",
+         "repos_url" : "https://api.github.com/users/jtimon/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jtimon/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jtimon/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jtimon"
+      }
+   },
+   {
+      "body" : "> I think the only next step in \"data-driven-ness\" that it's worth taking is to directly load the values from files (ie main.dat, testnet3.dat, regtest.dat [maybe .json or something instead of .dat]).\r\n\r\nAgreed. That could be kind of useful for testing.\r\n",
+      "created_at" : "2015-07-21T11:13:16Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6381#issuecomment-123265006",
+      "id" : 123265006,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6381",
+      "updated_at" : "2015-07-21T11:13:16Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/123265006",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   }
+]

@@ -1,0 +1,1203 @@
+[
+   {
+      "author_association" : "MEMBER",
+      "body" : "This is currently failing on [Travis](https://travis-ci.org/bitcoin/bitcoin/builds/579539398):\r\n```bash\r\nwallet/test/wallet_tests.cpp(381): Entering test case \"WatchOnlyPubKeys\"\r\nAssertion failed: lock cs_wallet not held in wallet/wallet.cpp:578; locks held:\r\nunknown location(0): fatal error: in \"wallet_tests/WatchOnlyPubKeys\": signal: SIGABRT (application abort requested)\r\nwallet/test/wallet_tests.cpp(357): last checkpoint\r\nwallet/test/wallet_tests.cpp(381): Leaving test case \"WatchOnlyPubKeys\"; testing time: 138195us\r\n```\r\n\r\n```bash\r\nwallet/test/wallet_tests.cpp:362:5: error: calling function 'RemoveWatchOnly' requires holding mutex 'wallet.cs_wallet' exclusively [-Werror,-Wthread-safety-analysis]\r\n    wallet.RemoveWatchOnly(p2pk);\r\n    ^\r\n1 error generated.\r\n```\r\n\r\nYou'll need to add some locking `LOCK(wallet->cs_wallet);`",
+      "created_at" : "2019-09-03T04:14:12Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#issuecomment-527297116",
+      "id" : 527297116,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16786",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDUyNzI5NzExNg==",
+      "updated_at" : "2019-09-03T04:14:12Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/527297116",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/863730?v=4",
+         "events_url" : "https://api.github.com/users/fanquake/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/fanquake/followers",
+         "following_url" : "https://api.github.com/users/fanquake/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/fanquake/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/fanquake",
+         "id" : 863730,
+         "login" : "fanquake",
+         "node_id" : "MDQ6VXNlcjg2MzczMA==",
+         "organizations_url" : "https://api.github.com/users/fanquake/orgs",
+         "received_events_url" : "https://api.github.com/users/fanquake/received_events",
+         "repos_url" : "https://api.github.com/users/fanquake/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/fanquake/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/fanquake/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/fanquake"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "> This is currently failing on [Travis](https://travis-ci.org/bitcoin/bitcoin/builds/579539398):\r\n> ...\r\n> You'll need to add some locking `LOCK(wallet->cs_wallet);`\r\n\r\nThanks, done (f74dc7ea05cf466077c6f46910ae4228373656e4). It took me quite a while to reproduce this warning, obviously it only appears compiling with clang (which makes sense after looking at src/threadsafety.h, where all the defines like e.g. EXCLUSIVE_LOCKS_REQUIRED are empty for g++).",
+      "created_at" : "2019-09-03T06:58:05Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#issuecomment-527330791",
+      "id" : 527330791,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16786",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDUyNzMzMDc5MQ==",
+      "updated_at" : "2019-09-03T06:58:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/527330791",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/91535?v=4",
+         "events_url" : "https://api.github.com/users/theStack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theStack/followers",
+         "following_url" : "https://api.github.com/users/theStack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theStack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theStack",
+         "id" : 91535,
+         "login" : "theStack",
+         "node_id" : "MDQ6VXNlcjkxNTM1",
+         "organizations_url" : "https://api.github.com/users/theStack/orgs",
+         "received_events_url" : "https://api.github.com/users/theStack/received_events",
+         "repos_url" : "https://api.github.com/users/theStack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theStack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320257616"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320257616"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "s/`cryptographically correct`/`a point on the curve`/",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-03T12:59:58Z",
+      "diff_hunk" : "@@ -334,6 +334,82 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is cryptographically",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320257616",
+      "id" : 320257616,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDI1NzYxNg==",
+      "original_commit_id" : "6a06b1d8155669c0387f05d16c82a4832df38538",
+      "original_position" : 7,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 282975607,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320257616",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "node_id" : "MDQ6VXNlcjU3Njc4OTE=",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320258229"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320258229"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Would it just be simpler for this test to zero out the last 32/64 bytes? Is having the shuffled bytes testing anything important\r\n?",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-03T13:01:25Z",
+      "diff_hunk" : "@@ -334,6 +334,82 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is cryptographically\n+// correct or not\n+static void TestWatchOnlyPubKey(CWallet& wallet, const CPubKey& add_pubkey)\n+{\n+    CScript p2pk = GetScriptForRawPubKey(add_pubkey);\n+    CKeyID add_address = add_pubkey.GetID();\n+    CPubKey found_pubkey;\n+\n+    // all Scripts (i.e. also all PubKeys) are add to the general watch-only set\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+    wallet.LoadWatchOnly(p2pk);\n+    BOOST_CHECK(wallet.HaveWatchOnly(p2pk));\n+\n+    // only cryptographically valid PubKeys shall be add to the watch-only address -> PubKey map\n+    bool isPubKeyFullyValid = add_pubkey.IsFullyValid();\n+    if (isPubKeyFullyValid) {\n+        BOOST_CHECK(wallet.GetWatchPubKey(add_address, found_pubkey));\n+        BOOST_CHECK(found_pubkey == add_pubkey);\n+    } else {\n+        BOOST_CHECK(!wallet.GetWatchPubKey(add_address, found_pubkey));\n+    }\n+\n+    wallet.RemoveWatchOnly(p2pk);\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+\n+    if (isPubKeyFullyValid)\n+        BOOST_CHECK(!wallet.GetWatchPubKey(add_address, found_pubkey));\n+}\n+\n+// Cryptographically invalidate a PubKey whilst keeping length and first byte\n+static void PollutePubKey(CPubKey& pubkey)\n+{\n+    do {\n+        std::vector<unsigned char> pubkey_raw(pubkey.begin(), pubkey.end());\n+        std::random_shuffle(pubkey_raw.begin()+1, pubkey_raw.end());",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320258229",
+      "id" : 320258229,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDI1ODIyOQ==",
+      "original_commit_id" : "6a06b1d8155669c0387f05d16c82a4832df38538",
+      "original_position" : 41,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 282975607,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320258229",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "node_id" : "MDQ6VXNlcjU3Njc4OTE=",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320258828"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320258828"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "s/add/added/",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-03T13:02:46Z",
+      "diff_hunk" : "@@ -334,6 +334,82 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is cryptographically\n+// correct or not\n+static void TestWatchOnlyPubKey(CWallet& wallet, const CPubKey& add_pubkey)\n+{\n+    CScript p2pk = GetScriptForRawPubKey(add_pubkey);\n+    CKeyID add_address = add_pubkey.GetID();\n+    CPubKey found_pubkey;\n+\n+    // all Scripts (i.e. also all PubKeys) are add to the general watch-only set",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320258828",
+      "id" : 320258828,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDI1ODgyOA==",
+      "original_commit_id" : "6a06b1d8155669c0387f05d16c82a4832df38538",
+      "original_position" : 15,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 282975607,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320258828",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "node_id" : "MDQ6VXNlcjU3Njc4OTE=",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320259011"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320259011"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "s/add/added/",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-03T13:03:11Z",
+      "diff_hunk" : "@@ -334,6 +334,82 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is cryptographically\n+// correct or not\n+static void TestWatchOnlyPubKey(CWallet& wallet, const CPubKey& add_pubkey)\n+{\n+    CScript p2pk = GetScriptForRawPubKey(add_pubkey);\n+    CKeyID add_address = add_pubkey.GetID();\n+    CPubKey found_pubkey;\n+\n+    // all Scripts (i.e. also all PubKeys) are add to the general watch-only set\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+    wallet.LoadWatchOnly(p2pk);\n+    BOOST_CHECK(wallet.HaveWatchOnly(p2pk));\n+\n+    // only cryptographically valid PubKeys shall be add to the watch-only address -> PubKey map",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320259011",
+      "id" : 320259011,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDI1OTAxMQ==",
+      "original_commit_id" : "6a06b1d8155669c0387f05d16c82a4832df38538",
+      "original_position" : 20,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 282975607,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320259011",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "node_id" : "MDQ6VXNlcjU3Njc4OTE=",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320259431"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320259431"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : " maybe also assert what `found_pubkey` ends up being  in this situation",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-03T13:04:09Z",
+      "diff_hunk" : "@@ -334,6 +334,82 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is cryptographically\n+// correct or not\n+static void TestWatchOnlyPubKey(CWallet& wallet, const CPubKey& add_pubkey)\n+{\n+    CScript p2pk = GetScriptForRawPubKey(add_pubkey);\n+    CKeyID add_address = add_pubkey.GetID();\n+    CPubKey found_pubkey;\n+\n+    // all Scripts (i.e. also all PubKeys) are add to the general watch-only set\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+    wallet.LoadWatchOnly(p2pk);\n+    BOOST_CHECK(wallet.HaveWatchOnly(p2pk));\n+\n+    // only cryptographically valid PubKeys shall be add to the watch-only address -> PubKey map\n+    bool isPubKeyFullyValid = add_pubkey.IsFullyValid();\n+    if (isPubKeyFullyValid) {\n+        BOOST_CHECK(wallet.GetWatchPubKey(add_address, found_pubkey));\n+        BOOST_CHECK(found_pubkey == add_pubkey);\n+    } else {\n+        BOOST_CHECK(!wallet.GetWatchPubKey(add_address, found_pubkey));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320259431",
+      "id" : 320259431,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDI1OTQzMQ==",
+      "original_commit_id" : "6a06b1d8155669c0387f05d16c82a4832df38538",
+      "original_position" : 26,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : 26,
+      "pull_request_review_id" : 282975607,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320259431",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "node_id" : "MDQ6VXNlcjU3Njc4OTE=",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "you should just squash the 2 commits together",
+      "created_at" : "2019-09-03T13:05:23Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#issuecomment-527449590",
+      "id" : 527449590,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16786",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDUyNzQ0OTU5MA==",
+      "updated_at" : "2019-09-03T13:05:23Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/527449590",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "node_id" : "MDQ6VXNlcjU3Njc4OTE=",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320310358"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320310358"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Good point -- no, the shuffling doesn't test anything import, for some reason I didn't want to set the PubKey coordinate(s) to a fixed value off the curve. Zeroing out is simpler and saves the loop.",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-03T14:40:43Z",
+      "diff_hunk" : "@@ -334,6 +334,82 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is cryptographically\n+// correct or not\n+static void TestWatchOnlyPubKey(CWallet& wallet, const CPubKey& add_pubkey)\n+{\n+    CScript p2pk = GetScriptForRawPubKey(add_pubkey);\n+    CKeyID add_address = add_pubkey.GetID();\n+    CPubKey found_pubkey;\n+\n+    // all Scripts (i.e. also all PubKeys) are add to the general watch-only set\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+    wallet.LoadWatchOnly(p2pk);\n+    BOOST_CHECK(wallet.HaveWatchOnly(p2pk));\n+\n+    // only cryptographically valid PubKeys shall be add to the watch-only address -> PubKey map\n+    bool isPubKeyFullyValid = add_pubkey.IsFullyValid();\n+    if (isPubKeyFullyValid) {\n+        BOOST_CHECK(wallet.GetWatchPubKey(add_address, found_pubkey));\n+        BOOST_CHECK(found_pubkey == add_pubkey);\n+    } else {\n+        BOOST_CHECK(!wallet.GetWatchPubKey(add_address, found_pubkey));\n+    }\n+\n+    wallet.RemoveWatchOnly(p2pk);\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+\n+    if (isPubKeyFullyValid)\n+        BOOST_CHECK(!wallet.GetWatchPubKey(add_address, found_pubkey));\n+}\n+\n+// Cryptographically invalidate a PubKey whilst keeping length and first byte\n+static void PollutePubKey(CPubKey& pubkey)\n+{\n+    do {\n+        std::vector<unsigned char> pubkey_raw(pubkey.begin(), pubkey.end());\n+        std::random_shuffle(pubkey_raw.begin()+1, pubkey_raw.end());",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320310358",
+      "id" : 320310358,
+      "in_reply_to_id" : 320258229,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDMxMDM1OA==",
+      "original_commit_id" : "6a06b1d8155669c0387f05d16c82a4832df38538",
+      "original_position" : 41,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 283045213,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320310358",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/91535?v=4",
+         "events_url" : "https://api.github.com/users/theStack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theStack/followers",
+         "following_url" : "https://api.github.com/users/theStack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theStack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theStack",
+         "id" : 91535,
+         "login" : "theStack",
+         "node_id" : "MDQ6VXNlcjkxNTM1",
+         "organizations_url" : "https://api.github.com/users/theStack/orgs",
+         "received_events_url" : "https://api.github.com/users/theStack/received_events",
+         "repos_url" : "https://api.github.com/users/theStack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theStack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320311485"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320311485"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "`found_pubkey` isn't touched when no PubKey is found, but of course this fact can be tested as well by asserting it to be a newly constructed (and thus invalid) PubKey.",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-03T14:42:42Z",
+      "diff_hunk" : "@@ -334,6 +334,82 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is cryptographically\n+// correct or not\n+static void TestWatchOnlyPubKey(CWallet& wallet, const CPubKey& add_pubkey)\n+{\n+    CScript p2pk = GetScriptForRawPubKey(add_pubkey);\n+    CKeyID add_address = add_pubkey.GetID();\n+    CPubKey found_pubkey;\n+\n+    // all Scripts (i.e. also all PubKeys) are add to the general watch-only set\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+    wallet.LoadWatchOnly(p2pk);\n+    BOOST_CHECK(wallet.HaveWatchOnly(p2pk));\n+\n+    // only cryptographically valid PubKeys shall be add to the watch-only address -> PubKey map\n+    bool isPubKeyFullyValid = add_pubkey.IsFullyValid();\n+    if (isPubKeyFullyValid) {\n+        BOOST_CHECK(wallet.GetWatchPubKey(add_address, found_pubkey));\n+        BOOST_CHECK(found_pubkey == add_pubkey);\n+    } else {\n+        BOOST_CHECK(!wallet.GetWatchPubKey(add_address, found_pubkey));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320311485",
+      "id" : 320311485,
+      "in_reply_to_id" : 320259431,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDMxMTQ4NQ==",
+      "original_commit_id" : "6a06b1d8155669c0387f05d16c82a4832df38538",
+      "original_position" : 26,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : 26,
+      "pull_request_review_id" : 283046661,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320311485",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/91535?v=4",
+         "events_url" : "https://api.github.com/users/theStack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theStack/followers",
+         "following_url" : "https://api.github.com/users/theStack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theStack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theStack",
+         "id" : 91535,
+         "login" : "theStack",
+         "node_id" : "MDQ6VXNlcjkxNTM1",
+         "organizations_url" : "https://api.github.com/users/theStack/orgs",
+         "received_events_url" : "https://api.github.com/users/theStack/received_events",
+         "repos_url" : "https://api.github.com/users/theStack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theStack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320408999"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320408999"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit: braces\r\n\r\nAs above, you should also check that `found_pubkey` is the default `CPubKey`.",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-03T18:12:32Z",
+      "diff_hunk" : "@@ -334,6 +334,82 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is a point on the curve\n+static void TestWatchOnlyPubKey(CWallet& wallet, const CPubKey& add_pubkey)\n+{\n+    CScript p2pk = GetScriptForRawPubKey(add_pubkey);\n+    CKeyID add_address = add_pubkey.GetID();\n+    CPubKey found_pubkey;\n+    LOCK(wallet.cs_wallet);\n+\n+    // all Scripts (i.e. also all PubKeys) are added to the general watch-only set\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+    wallet.LoadWatchOnly(p2pk);\n+    BOOST_CHECK(wallet.HaveWatchOnly(p2pk));\n+\n+    // only PubKeys on the curve shall be added to the watch-only address -> PubKey map\n+    bool isPubKeyFullyValid = add_pubkey.IsFullyValid();\n+    if (isPubKeyFullyValid) {\n+        BOOST_CHECK(wallet.GetWatchPubKey(add_address, found_pubkey));\n+        BOOST_CHECK(found_pubkey == add_pubkey);\n+    } else {\n+        BOOST_CHECK(!wallet.GetWatchPubKey(add_address, found_pubkey));\n+        BOOST_CHECK(found_pubkey == CPubKey());\n+    }\n+\n+    wallet.RemoveWatchOnly(p2pk);\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+\n+    if (isPubKeyFullyValid)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320408999",
+      "id" : 320408999,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDQwODk5OQ==",
+      "original_commit_id" : "c19bb7b3135dc661b67677a443d9c48cafc98d8e",
+      "original_position" : 33,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 283172384,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320408999",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320409627"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320409627"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Use `BOOST_CHECK` instead of `assert`.",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-03T18:13:59Z",
+      "diff_hunk" : "@@ -334,6 +334,82 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is a point on the curve\n+static void TestWatchOnlyPubKey(CWallet& wallet, const CPubKey& add_pubkey)\n+{\n+    CScript p2pk = GetScriptForRawPubKey(add_pubkey);\n+    CKeyID add_address = add_pubkey.GetID();\n+    CPubKey found_pubkey;\n+    LOCK(wallet.cs_wallet);\n+\n+    // all Scripts (i.e. also all PubKeys) are added to the general watch-only set\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+    wallet.LoadWatchOnly(p2pk);\n+    BOOST_CHECK(wallet.HaveWatchOnly(p2pk));\n+\n+    // only PubKeys on the curve shall be added to the watch-only address -> PubKey map\n+    bool isPubKeyFullyValid = add_pubkey.IsFullyValid();\n+    if (isPubKeyFullyValid) {\n+        BOOST_CHECK(wallet.GetWatchPubKey(add_address, found_pubkey));\n+        BOOST_CHECK(found_pubkey == add_pubkey);\n+    } else {\n+        BOOST_CHECK(!wallet.GetWatchPubKey(add_address, found_pubkey));\n+        BOOST_CHECK(found_pubkey == CPubKey());\n+    }\n+\n+    wallet.RemoveWatchOnly(p2pk);\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+\n+    if (isPubKeyFullyValid)\n+        BOOST_CHECK(!wallet.GetWatchPubKey(add_address, found_pubkey));\n+}\n+\n+// Cryptographically invalidate a PubKey whilst keeping length and first byte\n+static void PollutePubKey(CPubKey& pubkey)\n+{\n+    std::vector<unsigned char> pubkey_raw(pubkey.begin(), pubkey.end());\n+    std::fill(pubkey_raw.begin()+1, pubkey_raw.end(), 0);\n+    pubkey = CPubKey(pubkey_raw);\n+    assert(!pubkey.IsFullyValid());\n+    assert(pubkey.IsValid());\n+}\n+\n+// Test watch-only wallet logic for PubKeys\n+BOOST_AUTO_TEST_CASE(WatchOnlyPubKeys)\n+{\n+    CKey key;\n+    CPubKey pubkey;\n+\n+    assert(m_wallet.HaveWatchOnly() == false);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320409627",
+      "id" : 320409627,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDQwOTYyNw==",
+      "original_commit_id" : "c19bb7b3135dc661b67677a443d9c48cafc98d8e",
+      "original_position" : 53,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 283172384,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320409627",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320410159"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320410159"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Should use `!IsCompressed` rather than checking the size directly.",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-03T18:15:08Z",
+      "diff_hunk" : "@@ -334,6 +334,82 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is a point on the curve\n+static void TestWatchOnlyPubKey(CWallet& wallet, const CPubKey& add_pubkey)\n+{\n+    CScript p2pk = GetScriptForRawPubKey(add_pubkey);\n+    CKeyID add_address = add_pubkey.GetID();\n+    CPubKey found_pubkey;\n+    LOCK(wallet.cs_wallet);\n+\n+    // all Scripts (i.e. also all PubKeys) are added to the general watch-only set\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+    wallet.LoadWatchOnly(p2pk);\n+    BOOST_CHECK(wallet.HaveWatchOnly(p2pk));\n+\n+    // only PubKeys on the curve shall be added to the watch-only address -> PubKey map\n+    bool isPubKeyFullyValid = add_pubkey.IsFullyValid();\n+    if (isPubKeyFullyValid) {\n+        BOOST_CHECK(wallet.GetWatchPubKey(add_address, found_pubkey));\n+        BOOST_CHECK(found_pubkey == add_pubkey);\n+    } else {\n+        BOOST_CHECK(!wallet.GetWatchPubKey(add_address, found_pubkey));\n+        BOOST_CHECK(found_pubkey == CPubKey());\n+    }\n+\n+    wallet.RemoveWatchOnly(p2pk);\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+\n+    if (isPubKeyFullyValid)\n+        BOOST_CHECK(!wallet.GetWatchPubKey(add_address, found_pubkey));\n+}\n+\n+// Cryptographically invalidate a PubKey whilst keeping length and first byte\n+static void PollutePubKey(CPubKey& pubkey)\n+{\n+    std::vector<unsigned char> pubkey_raw(pubkey.begin(), pubkey.end());\n+    std::fill(pubkey_raw.begin()+1, pubkey_raw.end(), 0);\n+    pubkey = CPubKey(pubkey_raw);\n+    assert(!pubkey.IsFullyValid());\n+    assert(pubkey.IsValid());\n+}\n+\n+// Test watch-only wallet logic for PubKeys\n+BOOST_AUTO_TEST_CASE(WatchOnlyPubKeys)\n+{\n+    CKey key;\n+    CPubKey pubkey;\n+\n+    assert(m_wallet.HaveWatchOnly() == false);\n+\n+    // uncompressed valid PubKey\n+    key.MakeNewKey(false);\n+    pubkey = key.GetPubKey();\n+    assert(pubkey.size() == CPubKey::PUBLIC_KEY_SIZE);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320410159",
+      "id" : 320410159,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDQxMDE1OQ==",
+      "original_commit_id" : "c19bb7b3135dc661b67677a443d9c48cafc98d8e",
+      "original_position" : 58,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 283172384,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320410159",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320448669"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320448669"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Since `GetWatchPubKey` doesn't modify the passed PubKey if it returns `false`, it would still have the same contents as before, so in this case the correct assertion would be `found_pubkey == add_pubkey`. To not confuse the reader (one could wrongly assume that this assert checks for an explicit modification by the function in this case as well), I add the comment `// passed key is unchanged` for those two cases.",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-03T19:50:18Z",
+      "diff_hunk" : "@@ -334,6 +334,82 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is a point on the curve\n+static void TestWatchOnlyPubKey(CWallet& wallet, const CPubKey& add_pubkey)\n+{\n+    CScript p2pk = GetScriptForRawPubKey(add_pubkey);\n+    CKeyID add_address = add_pubkey.GetID();\n+    CPubKey found_pubkey;\n+    LOCK(wallet.cs_wallet);\n+\n+    // all Scripts (i.e. also all PubKeys) are added to the general watch-only set\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+    wallet.LoadWatchOnly(p2pk);\n+    BOOST_CHECK(wallet.HaveWatchOnly(p2pk));\n+\n+    // only PubKeys on the curve shall be added to the watch-only address -> PubKey map\n+    bool isPubKeyFullyValid = add_pubkey.IsFullyValid();\n+    if (isPubKeyFullyValid) {\n+        BOOST_CHECK(wallet.GetWatchPubKey(add_address, found_pubkey));\n+        BOOST_CHECK(found_pubkey == add_pubkey);\n+    } else {\n+        BOOST_CHECK(!wallet.GetWatchPubKey(add_address, found_pubkey));\n+        BOOST_CHECK(found_pubkey == CPubKey());\n+    }\n+\n+    wallet.RemoveWatchOnly(p2pk);\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+\n+    if (isPubKeyFullyValid)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320448669",
+      "id" : 320448669,
+      "in_reply_to_id" : 320408999,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDQ0ODY2OQ==",
+      "original_commit_id" : "c19bb7b3135dc661b67677a443d9c48cafc98d8e",
+      "original_position" : 33,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 283222873,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320448669",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/91535?v=4",
+         "events_url" : "https://api.github.com/users/theStack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theStack/followers",
+         "following_url" : "https://api.github.com/users/theStack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theStack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theStack",
+         "id" : 91535,
+         "login" : "theStack",
+         "node_id" : "MDQ6VXNlcjkxNTM1",
+         "organizations_url" : "https://api.github.com/users/theStack/orgs",
+         "received_events_url" : "https://api.github.com/users/theStack/received_events",
+         "repos_url" : "https://api.github.com/users/theStack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theStack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320504314"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320504314"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Done",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-03T22:27:24Z",
+      "diff_hunk" : "@@ -334,6 +334,82 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is cryptographically",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320504314",
+      "id" : 320504314,
+      "in_reply_to_id" : 320257616,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDUwNDMxNA==",
+      "original_commit_id" : "6a06b1d8155669c0387f05d16c82a4832df38538",
+      "original_position" : 7,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 283293890,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320504314",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/91535?v=4",
+         "events_url" : "https://api.github.com/users/theStack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theStack/followers",
+         "following_url" : "https://api.github.com/users/theStack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theStack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theStack",
+         "id" : 91535,
+         "login" : "theStack",
+         "node_id" : "MDQ6VXNlcjkxNTM1",
+         "organizations_url" : "https://api.github.com/users/theStack/orgs",
+         "received_events_url" : "https://api.github.com/users/theStack/received_events",
+         "repos_url" : "https://api.github.com/users/theStack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theStack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320504396"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320504396"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Done",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-03T22:27:43Z",
+      "diff_hunk" : "@@ -334,6 +334,82 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is cryptographically\n+// correct or not\n+static void TestWatchOnlyPubKey(CWallet& wallet, const CPubKey& add_pubkey)\n+{\n+    CScript p2pk = GetScriptForRawPubKey(add_pubkey);\n+    CKeyID add_address = add_pubkey.GetID();\n+    CPubKey found_pubkey;\n+\n+    // all Scripts (i.e. also all PubKeys) are add to the general watch-only set",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320504396",
+      "id" : 320504396,
+      "in_reply_to_id" : 320258828,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDUwNDM5Ng==",
+      "original_commit_id" : "6a06b1d8155669c0387f05d16c82a4832df38538",
+      "original_position" : 15,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 283293992,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320504396",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/91535?v=4",
+         "events_url" : "https://api.github.com/users/theStack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theStack/followers",
+         "following_url" : "https://api.github.com/users/theStack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theStack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theStack",
+         "id" : 91535,
+         "login" : "theStack",
+         "node_id" : "MDQ6VXNlcjkxNTM1",
+         "organizations_url" : "https://api.github.com/users/theStack/orgs",
+         "received_events_url" : "https://api.github.com/users/theStack/received_events",
+         "repos_url" : "https://api.github.com/users/theStack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theStack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320504479"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320504479"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Done",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-03T22:28:02Z",
+      "diff_hunk" : "@@ -334,6 +334,82 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is cryptographically\n+// correct or not\n+static void TestWatchOnlyPubKey(CWallet& wallet, const CPubKey& add_pubkey)\n+{\n+    CScript p2pk = GetScriptForRawPubKey(add_pubkey);\n+    CKeyID add_address = add_pubkey.GetID();\n+    CPubKey found_pubkey;\n+\n+    // all Scripts (i.e. also all PubKeys) are add to the general watch-only set\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+    wallet.LoadWatchOnly(p2pk);\n+    BOOST_CHECK(wallet.HaveWatchOnly(p2pk));\n+\n+    // only cryptographically valid PubKeys shall be add to the watch-only address -> PubKey map",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320504479",
+      "id" : 320504479,
+      "in_reply_to_id" : 320259011,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDUwNDQ3OQ==",
+      "original_commit_id" : "6a06b1d8155669c0387f05d16c82a4832df38538",
+      "original_position" : 20,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 283294099,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320504479",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/91535?v=4",
+         "events_url" : "https://api.github.com/users/theStack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theStack/followers",
+         "following_url" : "https://api.github.com/users/theStack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theStack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theStack",
+         "id" : 91535,
+         "login" : "theStack",
+         "node_id" : "MDQ6VXNlcjkxNTM1",
+         "organizations_url" : "https://api.github.com/users/theStack/orgs",
+         "received_events_url" : "https://api.github.com/users/theStack/received_events",
+         "repos_url" : "https://api.github.com/users/theStack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theStack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320504644"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320504644"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Done",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-03T22:28:35Z",
+      "diff_hunk" : "@@ -334,6 +334,82 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is a point on the curve\n+static void TestWatchOnlyPubKey(CWallet& wallet, const CPubKey& add_pubkey)\n+{\n+    CScript p2pk = GetScriptForRawPubKey(add_pubkey);\n+    CKeyID add_address = add_pubkey.GetID();\n+    CPubKey found_pubkey;\n+    LOCK(wallet.cs_wallet);\n+\n+    // all Scripts (i.e. also all PubKeys) are added to the general watch-only set\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+    wallet.LoadWatchOnly(p2pk);\n+    BOOST_CHECK(wallet.HaveWatchOnly(p2pk));\n+\n+    // only PubKeys on the curve shall be added to the watch-only address -> PubKey map\n+    bool isPubKeyFullyValid = add_pubkey.IsFullyValid();\n+    if (isPubKeyFullyValid) {\n+        BOOST_CHECK(wallet.GetWatchPubKey(add_address, found_pubkey));\n+        BOOST_CHECK(found_pubkey == add_pubkey);\n+    } else {\n+        BOOST_CHECK(!wallet.GetWatchPubKey(add_address, found_pubkey));\n+        BOOST_CHECK(found_pubkey == CPubKey());\n+    }\n+\n+    wallet.RemoveWatchOnly(p2pk);\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+\n+    if (isPubKeyFullyValid)\n+        BOOST_CHECK(!wallet.GetWatchPubKey(add_address, found_pubkey));\n+}\n+\n+// Cryptographically invalidate a PubKey whilst keeping length and first byte\n+static void PollutePubKey(CPubKey& pubkey)\n+{\n+    std::vector<unsigned char> pubkey_raw(pubkey.begin(), pubkey.end());\n+    std::fill(pubkey_raw.begin()+1, pubkey_raw.end(), 0);\n+    pubkey = CPubKey(pubkey_raw);\n+    assert(!pubkey.IsFullyValid());\n+    assert(pubkey.IsValid());\n+}\n+\n+// Test watch-only wallet logic for PubKeys\n+BOOST_AUTO_TEST_CASE(WatchOnlyPubKeys)\n+{\n+    CKey key;\n+    CPubKey pubkey;\n+\n+    assert(m_wallet.HaveWatchOnly() == false);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320504644",
+      "id" : 320504644,
+      "in_reply_to_id" : 320409627,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDUwNDY0NA==",
+      "original_commit_id" : "c19bb7b3135dc661b67677a443d9c48cafc98d8e",
+      "original_position" : 53,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 283294286,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320504644",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/91535?v=4",
+         "events_url" : "https://api.github.com/users/theStack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theStack/followers",
+         "following_url" : "https://api.github.com/users/theStack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theStack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theStack",
+         "id" : 91535,
+         "login" : "theStack",
+         "node_id" : "MDQ6VXNlcjkxNTM1",
+         "organizations_url" : "https://api.github.com/users/theStack/orgs",
+         "received_events_url" : "https://api.github.com/users/theStack/received_events",
+         "repos_url" : "https://api.github.com/users/theStack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theStack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320504794"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320504794"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Done",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-03T22:29:06Z",
+      "diff_hunk" : "@@ -334,6 +334,82 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is a point on the curve\n+static void TestWatchOnlyPubKey(CWallet& wallet, const CPubKey& add_pubkey)\n+{\n+    CScript p2pk = GetScriptForRawPubKey(add_pubkey);\n+    CKeyID add_address = add_pubkey.GetID();\n+    CPubKey found_pubkey;\n+    LOCK(wallet.cs_wallet);\n+\n+    // all Scripts (i.e. also all PubKeys) are added to the general watch-only set\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+    wallet.LoadWatchOnly(p2pk);\n+    BOOST_CHECK(wallet.HaveWatchOnly(p2pk));\n+\n+    // only PubKeys on the curve shall be added to the watch-only address -> PubKey map\n+    bool isPubKeyFullyValid = add_pubkey.IsFullyValid();\n+    if (isPubKeyFullyValid) {\n+        BOOST_CHECK(wallet.GetWatchPubKey(add_address, found_pubkey));\n+        BOOST_CHECK(found_pubkey == add_pubkey);\n+    } else {\n+        BOOST_CHECK(!wallet.GetWatchPubKey(add_address, found_pubkey));\n+        BOOST_CHECK(found_pubkey == CPubKey());\n+    }\n+\n+    wallet.RemoveWatchOnly(p2pk);\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+\n+    if (isPubKeyFullyValid)\n+        BOOST_CHECK(!wallet.GetWatchPubKey(add_address, found_pubkey));\n+}\n+\n+// Cryptographically invalidate a PubKey whilst keeping length and first byte\n+static void PollutePubKey(CPubKey& pubkey)\n+{\n+    std::vector<unsigned char> pubkey_raw(pubkey.begin(), pubkey.end());\n+    std::fill(pubkey_raw.begin()+1, pubkey_raw.end(), 0);\n+    pubkey = CPubKey(pubkey_raw);\n+    assert(!pubkey.IsFullyValid());\n+    assert(pubkey.IsValid());\n+}\n+\n+// Test watch-only wallet logic for PubKeys\n+BOOST_AUTO_TEST_CASE(WatchOnlyPubKeys)\n+{\n+    CKey key;\n+    CPubKey pubkey;\n+\n+    assert(m_wallet.HaveWatchOnly() == false);\n+\n+    // uncompressed valid PubKey\n+    key.MakeNewKey(false);\n+    pubkey = key.GetPubKey();\n+    assert(pubkey.size() == CPubKey::PUBLIC_KEY_SIZE);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r320504794",
+      "id" : 320504794,
+      "in_reply_to_id" : 320410159,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDUwNDc5NA==",
+      "original_commit_id" : "c19bb7b3135dc661b67677a443d9c48cafc98d8e",
+      "original_position" : 58,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 283294458,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/320504794",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/91535?v=4",
+         "events_url" : "https://api.github.com/users/theStack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theStack/followers",
+         "following_url" : "https://api.github.com/users/theStack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theStack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theStack",
+         "id" : 91535,
+         "login" : "theStack",
+         "node_id" : "MDQ6VXNlcjkxNTM1",
+         "organizations_url" : "https://api.github.com/users/theStack/orgs",
+         "received_events_url" : "https://api.github.com/users/theStack/received_events",
+         "repos_url" : "https://api.github.com/users/theStack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theStack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r324769911"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/324769911"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit: snake_case",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-16T16:29:35Z",
+      "diff_hunk" : "@@ -334,6 +334,84 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is a point on the curve\n+static void TestWatchOnlyPubKey(CWallet& wallet, const CPubKey& add_pubkey)\n+{\n+    CScript p2pk = GetScriptForRawPubKey(add_pubkey);\n+    CKeyID add_address = add_pubkey.GetID();\n+    CPubKey found_pubkey;\n+    LOCK(wallet.cs_wallet);\n+\n+    // all Scripts (i.e. also all PubKeys) are added to the general watch-only set\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+    wallet.LoadWatchOnly(p2pk);\n+    BOOST_CHECK(wallet.HaveWatchOnly(p2pk));\n+\n+    // only PubKeys on the curve shall be added to the watch-only address -> PubKey map\n+    bool isPubKeyFullyValid = add_pubkey.IsFullyValid();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r324769911",
+      "id" : 324769911,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNDc2OTkxMQ==",
+      "original_commit_id" : "3a219e82304c7f62d75369d6ee55111f601cc892",
+      "original_position" : 21,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 288751826,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-16T21:24:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/324769911",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r324995806"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/324995806"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Done",
+      "commit_id" : "a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3",
+      "created_at" : "2019-09-17T06:16:28Z",
+      "diff_hunk" : "@@ -334,6 +334,84 @@ BOOST_AUTO_TEST_CASE(LoadReceiveRequests)\n     BOOST_CHECK_EQUAL(values[1], \"val_rr1\");\n }\n \n+// Test some watch-only wallet methods by the procedure of loading (LoadWatchOnly),\n+// checking (HaveWatchOnly), getting (GetWatchPubKey) and removing (RemoveWatchOnly) a\n+// given PubKey, resp. its corresponding P2PK Script. Results of the the impact on\n+// the address -> PubKey map is dependent on whether the PubKey is a point on the curve\n+static void TestWatchOnlyPubKey(CWallet& wallet, const CPubKey& add_pubkey)\n+{\n+    CScript p2pk = GetScriptForRawPubKey(add_pubkey);\n+    CKeyID add_address = add_pubkey.GetID();\n+    CPubKey found_pubkey;\n+    LOCK(wallet.cs_wallet);\n+\n+    // all Scripts (i.e. also all PubKeys) are added to the general watch-only set\n+    BOOST_CHECK(!wallet.HaveWatchOnly(p2pk));\n+    wallet.LoadWatchOnly(p2pk);\n+    BOOST_CHECK(wallet.HaveWatchOnly(p2pk));\n+\n+    // only PubKeys on the curve shall be added to the watch-only address -> PubKey map\n+    bool isPubKeyFullyValid = add_pubkey.IsFullyValid();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#discussion_r324995806",
+      "id" : 324995806,
+      "in_reply_to_id" : 324769911,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNDk5NTgwNg==",
+      "original_commit_id" : "3a219e82304c7f62d75369d6ee55111f601cc892",
+      "original_position" : 21,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : null,
+      "pull_request_review_id" : 289037734,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16786",
+      "updated_at" : "2019-09-17T06:16:29Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/324995806",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/91535?v=4",
+         "events_url" : "https://api.github.com/users/theStack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theStack/followers",
+         "following_url" : "https://api.github.com/users/theStack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theStack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theStack",
+         "id" : 91535,
+         "login" : "theStack",
+         "node_id" : "MDQ6VXNlcjkxNTM1",
+         "organizations_url" : "https://api.github.com/users/theStack/orgs",
+         "received_events_url" : "https://api.github.com/users/theStack/received_events",
+         "repos_url" : "https://api.github.com/users/theStack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theStack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "@instagibbs @achow101 Thanks for your reviews!",
+      "created_at" : "2019-09-17T06:18:09Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#issuecomment-532076933",
+      "id" : 532076933,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16786",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDUzMjA3NjkzMw==",
+      "updated_at" : "2019-09-17T06:18:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/532076933",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/91535?v=4",
+         "events_url" : "https://api.github.com/users/theStack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theStack/followers",
+         "following_url" : "https://api.github.com/users/theStack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theStack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theStack",
+         "id" : 91535,
+         "login" : "theStack",
+         "node_id" : "MDQ6VXNlcjkxNTM1",
+         "organizations_url" : "https://api.github.com/users/theStack/orgs",
+         "received_events_url" : "https://api.github.com/users/theStack/received_events",
+         "repos_url" : "https://api.github.com/users/theStack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theStack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "ACK a57a1d4\r\n\r\n\r\nAs an aside, in case anyone wants to test P2PK functionality (on testnet), here's a fun tool: https://github.com/dianerey/bech32p2pkaddress (no need to provide inputs in the Python script, just use `fundrawtransaction` and `signrawtransactionwithwallet`).\r\n\r\nWhen you import a pubkey using `importpubkey`, the wallet watches for P2PK transactions as well. It also happily imports invalid pubkeys to watch. The same goes for `importaddress 21PUBKEYac` (P2PK script). The wallet also happily signs raw transactions to such keys, which should make anyone appreciate checksums.\r\n\r\nAlthough the above scenarios are rather contrived, should we have some RPC methods check if a pubkey is on a curve?",
+      "created_at" : "2019-09-19T10:41:20Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#issuecomment-533073216",
+      "id" : 533073216,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16786",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDUzMzA3MzIxNg==",
+      "updated_at" : "2019-09-19T10:42:46Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/533073216",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/10217?v=4",
+         "events_url" : "https://api.github.com/users/Sjors/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Sjors/followers",
+         "following_url" : "https://api.github.com/users/Sjors/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Sjors/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Sjors",
+         "id" : 10217,
+         "login" : "Sjors",
+         "node_id" : "MDQ6VXNlcjEwMjE3",
+         "organizations_url" : "https://api.github.com/users/Sjors/orgs",
+         "received_events_url" : "https://api.github.com/users/Sjors/received_events",
+         "repos_url" : "https://api.github.com/users/Sjors/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Sjors/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Sjors"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "@Sjors: Thanks for the review!\r\n\r\n> When you import a pubkey using `importpubkey`, the wallet watches for P2PK transactions as well. It also happily imports invalid pubkeys to watch. The same goes for `importaddress 21PUBKEYac` (P2PK script). The wallet also happily signs raw transactions to such keys, which should make anyone appreciate checksums.\r\n\r\nAre you sure that `importpubkey` imports invalid pubkeys? Can you give an example? Looking at `wallet/rpcdump.cpp:importpubkey()` there is a check if the given pubkey is on the curve, throwing an error if it isn't:\r\n\r\n`if (!pubKey.IsFullyValid())\r\n        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, \"Pubkey is not a valid public key\");`\r\n\r\n\r\n",
+      "created_at" : "2019-09-19T13:44:38Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#issuecomment-533137397",
+      "id" : 533137397,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16786",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDUzMzEzNzM5Nw==",
+      "updated_at" : "2019-09-19T13:44:38Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/533137397",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/91535?v=4",
+         "events_url" : "https://api.github.com/users/theStack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theStack/followers",
+         "following_url" : "https://api.github.com/users/theStack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theStack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theStack",
+         "id" : 91535,
+         "login" : "theStack",
+         "node_id" : "MDQ6VXNlcjkxNTM1",
+         "organizations_url" : "https://api.github.com/users/theStack/orgs",
+         "received_events_url" : "https://api.github.com/users/theStack/received_events",
+         "repos_url" : "https://api.github.com/users/theStack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theStack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Oops, I just changed one character in the pubkey hex thinking that would do the trick, but of course with a compressed pubkey such a tweaked point is most likely still on the curve.\r\n\r\n`importpubkey 020000000000000000000000000000000000000000000000000000000000000000` indeed throws. `importaddress 21020000000000000000000000000000000000000000000000000000000000000000ac` does work.",
+      "created_at" : "2019-09-19T15:19:24Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#issuecomment-533180728",
+      "id" : 533180728,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16786",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDUzMzE4MDcyOA==",
+      "updated_at" : "2019-09-19T15:19:24Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/533180728",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/10217?v=4",
+         "events_url" : "https://api.github.com/users/Sjors/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Sjors/followers",
+         "following_url" : "https://api.github.com/users/Sjors/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Sjors/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Sjors",
+         "id" : 10217,
+         "login" : "Sjors",
+         "node_id" : "MDQ6VXNlcjEwMjE3",
+         "organizations_url" : "https://api.github.com/users/Sjors/orgs",
+         "received_events_url" : "https://api.github.com/users/Sjors/received_events",
+         "repos_url" : "https://api.github.com/users/Sjors/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Sjors/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Sjors"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "> \r\n> \r\n> Oops, I just changed one character in the pubkey hex thinking that would do the trick, but of course with a compressed pubkey such a tweaked point is most likely still on the curve.\r\n\r\nOkay :+1: \r\n\r\n> \r\n> `importpubkey 020000000000000000000000000000000000000000000000000000000000000000` indeed throws. `importaddress 21020000000000000000000000000000000000000000000000000000000000000000ac` does work.\r\n\r\nLooking at the code, `importaddress` doesn't try to interpret (or validate) the contents of the passed hex-encoded script in any way but rather passes it to the wallet directly via `ImportScripts()` and `ImportScriptPubKeys()`. The RPC manual says to this call \"_If you have the full public key, you should call importpubkey instead of this._\", so I guess it is okay that there is no on-the-curve check here for pubkeys contained in P2PK scripts.",
+      "created_at" : "2019-09-19T17:51:28Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#issuecomment-533239186",
+      "id" : 533239186,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16786",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDUzMzIzOTE4Ng==",
+      "updated_at" : "2019-09-19T17:51:28Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/533239186",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/91535?v=4",
+         "events_url" : "https://api.github.com/users/theStack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theStack/followers",
+         "following_url" : "https://api.github.com/users/theStack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theStack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theStack",
+         "id" : 91535,
+         "login" : "theStack",
+         "node_id" : "MDQ6VXNlcjkxNTM1",
+         "organizations_url" : "https://api.github.com/users/theStack/orgs",
+         "received_events_url" : "https://api.github.com/users/theStack/received_events",
+         "repos_url" : "https://api.github.com/users/theStack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theStack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Since there has been no activity for three weeks: is there anything else I can do for this PR?",
+      "created_at" : "2019-10-10T13:58:16Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#issuecomment-540598405",
+      "id" : 540598405,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16786",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU0MDU5ODQwNQ==",
+      "updated_at" : "2019-10-10T13:58:16Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/540598405",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/91535?v=4",
+         "events_url" : "https://api.github.com/users/theStack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/theStack/followers",
+         "following_url" : "https://api.github.com/users/theStack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/theStack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/theStack",
+         "id" : 91535,
+         "login" : "theStack",
+         "node_id" : "MDQ6VXNlcjkxNTM1",
+         "organizations_url" : "https://api.github.com/users/theStack/orgs",
+         "received_events_url" : "https://api.github.com/users/theStack/received_events",
+         "repos_url" : "https://api.github.com/users/theStack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/theStack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "reACK https://github.com/bitcoin/bitcoin/pull/16786/commits/a57a1d42d52fe51e5b413a1fd3a5ef2b7a2120e3\r\n\r\njust squashed",
+      "created_at" : "2019-10-10T14:01:42Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/16786#issuecomment-540600454",
+      "id" : 540600454,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16786",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDU0MDYwMDQ1NA==",
+      "updated_at" : "2019-10-10T14:01:42Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/540600454",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "node_id" : "MDQ6VXNlcjU3Njc4OTE=",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
+   }
+]

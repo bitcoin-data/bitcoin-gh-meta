@@ -1,0 +1,974 @@
+[
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "This is cool. I'd thought about adding a similar concept to getblocktemplate (or some sort of package number or something).\r\n\r\nHave you given any thought to performance / done any benchmarking? I'm particularly thinking of what happens when the mempool is in the hundreds of megs as it was not too long ago.",
+      "created_at" : "2018-02-18T22:50:05Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#issuecomment-366555403",
+      "id" : 366555403,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12479",
+      "updated_at" : "2018-02-18T22:50:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/366555403",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/7999704?v=4",
+         "events_url" : "https://api.github.com/users/esotericnonsense/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/esotericnonsense/followers",
+         "following_url" : "https://api.github.com/users/esotericnonsense/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/esotericnonsense/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/esotericnonsense",
+         "id" : 7999704,
+         "login" : "esotericnonsense",
+         "organizations_url" : "https://api.github.com/users/esotericnonsense/orgs",
+         "received_events_url" : "https://api.github.com/users/esotericnonsense/received_events",
+         "repos_url" : "https://api.github.com/users/esotericnonsense/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/esotericnonsense/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/esotericnonsense/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/esotericnonsense"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r168969166"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/168969166"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Does this repeat tx.GetHash() for every vout?\r\nPossibly makes sense to do it outside of the loop?\r\n(Maybe the compiler is more intelligent than I'm imagining)",
+      "commit_id" : "1dfb4e7d753e9282c89d55bde358b8ad96d3bfc2",
+      "created_at" : "2018-02-18T22:50:57Z",
+      "diff_hunk" : "@@ -406,6 +409,24 @@ void entryToJSON(UniValue &info, const CTxMemPoolEntry &e)\n     }\n \n     info.pushKV(\"depends\", depends);\n+\n+    std::set<std::string> setSpent;\n+    for (unsigned int i = 0; i < tx.vout.size(); i++) {\n+        auto it = mempool.mapNextTx.find(COutPoint(tx.GetHash(), i));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r168969166",
+      "id" : 168969166,
+      "original_commit_id" : "46b89a2fe6b92be2c6af5ad8e951ed4fa7536428",
+      "original_position" : 17,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 97419841,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479",
+      "updated_at" : "2018-02-26T18:36:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/168969166",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/7999704?v=4",
+         "events_url" : "https://api.github.com/users/esotericnonsense/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/esotericnonsense/followers",
+         "following_url" : "https://api.github.com/users/esotericnonsense/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/esotericnonsense/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/esotericnonsense",
+         "id" : 7999704,
+         "login" : "esotericnonsense",
+         "organizations_url" : "https://api.github.com/users/esotericnonsense/orgs",
+         "received_events_url" : "https://api.github.com/users/esotericnonsense/received_events",
+         "repos_url" : "https://api.github.com/users/esotericnonsense/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/esotericnonsense/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/esotericnonsense/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/esotericnonsense"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "~~NACK, atleast, not by default,  this looks like it might increase the cost of this RPC call. (happy to be proven wrong though)~~\r\n\r\n**edit:** maybe, I initially mis-read this as adding the entirety of each spendby TX, not simply the txid,  still,  numbers are nice",
+      "created_at" : "2018-02-18T23:33:32Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#issuecomment-366558497",
+      "id" : 366558497,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12479",
+      "updated_at" : "2018-02-19T01:10:57Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/366558497",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/413395?v=4",
+         "events_url" : "https://api.github.com/users/dcousens/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/dcousens/followers",
+         "following_url" : "https://api.github.com/users/dcousens/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/dcousens/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/dcousens",
+         "id" : 413395,
+         "login" : "dcousens",
+         "organizations_url" : "https://api.github.com/users/dcousens/orgs",
+         "received_events_url" : "https://api.github.com/users/dcousens/received_events",
+         "repos_url" : "https://api.github.com/users/dcousens/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/dcousens/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/dcousens/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/dcousens"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Per suggestion of @dcousens and @esotericnonsense I will perform some timing tests and pull this out into an optional parameter if it's hampering performance significantly. ",
+      "created_at" : "2018-02-19T00:04:38Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#issuecomment-366560742",
+      "id" : 366560742,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12479",
+      "updated_at" : "2018-02-19T00:04:38Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/366560742",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/14220652?v=4",
+         "events_url" : "https://api.github.com/users/conscott/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/conscott/followers",
+         "following_url" : "https://api.github.com/users/conscott/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/conscott/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/conscott",
+         "id" : 14220652,
+         "login" : "conscott",
+         "organizations_url" : "https://api.github.com/users/conscott/orgs",
+         "received_events_url" : "https://api.github.com/users/conscott/received_events",
+         "repos_url" : "https://api.github.com/users/conscott/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/conscott/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/conscott/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/conscott"
+      }
+   },
+   {
+      "author_association" : "OWNER",
+      "body" : "I looks like it's a single map lookup per reported transaction output, which I don't expect to be all that expensive.\n\nNumbers are better, of course.",
+      "created_at" : "2018-02-19T00:08:50Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#issuecomment-366561213",
+      "id" : 366561213,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12479",
+      "updated_at" : "2018-02-19T00:08:50Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/366561213",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/548488?v=4",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "revoking my NACK,  I initially mis-interpreted the extent of the added data.\r\nI'd instead suggest to additionally add the `vout` which spends the TX, not only the `txid`. \r\n\r\n",
+      "created_at" : "2018-02-19T01:10:35Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#issuecomment-366566215",
+      "id" : 366566215,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12479",
+      "updated_at" : "2018-02-19T01:10:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/366566215",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/413395?v=4",
+         "events_url" : "https://api.github.com/users/dcousens/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/dcousens/followers",
+         "following_url" : "https://api.github.com/users/dcousens/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/dcousens/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/dcousens",
+         "id" : 413395,
+         "login" : "dcousens",
+         "organizations_url" : "https://api.github.com/users/dcousens/orgs",
+         "received_events_url" : "https://api.github.com/users/dcousens/received_events",
+         "repos_url" : "https://api.github.com/users/dcousens/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/dcousens/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/dcousens/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/dcousens"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r169028383"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/169028383"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "In addition to RPC `getrawmempool`, this also affects `getmempoolentry`, `getmempooldescendants`, `getmempoolancestors` and also REST `/rest/mempool/contents`. If this is intended then update respective tests to test the new field.",
+      "commit_id" : "1dfb4e7d753e9282c89d55bde358b8ad96d3bfc2",
+      "created_at" : "2018-02-19T09:59:22Z",
+      "diff_hunk" : "@@ -406,6 +409,24 @@ void entryToJSON(UniValue &info, const CTxMemPoolEntry &e)\n     }\n \n     info.pushKV(\"depends\", depends);\n+\n+    std::set<std::string> setSpent;\n+    for (unsigned int i = 0; i < tx.vout.size(); i++) {\n+        auto it = mempool.mapNextTx.find(COutPoint(tx.GetHash(), i));\n+        if (it == mempool.mapNextTx.end())\n+            continue;\n+        const uint256& tx_hash = it->second->GetHash();\n+        if (mempool.exists(tx_hash))\n+            setSpent.insert(tx_hash.ToString());\n+    }\n+\n+    UniValue spent(UniValue::VARR);\n+    for (const std::string& dep : setSpent)\n+    {\n+        spent.push_back(dep);\n+    }\n+\n+    info.pushKV(\"spentby\", spent);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r169028383",
+      "id" : 169028383,
+      "original_commit_id" : "58aa4dc14475837f628c746a0daf407aedf29052",
+      "original_position" : 31,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 97487987,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479",
+      "updated_at" : "2018-02-26T18:36:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/169028383",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r169028970"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/169028970"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "It's fine as is, see `CTransaction::GetHash()`.",
+      "commit_id" : "1dfb4e7d753e9282c89d55bde358b8ad96d3bfc2",
+      "created_at" : "2018-02-19T10:02:04Z",
+      "diff_hunk" : "@@ -406,6 +409,24 @@ void entryToJSON(UniValue &info, const CTxMemPoolEntry &e)\n     }\n \n     info.pushKV(\"depends\", depends);\n+\n+    std::set<std::string> setSpent;\n+    for (unsigned int i = 0; i < tx.vout.size(); i++) {\n+        auto it = mempool.mapNextTx.find(COutPoint(tx.GetHash(), i));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r169028970",
+      "id" : 169028970,
+      "in_reply_to_id" : 168969166,
+      "original_commit_id" : "46b89a2fe6b92be2c6af5ad8e951ed4fa7536428",
+      "original_position" : 17,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 97487987,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479",
+      "updated_at" : "2018-02-26T18:36:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/169028970",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r169032461"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/169032461"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Looks like alignment is bad.",
+      "commit_id" : "1dfb4e7d753e9282c89d55bde358b8ad96d3bfc2",
+      "created_at" : "2018-02-19T10:16:42Z",
+      "diff_hunk" : "@@ -372,6 +372,9 @@ std::string EntryDescriptionString()\n            \"    \\\"wtxid\\\" : hash,         (string) hash of serialized transaction, including witness data\\n\"\n            \"    \\\"depends\\\" : [           (array) unconfirmed transactions used as inputs for this transaction\\n\"\n            \"        \\\"transactionid\\\",    (string) parent transaction id\\n\"\n+           \"       ... ]\\n\"\n+           \"    \\\"spentby\\\" : [          (array) unconfirmed transactions spending outputs from this transaction\\n\"",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r169032461",
+      "id" : 169032461,
+      "original_commit_id" : "58aa4dc14475837f628c746a0daf407aedf29052",
+      "original_position" : 5,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 97487987,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479",
+      "updated_at" : "2018-02-26T18:36:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/169032461",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r169161251"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/169161251"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Agreed. I have updated the tests to coverage all these cases. ",
+      "commit_id" : "1dfb4e7d753e9282c89d55bde358b8ad96d3bfc2",
+      "created_at" : "2018-02-19T19:55:35Z",
+      "diff_hunk" : "@@ -406,6 +409,24 @@ void entryToJSON(UniValue &info, const CTxMemPoolEntry &e)\n     }\n \n     info.pushKV(\"depends\", depends);\n+\n+    std::set<std::string> setSpent;\n+    for (unsigned int i = 0; i < tx.vout.size(); i++) {\n+        auto it = mempool.mapNextTx.find(COutPoint(tx.GetHash(), i));\n+        if (it == mempool.mapNextTx.end())\n+            continue;\n+        const uint256& tx_hash = it->second->GetHash();\n+        if (mempool.exists(tx_hash))\n+            setSpent.insert(tx_hash.ToString());\n+    }\n+\n+    UniValue spent(UniValue::VARR);\n+    for (const std::string& dep : setSpent)\n+    {\n+        spent.push_back(dep);\n+    }\n+\n+    info.pushKV(\"spentby\", spent);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r169161251",
+      "id" : 169161251,
+      "in_reply_to_id" : 169028383,
+      "original_commit_id" : "58aa4dc14475837f628c746a0daf407aedf29052",
+      "original_position" : 31,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 97643791,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479",
+      "updated_at" : "2018-02-26T18:36:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/169161251",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/14220652?v=4",
+         "events_url" : "https://api.github.com/users/conscott/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/conscott/followers",
+         "following_url" : "https://api.github.com/users/conscott/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/conscott/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/conscott",
+         "id" : 14220652,
+         "login" : "conscott",
+         "organizations_url" : "https://api.github.com/users/conscott/orgs",
+         "received_events_url" : "https://api.github.com/users/conscott/received_events",
+         "repos_url" : "https://api.github.com/users/conscott/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/conscott/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/conscott/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/conscott"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Thanks for review @esotericnonsense @promag and @dcousens \r\n\r\nI have updated commits from your comments. \r\n\r\nIt is correct that this just adds a map lookup per transactions, but I went ahead and tested performance as well. This seems to add about 3% in execution time in my particular test. \r\n\r\nThe details are that I [hacked together a test]( https://github.com/bitcoin/bitcoin/commit/55a9289c82a1c088ae2be54452cfc1c4183172ff) to generate a mempool of 18k transactions with long chains of unconfirmed transactions that excercise child/parent relations for `getrawmempool` output. Once the mempool is generated there is a 5 minute sleep, so in a loop I could call `time bitcoin-cli -datadir=<test_dir> getrawmempool` with / without descendant pointers. I recorded the timing and arrived at an average increase in exec time of 3%, with fairly low deviation (in range 1%-8%). I realize this is pretty kludgy, but just wanted to get a rough idea if something really bad was happening. Seems okay. \r\n\r\n@dcousens I am not sure we want to add the `vout` of Tx in the spentby list. A child transaction can spend multiple outputs of the same parent, so representing this will add a bit more complexity to the output. This also applies to the `depends` list, in that the current transaction could be spending multiple outputs for a single parent, and I think we want to keep the `spends` / `depends` format about the same. What are your thoughts? ",
+      "created_at" : "2018-02-20T22:04:14Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#issuecomment-367136320",
+      "id" : 367136320,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12479",
+      "updated_at" : "2018-02-22T23:50:38Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/367136320",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/14220652?v=4",
+         "events_url" : "https://api.github.com/users/conscott/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/conscott/followers",
+         "following_url" : "https://api.github.com/users/conscott/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/conscott/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/conscott",
+         "id" : 14220652,
+         "login" : "conscott",
+         "organizations_url" : "https://api.github.com/users/conscott/orgs",
+         "received_events_url" : "https://api.github.com/users/conscott/received_events",
+         "repos_url" : "https://api.github.com/users/conscott/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/conscott/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/conscott/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/conscott"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r169785397"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/169785397"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "`std::set<uint256>`?",
+      "commit_id" : "1dfb4e7d753e9282c89d55bde358b8ad96d3bfc2",
+      "created_at" : "2018-02-21T21:36:51Z",
+      "diff_hunk" : "@@ -406,6 +409,26 @@ void entryToJSON(UniValue &info, const CTxMemPoolEntry &e)\n     }\n \n     info.pushKV(\"depends\", depends);\n+\n+    std::set<std::string> set_spent;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r169785397",
+      "id" : 169785397,
+      "original_commit_id" : "465cd73ed99b0defb100515598f10fe9dbdd29b4",
+      "original_position" : 15,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 98369545,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479",
+      "updated_at" : "2018-02-26T18:36:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/169785397",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r169787146"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/169787146"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Not sure if it matters, but how about `const auto& it = `?",
+      "commit_id" : "1dfb4e7d753e9282c89d55bde358b8ad96d3bfc2",
+      "created_at" : "2018-02-21T21:43:20Z",
+      "diff_hunk" : "@@ -406,6 +409,26 @@ void entryToJSON(UniValue &info, const CTxMemPoolEntry &e)\n     }\n \n     info.pushKV(\"depends\", depends);\n+\n+    std::set<std::string> set_spent;\n+    for (unsigned int i = 0; i < tx.vout.size(); i++) {\n+        auto it = mempool.mapNextTx.find(COutPoint(tx.GetHash(), i));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r169787146",
+      "id" : 169787146,
+      "original_commit_id" : "465cd73ed99b0defb100515598f10fe9dbdd29b4",
+      "original_position" : 17,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 98369545,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479",
+      "updated_at" : "2018-02-26T18:36:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/169787146",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r169788242"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/169788242"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Avoid loop below by taking advantage of `insert()` return value:\r\n```cpp\r\nif (set_spent.insert(tx_hash).second) {\r\n    spent.push_back(tx_hash.ToString());\r\n}\r\n```",
+      "commit_id" : "1dfb4e7d753e9282c89d55bde358b8ad96d3bfc2",
+      "created_at" : "2018-02-21T21:47:18Z",
+      "diff_hunk" : "@@ -406,6 +409,26 @@ void entryToJSON(UniValue &info, const CTxMemPoolEntry &e)\n     }\n \n     info.pushKV(\"depends\", depends);\n+\n+    std::set<std::string> set_spent;\n+    for (unsigned int i = 0; i < tx.vout.size(); i++) {\n+        auto it = mempool.mapNextTx.find(COutPoint(tx.GetHash(), i));\n+        if (it == mempool.mapNextTx.end()) {\n+            continue;\n+        }\n+        const uint256& tx_hash = it->second->GetHash();\n+        if (mempool.exists(tx_hash)) {\n+            set_spent.insert(tx_hash.ToString());",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r169788242",
+      "id" : 169788242,
+      "original_commit_id" : "465cd73ed99b0defb100515598f10fe9dbdd29b4",
+      "original_position" : 23,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 98369545,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479",
+      "updated_at" : "2018-02-26T18:36:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/169788242",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r170384663"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170384663"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Is this test really necessary? If `mapNextTx` contains the outpoint, then the spending transaction should be in the mempool? See `CTxMemPool::addUnchecked()`.\r\n\r\nTherefore, maybe:\r\n - replace with `assert(mempool.exists(tx_hash))`\r\n - or test and throw an error if not in the mempool (or log something)\r\n - or even remove the check.\r\n\r\nIMO not being in `mempool.mapTx` means that something is broken so I would choose the assert.\r\n\r\ncc @morcos @sdaftuar",
+      "commit_id" : "1dfb4e7d753e9282c89d55bde358b8ad96d3bfc2",
+      "created_at" : "2018-02-23T22:31:34Z",
+      "diff_hunk" : "@@ -406,6 +409,23 @@ void entryToJSON(UniValue &info, const CTxMemPoolEntry &e)\n     }\n \n     info.pushKV(\"depends\", depends);\n+\n+    std::set<uint256> set_spent;\n+    UniValue spent(UniValue::VARR);\n+    for (unsigned int i = 0; i < tx.vout.size(); i++) {\n+        const auto& it = mempool.mapNextTx.find(COutPoint(tx.GetHash(), i));\n+        if (it == mempool.mapNextTx.end()) {\n+            continue;\n+        }\n+        const uint256& tx_hash = it->second->GetHash();\n+        if (mempool.exists(tx_hash)) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r170384663",
+      "id" : 170384663,
+      "original_commit_id" : "8ad782d7071b8e1042e27a9c147e935b457c46b6",
+      "original_position" : 23,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 99072751,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479",
+      "updated_at" : "2018-02-26T18:36:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170384663",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r170384689"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170384689"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Nit, `++i`.",
+      "commit_id" : "1dfb4e7d753e9282c89d55bde358b8ad96d3bfc2",
+      "created_at" : "2018-02-23T22:31:43Z",
+      "diff_hunk" : "@@ -406,6 +409,23 @@ void entryToJSON(UniValue &info, const CTxMemPoolEntry &e)\n     }\n \n     info.pushKV(\"depends\", depends);\n+\n+    std::set<uint256> set_spent;\n+    UniValue spent(UniValue::VARR);\n+    for (unsigned int i = 0; i < tx.vout.size(); i++) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r170384689",
+      "id" : 170384689,
+      "original_commit_id" : "8ad782d7071b8e1042e27a9c147e935b457c46b6",
+      "original_position" : 17,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 99072751,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479",
+      "updated_at" : "2018-02-26T18:36:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170384689",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r170414529"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170414529"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "This for loop iterates tx.vout, does it equal to:\r\n`auto entryit = mempool.mapTx.find(tx.GetHash());`\r\n`auto children = mempool.GetMemPoolChildren(entryit);`\r\n?\r\n",
+      "commit_id" : "1dfb4e7d753e9282c89d55bde358b8ad96d3bfc2",
+      "created_at" : "2018-02-24T07:31:25Z",
+      "diff_hunk" : "@@ -406,6 +409,23 @@ void entryToJSON(UniValue &info, const CTxMemPoolEntry &e)\n     }\n \n     info.pushKV(\"depends\", depends);\n+\n+    std::set<uint256> set_spent;\n+    UniValue spent(UniValue::VARR);\n+    for (unsigned int i = 0; i < tx.vout.size(); i++) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r170414529",
+      "id" : 170414529,
+      "original_commit_id" : "8ad782d7071b8e1042e27a9c147e935b457c46b6",
+      "original_position" : 17,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 99105756,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479",
+      "updated_at" : "2018-02-26T18:36:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170414529",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/9248343?v=4",
+         "events_url" : "https://api.github.com/users/junfx/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/junfx/followers",
+         "following_url" : "https://api.github.com/users/junfx/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/junfx/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/junfx",
+         "id" : 9248343,
+         "login" : "junfx",
+         "organizations_url" : "https://api.github.com/users/junfx/orgs",
+         "received_events_url" : "https://api.github.com/users/junfx/received_events",
+         "repos_url" : "https://api.github.com/users/junfx/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/junfx/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/junfx/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/junfx"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r170429094"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170429094"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "I agree. This was a paranoia check and I debated whether this should be an assert. I think I will update as such. ",
+      "commit_id" : "1dfb4e7d753e9282c89d55bde358b8ad96d3bfc2",
+      "created_at" : "2018-02-24T18:48:48Z",
+      "diff_hunk" : "@@ -406,6 +409,23 @@ void entryToJSON(UniValue &info, const CTxMemPoolEntry &e)\n     }\n \n     info.pushKV(\"depends\", depends);\n+\n+    std::set<uint256> set_spent;\n+    UniValue spent(UniValue::VARR);\n+    for (unsigned int i = 0; i < tx.vout.size(); i++) {\n+        const auto& it = mempool.mapNextTx.find(COutPoint(tx.GetHash(), i));\n+        if (it == mempool.mapNextTx.end()) {\n+            continue;\n+        }\n+        const uint256& tx_hash = it->second->GetHash();\n+        if (mempool.exists(tx_hash)) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r170429094",
+      "id" : 170429094,
+      "in_reply_to_id" : 170384663,
+      "original_commit_id" : "8ad782d7071b8e1042e27a9c147e935b457c46b6",
+      "original_position" : 23,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 99120102,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479",
+      "updated_at" : "2018-02-26T18:36:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170429094",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/14220652?v=4",
+         "events_url" : "https://api.github.com/users/conscott/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/conscott/followers",
+         "following_url" : "https://api.github.com/users/conscott/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/conscott/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/conscott",
+         "id" : 14220652,
+         "login" : "conscott",
+         "organizations_url" : "https://api.github.com/users/conscott/orgs",
+         "received_events_url" : "https://api.github.com/users/conscott/received_events",
+         "repos_url" : "https://api.github.com/users/conscott/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/conscott/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/conscott/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/conscott"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r170432651"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170432651"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "The index is needed below, to construct the outpoint from the output.",
+      "commit_id" : "1dfb4e7d753e9282c89d55bde358b8ad96d3bfc2",
+      "created_at" : "2018-02-24T21:11:11Z",
+      "diff_hunk" : "@@ -406,6 +409,23 @@ void entryToJSON(UniValue &info, const CTxMemPoolEntry &e)\n     }\n \n     info.pushKV(\"depends\", depends);\n+\n+    std::set<uint256> set_spent;\n+    UniValue spent(UniValue::VARR);\n+    for (unsigned int i = 0; i < tx.vout.size(); i++) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r170432651",
+      "id" : 170432651,
+      "in_reply_to_id" : 170414529,
+      "original_commit_id" : "8ad782d7071b8e1042e27a9c147e935b457c46b6",
+      "original_position" : 17,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 99123499,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479",
+      "updated_at" : "2018-02-26T18:36:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170432651",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r170691210"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170691210"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "I believe @junfx is right. This looks like the more efficient path and I have tested it out. ",
+      "commit_id" : "1dfb4e7d753e9282c89d55bde358b8ad96d3bfc2",
+      "created_at" : "2018-02-26T18:36:13Z",
+      "diff_hunk" : "@@ -406,6 +409,23 @@ void entryToJSON(UniValue &info, const CTxMemPoolEntry &e)\n     }\n \n     info.pushKV(\"depends\", depends);\n+\n+    std::set<uint256> set_spent;\n+    UniValue spent(UniValue::VARR);\n+    for (unsigned int i = 0; i < tx.vout.size(); i++) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r170691210",
+      "id" : 170691210,
+      "in_reply_to_id" : 170414529,
+      "original_commit_id" : "8ad782d7071b8e1042e27a9c147e935b457c46b6",
+      "original_position" : 17,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 99416080,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479",
+      "updated_at" : "2018-02-26T18:36:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170691210",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/14220652?v=4",
+         "events_url" : "https://api.github.com/users/conscott/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/conscott/followers",
+         "following_url" : "https://api.github.com/users/conscott/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/conscott/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/conscott",
+         "id" : 14220652,
+         "login" : "conscott",
+         "organizations_url" : "https://api.github.com/users/conscott/orgs",
+         "received_events_url" : "https://api.github.com/users/conscott/received_events",
+         "repos_url" : "https://api.github.com/users/conscott/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/conscott/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/conscott/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/conscott"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r170727617"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170727617"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Right, I've overlooked @junfx suggestion.",
+      "commit_id" : "1dfb4e7d753e9282c89d55bde358b8ad96d3bfc2",
+      "created_at" : "2018-02-26T20:37:57Z",
+      "diff_hunk" : "@@ -406,6 +409,23 @@ void entryToJSON(UniValue &info, const CTxMemPoolEntry &e)\n     }\n \n     info.pushKV(\"depends\", depends);\n+\n+    std::set<uint256> set_spent;\n+    UniValue spent(UniValue::VARR);\n+    for (unsigned int i = 0; i < tx.vout.size(); i++) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#discussion_r170727617",
+      "id" : 170727617,
+      "in_reply_to_id" : 170414529,
+      "original_commit_id" : "8ad782d7071b8e1042e27a9c147e935b457c46b6",
+      "original_position" : 17,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 99457800,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/12479",
+      "updated_at" : "2018-02-26T20:37:57Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/170727617",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "ACK 1dfb4e7",
+      "created_at" : "2018-03-05T16:27:56Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#issuecomment-370476764",
+      "id" : 370476764,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12479",
+      "updated_at" : "2018-03-05T16:27:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/370476764",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/4360349?v=4",
+         "events_url" : "https://api.github.com/users/morcos/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/morcos/followers",
+         "following_url" : "https://api.github.com/users/morcos/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/morcos/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/morcos",
+         "id" : 4360349,
+         "login" : "morcos",
+         "organizations_url" : "https://api.github.com/users/morcos/orgs",
+         "received_events_url" : "https://api.github.com/users/morcos/received_events",
+         "repos_url" : "https://api.github.com/users/morcos/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/morcos/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/morcos/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/morcos"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "> This also applies to the depends list, in that the current transaction could be spending multiple outputs for a single parent, and I think we want to keep the spends / depends format about the same. What are your thoughts?\r\n\r\n@conscott I think that is fine,  I guess it depends on the verbosity required for your application.  The few places I can see this being useful,  I would appreciate the `vout` information (as is, I simply download everything).",
+      "created_at" : "2018-03-05T23:38:15Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#issuecomment-370606970",
+      "id" : 370606970,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12479",
+      "updated_at" : "2018-03-05T23:38:15Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/370606970",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/413395?v=4",
+         "events_url" : "https://api.github.com/users/dcousens/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/dcousens/followers",
+         "following_url" : "https://api.github.com/users/dcousens/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/dcousens/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/dcousens",
+         "id" : 413395,
+         "login" : "dcousens",
+         "organizations_url" : "https://api.github.com/users/dcousens/orgs",
+         "received_events_url" : "https://api.github.com/users/dcousens/received_events",
+         "repos_url" : "https://api.github.com/users/dcousens/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/dcousens/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/dcousens/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/dcousens"
+      }
+   },
+   {
+      "author_association" : "OWNER",
+      "body" : "utACK 1dfb4e7d753e9282c89d55bde358b8ad96d3bfc2",
+      "created_at" : "2018-03-06T15:28:22Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/12479#issuecomment-370818813",
+      "id" : 370818813,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/12479",
+      "updated_at" : "2018-03-06T15:28:22Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/370818813",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/548488?v=4",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   }
+]

@@ -1,0 +1,1029 @@
+[
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r470963461"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/470963461"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Note, the `assert_approx` assertions pass locally for me with vspan values < 5 (seconds). Made them 60 to leave a wide margin for avoiding data races. There shouldn't be any cost to doing so; the values under test should either be 0 or the current unix time. ",
+      "commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "created_at" : "2020-08-15T10:29:15Z",
+      "diff_hunk" : "@@ -139,8 +145,25 @@ def _test_getaddednodeinfo(self):\n         # check that a non-existent node returns an error\n         assert_raises_rpc_error(-24, \"Node has not been added\", self.nodes[0].getaddednodeinfo, '1.1.1.1')\n \n-    def _test_getpeerinfo(self):\n+    def test_getpeerinfo(self):\n+        self.log.info(\"Test getpeerinfo\")\n+        # Send a transaction, generate and sync to test last_transaction values.\n+        self.nodes[0].sendtoaddress(self.nodes[1].getnewaddress(), 1)\n+        self.nodes[1].generate(1)\n+        self.sync_all()\n+        time_now = int(time.time())\n         peer_info = [x.getpeerinfo() for x in self.nodes]\n+        # Verify last_block and last_transaction values.\n+        for n in range(self.num_nodes):\n+            assert_approx(peer_info[n][0]['last_block'], time_now, vspan=60)\n+            assert_equal(peer_info[n][1]['last_block'], 0)\n+            assert_equal(peer_info[0][n]['last_transaction'], 0)\n+        if peer_info[1][0]['last_transaction'] == 0:\n+            assert_equal(peer_info[1][0]['last_transaction'], 0)\n+            assert_approx(peer_info[1][1]['last_transaction'], time_now, vspan=60)\n+        else:\n+            assert_equal(peer_info[1][1]['last_transaction'], 0)\n+            assert_approx(peer_info[1][0]['last_transaction'], time_now, vspan=60)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r470963461",
+      "id" : 470963461,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3MDk2MzQ2MQ==",
+      "original_commit_id" : "5c1ec869cb38743848988c94d8e6a78ea147bb2d",
+      "original_line" : 166,
+      "original_position" : 104,
+      "original_start_line" : null,
+      "path" : "test/functional/rpc_net.py",
+      "position" : null,
+      "pull_request_review_id" : 467963186,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-08-15T13:28:24Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/470963461",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "ACK on the C++ code change\r\n\r\nI'll leave it up to @MarcoFalke to review the test, it might be a time dependency like this without using mocking makes the test too brittle / time dependent.",
+      "created_at" : "2020-08-15T11:07:27Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#issuecomment-674383459",
+      "id" : 674383459,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19731",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDY3NDM4MzQ1OQ==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-08-15T11:07:27Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/674383459",
+      "user" : {
+         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> ACK on the C++ code change\r\n> \r\n> I'll leave it up to @MarcoFalke to review the test, it might be a time dependency like this without using mocking makes the test too brittle / time dependent.\r\n\r\nAgree, I'm not sure here either. Edit: loosened the tests to not be time-dependent.",
+      "created_at" : "2020-08-15T11:12:49Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#issuecomment-674383924",
+      "id" : 674383924,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19731",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDY3NDM4MzkyNA==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-08-15T11:34:18Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/674383924",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r470969194"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/470969194"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Consider using [itertools.product()](https://docs.python.org/2/library/itertools.html#itertools.product) rather than a triple-nested for loop here. It'd also be helpful if there were more meaningful variable names than `x` and `y`.",
+      "commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "created_at" : "2020-08-15T11:45:50Z",
+      "diff_hunk" : "@@ -139,8 +145,21 @@ def _test_getaddednodeinfo(self):\n         # check that a non-existent node returns an error\n         assert_raises_rpc_error(-24, \"Node has not been added\", self.nodes[0].getaddednodeinfo, '1.1.1.1')\n \n-    def _test_getpeerinfo(self):\n+    def test_getpeerinfo(self):\n+        self.log.info(\"Test getpeerinfo\")\n+        if self.is_wallet_compiled():\n+            self.nodes[0].sendtoaddress(self.nodes[1].getnewaddress(), 1)\n+            self.nodes[1].generate(1)\n+            self.sync_all()\n+        time_now = int(time.time())\n         peer_info = [x.getpeerinfo() for x in self.nodes]\n+        # Verify last_block and last_transaction values.\n+        for x in range(self.num_nodes):",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r470969194",
+      "id" : 470969194,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3MDk2OTE5NA==",
+      "original_commit_id" : "062614fd16306169be23f84f14257f128ffd70a2",
+      "original_line" : 157,
+      "original_position" : 95,
+      "original_start_line" : null,
+      "path" : "test/functional/rpc_net.py",
+      "position" : null,
+      "pull_request_review_id" : 467966327,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-08-15T13:28:24Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/470969194",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r470969733"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/470969733"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I don't think 'accepted and relayed by' is quite right:\r\n\r\nFor `last_transaction`, it's the time of the last transaction that we received and accepted into our mempool. I think `the time of the last valid transaction received from this peer` is accurate.\r\nFor `last_block`, it's the time of the last block that we received and saved to disk (even if we don't connect the block or it eventually fails connection). I think `the time of the last block received from this peer` is fine here.",
+      "commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "created_at" : "2020-08-15T11:53:33Z",
+      "diff_hunk" : "@@ -100,6 +100,8 @@ static UniValue getpeerinfo(const JSONRPCRequest& request)\n                             {RPCResult::Type::BOOL, \"relaytxes\", \"Whether peer has asked us to relay transactions to it\"},\n                             {RPCResult::Type::NUM_TIME, \"lastsend\", \"The \" + UNIX_EPOCH_TIME + \" of the last send\"},\n                             {RPCResult::Type::NUM_TIME, \"lastrecv\", \"The \" + UNIX_EPOCH_TIME + \" of the last receive\"},\n+                            {RPCResult::Type::NUM_TIME, \"last_transaction\", \"The \" + UNIX_EPOCH_TIME + \" of the last transaction accepted and relayed by this peer\"},\n+                            {RPCResult::Type::NUM_TIME, \"last_block\", \"The \" + UNIX_EPOCH_TIME + \" of the last block accepted and relayed by this peer \"},",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r470969733",
+      "id" : 470969733,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3MDk2OTczMw==",
+      "original_commit_id" : "062614fd16306169be23f84f14257f128ffd70a2",
+      "original_line" : 104,
+      "original_position" : 5,
+      "original_start_line" : 103,
+      "path" : "src/rpc/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 467966327,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : "RIGHT",
+      "updated_at" : "2020-08-15T13:28:24Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/470969733",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r470970656"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/470970656"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Thanks @jnewbery! I was just reconsidering those as well. Updating.",
+      "commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "created_at" : "2020-08-15T12:05:14Z",
+      "diff_hunk" : "@@ -100,6 +100,8 @@ static UniValue getpeerinfo(const JSONRPCRequest& request)\n                             {RPCResult::Type::BOOL, \"relaytxes\", \"Whether peer has asked us to relay transactions to it\"},\n                             {RPCResult::Type::NUM_TIME, \"lastsend\", \"The \" + UNIX_EPOCH_TIME + \" of the last send\"},\n                             {RPCResult::Type::NUM_TIME, \"lastrecv\", \"The \" + UNIX_EPOCH_TIME + \" of the last receive\"},\n+                            {RPCResult::Type::NUM_TIME, \"last_transaction\", \"The \" + UNIX_EPOCH_TIME + \" of the last transaction accepted and relayed by this peer\"},\n+                            {RPCResult::Type::NUM_TIME, \"last_block\", \"The \" + UNIX_EPOCH_TIME + \" of the last block accepted and relayed by this peer \"},",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r470970656",
+      "id" : 470970656,
+      "in_reply_to_id" : 470969733,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3MDk3MDY1Ng==",
+      "original_commit_id" : "062614fd16306169be23f84f14257f128ffd70a2",
+      "original_line" : 104,
+      "original_position" : 5,
+      "original_start_line" : 103,
+      "path" : "src/rpc/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 467967190,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : "RIGHT",
+      "updated_at" : "2020-08-15T13:28:24Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/470970656",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r470979310"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/470979310"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Good idea -- done. It's much nicer now.",
+      "commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "created_at" : "2020-08-15T13:28:12Z",
+      "diff_hunk" : "@@ -139,8 +145,21 @@ def _test_getaddednodeinfo(self):\n         # check that a non-existent node returns an error\n         assert_raises_rpc_error(-24, \"Node has not been added\", self.nodes[0].getaddednodeinfo, '1.1.1.1')\n \n-    def _test_getpeerinfo(self):\n+    def test_getpeerinfo(self):\n+        self.log.info(\"Test getpeerinfo\")\n+        if self.is_wallet_compiled():\n+            self.nodes[0].sendtoaddress(self.nodes[1].getnewaddress(), 1)\n+            self.nodes[1].generate(1)\n+            self.sync_all()\n+        time_now = int(time.time())\n         peer_info = [x.getpeerinfo() for x in self.nodes]\n+        # Verify last_block and last_transaction values.\n+        for x in range(self.num_nodes):",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r470979310",
+      "id" : 470979310,
+      "in_reply_to_id" : 470969194,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3MDk3OTMxMA==",
+      "original_commit_id" : "062614fd16306169be23f84f14257f128ffd70a2",
+      "original_line" : 157,
+      "original_position" : 95,
+      "original_start_line" : null,
+      "path" : "test/functional/rpc_net.py",
+      "position" : null,
+      "pull_request_review_id" : 467985626,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-08-15T13:28:24Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/470979310",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Updated with @jnewbery feedback (thanks!)",
+      "created_at" : "2020-08-15T13:30:55Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#issuecomment-674396728",
+      "id" : 674396728,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19731",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDY3NDM5NjcyOA==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-08-15T13:30:55Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/674396728",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471169546"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471169546"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit, last valid block too.",
+      "commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "created_at" : "2020-08-16T22:58:29Z",
+      "diff_hunk" : "@@ -0,0 +1,6 @@\n+Updated RPCs\n+------------\n+\n+- The `getpeerinfo` RPC now has additional `last_block` and `last_transaction`\n+  fields that return the UNIX epoch time of the last block and the last valid",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471169546",
+      "id" : 471169546,
+      "line" : 5,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3MTE2OTU0Ng==",
+      "original_commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "original_line" : 5,
+      "original_position" : 5,
+      "original_start_line" : null,
+      "path" : "doc/release-notes-19731.md",
+      "position" : 5,
+      "pull_request_review_id" : 468102020,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-08-16T23:01:00Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471169546",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471169796"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471169796"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit, I don't have an alternative but `last_transaction` suggests it returns the actual transaction, not a timestamp.",
+      "commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "created_at" : "2020-08-16T23:00:49Z",
+      "diff_hunk" : "@@ -169,6 +171,8 @@ static UniValue getpeerinfo(const JSONRPCRequest& request)\n         obj.pushKV(\"relaytxes\", stats.fRelayTxes);\n         obj.pushKV(\"lastsend\", stats.nLastSend);\n         obj.pushKV(\"lastrecv\", stats.nLastRecv);\n+        obj.pushKV(\"last_transaction\", stats.nLastTXTime);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471169796",
+      "id" : 471169796,
+      "line" : 174,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3MTE2OTc5Ng==",
+      "original_commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "original_line" : 174,
+      "original_position" : 13,
+      "original_start_line" : null,
+      "path" : "src/rpc/net.cpp",
+      "position" : 13,
+      "pull_request_review_id" : 468102020,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-08-16T23:01:00Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471169796",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471369537"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471369537"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "No. `nLastBlockTime` is updated even if connecting the block fails.",
+      "commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "created_at" : "2020-08-17T09:54:56Z",
+      "diff_hunk" : "@@ -0,0 +1,6 @@\n+Updated RPCs\n+------------\n+\n+- The `getpeerinfo` RPC now has additional `last_block` and `last_transaction`\n+  fields that return the UNIX epoch time of the last block and the last valid",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471369537",
+      "id" : 471369537,
+      "in_reply_to_id" : 471169546,
+      "line" : 5,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3MTM2OTUzNw==",
+      "original_commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "original_line" : 5,
+      "original_position" : 5,
+      "original_start_line" : null,
+      "path" : "doc/release-notes-19731.md",
+      "position" : 5,
+      "pull_request_review_id" : 468325207,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-08-17T09:54:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471369537",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Code review ACK 5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "created_at" : "2020-08-17T09:58:43Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#issuecomment-674785606",
+      "id" : 674785606,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19731",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDY3NDc4NTYwNg==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-08-17T09:58:43Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/674785606",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471372578"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471372578"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "> nit, I don't have an alternative but `last_transaction` suggests it returns the actual transaction, not a timestamp.\r\n\r\nI considered adding `_time` to the names, but we already have timestamp fields both with and without \"time\" (`conntime`, `lastsend`, `lastrecv`), so I went for the shorter variants unless everyone prefers `last_transaction_time` and `last_block_time` instead.",
+      "commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "created_at" : "2020-08-17T10:00:46Z",
+      "diff_hunk" : "@@ -169,6 +171,8 @@ static UniValue getpeerinfo(const JSONRPCRequest& request)\n         obj.pushKV(\"relaytxes\", stats.fRelayTxes);\n         obj.pushKV(\"lastsend\", stats.nLastSend);\n         obj.pushKV(\"lastrecv\", stats.nLastRecv);\n+        obj.pushKV(\"last_transaction\", stats.nLastTXTime);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471372578",
+      "id" : 471372578,
+      "in_reply_to_id" : 471169796,
+      "line" : 174,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3MTM3MjU3OA==",
+      "original_commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "original_line" : 174,
+      "original_position" : 13,
+      "original_start_line" : null,
+      "path" : "src/rpc/net.cpp",
+      "position" : 13,
+      "pull_request_review_id" : 468329059,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-08-17T10:05:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471372578",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471374270"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471374270"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I'm fine with either, although I think `last_block_time` could still be confusing, since one interpretation could be the timestamp in the block. ",
+      "commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "created_at" : "2020-08-17T10:04:16Z",
+      "diff_hunk" : "@@ -169,6 +171,8 @@ static UniValue getpeerinfo(const JSONRPCRequest& request)\n         obj.pushKV(\"relaytxes\", stats.fRelayTxes);\n         obj.pushKV(\"lastsend\", stats.nLastSend);\n         obj.pushKV(\"lastrecv\", stats.nLastRecv);\n+        obj.pushKV(\"last_transaction\", stats.nLastTXTime);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471374270",
+      "id" : 471374270,
+      "in_reply_to_id" : 471169796,
+      "line" : 174,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3MTM3NDI3MA==",
+      "original_commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "original_line" : 174,
+      "original_position" : 13,
+      "original_start_line" : null,
+      "path" : "src/rpc/net.cpp",
+      "position" : 13,
+      "pull_request_review_id" : 468331270,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-08-17T10:04:16Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471374270",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471377177"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471377177"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Thanks @jnewbery. I found figuring out their exact definition to be the most interesting part of this PR. More precise code documentation than\r\n\r\n- `net.h` *Block and TXN accept times*\r\n- `net.cpp::AttemptToEvictConnection` *recently sent us transactions/recently sent us blocks*\r\n\r\nmight be worth adding/updating.",
+      "commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "created_at" : "2020-08-17T10:09:39Z",
+      "diff_hunk" : "@@ -0,0 +1,6 @@\n+Updated RPCs\n+------------\n+\n+- The `getpeerinfo` RPC now has additional `last_block` and `last_transaction`\n+  fields that return the UNIX epoch time of the last block and the last valid",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471377177",
+      "id" : 471377177,
+      "in_reply_to_id" : 471169546,
+      "line" : 5,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3MTM3NzE3Nw==",
+      "original_commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "original_line" : 5,
+      "original_position" : 5,
+      "original_start_line" : null,
+      "path" : "doc/release-notes-19731.md",
+      "position" : 5,
+      "pull_request_review_id" : 468334904,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-08-17T10:15:29Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471377177",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471380150"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471380150"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "> More code documentation ... might be worth adding/updating.\r\n\r\nCertainly! Although it doesn't have to be in this PR.",
+      "commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "created_at" : "2020-08-17T10:15:27Z",
+      "diff_hunk" : "@@ -0,0 +1,6 @@\n+Updated RPCs\n+------------\n+\n+- The `getpeerinfo` RPC now has additional `last_block` and `last_transaction`\n+  fields that return the UNIX epoch time of the last block and the last valid",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471380150",
+      "id" : 471380150,
+      "in_reply_to_id" : 471169546,
+      "line" : 5,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3MTM4MDE1MA==",
+      "original_commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "original_line" : 5,
+      "original_position" : 5,
+      "original_start_line" : null,
+      "path" : "doc/release-notes-19731.md",
+      "position" : 5,
+      "pull_request_review_id" : 468338478,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-08-17T10:15:27Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471380150",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471380927"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471380927"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "> > More code documentation ... might be worth adding/updating.\r\n> \r\n> Certainly! Although it doesn't have to be in this PR.\r\n\r\nAgreed!",
+      "commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "created_at" : "2020-08-17T10:17:03Z",
+      "diff_hunk" : "@@ -0,0 +1,6 @@\n+Updated RPCs\n+------------\n+\n+- The `getpeerinfo` RPC now has additional `last_block` and `last_transaction`\n+  fields that return the UNIX epoch time of the last block and the last valid",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471380927",
+      "id" : 471380927,
+      "in_reply_to_id" : 471169546,
+      "line" : 5,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3MTM4MDkyNw==",
+      "original_commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "original_line" : 5,
+      "original_position" : 5,
+      "original_start_line" : null,
+      "path" : "doc/release-notes-19731.md",
+      "position" : 5,
+      "pull_request_review_id" : 468339509,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-08-17T10:17:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471380927",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471383767"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471383767"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Unresolving to make the head comment visible for reviewers and future code doc writers.",
+      "commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "created_at" : "2020-08-17T10:22:30Z",
+      "diff_hunk" : "@@ -100,6 +100,8 @@ static UniValue getpeerinfo(const JSONRPCRequest& request)\n                             {RPCResult::Type::BOOL, \"relaytxes\", \"Whether peer has asked us to relay transactions to it\"},\n                             {RPCResult::Type::NUM_TIME, \"lastsend\", \"The \" + UNIX_EPOCH_TIME + \" of the last send\"},\n                             {RPCResult::Type::NUM_TIME, \"lastrecv\", \"The \" + UNIX_EPOCH_TIME + \" of the last receive\"},\n+                            {RPCResult::Type::NUM_TIME, \"last_transaction\", \"The \" + UNIX_EPOCH_TIME + \" of the last transaction accepted and relayed by this peer\"},\n+                            {RPCResult::Type::NUM_TIME, \"last_block\", \"The \" + UNIX_EPOCH_TIME + \" of the last block accepted and relayed by this peer \"},",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r471383767",
+      "id" : 471383767,
+      "in_reply_to_id" : 470969733,
+      "line" : null,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3MTM4Mzc2Nw==",
+      "original_commit_id" : "062614fd16306169be23f84f14257f128ffd70a2",
+      "original_line" : 104,
+      "original_position" : 5,
+      "original_start_line" : 103,
+      "path" : "src/rpc/net.cpp",
+      "position" : null,
+      "pull_request_review_id" : 468343003,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : "RIGHT",
+      "updated_at" : "2020-08-17T10:22:30Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/471383767",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* #19499 (p2p: Make timeout mockable and type safe, speed up test by MarcoFalke)\n* #19405 (rpc, cli: add network in/out connections to `getnetworkinfo` and `-getinfo` by jonatack)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "created_at" : "2020-08-20T20:19:36Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#issuecomment-677882715",
+      "id" : 677882715,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19731",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDY3Nzg4MjcxNQ==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-08-20T20:19:36Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/677882715",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r474333916"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/474333916"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Right, got confused by fNewBlock.",
+      "commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "created_at" : "2020-08-20T23:57:08Z",
+      "diff_hunk" : "@@ -0,0 +1,6 @@\n+Updated RPCs\n+------------\n+\n+- The `getpeerinfo` RPC now has additional `last_block` and `last_transaction`\n+  fields that return the UNIX epoch time of the last block and the last valid",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#discussion_r474333916",
+      "id" : 474333916,
+      "in_reply_to_id" : 471169546,
+      "line" : 5,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3NDMzMzkxNg==",
+      "original_commit_id" : "5da96210fc2fda9fbd79531f42f91262fd7a9257",
+      "original_line" : 5,
+      "original_position" : 5,
+      "original_start_line" : null,
+      "path" : "doc/release-notes-19731.md",
+      "position" : 5,
+      "pull_request_review_id" : 472059597,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19731",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2020-08-20T23:57:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/474333916",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> Just out of curiosity, any reason why you changed the execution order of the tests?\r\n\r\nGood question. It mattered for an earlier version of the test and no longer matters now, and I forgot to revert to the previous order. I don't think there was anything critical or sacred about the previous order, but I don't mind reverting that if someone thinks it's better to do so.\r\n",
+      "created_at" : "2020-08-24T08:40:17Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19731#issuecomment-678992164",
+      "id" : 678992164,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19731",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDY3ODk5MjE2NA==",
+      "performed_via_github_app" : null,
+      "updated_at" : "2020-08-24T08:40:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/678992164",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   }
+]

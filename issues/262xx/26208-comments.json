@@ -1,0 +1,181 @@
+[
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "signet/miner --poisson attempts to simulate the distribution of times you'd see on mainnet. My original reasoning for the 60 minute cap is that you only expect 0.25% of blocks to take that long, so what does it matter. With a lower cap it seems worthwhile checking what that effects. I think you can work out the expected average with a cap as follows:\r\n\r\n```py\r\ndef expected_times(tgt, N=100000):\r\n    return [tgt*-math.log(1-i*1.0/N) for i in range(N)]\r\n\r\ndef capped_average(seq, cap):\r\n    sum, cnt = 0,0\r\n    for v in seq:\r\n        sum += min(v, cap)\r\n        cnt += 1\r\n    return sum/cnt\r\n\r\ndef bisect(f, want, l=0, h=100000, prec=0.0005):\r\n    while l + prec < h:\r\n        m = (l + h)/2\r\n        if f(m) < want:\r\n            l = m\r\n        else:\r\n            h = m\r\n    return h\r\n\r\nfor cap in [11, 15, 16, 20, 25, 30, 45, 60]:\r\n    tgt = bisect(lambda t: capped_average(expected_times(t), cap*60), 600)\r\n    print(\"cap=%dmin, tgt=%.2fmin, average=%ds\" % (cap, tgt/60, capped_average(expected_times(tgt), cap*60)))\r\n\r\n# results:\r\n# cap=11min, tgt=56.78min, average=600.0s\r\n# cap=15min, tgt=17.16min, average=600.0s\r\n# cap=16min, tgt=15.58min, average=600.0s\r\n# cap=20min, tgt=12.55min, average=600.0s\r\n# cap=25min, tgt=11.20min, average=600.0s\r\n# cap=30min, tgt=10.63min, average=600.0s\r\n# cap=45min, tgt=10.12min, average=600.0s\r\n# cap=60min, tgt=10.03min, average=600.0s\r\n```\r\n\r\nThat is, if you have a cap of 30 minutes, you need to be trying to have blocks every 10.63 minutes instead of every ten minutes because after applying the cap, you actual average will be reduced by that much. Effectively, this means the actual difficulty will generally be somewhat above the `--nbits` target, causing the signet miner to attempt to reduce the difficulty by mining more slowly, but that reduction will be offset in practice by the cap.\r\n\r\nIt seems to me like 30 minutes is a nice round figure that doesn't cause anything to get too weird; and I've used 16minutes as a lower limit, since below that, you're targetting an average block interval that's higher than your maximum acceptable block interval, so it's probably better to just not use `--poisson` at all at that point, I think.",
+      "created_at" : "2022-09-29T19:45:06Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26208#issuecomment-1262736176",
+      "id" : 1262736176,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26208",
+      "node_id" : "IC_kwDOABII585LQ9Mw",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1262736176/reactions"
+      },
+      "updated_at" : "2022-09-29T19:45:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1262736176",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/127186?v=4",
+         "events_url" : "https://api.github.com/users/ajtowns/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ajtowns/followers",
+         "following_url" : "https://api.github.com/users/ajtowns/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ajtowns/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ajtowns",
+         "id" : 127186,
+         "login" : "ajtowns",
+         "node_id" : "MDQ6VXNlcjEyNzE4Ng==",
+         "organizations_url" : "https://api.github.com/users/ajtowns/orgs",
+         "received_events_url" : "https://api.github.com/users/ajtowns/received_events",
+         "repos_url" : "https://api.github.com/users/ajtowns/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ajtowns/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ajtowns/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ajtowns"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/26208#discussion_r985095913"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26208"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/985095913"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "have you thought about defaulting `max_interval` to 3600 so this change doesn't break any existing callers of `next_block_delta`? I see below that the arg parser has a default value, so maybe it's a moot point. ",
+      "commit_id" : "51a08f41ffab914d6dfa009b2ba31065b86444a4",
+      "created_at" : "2022-10-01T12:49:26Z",
+      "diff_hunk" : "@@ -225,7 +225,7 @@ def seconds_to_hms(s):\n         out = \"-\" + out\n     return out\n \n-def next_block_delta(last_nbits, last_hash, ultimate_target, do_poisson):\n+def next_block_delta(last_nbits, last_hash, ultimate_target, do_poisson, max_interval):",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26208#discussion_r985095913",
+      "id" : 985095913,
+      "line" : 228,
+      "node_id" : "PRRC_kwDOABII5846t17p",
+      "original_commit_id" : "51a08f41ffab914d6dfa009b2ba31065b86444a4",
+      "original_line" : 228,
+      "original_position" : 5,
+      "original_start_line" : null,
+      "path" : "contrib/signet/miner",
+      "position" : 5,
+      "pull_request_review_id" : 1127525546,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26208",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/985095913/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-10-01T12:49:26Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/985095913",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/207713?v=4",
+         "events_url" : "https://api.github.com/users/a5an0/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/a5an0/followers",
+         "following_url" : "https://api.github.com/users/a5an0/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/a5an0/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/a5an0",
+         "id" : 207713,
+         "login" : "a5an0",
+         "node_id" : "MDQ6VXNlcjIwNzcxMw==",
+         "organizations_url" : "https://api.github.com/users/a5an0/orgs",
+         "received_events_url" : "https://api.github.com/users/a5an0/received_events",
+         "repos_url" : "https://api.github.com/users/a5an0/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/a5an0/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/a5an0/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/a5an0"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/26208#discussion_r985166473"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26208"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/985166473"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "You want each call site to use the same `max_interval`, so I thought it was less bug prone for missing the value to have an explicit \"missing argument\" error, rather than an implicit \"cap is set to a different time\".\r\n\r\nAll existing callers in the script should already be updated by this patch; it's not really intended for this to provide a stable api that external callers could rely on.",
+      "commit_id" : "51a08f41ffab914d6dfa009b2ba31065b86444a4",
+      "created_at" : "2022-10-02T01:58:56Z",
+      "diff_hunk" : "@@ -225,7 +225,7 @@ def seconds_to_hms(s):\n         out = \"-\" + out\n     return out\n \n-def next_block_delta(last_nbits, last_hash, ultimate_target, do_poisson):\n+def next_block_delta(last_nbits, last_hash, ultimate_target, do_poisson, max_interval):",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26208#discussion_r985166473",
+      "id" : 985166473,
+      "in_reply_to_id" : 985095913,
+      "line" : 228,
+      "node_id" : "PRRC_kwDOABII5846uHKJ",
+      "original_commit_id" : "51a08f41ffab914d6dfa009b2ba31065b86444a4",
+      "original_line" : 228,
+      "original_position" : 5,
+      "original_start_line" : null,
+      "path" : "contrib/signet/miner",
+      "position" : 5,
+      "pull_request_review_id" : 1127582015,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26208",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/985166473/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-10-02T01:58:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/985166473",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/127186?v=4",
+         "events_url" : "https://api.github.com/users/ajtowns/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ajtowns/followers",
+         "following_url" : "https://api.github.com/users/ajtowns/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ajtowns/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ajtowns",
+         "id" : 127186,
+         "login" : "ajtowns",
+         "node_id" : "MDQ6VXNlcjEyNzE4Ng==",
+         "organizations_url" : "https://api.github.com/users/ajtowns/orgs",
+         "received_events_url" : "https://api.github.com/users/ajtowns/received_events",
+         "repos_url" : "https://api.github.com/users/ajtowns/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ajtowns/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ajtowns/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ajtowns"
+      }
+   }
+]

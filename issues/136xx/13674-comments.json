@@ -1,0 +1,1744 @@
+[
+   {
+      "author_association" : "NONE",
+      "body" : "There's also the possibility of emitting the shutdown signal from RPCExecutor destructor so we don't need a wrapper - that simplify the solution. I created the PR with the wrapper solution because it might be considered unsafe to emit signals from a destructor in a multi-threaded application. Would appreciate any input on this and I'll update the PR accordingly.",
+      "created_at" : "2018-07-16T17:27:59Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#issuecomment-405323678",
+      "id" : 405323678,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/13674",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQwNTMyMzY3OA==",
+      "updated_at" : "2018-07-16T17:27:59Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/405323678",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r202818240"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/202818240"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Remove commented code?",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-07-16T20:44:13Z",
+      "diff_hunk" : "@@ -968,19 +1014,21 @@ void RPCConsole::browseHistory(int offset)\n \n void RPCConsole::startExecutor()\n {\n-    RPCExecutor *executor = new RPCExecutor(m_node);\n-    executor->moveToThread(&thread);\n+    RPCExecutorWrapper *executorWrapper = new RPCExecutorWrapper(m_node);\n+    executorWrapper->moveToThread(&thread);\n \n     // Replies from executor object must go to this object\n-    connect(executor, SIGNAL(reply(int,QString)), this, SLOT(message(int,QString)));\n+    connect(executorWrapper, SIGNAL(reply(int,QString)), this, SLOT(message(int,QString)));\n     // Requests from this object must go to executor\n-    connect(this, SIGNAL(cmdRequest(QString, QString)), executor, SLOT(request(QString, QString)));\n+    connect(this, SIGNAL(cmdRequest(QString, QString)), executorWrapper, SLOT(request(QString, QString)));\n+    connect(executorWrapper, SIGNAL(shutdownComplete()), this, SIGNAL(rpcExecutorShutdownComplete()));\n \n     // On stopExecutor signal\n     // - quit the Qt event loop in the execution thread\n-    connect(this, SIGNAL(stopExecutor()), &thread, SLOT(quit()));\n+    connect(this, SIGNAL(stopExecutor()), executorWrapper, SLOT(shutdown()));\n+    //connect(this, SIGNAL(stopExecutor()), &thread, SLOT(quit()));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r202818240",
+      "id" : 202818240,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIwMjgxODI0MA==",
+      "original_commit_id" : "debf7dbeb26d5f05c134ca6a3ce0b9d1ce40a88d",
+      "original_position" : 90,
+      "path" : "src/qt/rpcconsole.cpp",
+      "position" : null,
+      "pull_request_review_id" : 137589486,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/202818240",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "author_association" : "NONE",
+      "body" : "Thanks for the suggestion @promag \r\nI've updated the PR to remove the unnecessary complexity. Aside from your suggested code, I've made a small change to bitcoingui.cpp so that the UI clientModel is not cleared until the RPCExecutor thread joins. Otherwise, network events, like a new connection, that trigger a UI update would raise exceptions.\r\n",
+      "created_at" : "2018-07-17T04:08:07Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#issuecomment-405453406",
+      "id" : 405453406,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/13674",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQwNTQ1MzQwNg==",
+      "updated_at" : "2018-07-17T04:08:07Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/405453406",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r203056751"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/203056751"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Sorry, could use new connect syntax?\r\n```cpp\r\nconnect(&thread, &QThread::finished, &loop, &QEventLoop::quit)",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-07-17T14:58:11Z",
+      "diff_hunk" : "@@ -688,8 +689,10 @@ void RPCConsole::setClientModel(ClientModel *model)\n     if (!model) {\n         // Client model is being set to 0, this means shutdown() is about to be called.\n         // Make sure we clean up the executor thread\n+        QEventLoop loop;\n+        connect(&thread, SIGNAL(finished()), &loop, SLOT(quit()));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r203056751",
+      "id" : 203056751,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIwMzA1Njc1MQ==",
+      "original_commit_id" : "3844ba3d10a4bb89ddd348a19ccd33f64f35a1a6",
+      "original_position" : 13,
+      "path" : "src/qt/rpcconsole.cpp",
+      "position" : null,
+      "pull_request_review_id" : 137871575,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/203056751",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r203490214"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/203490214"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "Sure thing. That's done.\r\nAnd rebased.",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-07-18T18:49:01Z",
+      "diff_hunk" : "@@ -688,8 +689,10 @@ void RPCConsole::setClientModel(ClientModel *model)\n     if (!model) {\n         // Client model is being set to 0, this means shutdown() is about to be called.\n         // Make sure we clean up the executor thread\n+        QEventLoop loop;\n+        connect(&thread, SIGNAL(finished()), &loop, SLOT(quit()));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r203490214",
+      "id" : 203490214,
+      "in_reply_to_id" : 203056751,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIwMzQ5MDIxNA==",
+      "original_commit_id" : "3844ba3d10a4bb89ddd348a19ccd33f64f35a1a6",
+      "original_position" : 13,
+      "path" : "src/qt/rpcconsole.cpp",
+      "position" : null,
+      "pull_request_review_id" : 138390317,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/203490214",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r205535493"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/205535493"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Rebase to remove this change.",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-07-26T17:15:40Z",
+      "diff_hunk" : "@@ -470,13 +470,13 @@ void BitcoinGUI::setClientModel(ClientModel *_clientModel)\n         }\n #endif // ENABLE_WALLET\n         unitDisplayControl->setOptionsModel(_clientModel->getOptionsModel());\n-        \n+",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r205535493",
+      "id" : 205535493,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIwNTUzNTQ5Mw==",
+      "original_commit_id" : "086d88e3e911930152827dfe9f0c878d1de18296",
+      "original_position" : 16,
+      "path" : "src/qt/bitcoingui.cpp",
+      "position" : null,
+      "pull_request_review_id" : 140825723,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/205535493",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r205535537"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/205535537"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Why this change? Should update `this->clientModel` event if `_clientModel` is null.",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-07-26T17:15:48Z",
+      "diff_hunk" : "@@ -437,9 +437,9 @@ void BitcoinGUI::createToolBars()\n \n void BitcoinGUI::setClientModel(ClientModel *_clientModel)\n {\n-    this->clientModel = _clientModel;\n     if(_clientModel)\n     {\n+        this->clientModel = _clientModel;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r205535537",
+      "id" : 205535537,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIwNTUzNTUzNw==",
+      "original_commit_id" : "086d88e3e911930152827dfe9f0c878d1de18296",
+      "original_position" : 7,
+      "path" : "src/qt/bitcoingui.cpp",
+      "position" : 7,
+      "pull_request_review_id" : 140825723,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/205535537",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r205535639"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/205535639"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Same as above.",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-07-26T17:16:03Z",
+      "diff_hunk" : "@@ -470,13 +470,13 @@ void BitcoinGUI::setClientModel(ClientModel *_clientModel)\n         }\n #endif // ENABLE_WALLET\n         unitDisplayControl->setOptionsModel(_clientModel->getOptionsModel());\n-        \n+\n         OptionsModel* optionsModel = _clientModel->getOptionsModel();\n         if(optionsModel)\n         {\n             // be aware of the tray icon disable state change reported by the OptionsModel object.\n             connect(optionsModel,SIGNAL(hideTrayIconChanged(bool)),this,SLOT(setTrayIconVisible(bool)));\n-        \n+",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r205535639",
+      "id" : 205535639,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIwNTUzNTYzOQ==",
+      "original_commit_id" : "086d88e3e911930152827dfe9f0c878d1de18296",
+      "original_position" : 23,
+      "path" : "src/qt/bitcoingui.cpp",
+      "position" : null,
+      "pull_request_review_id" : 140825723,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/205535639",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r205655309"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/205655309"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "Because now the main thread is not blocked, network events can trigger a GUI update. If the clientModel is set to 0 or null at the time, the application will crash.\r\nExample: When number of connections change, BitcoinGUI::updateNetworkState() gets invoked and this method assumes that clientModel is valid.\r\nWith this change  BitcoinGUI clientModel is cleared only after the RPCExecutor thread joins and shutdown resumes in the main thread.",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-07-27T02:52:55Z",
+      "diff_hunk" : "@@ -437,9 +437,9 @@ void BitcoinGUI::createToolBars()\n \n void BitcoinGUI::setClientModel(ClientModel *_clientModel)\n {\n-    this->clientModel = _clientModel;\n     if(_clientModel)\n     {\n+        this->clientModel = _clientModel;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r205655309",
+      "id" : 205655309,
+      "in_reply_to_id" : 205535537,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIwNTY1NTMwOQ==",
+      "original_commit_id" : "086d88e3e911930152827dfe9f0c878d1de18296",
+      "original_position" : 7,
+      "path" : "src/qt/bitcoingui.cpp",
+      "position" : 7,
+      "pull_request_review_id" : 140970757,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/205655309",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r205656056"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/205656056"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "Done",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-07-27T03:00:14Z",
+      "diff_hunk" : "@@ -470,13 +470,13 @@ void BitcoinGUI::setClientModel(ClientModel *_clientModel)\n         }\n #endif // ENABLE_WALLET\n         unitDisplayControl->setOptionsModel(_clientModel->getOptionsModel());\n-        \n+",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r205656056",
+      "id" : 205656056,
+      "in_reply_to_id" : 205535493,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIwNTY1NjA1Ng==",
+      "original_commit_id" : "086d88e3e911930152827dfe9f0c878d1de18296",
+      "original_position" : 16,
+      "path" : "src/qt/bitcoingui.cpp",
+      "position" : null,
+      "pull_request_review_id" : 140971657,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/205656056",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r205656066"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/205656066"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "Done!",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-07-27T03:00:22Z",
+      "diff_hunk" : "@@ -470,13 +470,13 @@ void BitcoinGUI::setClientModel(ClientModel *_clientModel)\n         }\n #endif // ENABLE_WALLET\n         unitDisplayControl->setOptionsModel(_clientModel->getOptionsModel());\n-        \n+\n         OptionsModel* optionsModel = _clientModel->getOptionsModel();\n         if(optionsModel)\n         {\n             // be aware of the tray icon disable state change reported by the OptionsModel object.\n             connect(optionsModel,SIGNAL(hideTrayIconChanged(bool)),this,SLOT(setTrayIconVisible(bool)));\n-        \n+",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r205656066",
+      "id" : 205656066,
+      "in_reply_to_id" : 205535639,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIwNTY1NjA2Ng==",
+      "original_commit_id" : "086d88e3e911930152827dfe9f0c878d1de18296",
+      "original_position" : 23,
+      "path" : "src/qt/bitcoingui.cpp",
+      "position" : null,
+      "pull_request_review_id" : 140971670,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/205656066",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "author_association" : "NONE",
+      "body" : "Hi all, please let me know if there's anything that needs to be done to have this fix merged.\r\nThanks",
+      "created_at" : "2018-09-01T05:45:35Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#issuecomment-417835170",
+      "id" : 417835170,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/13674",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQxNzgzNTE3MA==",
+      "updated_at" : "2018-09-01T05:45:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/417835170",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r219680542"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/219680542"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "You're implicitly using `QueuedConnection` here: https://github.com/bitcoin/bitcoin/blob/9255963890f07f93646cc32703da935dcb24d454/src/qt/rpcconsole.cpp#L693\r\nTherefore,  the `thread.isFinished()` is called immediately after the `stopExecutor()` signal is emitted. If the `thread` is idle the value of `thread.isFinished()` may be unpredictable, IMO.",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-09-22T19:37:33Z",
+      "diff_hunk" : "@@ -688,8 +689,10 @@ void RPCConsole::setClientModel(ClientModel *model)\n     if (!model) {\n         // Client model is being set to 0, this means shutdown() is about to be called.\n         // Make sure we clean up the executor thread\n+        QEventLoop loop;\n+        connect(&thread, &QThread::finished, &loop, &QEventLoop::quit);\n         Q_EMIT stopExecutor();\n-        thread.wait();\n+        if (!thread.isFinished()) loop.exec();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r219680542",
+      "id" : 219680542,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIxOTY4MDU0Mg==",
+      "original_commit_id" : "9255963890f07f93646cc32703da935dcb24d454",
+      "original_position" : 16,
+      "path" : "src/qt/rpcconsole.cpp",
+      "position" : null,
+      "pull_request_review_id" : 157920184,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/219680542",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r221449323"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/221449323"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "If I understood your concern correctly, you're afraid that the thread.isFinished() result may be unpredictable and as a result, the QEventLoop may never quit since it is tied to the thread finished() signal.\r\n\r\nI don't see a problem considering how the QThread lifecycle works. As per documentation, the order is:\r\n* Thread quit() or exit() is called\r\n* As soon as exec completes, isFinished starts to return true\r\n* The finished() signal is emitted\r\n\r\nAs a result we should consistently get the loop.exec before the thread finished signal is emitted.\r\nAlso, if thread.isFinished return true, the code in the if statement is not executed and shutdown continues normally.\r\n\r\nPlease let me know if I misunderstood your concern.\r\nThanks,\r\n\r\n\r\n",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-09-30T06:47:57Z",
+      "diff_hunk" : "@@ -688,8 +689,10 @@ void RPCConsole::setClientModel(ClientModel *model)\n     if (!model) {\n         // Client model is being set to 0, this means shutdown() is about to be called.\n         // Make sure we clean up the executor thread\n+        QEventLoop loop;\n+        connect(&thread, &QThread::finished, &loop, &QEventLoop::quit);\n         Q_EMIT stopExecutor();\n-        thread.wait();\n+        if (!thread.isFinished()) loop.exec();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r221449323",
+      "id" : 221449323,
+      "in_reply_to_id" : 219680542,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIyMTQ0OTMyMw==",
+      "original_commit_id" : "9255963890f07f93646cc32703da935dcb24d454",
+      "original_position" : 16,
+      "path" : "src/qt/rpcconsole.cpp",
+      "position" : null,
+      "pull_request_review_id" : 160104199,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/221449323",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r226862713"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/226862713"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "~`if (!thread.isFinished()) loop.exec();` is not atomic so the wrong order (`loop.quit()` then `loop.exec()`) is possible.~ See: https://github.com/bitcoin/bitcoin/pull/13674#discussion_r238215586",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-10-21T13:19:38Z",
+      "diff_hunk" : "@@ -688,8 +689,10 @@ void RPCConsole::setClientModel(ClientModel *model)\n     if (!model) {\n         // Client model is being set to 0, this means shutdown() is about to be called.\n         // Make sure we clean up the executor thread\n+        QEventLoop loop;\n+        connect(&thread, &QThread::finished, &loop, &QEventLoop::quit);\n         Q_EMIT stopExecutor();\n-        thread.wait();\n+        if (!thread.isFinished()) loop.exec();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r226862713",
+      "id" : 226862713,
+      "in_reply_to_id" : 219680542,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIyNjg2MjcxMw==",
+      "original_commit_id" : "9255963890f07f93646cc32703da935dcb24d454",
+      "original_position" : 16,
+      "path" : "src/qt/rpcconsole.cpp",
+      "position" : null,
+      "pull_request_review_id" : 166784985,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/226862713",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#15894](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/15894.html) (Remove duplicated \"Error: \" prefix in logs by hebasto)\n* [#9849](https://drahtbot.github.io/bitcoin_core_issue_redirect/r/9849.html) (Qt: Network Watch tool by luke-jr)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "created_at" : "2018-10-24T00:08:43Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#issuecomment-432465354",
+      "id" : 432465354,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/13674",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQzMjQ2NTM1NA==",
+      "updated_at" : "2019-06-19T20:38:04Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/432465354",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r231021109"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/231021109"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "As you noticed, we're using `QueuedConnection` implicitly here.\r\nThe EventLoop will only receive the thread finished event after we call `exec()`. I ran multiple tests locally to confirm that. Even when the thread finishes right away and we insert some long running process before the exec, it still exits successfully.\r\nThat would only be a problem if we were using Qt::DirectConnection.\r\n\r\n@promag , do you have anything to add to this comment?  (as you suggested that snippet of code)",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-11-06T07:38:57Z",
+      "diff_hunk" : "@@ -688,8 +689,10 @@ void RPCConsole::setClientModel(ClientModel *model)\n     if (!model) {\n         // Client model is being set to 0, this means shutdown() is about to be called.\n         // Make sure we clean up the executor thread\n+        QEventLoop loop;\n+        connect(&thread, &QThread::finished, &loop, &QEventLoop::quit);\n         Q_EMIT stopExecutor();\n-        thread.wait();\n+        if (!thread.isFinished()) loop.exec();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r231021109",
+      "id" : 231021109,
+      "in_reply_to_id" : 219680542,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIzMTAyMTEwOQ==",
+      "original_commit_id" : "9255963890f07f93646cc32703da935dcb24d454",
+      "original_position" : 16,
+      "path" : "src/qt/rpcconsole.cpp",
+      "position" : null,
+      "pull_request_review_id" : 171890497,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/231021109",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r238215586"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/238215586"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Agree: forcing event dispatching by means of a local event loop works as expected.",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-12-03T10:34:41Z",
+      "diff_hunk" : "@@ -688,8 +689,10 @@ void RPCConsole::setClientModel(ClientModel *model)\n     if (!model) {\n         // Client model is being set to 0, this means shutdown() is about to be called.\n         // Make sure we clean up the executor thread\n+        QEventLoop loop;\n+        connect(&thread, &QThread::finished, &loop, &QEventLoop::quit);\n         Q_EMIT stopExecutor();\n-        thread.wait();\n+        if (!thread.isFinished()) loop.exec();",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r238215586",
+      "id" : 238215586,
+      "in_reply_to_id" : 219680542,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIzODIxNTU4Ng==",
+      "original_commit_id" : "9255963890f07f93646cc32703da935dcb24d454",
+      "original_position" : 16,
+      "path" : "src/qt/rpcconsole.cpp",
+      "position" : null,
+      "pull_request_review_id" : 180700240,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/238215586",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r238216215"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/238216215"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "```\r\nthis->clientModel = nullptr;\r\n```",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-12-03T10:36:34Z",
+      "diff_hunk" : "@@ -488,8 +488,11 @@ void BitcoinGUI::setClientModel(ClientModel *_clientModel)\n             // Disable context menu on tray icon\n             trayIconMenu->clear();\n         }\n-        // Propagate cleared model to child objects\n+        // Propagate cleared model to RPC console\n         rpcConsole->setClientModel(nullptr);\n+\n+        // Once RPC console is cleared, propagate to other child objects\n+        this->clientModel = 0;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r238216215",
+      "id" : 238216215,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIzODIxNjIxNQ==",
+      "original_commit_id" : "9255963890f07f93646cc32703da935dcb24d454",
+      "original_position" : 20,
+      "path" : "src/qt/bitcoingui.cpp",
+      "position" : null,
+      "pull_request_review_id" : 180701040,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/238216215",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r238962093"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/238962093"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "Done. Changed to nullptr.\r\nI had it set to 0 before because it is the current behavior in master. `BitcoinApplication::requestShutdown()` in bitcoin.cpp invokes `window->setClientModel(0)`",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-12-05T08:02:51Z",
+      "diff_hunk" : "@@ -488,8 +488,11 @@ void BitcoinGUI::setClientModel(ClientModel *_clientModel)\n             // Disable context menu on tray icon\n             trayIconMenu->clear();\n         }\n-        // Propagate cleared model to child objects\n+        // Propagate cleared model to RPC console\n         rpcConsole->setClientModel(nullptr);\n+\n+        // Once RPC console is cleared, propagate to other child objects\n+        this->clientModel = 0;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r238962093",
+      "id" : 238962093,
+      "in_reply_to_id" : 238216215,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIzODk2MjA5Mw==",
+      "original_commit_id" : "9255963890f07f93646cc32703da935dcb24d454",
+      "original_position" : 20,
+      "path" : "src/qt/bitcoingui.cpp",
+      "position" : null,
+      "pull_request_review_id" : 181628340,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/238962093",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r238966825"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/238966825"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "[Developer Notes - Coding Style (General)](https://github.com/bitcoin/bitcoin/blob/master/doc/developer-notes.md#coding-style-general):\r\n>  When writing patches, favor the new style over attempting to mimic the surrounding style, except for move-only commits.",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2018-12-05T08:22:41Z",
+      "diff_hunk" : "@@ -488,8 +488,11 @@ void BitcoinGUI::setClientModel(ClientModel *_clientModel)\n             // Disable context menu on tray icon\n             trayIconMenu->clear();\n         }\n-        // Propagate cleared model to child objects\n+        // Propagate cleared model to RPC console\n         rpcConsole->setClientModel(nullptr);\n+\n+        // Once RPC console is cleared, propagate to other child objects\n+        this->clientModel = 0;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r238966825",
+      "id" : 238966825,
+      "in_reply_to_id" : 238216215,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDIzODk2NjgyNQ==",
+      "original_commit_id" : "9255963890f07f93646cc32703da935dcb24d454",
+      "original_position" : 20,
+      "path" : "src/qt/bitcoingui.cpp",
+      "position" : null,
+      "pull_request_review_id" : 181634186,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/238966825",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "tACK 18850903f803bba58d110d3994df18969992f383 (on Linux)\r\nWould you squash commits?",
+      "created_at" : "2018-12-05T08:25:59Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#issuecomment-444399710",
+      "id" : 444399710,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/13674",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ0NDM5OTcxMA==",
+      "updated_at" : "2018-12-05T08:25:59Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/444399710",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "NONE",
+      "body" : "All comments addressed. Commits squashed. Please let me know if there's anything.",
+      "created_at" : "2018-12-06T07:06:01Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#issuecomment-444770111",
+      "id" : 444770111,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/13674",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ0NDc3MDExMQ==",
+      "updated_at" : "2018-12-06T07:06:01Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/444770111",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "re-tACK abff36969da9998e36c72f2df7faf68564f0c8db (Linux, macOS 10.13.6)",
+      "created_at" : "2018-12-06T19:22:18Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#issuecomment-444996683",
+      "id" : 444996683,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/13674",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ0NDk5NjY4Mw==",
+      "updated_at" : "2018-12-06T19:22:18Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/444996683",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->Needs rebase",
+      "created_at" : "2019-01-17T15:11:00Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#issuecomment-455205843",
+      "id" : 455205843,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/13674",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ1NTIwNTg0Mw==",
+      "updated_at" : "2019-01-17T15:11:00Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/455205843",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@LeandroRocha84 sorry for keeping this up so long...\r\ncan you rebase once and then we try to get this merged?",
+      "created_at" : "2019-04-16T07:54:11Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#issuecomment-483552051",
+      "id" : 483552051,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/13674",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4MzU1MjA1MQ==",
+      "updated_at" : "2019-04-16T07:54:11Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/483552051",
+      "user" : {
+         "avatar_url" : "https://avatars3.githubusercontent.com/u/178464?v=4",
+         "events_url" : "https://api.github.com/users/jonasschnelli/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonasschnelli/followers",
+         "following_url" : "https://api.github.com/users/jonasschnelli/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonasschnelli/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonasschnelli",
+         "id" : 178464,
+         "login" : "jonasschnelli",
+         "node_id" : "MDQ6VXNlcjE3ODQ2NA==",
+         "organizations_url" : "https://api.github.com/users/jonasschnelli/orgs",
+         "received_events_url" : "https://api.github.com/users/jonasschnelli/received_events",
+         "repos_url" : "https://api.github.com/users/jonasschnelli/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonasschnelli/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonasschnelli/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonasschnelli"
+      }
+   },
+   {
+      "author_association" : "NONE",
+      "body" : "Thanks @jonasschnelli I'm working on solving the conflicts after the rebase.\r\nThe order change in fd6d499 breaks the solution in this PR as it makes the QEventLoop.exec returns right away. I've confirmed that the bug this PR intends to solve is still reproducible; the shutdown screen is frozen/blocked when we have a long running RPC command.\r\nI'm going to spend some time this weekend to find out how exactly the order change I linked affects the QEventLoop.\r\n\r\nAdding @promag as he might have some insight.",
+      "created_at" : "2019-04-17T06:18:39Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#issuecomment-483952353",
+      "id" : 483952353,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/13674",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4Mzk1MjM1Mw==",
+      "updated_at" : "2019-04-17T06:18:39Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/483952353",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "author_association" : "NONE",
+      "body" : "Conflicts resolved, rebase completed. I've tested the fix on linux.\r\n@jonasschnelli please let me know if there's anything else I can do to get this pull request completed.\r\nThank you.",
+      "created_at" : "2019-04-20T06:18:36Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#issuecomment-485062401",
+      "id" : 485062401,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/13674",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDQ4NTA2MjQwMQ==",
+      "updated_at" : "2019-04-20T06:18:36Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/485062401",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r277131238"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/277131238"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "> BitcoinGUI::updateNetworkState() gets invoked and this method assumes that clientModel is valid.\r\n\r\nThen those need to be fixed IMO. With your change calling `setClientModel(nullptr)` on the `BitcoinGUI` instance is a noop.",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2019-04-20T10:40:42Z",
+      "diff_hunk" : "@@ -437,9 +437,9 @@ void BitcoinGUI::createToolBars()\n \n void BitcoinGUI::setClientModel(ClientModel *_clientModel)\n {\n-    this->clientModel = _clientModel;\n     if(_clientModel)\n     {\n+        this->clientModel = _clientModel;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r277131238",
+      "id" : 277131238,
+      "in_reply_to_id" : 205535537,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3NzEzMTIzOA==",
+      "original_commit_id" : "086d88e3e911930152827dfe9f0c878d1de18296",
+      "original_position" : 7,
+      "path" : "src/qt/bitcoingui.cpp",
+      "position" : 7,
+      "pull_request_review_id" : 228874229,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/277131238",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r277131276"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/277131276"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Add braces `{`.",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2019-04-20T10:42:13Z",
+      "diff_hunk" : "@@ -686,8 +687,11 @@ void RPCConsole::setClientModel(ClientModel *model)\n     }\n     if (!model) {\n         // Client model is being set to 0, this means shutdown() is about to be called.\n+        QEventLoop loop;\n+        connect(&thread, &QThread::finished, &loop, &QEventLoop::quit);\n         thread.quit();\n-        thread.wait();\n+        if (!thread.isFinished())",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r277131276",
+      "id" : 277131276,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3NzEzMTI3Ng==",
+      "original_commit_id" : "a302c992bae07e9982a3293e3e27199f3b822632",
+      "original_position" : 16,
+      "path" : "src/qt/rpcconsole.cpp",
+      "position" : null,
+      "pull_request_review_id" : 228874229,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/277131276",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r277131286"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/277131286"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Should be\r\n```cpp\r\nif (!closeEventRegistered) qApp->quit();\r\n```\r\nOr\r\n```cpp\r\nif (!closeEventRegistered) {\r\n    qApp->quit();\r\n}\r\n```\r\n",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2019-04-20T10:42:48Z",
+      "diff_hunk" : "@@ -1311,7 +1314,8 @@ void BitcoinGUI::detectShutdown()\n     {\n         if(rpcConsole)\n             rpcConsole->hide();\n-        qApp->quit();\n+        if(!closeEventRegistered)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r277131286",
+      "id" : 277131286,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3NzEzMTI4Ng==",
+      "original_commit_id" : "a302c992bae07e9982a3293e3e27199f3b822632",
+      "original_position" : 38,
+      "path" : "src/qt/bitcoingui.cpp",
+      "position" : null,
+      "pull_request_review_id" : 228874229,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/277131286",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r277131319"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/277131319"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This is used to prevent calling `qApp->quit()` more than once. Is this a real problem - could this be removed?",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2019-04-20T10:44:39Z",
+      "diff_hunk" : "@@ -161,6 +161,7 @@ class BitcoinGUI : public QMainWindow\n     RPCConsole* rpcConsole = nullptr;\n     HelpMessageDialog* helpMessageDialog = nullptr;\n     ModalOverlay* modalOverlay = nullptr;\n+    bool closeEventRegistered = false;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r277131319",
+      "id" : 277131319,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3NzEzMTMxOQ==",
+      "original_commit_id" : "a302c992bae07e9982a3293e3e27199f3b822632",
+      "original_position" : 4,
+      "path" : "src/qt/bitcoingui.h",
+      "position" : 4,
+      "pull_request_review_id" : 228874229,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/277131319",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r277137727"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/277137727"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "Done.",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2019-04-20T15:18:43Z",
+      "diff_hunk" : "@@ -1311,7 +1314,8 @@ void BitcoinGUI::detectShutdown()\n     {\n         if(rpcConsole)\n             rpcConsole->hide();\n-        qApp->quit();\n+        if(!closeEventRegistered)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r277137727",
+      "id" : 277137727,
+      "in_reply_to_id" : 277131286,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3NzEzNzcyNw==",
+      "original_commit_id" : "a302c992bae07e9982a3293e3e27199f3b822632",
+      "original_position" : 38,
+      "path" : "src/qt/bitcoingui.cpp",
+      "position" : null,
+      "pull_request_review_id" : 228881359,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/277137727",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r277138122"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/277138122"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "That's right. This is needed since the reordering in fd6d499. The second call to ```aApp-quit()``` would make the QEventLoop exit before the RPC executor thread finishes causing the application to crash.\r\nI've made sure that closing bitcoin QT by typing in 'stop' in the console still works as intended when this line was introduced in 9a2305a",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2019-04-20T15:34:36Z",
+      "diff_hunk" : "@@ -161,6 +161,7 @@ class BitcoinGUI : public QMainWindow\n     RPCConsole* rpcConsole = nullptr;\n     HelpMessageDialog* helpMessageDialog = nullptr;\n     ModalOverlay* modalOverlay = nullptr;\n+    bool closeEventRegistered = false;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r277138122",
+      "id" : 277138122,
+      "in_reply_to_id" : 277131319,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3NzEzODEyMg==",
+      "original_commit_id" : "a302c992bae07e9982a3293e3e27199f3b822632",
+      "original_position" : 4,
+      "path" : "src/qt/bitcoingui.h",
+      "position" : 4,
+      "pull_request_review_id" : 228881814,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/277138122",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r278286301"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/278286301"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Between `thread.isFinished()` and `loop.exec()` the thread can terminate and then `loop` won't quit.",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2019-04-24T19:39:41Z",
+      "diff_hunk" : "@@ -686,8 +687,12 @@ void RPCConsole::setClientModel(ClientModel *model)\n     }\n     if (!model) {\n         // Client model is being set to 0, this means shutdown() is about to be called.\n+        QEventLoop loop;\n+        connect(&thread, &QThread::finished, &loop, &QEventLoop::quit);\n         thread.quit();\n-        thread.wait();\n+        if (!thread.isFinished()) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r278286301",
+      "id" : 278286301,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3ODI4NjMwMQ==",
+      "original_commit_id" : "ba230e42996f80e06b379b65e597050388edba7f",
+      "original_position" : 16,
+      "path" : "src/qt/rpcconsole.cpp",
+      "position" : null,
+      "pull_request_review_id" : 230315964,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/278286301",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r278380529"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/278380529"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "As we're implicitly using QueuedConnection, the thread finished signal won't be produced until after ```loop.exec()``` is called, that's my understanding based on the docs. Please let me know if you think I'm wrong here - I've tested this a lot, including with varying delays between ```thread.isFinished()``` and ```loop.exec()```\r\nAnother comment I wrote on this PR in a thread with @hebasto : https://github.com/bitcoin/bitcoin/pull/13674#discussion_r231021109\r\n\r\nLet me know whether you still think this is a problem.\r\n",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2019-04-25T02:40:35Z",
+      "diff_hunk" : "@@ -686,8 +687,12 @@ void RPCConsole::setClientModel(ClientModel *model)\n     }\n     if (!model) {\n         // Client model is being set to 0, this means shutdown() is about to be called.\n+        QEventLoop loop;\n+        connect(&thread, &QThread::finished, &loop, &QEventLoop::quit);\n         thread.quit();\n-        thread.wait();\n+        if (!thread.isFinished()) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r278380529",
+      "id" : 278380529,
+      "in_reply_to_id" : 278286301,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3ODM4MDUyOQ==",
+      "original_commit_id" : "ba230e42996f80e06b379b65e597050388edba7f",
+      "original_position" : 16,
+      "path" : "src/qt/rpcconsole.cpp",
+      "position" : null,
+      "pull_request_review_id" : 230431887,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/278380529",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r278445111"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/278445111"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "You are correct, I've verified `QThread::finished` signal is emitted from a different thread which defers the `QEventLoop::quit` execution.\r\n\r\nHowever, considering #15313, I'm not sure if nested event loops should be avoided. Sorry for suggesting this approach but #15313 raised some concerns in this regard.\r\n\r\nAn alternative is to expose a signal `RPCConsole::finished` to `BitcoinGUI`.",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2019-04-25T08:29:24Z",
+      "diff_hunk" : "@@ -686,8 +687,12 @@ void RPCConsole::setClientModel(ClientModel *model)\n     }\n     if (!model) {\n         // Client model is being set to 0, this means shutdown() is about to be called.\n+        QEventLoop loop;\n+        connect(&thread, &QThread::finished, &loop, &QEventLoop::quit);\n         thread.quit();\n-        thread.wait();\n+        if (!thread.isFinished()) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r278445111",
+      "id" : 278445111,
+      "in_reply_to_id" : 278286301,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3ODQ0NTExMQ==",
+      "original_commit_id" : "ba230e42996f80e06b379b65e597050388edba7f",
+      "original_position" : 16,
+      "path" : "src/qt/rpcconsole.cpp",
+      "position" : null,
+      "pull_request_review_id" : 230511750,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:08:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/278445111",
+      "user" : {
+         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "events_url" : "https://api.github.com/users/promag/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/promag/followers",
+         "following_url" : "https://api.github.com/users/promag/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/promag/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/promag",
+         "id" : 3534524,
+         "login" : "promag",
+         "node_id" : "MDQ6VXNlcjM1MzQ1MjQ=",
+         "organizations_url" : "https://api.github.com/users/promag/orgs",
+         "received_events_url" : "https://api.github.com/users/promag/received_events",
+         "repos_url" : "https://api.github.com/users/promag/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/promag/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/promag/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/promag"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r281038968"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/281038968"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "I see the point. That's done, I've exposed the thread finished signal to ````BitcoinGUI````\r\nCan you please review?\r\nThanks,",
+      "commit_id" : "0636f38ad163333319756e865f074a79380dd7ed",
+      "created_at" : "2019-05-05T21:11:50Z",
+      "diff_hunk" : "@@ -686,8 +687,12 @@ void RPCConsole::setClientModel(ClientModel *model)\n     }\n     if (!model) {\n         // Client model is being set to 0, this means shutdown() is about to be called.\n+        QEventLoop loop;\n+        connect(&thread, &QThread::finished, &loop, &QEventLoop::quit);\n         thread.quit();\n-        thread.wait();\n+        if (!thread.isFinished()) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#discussion_r281038968",
+      "id" : 281038968,
+      "in_reply_to_id" : 278286301,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI4MTAzODk2OA==",
+      "original_commit_id" : "ba230e42996f80e06b379b65e597050388edba7f",
+      "original_position" : 16,
+      "path" : "src/qt/rpcconsole.cpp",
+      "position" : null,
+      "pull_request_review_id" : 233797950,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/13674",
+      "updated_at" : "2019-05-05T21:11:50Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/281038968",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/8540640?v=4",
+         "events_url" : "https://api.github.com/users/LeandroRocha84/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/LeandroRocha84/followers",
+         "following_url" : "https://api.github.com/users/LeandroRocha84/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/LeandroRocha84/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/LeandroRocha84",
+         "id" : 8540640,
+         "login" : "LeandroRocha84",
+         "node_id" : "MDQ6VXNlcjg1NDA2NDA=",
+         "organizations_url" : "https://api.github.com/users/LeandroRocha84/orgs",
+         "received_events_url" : "https://api.github.com/users/LeandroRocha84/received_events",
+         "repos_url" : "https://api.github.com/users/LeandroRocha84/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/LeandroRocha84/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/LeandroRocha84/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/LeandroRocha84"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->Needs rebase",
+      "created_at" : "2019-06-25T11:56:27Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#issuecomment-505412029",
+      "id" : 505412029,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/13674",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDUwNTQxMjAyOQ==",
+      "updated_at" : "2019-06-25T11:56:27Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/505412029",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--5fd3d806e98f4a0ca80977bb178665a0-->There hasn't been much activity lately and the patch still needs rebase, so I am closing this for now. Please let me know when you want to continue working on this, so the pull request can be re-opened.",
+      "created_at" : "2019-09-30T13:02:32Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/13674#issuecomment-536550543",
+      "id" : 536550543,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/13674",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDUzNjU1MDU0Mw==",
+      "updated_at" : "2019-09-30T13:02:32Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/536550543",
+      "user" : {
+         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   }
+]

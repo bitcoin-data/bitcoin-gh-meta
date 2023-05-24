@@ -1,0 +1,1097 @@
+[
+   {
+      "body" : "Nice feature.  RE -storebanlist, the system should default to storing.   Users may disable.\r\n\r\nOr don't create an option at all -- same as CAddrDB, user may delete file to clear the list.\r\n",
+      "created_at" : "2015-06-19T15:53:51Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#issuecomment-113555161",
+      "id" : 113555161,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6310",
+      "updated_at" : "2015-06-19T15:53:51Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/113555161",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/494411?v=3",
+         "events_url" : "https://api.github.com/users/jgarzik/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jgarzik/followers",
+         "following_url" : "https://api.github.com/users/jgarzik/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jgarzik/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jgarzik",
+         "id" : 494411,
+         "login" : "jgarzik",
+         "organizations_url" : "https://api.github.com/users/jgarzik/orgs",
+         "received_events_url" : "https://api.github.com/users/jgarzik/received_events",
+         "repos_url" : "https://api.github.com/users/jgarzik/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jgarzik/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jgarzik/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jgarzik"
+      }
+   },
+   {
+      "body" : "I'd also vote for treating this the same as peers.dat and don't add an option for it.",
+      "created_at" : "2015-06-19T19:52:25Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#issuecomment-113624098",
+      "id" : 113624098,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6310",
+      "updated_at" : "2015-06-19T19:52:25Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/113624098",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1419649?v=3",
+         "events_url" : "https://api.github.com/users/Diapolo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Diapolo/followers",
+         "following_url" : "https://api.github.com/users/Diapolo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Diapolo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Diapolo",
+         "id" : 1419649,
+         "login" : "Diapolo",
+         "organizations_url" : "https://api.github.com/users/Diapolo/orgs",
+         "received_events_url" : "https://api.github.com/users/Diapolo/received_events",
+         "repos_url" : "https://api.github.com/users/Diapolo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Diapolo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Diapolo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Diapolo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r32863378"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/32863378"
+         }
+      },
+      "body" : "Not sure if this is best to use an int here... what is file_size returning?",
+      "commit_id" : "177a0e491449b9accfa0cf17c138147539071358",
+      "created_at" : "2015-06-19T19:55:25Z",
+      "diff_hunk" : "@@ -2107,3 +2173,119 @@ void CNode::EndMessage() UNLOCK_FUNCTION(cs_vSend)\n \n     LEAVE_CRITICAL_SECTION(cs_vSend);\n }\n+\n+//\n+// CBanDB\n+//\n+\n+CBanDB::CBanDB()\n+{\n+    pathBanlist = GetDataDir() / \"banlist.dat\";\n+}\n+\n+bool CBanDB::Write(const std::map<CSubNet, int64_t>& banSet)\n+{\n+    // Generate random temporary filename\n+    unsigned short randv = 0;\n+    GetRandBytes((unsigned char*)&randv, sizeof(randv));\n+    std::string tmpfn = strprintf(\"banlist.dat.%04x\", randv);\n+\n+    // serialize banlist, checksum data up to that point, then append csum\n+    CDataStream ssBanlist(SER_DISK, CLIENT_VERSION);\n+    ssBanlist << FLATDATA(Params().MessageStart());\n+    ssBanlist << banSet;\n+    uint256 hash = Hash(ssBanlist.begin(), ssBanlist.end());\n+    ssBanlist << hash;\n+\n+    // open temp output file, and associate with CAutoFile\n+    boost::filesystem::path pathTmp = GetDataDir() / tmpfn;\n+    FILE *file = fopen(pathTmp.string().c_str(), \"wb\");\n+    CAutoFile fileout(file, SER_DISK, CLIENT_VERSION);\n+    if (fileout.IsNull())\n+        return error(\"%s: Failed to open file %s\", __func__, pathTmp.string());\n+\n+    // Write and commit header, data\n+    try {\n+        fileout << ssBanlist;\n+    }\n+    catch (const std::exception& e) {\n+        return error(\"%s: Serialize or I/O error - %s\", __func__, e.what());\n+    }\n+    FileCommit(fileout.Get());\n+    fileout.fclose();\n+\n+    // replace existing banlist.dat, if any, with new banlist.dat.XXXX\n+    if (!RenameOver(pathTmp, pathBanlist))\n+        return error(\"%s: Rename-into-place failed\", __func__);\n+\n+    return true;\n+}\n+\n+bool CBanDB::Read(std::map<CSubNet, int64_t>& banSet)\n+{\n+    // open input file, and associate with CAutoFile\n+    FILE *file = fopen(pathBanlist.string().c_str(), \"rb\");\n+    CAutoFile filein(file, SER_DISK, CLIENT_VERSION);\n+    if (filein.IsNull())\n+        return error(\"%s: Failed to open file %s\", __func__, pathBanlist.string());\n+\n+    // use file size to size memory buffer\n+    int fileSize = boost::filesystem::file_size(pathBanlist);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r32863378",
+      "id" : 32863378,
+      "original_commit_id" : "9c4b16b843c25d9741cbae5a7ec9e6ac11fbd846",
+      "original_position" : 193,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310",
+      "updated_at" : "2015-07-02T18:44:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/32863378",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1419649?v=3",
+         "events_url" : "https://api.github.com/users/Diapolo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Diapolo/followers",
+         "following_url" : "https://api.github.com/users/Diapolo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Diapolo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Diapolo",
+         "id" : 1419649,
+         "login" : "Diapolo",
+         "organizations_url" : "https://api.github.com/users/Diapolo/orgs",
+         "received_events_url" : "https://api.github.com/users/Diapolo/received_events",
+         "repos_url" : "https://api.github.com/users/Diapolo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Diapolo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Diapolo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Diapolo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r32863463"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/32863463"
+         }
+      },
+      "body" : "Maybe you could use std:: so we can get rid of using namespace std; easier :)?",
+      "commit_id" : "177a0e491449b9accfa0cf17c138147539071358",
+      "created_at" : "2015-06-19T19:56:33Z",
+      "diff_hunk" : "@@ -2107,3 +2173,119 @@ void CNode::EndMessage() UNLOCK_FUNCTION(cs_vSend)\n \n     LEAVE_CRITICAL_SECTION(cs_vSend);\n }\n+\n+//\n+// CBanDB\n+//\n+\n+CBanDB::CBanDB()\n+{\n+    pathBanlist = GetDataDir() / \"banlist.dat\";\n+}\n+\n+bool CBanDB::Write(const std::map<CSubNet, int64_t>& banSet)\n+{\n+    // Generate random temporary filename\n+    unsigned short randv = 0;\n+    GetRandBytes((unsigned char*)&randv, sizeof(randv));\n+    std::string tmpfn = strprintf(\"banlist.dat.%04x\", randv);\n+\n+    // serialize banlist, checksum data up to that point, then append csum\n+    CDataStream ssBanlist(SER_DISK, CLIENT_VERSION);\n+    ssBanlist << FLATDATA(Params().MessageStart());\n+    ssBanlist << banSet;\n+    uint256 hash = Hash(ssBanlist.begin(), ssBanlist.end());\n+    ssBanlist << hash;\n+\n+    // open temp output file, and associate with CAutoFile\n+    boost::filesystem::path pathTmp = GetDataDir() / tmpfn;\n+    FILE *file = fopen(pathTmp.string().c_str(), \"wb\");\n+    CAutoFile fileout(file, SER_DISK, CLIENT_VERSION);\n+    if (fileout.IsNull())\n+        return error(\"%s: Failed to open file %s\", __func__, pathTmp.string());\n+\n+    // Write and commit header, data\n+    try {\n+        fileout << ssBanlist;\n+    }\n+    catch (const std::exception& e) {\n+        return error(\"%s: Serialize or I/O error - %s\", __func__, e.what());\n+    }\n+    FileCommit(fileout.Get());\n+    fileout.fclose();\n+\n+    // replace existing banlist.dat, if any, with new banlist.dat.XXXX\n+    if (!RenameOver(pathTmp, pathBanlist))\n+        return error(\"%s: Rename-into-place failed\", __func__);\n+\n+    return true;\n+}\n+\n+bool CBanDB::Read(std::map<CSubNet, int64_t>& banSet)\n+{\n+    // open input file, and associate with CAutoFile\n+    FILE *file = fopen(pathBanlist.string().c_str(), \"rb\");\n+    CAutoFile filein(file, SER_DISK, CLIENT_VERSION);\n+    if (filein.IsNull())\n+        return error(\"%s: Failed to open file %s\", __func__, pathBanlist.string());\n+\n+    // use file size to size memory buffer\n+    int fileSize = boost::filesystem::file_size(pathBanlist);\n+    int dataSize = fileSize - sizeof(uint256);\n+    // Don't try to resize to a negative number if file is small\n+    if (dataSize < 0)\n+        dataSize = 0;\n+    vector<unsigned char> vchData;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r32863463",
+      "id" : 32863463,
+      "original_commit_id" : "9c4b16b843c25d9741cbae5a7ec9e6ac11fbd846",
+      "original_position" : 198,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310",
+      "updated_at" : "2015-07-02T18:44:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/32863463",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1419649?v=3",
+         "events_url" : "https://api.github.com/users/Diapolo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Diapolo/followers",
+         "following_url" : "https://api.github.com/users/Diapolo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Diapolo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Diapolo",
+         "id" : 1419649,
+         "login" : "Diapolo",
+         "organizations_url" : "https://api.github.com/users/Diapolo/orgs",
+         "received_events_url" : "https://api.github.com/users/Diapolo/received_events",
+         "repos_url" : "https://api.github.com/users/Diapolo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Diapolo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Diapolo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Diapolo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r32863654"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/32863654"
+         }
+      },
+      "body" : "Do you expect users with more then 2GB of banned node data?\r\nI have taken this approach from CAddrDB 1:1. But i agree file sizes should be held in `uint64_t` or in `size_t` if they are not serialized/shared anywhere.",
+      "commit_id" : "177a0e491449b9accfa0cf17c138147539071358",
+      "created_at" : "2015-06-19T19:58:50Z",
+      "diff_hunk" : "@@ -2107,3 +2173,119 @@ void CNode::EndMessage() UNLOCK_FUNCTION(cs_vSend)\n \n     LEAVE_CRITICAL_SECTION(cs_vSend);\n }\n+\n+//\n+// CBanDB\n+//\n+\n+CBanDB::CBanDB()\n+{\n+    pathBanlist = GetDataDir() / \"banlist.dat\";\n+}\n+\n+bool CBanDB::Write(const std::map<CSubNet, int64_t>& banSet)\n+{\n+    // Generate random temporary filename\n+    unsigned short randv = 0;\n+    GetRandBytes((unsigned char*)&randv, sizeof(randv));\n+    std::string tmpfn = strprintf(\"banlist.dat.%04x\", randv);\n+\n+    // serialize banlist, checksum data up to that point, then append csum\n+    CDataStream ssBanlist(SER_DISK, CLIENT_VERSION);\n+    ssBanlist << FLATDATA(Params().MessageStart());\n+    ssBanlist << banSet;\n+    uint256 hash = Hash(ssBanlist.begin(), ssBanlist.end());\n+    ssBanlist << hash;\n+\n+    // open temp output file, and associate with CAutoFile\n+    boost::filesystem::path pathTmp = GetDataDir() / tmpfn;\n+    FILE *file = fopen(pathTmp.string().c_str(), \"wb\");\n+    CAutoFile fileout(file, SER_DISK, CLIENT_VERSION);\n+    if (fileout.IsNull())\n+        return error(\"%s: Failed to open file %s\", __func__, pathTmp.string());\n+\n+    // Write and commit header, data\n+    try {\n+        fileout << ssBanlist;\n+    }\n+    catch (const std::exception& e) {\n+        return error(\"%s: Serialize or I/O error - %s\", __func__, e.what());\n+    }\n+    FileCommit(fileout.Get());\n+    fileout.fclose();\n+\n+    // replace existing banlist.dat, if any, with new banlist.dat.XXXX\n+    if (!RenameOver(pathTmp, pathBanlist))\n+        return error(\"%s: Rename-into-place failed\", __func__);\n+\n+    return true;\n+}\n+\n+bool CBanDB::Read(std::map<CSubNet, int64_t>& banSet)\n+{\n+    // open input file, and associate with CAutoFile\n+    FILE *file = fopen(pathBanlist.string().c_str(), \"rb\");\n+    CAutoFile filein(file, SER_DISK, CLIENT_VERSION);\n+    if (filein.IsNull())\n+        return error(\"%s: Failed to open file %s\", __func__, pathBanlist.string());\n+\n+    // use file size to size memory buffer\n+    int fileSize = boost::filesystem::file_size(pathBanlist);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r32863654",
+      "id" : 32863654,
+      "original_commit_id" : "9c4b16b843c25d9741cbae5a7ec9e6ac11fbd846",
+      "original_position" : 193,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310",
+      "updated_at" : "2015-07-02T18:44:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/32863654",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/178464?v=3",
+         "events_url" : "https://api.github.com/users/jonasschnelli/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonasschnelli/followers",
+         "following_url" : "https://api.github.com/users/jonasschnelli/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonasschnelli/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonasschnelli",
+         "id" : 178464,
+         "login" : "jonasschnelli",
+         "organizations_url" : "https://api.github.com/users/jonasschnelli/orgs",
+         "received_events_url" : "https://api.github.com/users/jonasschnelli/received_events",
+         "repos_url" : "https://api.github.com/users/jonasschnelli/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonasschnelli/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonasschnelli/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonasschnelli"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r32863840"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/32863840"
+         }
+      },
+      "body" : "I think it's plenty of space, but we should be 100% sure we don't overflow IMHO? Yeah there are more parts in the code that don't do that.",
+      "commit_id" : "177a0e491449b9accfa0cf17c138147539071358",
+      "created_at" : "2015-06-19T20:00:46Z",
+      "diff_hunk" : "@@ -2107,3 +2173,119 @@ void CNode::EndMessage() UNLOCK_FUNCTION(cs_vSend)\n \n     LEAVE_CRITICAL_SECTION(cs_vSend);\n }\n+\n+//\n+// CBanDB\n+//\n+\n+CBanDB::CBanDB()\n+{\n+    pathBanlist = GetDataDir() / \"banlist.dat\";\n+}\n+\n+bool CBanDB::Write(const std::map<CSubNet, int64_t>& banSet)\n+{\n+    // Generate random temporary filename\n+    unsigned short randv = 0;\n+    GetRandBytes((unsigned char*)&randv, sizeof(randv));\n+    std::string tmpfn = strprintf(\"banlist.dat.%04x\", randv);\n+\n+    // serialize banlist, checksum data up to that point, then append csum\n+    CDataStream ssBanlist(SER_DISK, CLIENT_VERSION);\n+    ssBanlist << FLATDATA(Params().MessageStart());\n+    ssBanlist << banSet;\n+    uint256 hash = Hash(ssBanlist.begin(), ssBanlist.end());\n+    ssBanlist << hash;\n+\n+    // open temp output file, and associate with CAutoFile\n+    boost::filesystem::path pathTmp = GetDataDir() / tmpfn;\n+    FILE *file = fopen(pathTmp.string().c_str(), \"wb\");\n+    CAutoFile fileout(file, SER_DISK, CLIENT_VERSION);\n+    if (fileout.IsNull())\n+        return error(\"%s: Failed to open file %s\", __func__, pathTmp.string());\n+\n+    // Write and commit header, data\n+    try {\n+        fileout << ssBanlist;\n+    }\n+    catch (const std::exception& e) {\n+        return error(\"%s: Serialize or I/O error - %s\", __func__, e.what());\n+    }\n+    FileCommit(fileout.Get());\n+    fileout.fclose();\n+\n+    // replace existing banlist.dat, if any, with new banlist.dat.XXXX\n+    if (!RenameOver(pathTmp, pathBanlist))\n+        return error(\"%s: Rename-into-place failed\", __func__);\n+\n+    return true;\n+}\n+\n+bool CBanDB::Read(std::map<CSubNet, int64_t>& banSet)\n+{\n+    // open input file, and associate with CAutoFile\n+    FILE *file = fopen(pathBanlist.string().c_str(), \"rb\");\n+    CAutoFile filein(file, SER_DISK, CLIENT_VERSION);\n+    if (filein.IsNull())\n+        return error(\"%s: Failed to open file %s\", __func__, pathBanlist.string());\n+\n+    // use file size to size memory buffer\n+    int fileSize = boost::filesystem::file_size(pathBanlist);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r32863840",
+      "id" : 32863840,
+      "original_commit_id" : "9c4b16b843c25d9741cbae5a7ec9e6ac11fbd846",
+      "original_position" : 193,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310",
+      "updated_at" : "2015-07-02T18:44:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/32863840",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1419649?v=3",
+         "events_url" : "https://api.github.com/users/Diapolo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Diapolo/followers",
+         "following_url" : "https://api.github.com/users/Diapolo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Diapolo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Diapolo",
+         "id" : 1419649,
+         "login" : "Diapolo",
+         "organizations_url" : "https://api.github.com/users/Diapolo/orgs",
+         "received_events_url" : "https://api.github.com/users/Diapolo/received_events",
+         "repos_url" : "https://api.github.com/users/Diapolo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Diapolo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Diapolo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Diapolo"
+      }
+   },
+   {
+      "body" : "> @jgarzik: RE -storebanlist, the system should default to storing. Users may disable.\r\n\r\nThis seems risky in my opinion, because not all IPs are static, and they don't necessarily always belong to the same node.",
+      "created_at" : "2015-06-26T00:08:47Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#issuecomment-115435212",
+      "id" : 115435212,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6310",
+      "updated_at" : "2015-06-26T00:08:47Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/115435212",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/5836089?v=3",
+         "events_url" : "https://api.github.com/users/dexX7/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/dexX7/followers",
+         "following_url" : "https://api.github.com/users/dexX7/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/dexX7/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/dexX7",
+         "id" : 5836089,
+         "login" : "dexX7",
+         "organizations_url" : "https://api.github.com/users/dexX7/orgs",
+         "received_events_url" : "https://api.github.com/users/dexX7/received_events",
+         "repos_url" : "https://api.github.com/users/dexX7/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/dexX7/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/dexX7/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/dexX7"
+      }
+   },
+   {
+      "body" : "dexX7: that is why all bans are temporary.\n\njonasschnelli: I think defaulting to storing them is perfectly fine (or\neven not offering the option).\n",
+      "created_at" : "2015-06-26T00:47:13Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#issuecomment-115447766",
+      "id" : 115447766,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6310",
+      "updated_at" : "2015-06-26T00:47:13Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/115447766",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=3",
+         "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/sipa/followers",
+         "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/sipa/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/sipa",
+         "id" : 548488,
+         "login" : "sipa",
+         "organizations_url" : "https://api.github.com/users/sipa/orgs",
+         "received_events_url" : "https://api.github.com/users/sipa/received_events",
+         "repos_url" : "https://api.github.com/users/sipa/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/sipa/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/sipa/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/sipa"
+      }
+   },
+   {
+      "body" : "@jgarziks way of resetting the banlist (by removing banlist.dat) is very straightforward and doesn't need any explanation. I'd like to avoid another cmd arg option to not end up in having thousands of tiny options.\r\n\r\nNode misbehaving bans are by default 24h. All other bans needs conscious actions from the users.\r\nThe chance that your node accidentally get an IP out of a dynamic range, where the previous owner managed to add his bitcoin-core on a ban-list, is very rar. And then, the chance that all nodes did ban this IP or that you connect to a node which conscious added your new IP to the banlist is even rarer\r\nWe have 3,706,452,992 assignable public IPv4 addresses.",
+      "created_at" : "2015-06-26T07:15:09Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#issuecomment-115555420",
+      "id" : 115555420,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6310",
+      "updated_at" : "2015-06-26T07:15:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/115555420",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/178464?v=3",
+         "events_url" : "https://api.github.com/users/jonasschnelli/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonasschnelli/followers",
+         "following_url" : "https://api.github.com/users/jonasschnelli/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonasschnelli/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonasschnelli",
+         "id" : 178464,
+         "login" : "jonasschnelli",
+         "organizations_url" : "https://api.github.com/users/jonasschnelli/orgs",
+         "received_events_url" : "https://api.github.com/users/jonasschnelli/received_events",
+         "repos_url" : "https://api.github.com/users/jonasschnelli/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonasschnelli/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonasschnelli/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonasschnelli"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33347282"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33347282"
+         }
+      },
+      "body" : "Right: to be precise, file sizes should be `uint64_t`, not `size_t`. Remember that size_t depends on the address width, it is for in-memory sizes.",
+      "commit_id" : "177a0e491449b9accfa0cf17c138147539071358",
+      "created_at" : "2015-06-26T11:20:54Z",
+      "diff_hunk" : "@@ -2107,3 +2173,119 @@ void CNode::EndMessage() UNLOCK_FUNCTION(cs_vSend)\n \n     LEAVE_CRITICAL_SECTION(cs_vSend);\n }\n+\n+//\n+// CBanDB\n+//\n+\n+CBanDB::CBanDB()\n+{\n+    pathBanlist = GetDataDir() / \"banlist.dat\";\n+}\n+\n+bool CBanDB::Write(const std::map<CSubNet, int64_t>& banSet)\n+{\n+    // Generate random temporary filename\n+    unsigned short randv = 0;\n+    GetRandBytes((unsigned char*)&randv, sizeof(randv));\n+    std::string tmpfn = strprintf(\"banlist.dat.%04x\", randv);\n+\n+    // serialize banlist, checksum data up to that point, then append csum\n+    CDataStream ssBanlist(SER_DISK, CLIENT_VERSION);\n+    ssBanlist << FLATDATA(Params().MessageStart());\n+    ssBanlist << banSet;\n+    uint256 hash = Hash(ssBanlist.begin(), ssBanlist.end());\n+    ssBanlist << hash;\n+\n+    // open temp output file, and associate with CAutoFile\n+    boost::filesystem::path pathTmp = GetDataDir() / tmpfn;\n+    FILE *file = fopen(pathTmp.string().c_str(), \"wb\");\n+    CAutoFile fileout(file, SER_DISK, CLIENT_VERSION);\n+    if (fileout.IsNull())\n+        return error(\"%s: Failed to open file %s\", __func__, pathTmp.string());\n+\n+    // Write and commit header, data\n+    try {\n+        fileout << ssBanlist;\n+    }\n+    catch (const std::exception& e) {\n+        return error(\"%s: Serialize or I/O error - %s\", __func__, e.what());\n+    }\n+    FileCommit(fileout.Get());\n+    fileout.fclose();\n+\n+    // replace existing banlist.dat, if any, with new banlist.dat.XXXX\n+    if (!RenameOver(pathTmp, pathBanlist))\n+        return error(\"%s: Rename-into-place failed\", __func__);\n+\n+    return true;\n+}\n+\n+bool CBanDB::Read(std::map<CSubNet, int64_t>& banSet)\n+{\n+    // open input file, and associate with CAutoFile\n+    FILE *file = fopen(pathBanlist.string().c_str(), \"rb\");\n+    CAutoFile filein(file, SER_DISK, CLIENT_VERSION);\n+    if (filein.IsNull())\n+        return error(\"%s: Failed to open file %s\", __func__, pathBanlist.string());\n+\n+    // use file size to size memory buffer\n+    int fileSize = boost::filesystem::file_size(pathBanlist);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33347282",
+      "id" : 33347282,
+      "original_commit_id" : "9c4b16b843c25d9741cbae5a7ec9e6ac11fbd846",
+      "original_position" : 193,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310",
+      "updated_at" : "2015-07-02T18:44:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33347282",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "body" : "Concept ACK, also agree that defaulting to store bans is perfectly fine (so is not offering an option).\r\n\r\nAs any kind of persistence commits to a format it is good to think forward a bit what should be included: would it make sense to add e.g. a \"ban source\" enum field, that specifies whether the ban is automatic or manual?",
+      "created_at" : "2015-06-26T11:21:18Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#issuecomment-115650574",
+      "id" : 115650574,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6310",
+      "updated_at" : "2015-06-26T11:21:18Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/115650574",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33354739"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33354739"
+         }
+      },
+      "body" : "Agreed. Changed from `int` to `uint64_t` (also in `CAddDB`).",
+      "commit_id" : "177a0e491449b9accfa0cf17c138147539071358",
+      "created_at" : "2015-06-26T13:22:34Z",
+      "diff_hunk" : "@@ -2107,3 +2173,119 @@ void CNode::EndMessage() UNLOCK_FUNCTION(cs_vSend)\n \n     LEAVE_CRITICAL_SECTION(cs_vSend);\n }\n+\n+//\n+// CBanDB\n+//\n+\n+CBanDB::CBanDB()\n+{\n+    pathBanlist = GetDataDir() / \"banlist.dat\";\n+}\n+\n+bool CBanDB::Write(const std::map<CSubNet, int64_t>& banSet)\n+{\n+    // Generate random temporary filename\n+    unsigned short randv = 0;\n+    GetRandBytes((unsigned char*)&randv, sizeof(randv));\n+    std::string tmpfn = strprintf(\"banlist.dat.%04x\", randv);\n+\n+    // serialize banlist, checksum data up to that point, then append csum\n+    CDataStream ssBanlist(SER_DISK, CLIENT_VERSION);\n+    ssBanlist << FLATDATA(Params().MessageStart());\n+    ssBanlist << banSet;\n+    uint256 hash = Hash(ssBanlist.begin(), ssBanlist.end());\n+    ssBanlist << hash;\n+\n+    // open temp output file, and associate with CAutoFile\n+    boost::filesystem::path pathTmp = GetDataDir() / tmpfn;\n+    FILE *file = fopen(pathTmp.string().c_str(), \"wb\");\n+    CAutoFile fileout(file, SER_DISK, CLIENT_VERSION);\n+    if (fileout.IsNull())\n+        return error(\"%s: Failed to open file %s\", __func__, pathTmp.string());\n+\n+    // Write and commit header, data\n+    try {\n+        fileout << ssBanlist;\n+    }\n+    catch (const std::exception& e) {\n+        return error(\"%s: Serialize or I/O error - %s\", __func__, e.what());\n+    }\n+    FileCommit(fileout.Get());\n+    fileout.fclose();\n+\n+    // replace existing banlist.dat, if any, with new banlist.dat.XXXX\n+    if (!RenameOver(pathTmp, pathBanlist))\n+        return error(\"%s: Rename-into-place failed\", __func__);\n+\n+    return true;\n+}\n+\n+bool CBanDB::Read(std::map<CSubNet, int64_t>& banSet)\n+{\n+    // open input file, and associate with CAutoFile\n+    FILE *file = fopen(pathBanlist.string().c_str(), \"rb\");\n+    CAutoFile filein(file, SER_DISK, CLIENT_VERSION);\n+    if (filein.IsNull())\n+        return error(\"%s: Failed to open file %s\", __func__, pathBanlist.string());\n+\n+    // use file size to size memory buffer\n+    int fileSize = boost::filesystem::file_size(pathBanlist);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33354739",
+      "id" : 33354739,
+      "original_commit_id" : "9c4b16b843c25d9741cbae5a7ec9e6ac11fbd846",
+      "original_position" : 193,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310",
+      "updated_at" : "2015-07-02T18:44:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33354739",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/178464?v=3",
+         "events_url" : "https://api.github.com/users/jonasschnelli/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonasschnelli/followers",
+         "following_url" : "https://api.github.com/users/jonasschnelli/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonasschnelli/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonasschnelli",
+         "id" : 178464,
+         "login" : "jonasschnelli",
+         "organizations_url" : "https://api.github.com/users/jonasschnelli/orgs",
+         "received_events_url" : "https://api.github.com/users/jonasschnelli/received_events",
+         "repos_url" : "https://api.github.com/users/jonasschnelli/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonasschnelli/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonasschnelli/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonasschnelli"
+      }
+   },
+   {
+      "body" : "I like the idea of storing the \"ban source\". Because we now keep/dump a serialized `std::map<CSubNet, int64_t>` everything beyond that would be a bigger change. We should probably introduce a simple class for the banlist entry like `class CBanEntry { int64_t bantime, enum banSource }`. This might also be capable of allowing ban distinction between multiple bans on the same IP but with different ports (but would mean moving from std::map to a vector).",
+      "created_at" : "2015-06-26T13:52:55Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#issuecomment-115697741",
+      "id" : 115697741,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6310",
+      "updated_at" : "2015-06-26T13:52:55Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/115697741",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/178464?v=3",
+         "events_url" : "https://api.github.com/users/jonasschnelli/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonasschnelli/followers",
+         "following_url" : "https://api.github.com/users/jonasschnelli/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonasschnelli/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonasschnelli",
+         "id" : 178464,
+         "login" : "jonasschnelli",
+         "organizations_url" : "https://api.github.com/users/jonasschnelli/orgs",
+         "received_events_url" : "https://api.github.com/users/jonasschnelli/received_events",
+         "repos_url" : "https://api.github.com/users/jonasschnelli/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonasschnelli/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonasschnelli/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonasschnelli"
+      }
+   },
+   {
+      "body" : "> We should probably introduce a simple class for the banlist entry like class CBanEntry { int64_t bantime, enum banSource }\r\n\r\nRight. That would also allow for versioning in serialization.\r\n\r\n> This might also be capable of allowing ban distinction between multiple bans on the same IP but with different ports\r\n\r\nThis might be overdoing it; at least I don't see much added value in per-port bans, at the least they're easily circumvented (for incoming connections: just reconnect and you get a different source port, for outgoing connections simply rebind to a different port).",
+      "created_at" : "2015-06-26T15:20:40Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#issuecomment-115726862",
+      "id" : 115726862,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6310",
+      "updated_at" : "2015-06-26T15:21:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/115726862",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "body" : "@laanwj Think about per port bans with incoming Tor/proxy connections, they're all 127.0.0.1 and when I currently ban a single 127.0.0.1 with a specific port all further connection attempts are blocked until bantime is over. Not sure if this is to solve in any way.",
+      "created_at" : "2015-06-26T15:27:51Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#issuecomment-115730290",
+      "id" : 115730290,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6310",
+      "updated_at" : "2015-06-26T15:27:51Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/115730290",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1419649?v=3",
+         "events_url" : "https://api.github.com/users/Diapolo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Diapolo/followers",
+         "following_url" : "https://api.github.com/users/Diapolo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Diapolo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Diapolo",
+         "id" : 1419649,
+         "login" : "Diapolo",
+         "organizations_url" : "https://api.github.com/users/Diapolo/orgs",
+         "received_events_url" : "https://api.github.com/users/Diapolo/received_events",
+         "repos_url" : "https://api.github.com/users/Diapolo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Diapolo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Diapolo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Diapolo"
+      }
+   },
+   {
+      "body" : "@Diapolo That simply won't work. As I try to explain above, source ports aren't unique nor identifying.",
+      "created_at" : "2015-06-26T15:33:04Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#issuecomment-115733060",
+      "id" : 115733060,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6310",
+      "updated_at" : "2015-06-26T15:33:04Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/115733060",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "body" : "@laanwj Indeed, my fault... but should be warned when banning 127.0.0.1 or do you assume people know what they are banning?",
+      "created_at" : "2015-06-26T15:55:22Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#issuecomment-115739326",
+      "id" : 115739326,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6310",
+      "updated_at" : "2015-06-26T15:55:22Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/115739326",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1419649?v=3",
+         "events_url" : "https://api.github.com/users/Diapolo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Diapolo/followers",
+         "following_url" : "https://api.github.com/users/Diapolo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Diapolo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Diapolo",
+         "id" : 1419649,
+         "login" : "Diapolo",
+         "organizations_url" : "https://api.github.com/users/Diapolo/orgs",
+         "received_events_url" : "https://api.github.com/users/Diapolo/received_events",
+         "repos_url" : "https://api.github.com/users/Diapolo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Diapolo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Diapolo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Diapolo"
+      }
+   },
+   {
+      "body" : "Followed and implemented @laanwj s proposal.\r\nAdded `CBanEntry` as ban metadata container which uses `enum BanReason` (`BanReasonNodeMisbehaving`, `BanReasonManuallyAdded`). Also added `nCreateTime` within the new metadata class, to allow to backtrack when a ban was added/created.\r\nUsing now everywhere the typedef `std::map<CSubNet, CBanEntry> banmap_t`.\r\n\r\nNow the `banlist.dat` file is extendable over the possibility to detect different versions (`CBanEntry->nVersion`) of entries and allow possible migrations during deserialization.",
+      "created_at" : "2015-06-26T19:58:22Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#issuecomment-115857001",
+      "id" : 115857001,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6310",
+      "updated_at" : "2015-06-26T19:58:22Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/115857001",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/178464?v=3",
+         "events_url" : "https://api.github.com/users/jonasschnelli/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonasschnelli/followers",
+         "following_url" : "https://api.github.com/users/jonasschnelli/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonasschnelli/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonasschnelli",
+         "id" : 178464,
+         "login" : "jonasschnelli",
+         "organizations_url" : "https://api.github.com/users/jonasschnelli/orgs",
+         "received_events_url" : "https://api.github.com/users/jonasschnelli/received_events",
+         "repos_url" : "https://api.github.com/users/jonasschnelli/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonasschnelli/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonasschnelli/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonasschnelli"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33471202"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33471202"
+         }
+      },
+      "body" : "`s/untill/until/` I suppose?\r\n",
+      "commit_id" : "177a0e491449b9accfa0cf17c138147539071358",
+      "created_at" : "2015-06-29T14:49:45Z",
+      "diff_hunk" : "@@ -541,15 +542,19 @@ UniValue listbanned(const UniValue& params, bool fHelp)\n                             + HelpExampleRpc(\"listbanned\", \"\")\n                             );\n \n-    std::map<CSubNet, int64_t> banMap;\n+    banmap_t banMap;\n     CNode::GetBanned(banMap);\n \n     UniValue bannedAddresses(UniValue::VARR);\n-    for (std::map<CSubNet, int64_t>::iterator it = banMap.begin(); it != banMap.end(); it++)\n+    for (banmap_t::iterator it = banMap.begin(); it != banMap.end(); it++)\n     {\n+        CBanEntry banEntry = (*it).second;\n         UniValue rec(UniValue::VOBJ);\n         rec.push_back(Pair(\"address\", (*it).first.ToString()));\n-        rec.push_back(Pair(\"banned_untill\", (*it).second));\n+        rec.push_back(Pair(\"banned_untill\", banEntry.nBanUntil));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33471202",
+      "id" : 33471202,
+      "original_commit_id" : "0386ba4b6224aeccfe8977d5cf454fa24b82b55d",
+      "original_position" : 33,
+      "path" : "src/rpcnet.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310",
+      "updated_at" : "2015-07-02T18:44:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33471202",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "body" : "utACK",
+      "created_at" : "2015-06-29T14:50:53Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#issuecomment-116713725",
+      "id" : 116713725,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6310",
+      "updated_at" : "2015-06-29T14:50:53Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/116713725",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33471651"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33471651"
+         }
+      },
+      "body" : "Hhmm at some point we should add a CSubNet constructor or factory function that makes a subnet with one unique `CNetAddr` (netmask all ones), and use that, instead of going through a string. Not a big deal, though.",
+      "commit_id" : "177a0e491449b9accfa0cf17c138147539071358",
+      "created_at" : "2015-06-29T14:53:32Z",
+      "diff_hunk" : "@@ -474,30 +476,35 @@ bool CNode::IsBanned(CSubNet subnet)\n     bool fResult = false;\n     {\n         LOCK(cs_setBanned);\n-        std::map<CSubNet, int64_t>::iterator i = setBanned.find(subnet);\n+        banmap_t::iterator i = setBanned.find(subnet);\n         if (i != setBanned.end())\n         {\n-            int64_t t = (*i).second;\n-            if (GetTime() < t)\n+            CBanEntry banEntry = (*i).second;\n+            if (GetTime() < banEntry.nBanUntil)\n                 fResult = true;\n         }\n     }\n     return fResult;\n }\n \n-void CNode::Ban(const CNetAddr& addr, int64_t bantimeoffset, bool sinceUnixEpoch) {\n+void CNode::Ban(const CNetAddr& addr, const BanReason &banReason, int64_t bantimeoffset, bool sinceUnixEpoch) {\n     CSubNet subNet(addr.ToString()+(addr.IsIPv4() ? \"/32\" : \"/128\"));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33471651",
+      "id" : 33471651,
+      "original_commit_id" : "0386ba4b6224aeccfe8977d5cf454fa24b82b55d",
+      "original_position" : 53,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310",
+      "updated_at" : "2015-07-02T18:44:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33471651",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33472954"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33472954"
+         }
+      },
+      "body" : "maybe\r\n```\r\nif (bantimeoffset <= 0)\r\n{\r\n    bantimeoffset = GetArg(\"-bantime\", 60*60*24); // Default 24-hour ban\r\n    sinceUnixEpoch = false;\r\n}\r\nbanEntry.nBanUntil = (sinceUnixEpoch ? 0 : GetTime() )+bantimeoffset;    \r\n```\r\n(slightly cleaner, not calling GetTime() twice)",
+      "commit_id" : "177a0e491449b9accfa0cf17c138147539071358",
+      "created_at" : "2015-06-29T15:04:26Z",
+      "diff_hunk" : "@@ -474,30 +476,35 @@ bool CNode::IsBanned(CSubNet subnet)\n     bool fResult = false;\n     {\n         LOCK(cs_setBanned);\n-        std::map<CSubNet, int64_t>::iterator i = setBanned.find(subnet);\n+        banmap_t::iterator i = setBanned.find(subnet);\n         if (i != setBanned.end())\n         {\n-            int64_t t = (*i).second;\n-            if (GetTime() < t)\n+            CBanEntry banEntry = (*i).second;\n+            if (GetTime() < banEntry.nBanUntil)\n                 fResult = true;\n         }\n     }\n     return fResult;\n }\n \n-void CNode::Ban(const CNetAddr& addr, int64_t bantimeoffset, bool sinceUnixEpoch) {\n+void CNode::Ban(const CNetAddr& addr, const BanReason &banReason, int64_t bantimeoffset, bool sinceUnixEpoch) {\n     CSubNet subNet(addr.ToString()+(addr.IsIPv4() ? \"/32\" : \"/128\"));\n-    Ban(subNet, bantimeoffset, sinceUnixEpoch);\n+    Ban(subNet, banReason, bantimeoffset, sinceUnixEpoch);\n }\n \n-void CNode::Ban(const CSubNet& subNet, int64_t bantimeoffset, bool sinceUnixEpoch) {\n-    int64_t banTime = GetTime()+GetArg(\"-bantime\", 60*60*24);  // Default 24-hour ban\n+void CNode::Ban(const CSubNet& subNet, const BanReason &banReason, int64_t bantimeoffset, bool sinceUnixEpoch) {\n+    CBanEntry banEntry(GetTime());\n+    banEntry.banReason = banReason;\n+    banEntry.nBanUntil = GetTime()+GetArg(\"-bantime\", 60*60*24);  // Default 24-hour ban\n     if (bantimeoffset > 0)\n-        banTime = (sinceUnixEpoch ? 0 : GetTime() )+bantimeoffset;\n+        banEntry.nBanUntil = (sinceUnixEpoch ? 0 : GetTime() )+bantimeoffset;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33472954",
+      "id" : 33472954,
+      "original_commit_id" : "0386ba4b6224aeccfe8977d5cf454fa24b82b55d",
+      "original_position" : 66,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310",
+      "updated_at" : "2015-07-02T18:44:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33472954",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33492892"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33492892"
+         }
+      },
+      "body" : "> s/untill/until/ I suppose?\r\n\r\nFixed typo.",
+      "commit_id" : "177a0e491449b9accfa0cf17c138147539071358",
+      "created_at" : "2015-06-29T18:04:45Z",
+      "diff_hunk" : "@@ -541,15 +542,19 @@ UniValue listbanned(const UniValue& params, bool fHelp)\n                             + HelpExampleRpc(\"listbanned\", \"\")\n                             );\n \n-    std::map<CSubNet, int64_t> banMap;\n+    banmap_t banMap;\n     CNode::GetBanned(banMap);\n \n     UniValue bannedAddresses(UniValue::VARR);\n-    for (std::map<CSubNet, int64_t>::iterator it = banMap.begin(); it != banMap.end(); it++)\n+    for (banmap_t::iterator it = banMap.begin(); it != banMap.end(); it++)\n     {\n+        CBanEntry banEntry = (*it).second;\n         UniValue rec(UniValue::VOBJ);\n         rec.push_back(Pair(\"address\", (*it).first.ToString()));\n-        rec.push_back(Pair(\"banned_untill\", (*it).second));\n+        rec.push_back(Pair(\"banned_untill\", banEntry.nBanUntil));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33492892",
+      "id" : 33492892,
+      "original_commit_id" : "0386ba4b6224aeccfe8977d5cf454fa24b82b55d",
+      "original_position" : 33,
+      "path" : "src/rpcnet.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310",
+      "updated_at" : "2015-07-02T18:44:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33492892",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/178464?v=3",
+         "events_url" : "https://api.github.com/users/jonasschnelli/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonasschnelli/followers",
+         "following_url" : "https://api.github.com/users/jonasschnelli/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonasschnelli/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonasschnelli",
+         "id" : 178464,
+         "login" : "jonasschnelli",
+         "organizations_url" : "https://api.github.com/users/jonasschnelli/orgs",
+         "received_events_url" : "https://api.github.com/users/jonasschnelli/received_events",
+         "repos_url" : "https://api.github.com/users/jonasschnelli/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonasschnelli/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonasschnelli/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonasschnelli"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33492993"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33492993"
+         }
+      },
+      "body" : "Yes. This makes more sense. Fixed and pushed.",
+      "commit_id" : "177a0e491449b9accfa0cf17c138147539071358",
+      "created_at" : "2015-06-29T18:05:41Z",
+      "diff_hunk" : "@@ -474,30 +476,35 @@ bool CNode::IsBanned(CSubNet subnet)\n     bool fResult = false;\n     {\n         LOCK(cs_setBanned);\n-        std::map<CSubNet, int64_t>::iterator i = setBanned.find(subnet);\n+        banmap_t::iterator i = setBanned.find(subnet);\n         if (i != setBanned.end())\n         {\n-            int64_t t = (*i).second;\n-            if (GetTime() < t)\n+            CBanEntry banEntry = (*i).second;\n+            if (GetTime() < banEntry.nBanUntil)\n                 fResult = true;\n         }\n     }\n     return fResult;\n }\n \n-void CNode::Ban(const CNetAddr& addr, int64_t bantimeoffset, bool sinceUnixEpoch) {\n+void CNode::Ban(const CNetAddr& addr, const BanReason &banReason, int64_t bantimeoffset, bool sinceUnixEpoch) {\n     CSubNet subNet(addr.ToString()+(addr.IsIPv4() ? \"/32\" : \"/128\"));\n-    Ban(subNet, bantimeoffset, sinceUnixEpoch);\n+    Ban(subNet, banReason, bantimeoffset, sinceUnixEpoch);\n }\n \n-void CNode::Ban(const CSubNet& subNet, int64_t bantimeoffset, bool sinceUnixEpoch) {\n-    int64_t banTime = GetTime()+GetArg(\"-bantime\", 60*60*24);  // Default 24-hour ban\n+void CNode::Ban(const CSubNet& subNet, const BanReason &banReason, int64_t bantimeoffset, bool sinceUnixEpoch) {\n+    CBanEntry banEntry(GetTime());\n+    banEntry.banReason = banReason;\n+    banEntry.nBanUntil = GetTime()+GetArg(\"-bantime\", 60*60*24);  // Default 24-hour ban\n     if (bantimeoffset > 0)\n-        banTime = (sinceUnixEpoch ? 0 : GetTime() )+bantimeoffset;\n+        banEntry.nBanUntil = (sinceUnixEpoch ? 0 : GetTime() )+bantimeoffset;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33492993",
+      "id" : 33492993,
+      "original_commit_id" : "0386ba4b6224aeccfe8977d5cf454fa24b82b55d",
+      "original_position" : 66,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310",
+      "updated_at" : "2015-07-02T18:44:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33492993",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/178464?v=3",
+         "events_url" : "https://api.github.com/users/jonasschnelli/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonasschnelli/followers",
+         "following_url" : "https://api.github.com/users/jonasschnelli/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonasschnelli/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonasschnelli",
+         "id" : 178464,
+         "login" : "jonasschnelli",
+         "organizations_url" : "https://api.github.com/users/jonasschnelli/orgs",
+         "received_events_url" : "https://api.github.com/users/jonasschnelli/received_events",
+         "repos_url" : "https://api.github.com/users/jonasschnelli/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonasschnelli/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonasschnelli/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonasschnelli"
+      }
+   },
+   {
+      "body" : "I have an unsubmitted patch that also adds \"remembering\" of ban scores associated by IP address across disconnects over a time window (24h I think).  That is, it prevents malicious nodes from carrying out sawtooth attacks where they can reset their ban score by disconnecting and reconnecting before being banned.  There are pros (prevents malicious behavior) and cons (tightens up the rules and increases the likelihood of NAT exit hosts getting banned due to lots of small accumulations of ban points over time.)  Is there any interest in this?  I can open a new pull if so... ",
+      "created_at" : "2015-06-29T18:33:31Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#issuecomment-116788718",
+      "id" : 116788718,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6310",
+      "updated_at" : "2015-06-29T18:33:31Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/116788718",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/430315?v=3",
+         "events_url" : "https://api.github.com/users/ajweiss/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ajweiss/followers",
+         "following_url" : "https://api.github.com/users/ajweiss/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ajweiss/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ajweiss",
+         "id" : 430315,
+         "login" : "ajweiss",
+         "organizations_url" : "https://api.github.com/users/ajweiss/orgs",
+         "received_events_url" : "https://api.github.com/users/ajweiss/received_events",
+         "repos_url" : "https://api.github.com/users/ajweiss/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ajweiss/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ajweiss/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ajweiss"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33497028"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33497028"
+         }
+      },
+      "body" : "> Hhmm at some point we should add a CSubNet constructor or factory function that makes a subnet with one unique CNetAddr (netmask all ones), and use that, instead of going through a string. Not a big deal, though.\r\n\r\nRight. Added (see latest commit). If we don't add it now, it probably will never be added.",
+      "commit_id" : "177a0e491449b9accfa0cf17c138147539071358",
+      "created_at" : "2015-06-29T18:40:25Z",
+      "diff_hunk" : "@@ -474,30 +476,35 @@ bool CNode::IsBanned(CSubNet subnet)\n     bool fResult = false;\n     {\n         LOCK(cs_setBanned);\n-        std::map<CSubNet, int64_t>::iterator i = setBanned.find(subnet);\n+        banmap_t::iterator i = setBanned.find(subnet);\n         if (i != setBanned.end())\n         {\n-            int64_t t = (*i).second;\n-            if (GetTime() < t)\n+            CBanEntry banEntry = (*i).second;\n+            if (GetTime() < banEntry.nBanUntil)\n                 fResult = true;\n         }\n     }\n     return fResult;\n }\n \n-void CNode::Ban(const CNetAddr& addr, int64_t bantimeoffset, bool sinceUnixEpoch) {\n+void CNode::Ban(const CNetAddr& addr, const BanReason &banReason, int64_t bantimeoffset, bool sinceUnixEpoch) {\n     CSubNet subNet(addr.ToString()+(addr.IsIPv4() ? \"/32\" : \"/128\"));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33497028",
+      "id" : 33497028,
+      "original_commit_id" : "0386ba4b6224aeccfe8977d5cf454fa24b82b55d",
+      "original_position" : 53,
+      "path" : "src/net.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310",
+      "updated_at" : "2015-07-02T18:44:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33497028",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/178464?v=3",
+         "events_url" : "https://api.github.com/users/jonasschnelli/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonasschnelli/followers",
+         "following_url" : "https://api.github.com/users/jonasschnelli/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonasschnelli/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonasschnelli",
+         "id" : 178464,
+         "login" : "jonasschnelli",
+         "organizations_url" : "https://api.github.com/users/jonasschnelli/orgs",
+         "received_events_url" : "https://api.github.com/users/jonasschnelli/received_events",
+         "repos_url" : "https://api.github.com/users/jonasschnelli/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonasschnelli/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonasschnelli/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonasschnelli"
+      }
+   },
+   {
+      "body" : "@ajweiss Not sure about that. At least make sure that the associated structure is size-limited. Especially with IPv6 it will be extremely easy to fill memory that way. But this needs to be  discussed somewhere else as it is not related to this pull.",
+      "created_at" : "2015-07-02T18:17:32Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#issuecomment-118114715",
+      "id" : 118114715,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6310",
+      "updated_at" : "2015-07-02T18:17:32Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/118114715",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33807337"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33807337"
+         }
+      },
+      "body" : "Thanks. But this seems a bit circuitous. Let's do just:\r\n```c++\r\nCSubNet::CSubNet(const CNetAddr &addr, bool fAllowLookup):\r\n    valid(addr.IsValid())\r\n{\r\n    memset(netmask, 255, sizeof(netmask));\r\n    network = addr;\r\n}\r\n```\r\nAlso the fAllowLookup parameter is unnecessary. It should never be needed to look up anything when going from an already binary address.\r\n\r\n**Edit**: added initialization for  valid()",
+      "commit_id" : "177a0e491449b9accfa0cf17c138147539071358",
+      "created_at" : "2015-07-02T18:22:37Z",
+      "diff_hunk" : "@@ -1291,6 +1291,24 @@ CSubNet::CSubNet(const std::string &strSubnet, bool fAllowLookup)\n         network.ip[x] &= netmask[x];\n }\n \n+CSubNet::CSubNet(const CNetAddr &addr, bool fAllowLookup)\n+{\n+    valid = addr.IsValid();\n+    if (!valid)\n+        return;\n+\n+    //set all netmask bits to 1\n+    memset(netmask, 255, sizeof(netmask));\n+\n+    std::vector<CNetAddr> vIP;\n+    if (!LookupHost(addr.ToString().c_str(), vIP, 1, fAllowLookup))",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33807337",
+      "id" : 33807337,
+      "original_commit_id" : "79f375fc054ec1ea55a061ca4bb4cdb055bafb9f",
+      "original_position" : 14,
+      "path" : "src/netbase.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310",
+      "updated_at" : "2015-07-02T18:44:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33807337",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=3",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33808905"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33808905"
+         }
+      },
+      "body" : "Right. Wasn't aware of the `LookupHost()` in the `CNetAddr::CNetAddr()` constructor.\r\nFixed and pushed.",
+      "commit_id" : "177a0e491449b9accfa0cf17c138147539071358",
+      "created_at" : "2015-07-02T18:38:01Z",
+      "diff_hunk" : "@@ -1291,6 +1291,24 @@ CSubNet::CSubNet(const std::string &strSubnet, bool fAllowLookup)\n         network.ip[x] &= netmask[x];\n }\n \n+CSubNet::CSubNet(const CNetAddr &addr, bool fAllowLookup)\n+{\n+    valid = addr.IsValid();\n+    if (!valid)\n+        return;\n+\n+    //set all netmask bits to 1\n+    memset(netmask, 255, sizeof(netmask));\n+\n+    std::vector<CNetAddr> vIP;\n+    if (!LookupHost(addr.ToString().c_str(), vIP, 1, fAllowLookup))",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33808905",
+      "id" : 33808905,
+      "original_commit_id" : "79f375fc054ec1ea55a061ca4bb4cdb055bafb9f",
+      "original_position" : 14,
+      "path" : "src/netbase.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310",
+      "updated_at" : "2015-07-02T18:44:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33808905",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/178464?v=3",
+         "events_url" : "https://api.github.com/users/jonasschnelli/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonasschnelli/followers",
+         "following_url" : "https://api.github.com/users/jonasschnelli/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonasschnelli/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonasschnelli",
+         "id" : 178464,
+         "login" : "jonasschnelli",
+         "organizations_url" : "https://api.github.com/users/jonasschnelli/orgs",
+         "received_events_url" : "https://api.github.com/users/jonasschnelli/received_events",
+         "repos_url" : "https://api.github.com/users/jonasschnelli/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonasschnelli/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonasschnelli/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonasschnelli"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33809643"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33809643"
+         }
+      },
+      "body" : "Right! The isValid must be set explicit. Fixed.",
+      "commit_id" : "177a0e491449b9accfa0cf17c138147539071358",
+      "created_at" : "2015-07-02T18:44:58Z",
+      "diff_hunk" : "@@ -1291,6 +1291,24 @@ CSubNet::CSubNet(const std::string &strSubnet, bool fAllowLookup)\n         network.ip[x] &= netmask[x];\n }\n \n+CSubNet::CSubNet(const CNetAddr &addr, bool fAllowLookup)\n+{\n+    valid = addr.IsValid();\n+    if (!valid)\n+        return;\n+\n+    //set all netmask bits to 1\n+    memset(netmask, 255, sizeof(netmask));\n+\n+    std::vector<CNetAddr> vIP;\n+    if (!LookupHost(addr.ToString().c_str(), vIP, 1, fAllowLookup))",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/6310#discussion_r33809643",
+      "id" : 33809643,
+      "original_commit_id" : "79f375fc054ec1ea55a061ca4bb4cdb055bafb9f",
+      "original_position" : 14,
+      "path" : "src/netbase.cpp",
+      "position" : null,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/6310",
+      "updated_at" : "2015-07-02T18:44:58Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/33809643",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/178464?v=3",
+         "events_url" : "https://api.github.com/users/jonasschnelli/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonasschnelli/followers",
+         "following_url" : "https://api.github.com/users/jonasschnelli/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonasschnelli/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonasschnelli",
+         "id" : 178464,
+         "login" : "jonasschnelli",
+         "organizations_url" : "https://api.github.com/users/jonasschnelli/orgs",
+         "received_events_url" : "https://api.github.com/users/jonasschnelli/received_events",
+         "repos_url" : "https://api.github.com/users/jonasschnelli/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonasschnelli/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonasschnelli/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonasschnelli"
+      }
+   }
+]

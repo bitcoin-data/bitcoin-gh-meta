@@ -1,0 +1,1910 @@
+[
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r846585627"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/846585627"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I think you can just recycle the existing name. No need to add a second one.",
+      "commit_id" : "5eeb1e55e550d8226ef5a943e18c25a643cef864",
+      "created_at" : "2022-04-09T06:59:17Z",
+      "diff_hunk" : "@@ -80,4 +80,21 @@ T&& inline_assertion_check(T&& val, [[maybe_unused]] const char* file, [[maybe_u\n  */\n #define Assume(val) inline_assertion_check<false>(val, __FILE__, __LINE__, __func__, #val)\n \n+/** Helper for CheckNonFatal() */\n+template <typename T>\n+T&& inline_check_non_fatal(T&& val, [[maybe_unused]] const char* file, [[maybe_unused]] int line, [[maybe_unused]] const char* func, [[maybe_unused]] const char* assertion)\n+{\n+    CHECK_NONFATAL(val);\n+    return std::forward<T>(val);\n+}\n+\n+/**\n+ * CheckNonFatal is the identity function. Throws a NonFatalCheckError if value compares equal to zero\n+ *\n+ * - Should be used to run non-fatal checks.\n+ * - For fatal errors, use Assert().\n+ * - Appropriate for non-fatal errors in interactive sessions (e.g. RPC or command line interfaces).\n+ */\n+#define CheckNonFatal(val) inline_check_non_fatal(val, __FILE__, __LINE__, __func__, #val)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r846585627",
+      "id" : 846585627,
+      "line" : 98,
+      "node_id" : "PRRC_kwDOABII584ydd8b",
+      "original_commit_id" : "5eeb1e55e550d8226ef5a943e18c25a643cef864",
+      "original_line" : 98,
+      "original_position" : 19,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : 19,
+      "pull_request_review_id" : 937084332,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/846585627/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-09T06:59:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/846585627",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r846747823"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/846747823"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "It's now replaced\r\nI had to add unreachable return statements like below otherwise the CI would complain\r\nhttps://github.com/bitcoin/bitcoin/blob/0661baffe8044cc049f6494ab29b79f5e4b00998/src/rpc/util.cpp#L986-L993",
+      "commit_id" : "0661baffe8044cc049f6494ab29b79f5e4b00998",
+      "created_at" : "2022-04-10T09:28:49Z",
+      "diff_hunk" : "@@ -80,4 +80,21 @@ T&& inline_assertion_check(T&& val, [[maybe_unused]] const char* file, [[maybe_u\n  */\n #define Assume(val) inline_assertion_check<false>(val, __FILE__, __LINE__, __func__, #val)\n \n+/** Helper for CheckNonFatal() */\n+template <typename T>\n+T&& inline_check_non_fatal(T&& val, [[maybe_unused]] const char* file, [[maybe_unused]] int line, [[maybe_unused]] const char* func, [[maybe_unused]] const char* assertion)\n+{\n+    CHECK_NONFATAL(val);\n+    return std::forward<T>(val);\n+}\n+\n+/**\n+ * CheckNonFatal is the identity function. Throws a NonFatalCheckError if value compares equal to zero\n+ *\n+ * - Should be used to run non-fatal checks.\n+ * - For fatal errors, use Assert().\n+ * - Appropriate for non-fatal errors in interactive sessions (e.g. RPC or command line interfaces).\n+ */\n+#define CheckNonFatal(val) inline_check_non_fatal(val, __FILE__, __LINE__, __func__, #val)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r846747823",
+      "id" : 846747823,
+      "in_reply_to_id" : 846585627,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII584yeFiv",
+      "original_commit_id" : "5eeb1e55e550d8226ef5a943e18c25a643cef864",
+      "original_line" : 98,
+      "original_position" : 19,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : null,
+      "pull_request_review_id" : 937236913,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/846747823/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-10T09:28:49Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/846747823",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/22493292?v=4",
+         "events_url" : "https://api.github.com/users/aureleoules/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/aureleoules/followers",
+         "following_url" : "https://api.github.com/users/aureleoules/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/aureleoules/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/aureleoules",
+         "id" : 22493292,
+         "login" : "aureleoules",
+         "node_id" : "MDQ6VXNlcjIyNDkzMjky",
+         "organizations_url" : "https://api.github.com/users/aureleoules/orgs",
+         "received_events_url" : "https://api.github.com/users/aureleoules/received_events",
+         "repos_url" : "https://api.github.com/users/aureleoules/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/aureleoules/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/aureleoules/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/aureleoules"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24455](https://github.com/bitcoin/bitcoin/pull/24455) (refactor: Split ArgsManager out of util/system by Empact)\n* [#22341](https://github.com/bitcoin/bitcoin/pull/22341) (rpc: add getxpub by Sjors)\n* [#21726](https://github.com/bitcoin/bitcoin/pull/21726) (Improve Indices on pruned nodes via prune blockers by fjahr)\n* [#19792](https://github.com/bitcoin/bitcoin/pull/19792) (rpc: Add dumpcoinstats by fjahr)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "created_at" : "2022-04-11T01:50:07Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#issuecomment-1094462014",
+      "id" : 1094462014,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24812",
+      "node_id" : "IC_kwDOABII585BPCo-",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1094462014/reactions"
+      },
+      "updated_at" : "2022-04-13T16:01:13Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1094462014",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r847132794"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/847132794"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Hmm, I am wondering if it makes sense to introduce a macro that throws `NonFatalCheckError` unconditionally?\r\n\r\n`CHECK_NONFATAL(false)` is inspired by `assert(false)` to mark unreachable code. Though, hiding the implementation behind a function call makes it harder for the compiler to realize the function never returns when called with `false`. (The same happens when using `Assert(false)`).\r\n\r\n",
+      "commit_id" : "0661baffe8044cc049f6494ab29b79f5e4b00998",
+      "created_at" : "2022-04-11T09:35:52Z",
+      "diff_hunk" : "@@ -916,6 +916,7 @@ static std::string RecurseImportData(const CScript& script, ImportData& import_d\n         return \"unrecognized script\";\n     } // no default case, so the compiler can warn about missing cases\n     CHECK_NONFATAL(false);\n+    return \"\"; // not reached",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r847132794",
+      "id" : 847132794,
+      "line" : 919,
+      "node_id" : "PRRC_kwDOABII584yfjh6",
+      "original_commit_id" : "0661baffe8044cc049f6494ab29b79f5e4b00998",
+      "original_line" : 919,
+      "original_position" : 4,
+      "original_start_line" : null,
+      "path" : "src/wallet/rpc/backup.cpp",
+      "position" : 4,
+      "pull_request_review_id" : 937727646,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/847132794/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-11T09:35:52Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/847132794",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r847670350"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/847670350"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "How about a macro `UNREACHABLE_NONFATAL()` and `UNREACHABLE()`?",
+      "commit_id" : "0661baffe8044cc049f6494ab29b79f5e4b00998",
+      "created_at" : "2022-04-11T19:36:01Z",
+      "diff_hunk" : "@@ -916,6 +916,7 @@ static std::string RecurseImportData(const CScript& script, ImportData& import_d\n         return \"unrecognized script\";\n     } // no default case, so the compiler can warn about missing cases\n     CHECK_NONFATAL(false);\n+    return \"\"; // not reached",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r847670350",
+      "id" : 847670350,
+      "in_reply_to_id" : 847132794,
+      "line" : 919,
+      "node_id" : "PRRC_kwDOABII584yhmxO",
+      "original_commit_id" : "0661baffe8044cc049f6494ab29b79f5e4b00998",
+      "original_line" : 919,
+      "original_position" : 4,
+      "original_start_line" : null,
+      "path" : "src/wallet/rpc/backup.cpp",
+      "position" : 4,
+      "pull_request_review_id" : 938498061,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/847670350/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-11T19:36:01Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/847670350",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/22493292?v=4",
+         "events_url" : "https://api.github.com/users/aureleoules/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/aureleoules/followers",
+         "following_url" : "https://api.github.com/users/aureleoules/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/aureleoules/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/aureleoules",
+         "id" : 22493292,
+         "login" : "aureleoules",
+         "node_id" : "MDQ6VXNlcjIyNDkzMjky",
+         "organizations_url" : "https://api.github.com/users/aureleoules/orgs",
+         "received_events_url" : "https://api.github.com/users/aureleoules/received_events",
+         "repos_url" : "https://api.github.com/users/aureleoules/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/aureleoules/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/aureleoules/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/aureleoules"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r847820688"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/847820688"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : ">Hmm, I am wondering if it makes sense to introduce a macro that throws NonFatalCheckError unconditionally?\r\n\r\nCHECK_NONFATAL(false) is inspired by assert(false) to mark unreachable code. Though, hiding the implementation behind a function call makes it harder for the compiler to realize the function never returns when called with false. (The same happens when using Assert(false)).\r\n\r\nConcept ACK, this will make the code much cleaner",
+      "commit_id" : "0661baffe8044cc049f6494ab29b79f5e4b00998",
+      "created_at" : "2022-04-11T23:37:30Z",
+      "diff_hunk" : "@@ -916,6 +916,7 @@ static std::string RecurseImportData(const CScript& script, ImportData& import_d\n         return \"unrecognized script\";\n     } // no default case, so the compiler can warn about missing cases\n     CHECK_NONFATAL(false);\n+    return \"\"; // not reached",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r847820688",
+      "id" : 847820688,
+      "in_reply_to_id" : 847132794,
+      "line" : 919,
+      "node_id" : "PRRC_kwDOABII584yiLeQ",
+      "original_commit_id" : "0661baffe8044cc049f6494ab29b79f5e4b00998",
+      "original_line" : 919,
+      "original_position" : 4,
+      "original_start_line" : null,
+      "path" : "src/wallet/rpc/backup.cpp",
+      "position" : 4,
+      "pull_request_review_id" : 938710870,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/847820688/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-11T23:37:30Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/847820688",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/17150045?v=4",
+         "events_url" : "https://api.github.com/users/vincenzopalazzo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vincenzopalazzo/followers",
+         "following_url" : "https://api.github.com/users/vincenzopalazzo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vincenzopalazzo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vincenzopalazzo",
+         "id" : 17150045,
+         "login" : "vincenzopalazzo",
+         "node_id" : "MDQ6VXNlcjE3MTUwMDQ1",
+         "organizations_url" : "https://api.github.com/users/vincenzopalazzo/orgs",
+         "received_events_url" : "https://api.github.com/users/vincenzopalazzo/received_events",
+         "repos_url" : "https://api.github.com/users/vincenzopalazzo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vincenzopalazzo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vincenzopalazzo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vincenzopalazzo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r848007900"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848007900"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "```suggestion\r\n    } while (false)\r\n```",
+      "commit_id" : "36654224a6b7a57d4e4055e23a1efe06500f703f",
+      "created_at" : "2022-04-12T06:10:21Z",
+      "diff_hunk" : "@@ -80,4 +86,25 @@ T&& inline_assertion_check(T&& val, [[maybe_unused]] const char* file, [[maybe_u\n  */\n #define Assume(val) inline_assertion_check<false>(val, __FILE__, __LINE__, __func__, #val)\n \n+/**\n+ * NONFATAL_UNREACHABLE() is a macro that is used to mark unreachable code. It throws a NonFatalCheckError.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define NONFATAL_UNREACHABLE()                                                       \\\n+    do {                                                                             \\\n+        throw NonFatalCheckError(                                                    \\\n+            format_internal_error(\"Unreachable code reached\",                        \\\n+                                  __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT)); \\\n+    } while (0)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r848007900",
+      "id" : 848007900,
+      "line" : 98,
+      "node_id" : "PRRC_kwDOABII584yi5Lc",
+      "original_commit_id" : "36654224a6b7a57d4e4055e23a1efe06500f703f",
+      "original_line" : 98,
+      "original_position" : 60,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : 60,
+      "pull_request_review_id" : 938949665,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848007900/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-12T06:11:15Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848007900",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/17150045?v=4",
+         "events_url" : "https://api.github.com/users/vincenzopalazzo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vincenzopalazzo/followers",
+         "following_url" : "https://api.github.com/users/vincenzopalazzo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vincenzopalazzo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vincenzopalazzo",
+         "id" : 17150045,
+         "login" : "vincenzopalazzo",
+         "node_id" : "MDQ6VXNlcjE3MTUwMDQ1",
+         "organizations_url" : "https://api.github.com/users/vincenzopalazzo/orgs",
+         "received_events_url" : "https://api.github.com/users/vincenzopalazzo/received_events",
+         "repos_url" : "https://api.github.com/users/vincenzopalazzo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vincenzopalazzo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vincenzopalazzo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vincenzopalazzo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r848012584"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848012584"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "`do-while-0` is only used when there is a need to force a trailing semicolon or to bundle several statements or \"leaking\" statements into one, none of which apply here, so it could be dropped as well?",
+      "commit_id" : "36654224a6b7a57d4e4055e23a1efe06500f703f",
+      "created_at" : "2022-04-12T06:18:25Z",
+      "diff_hunk" : "@@ -80,4 +86,25 @@ T&& inline_assertion_check(T&& val, [[maybe_unused]] const char* file, [[maybe_u\n  */\n #define Assume(val) inline_assertion_check<false>(val, __FILE__, __LINE__, __func__, #val)\n \n+/**\n+ * NONFATAL_UNREACHABLE() is a macro that is used to mark unreachable code. It throws a NonFatalCheckError.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define NONFATAL_UNREACHABLE()                                                       \\\n+    do {                                                                             \\\n+        throw NonFatalCheckError(                                                    \\\n+            format_internal_error(\"Unreachable code reached\",                        \\\n+                                  __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT)); \\\n+    } while (0)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r848012584",
+      "id" : 848012584,
+      "in_reply_to_id" : 848007900,
+      "line" : 98,
+      "node_id" : "PRRC_kwDOABII584yi6Uo",
+      "original_commit_id" : "36654224a6b7a57d4e4055e23a1efe06500f703f",
+      "original_line" : 98,
+      "original_position" : 60,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : 60,
+      "pull_request_review_id" : 938956360,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848012584/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-12T06:20:51Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848012584",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r848013230"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848013230"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Are the `maybe_unused` used or actually unused here?",
+      "commit_id" : "36654224a6b7a57d4e4055e23a1efe06500f703f",
+      "created_at" : "2022-04-12T06:19:27Z",
+      "diff_hunk" : "@@ -18,8 +18,24 @@ class NonFatalCheckError : public std::runtime_error\n     using std::runtime_error::runtime_error;\n };\n \n+#define format_internal_error(msg, file, line, func, report)                                  \\\n+    strprintf(\"Internal bug detected: '%s'\\n%s:%d (%s)\\nPlease report this issue here: %s\\n\", \\\n+              msg, file, line, func, report)\n+\n+/** Helper for CHECK_NONFATAL() */\n+template <typename T>\n+T&& inline_check_non_fatal(T&& val, [[maybe_unused]] const char* file, [[maybe_unused]] int line, [[maybe_unused]] const char* func, [[maybe_unused]] const char* assertion)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r848013230",
+      "id" : 848013230,
+      "line" : 27,
+      "node_id" : "PRRC_kwDOABII584yi6eu",
+      "original_commit_id" : "36654224a6b7a57d4e4055e23a1efe06500f703f",
+      "original_line" : 27,
+      "original_position" : 10,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : 10,
+      "pull_request_review_id" : 938956360,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848013230/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-12T06:20:51Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848013230",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r848013927"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848013927"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "```suggestion\r\n        std::abort();                                                                                                                      \\\r\n```\r\n\r\n",
+      "commit_id" : "36654224a6b7a57d4e4055e23a1efe06500f703f",
+      "created_at" : "2022-04-12T06:20:41Z",
+      "diff_hunk" : "@@ -80,4 +86,25 @@ T&& inline_assertion_check(T&& val, [[maybe_unused]] const char* file, [[maybe_u\n  */\n #define Assume(val) inline_assertion_check<false>(val, __FILE__, __LINE__, __func__, #val)\n \n+/**\n+ * NONFATAL_UNREACHABLE() is a macro that is used to mark unreachable code. It throws a NonFatalCheckError.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define NONFATAL_UNREACHABLE()                                                       \\\n+    do {                                                                             \\\n+        throw NonFatalCheckError(                                                    \\\n+            format_internal_error(\"Unreachable code reached\",                        \\\n+                                  __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT)); \\\n+    } while (0)\n+\n+/**\n+ * UNREACHABLE is a macro that is used to mark unreachable code. It aborts the program.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define UNREACHABLE()                                                                                                                 \\\n+    do {                                                                                                                              \\\n+        std::cerr << format_internal_error(\"Unreachable code reached\", __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT) << std::endl; \\\n+        abort();                                                                                                                      \\",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r848013927",
+      "id" : 848013927,
+      "line" : 107,
+      "node_id" : "PRRC_kwDOABII584yi6pn",
+      "original_commit_id" : "36654224a6b7a57d4e4055e23a1efe06500f703f",
+      "original_line" : 107,
+      "original_position" : 69,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : 69,
+      "pull_request_review_id" : 938956360,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848013927/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-12T06:20:51Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848013927",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r848015910"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848015910"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "Concept ACK",
+      "commit_id" : "36654224a6b7a57d4e4055e23a1efe06500f703f",
+      "created_at" : "2022-04-12T06:23:12Z",
+      "diff_hunk" : "@@ -80,4 +86,25 @@ T&& inline_assertion_check(T&& val, [[maybe_unused]] const char* file, [[maybe_u\n  */\n #define Assume(val) inline_assertion_check<false>(val, __FILE__, __LINE__, __func__, #val)\n \n+/**\n+ * NONFATAL_UNREACHABLE() is a macro that is used to mark unreachable code. It throws a NonFatalCheckError.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define NONFATAL_UNREACHABLE()                                                       \\\n+    do {                                                                             \\\n+        throw NonFatalCheckError(                                                    \\\n+            format_internal_error(\"Unreachable code reached\",                        \\\n+                                  __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT)); \\\n+    } while (0)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r848015910",
+      "id" : 848015910,
+      "in_reply_to_id" : 848007900,
+      "line" : 98,
+      "node_id" : "PRRC_kwDOABII584yi7Im",
+      "original_commit_id" : "36654224a6b7a57d4e4055e23a1efe06500f703f",
+      "original_line" : 98,
+      "original_position" : 60,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : 60,
+      "pull_request_review_id" : 938960554,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848015910/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-12T06:23:12Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848015910",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/17150045?v=4",
+         "events_url" : "https://api.github.com/users/vincenzopalazzo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vincenzopalazzo/followers",
+         "following_url" : "https://api.github.com/users/vincenzopalazzo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vincenzopalazzo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vincenzopalazzo",
+         "id" : 17150045,
+         "login" : "vincenzopalazzo",
+         "node_id" : "MDQ6VXNlcjE3MTUwMDQ1",
+         "organizations_url" : "https://api.github.com/users/vincenzopalazzo/orgs",
+         "received_events_url" : "https://api.github.com/users/vincenzopalazzo/received_events",
+         "repos_url" : "https://api.github.com/users/vincenzopalazzo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vincenzopalazzo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vincenzopalazzo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vincenzopalazzo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r848341864"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848341864"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "Fixed it",
+      "commit_id" : "1e4d38267feb69bab20ed06367d0a0adcd211068",
+      "created_at" : "2022-04-12T11:47:34Z",
+      "diff_hunk" : "@@ -80,4 +86,25 @@ T&& inline_assertion_check(T&& val, [[maybe_unused]] const char* file, [[maybe_u\n  */\n #define Assume(val) inline_assertion_check<false>(val, __FILE__, __LINE__, __func__, #val)\n \n+/**\n+ * NONFATAL_UNREACHABLE() is a macro that is used to mark unreachable code. It throws a NonFatalCheckError.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define NONFATAL_UNREACHABLE()                                                       \\\n+    do {                                                                             \\\n+        throw NonFatalCheckError(                                                    \\\n+            format_internal_error(\"Unreachable code reached\",                        \\\n+                                  __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT)); \\\n+    } while (0)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r848341864",
+      "id" : 848341864,
+      "in_reply_to_id" : 848007900,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII584ykKto",
+      "original_commit_id" : "36654224a6b7a57d4e4055e23a1efe06500f703f",
+      "original_line" : 98,
+      "original_position" : 60,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : null,
+      "pull_request_review_id" : 939411031,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848341864/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-12T11:47:34Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848341864",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/22493292?v=4",
+         "events_url" : "https://api.github.com/users/aureleoules/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/aureleoules/followers",
+         "following_url" : "https://api.github.com/users/aureleoules/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/aureleoules/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/aureleoules",
+         "id" : 22493292,
+         "login" : "aureleoules",
+         "node_id" : "MDQ6VXNlcjIyNDkzMjky",
+         "organizations_url" : "https://api.github.com/users/aureleoules/orgs",
+         "received_events_url" : "https://api.github.com/users/aureleoules/received_events",
+         "repos_url" : "https://api.github.com/users/aureleoules/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/aureleoules/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/aureleoules/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/aureleoules"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r848342143"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848342143"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "Removed annotations",
+      "commit_id" : "1e4d38267feb69bab20ed06367d0a0adcd211068",
+      "created_at" : "2022-04-12T11:47:56Z",
+      "diff_hunk" : "@@ -18,8 +18,24 @@ class NonFatalCheckError : public std::runtime_error\n     using std::runtime_error::runtime_error;\n };\n \n+#define format_internal_error(msg, file, line, func, report)                                  \\\n+    strprintf(\"Internal bug detected: '%s'\\n%s:%d (%s)\\nPlease report this issue here: %s\\n\", \\\n+              msg, file, line, func, report)\n+\n+/** Helper for CHECK_NONFATAL() */\n+template <typename T>\n+T&& inline_check_non_fatal(T&& val, [[maybe_unused]] const char* file, [[maybe_unused]] int line, [[maybe_unused]] const char* func, [[maybe_unused]] const char* assertion)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r848342143",
+      "id" : 848342143,
+      "in_reply_to_id" : 848013230,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII584ykKx_",
+      "original_commit_id" : "36654224a6b7a57d4e4055e23a1efe06500f703f",
+      "original_line" : 27,
+      "original_position" : 10,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : null,
+      "pull_request_review_id" : 939411409,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848342143/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-12T11:47:56Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848342143",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/22493292?v=4",
+         "events_url" : "https://api.github.com/users/aureleoules/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/aureleoules/followers",
+         "following_url" : "https://api.github.com/users/aureleoules/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/aureleoules/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/aureleoules",
+         "id" : 22493292,
+         "login" : "aureleoules",
+         "node_id" : "MDQ6VXNlcjIyNDkzMjky",
+         "organizations_url" : "https://api.github.com/users/aureleoules/orgs",
+         "received_events_url" : "https://api.github.com/users/aureleoules/received_events",
+         "repos_url" : "https://api.github.com/users/aureleoules/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/aureleoules/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/aureleoules/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/aureleoules"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r848342231"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848342231"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "Fixed it",
+      "commit_id" : "1e4d38267feb69bab20ed06367d0a0adcd211068",
+      "created_at" : "2022-04-12T11:48:03Z",
+      "diff_hunk" : "@@ -80,4 +86,25 @@ T&& inline_assertion_check(T&& val, [[maybe_unused]] const char* file, [[maybe_u\n  */\n #define Assume(val) inline_assertion_check<false>(val, __FILE__, __LINE__, __func__, #val)\n \n+/**\n+ * NONFATAL_UNREACHABLE() is a macro that is used to mark unreachable code. It throws a NonFatalCheckError.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define NONFATAL_UNREACHABLE()                                                       \\\n+    do {                                                                             \\\n+        throw NonFatalCheckError(                                                    \\\n+            format_internal_error(\"Unreachable code reached\",                        \\\n+                                  __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT)); \\\n+    } while (0)\n+\n+/**\n+ * UNREACHABLE is a macro that is used to mark unreachable code. It aborts the program.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define UNREACHABLE()                                                                                                                 \\\n+    do {                                                                                                                              \\\n+        std::cerr << format_internal_error(\"Unreachable code reached\", __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT) << std::endl; \\\n+        abort();                                                                                                                      \\",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r848342231",
+      "id" : 848342231,
+      "in_reply_to_id" : 848013927,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII584ykKzX",
+      "original_commit_id" : "36654224a6b7a57d4e4055e23a1efe06500f703f",
+      "original_line" : 107,
+      "original_position" : 69,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : null,
+      "pull_request_review_id" : 939411530,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848342231/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-12T11:48:04Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/848342231",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/22493292?v=4",
+         "events_url" : "https://api.github.com/users/aureleoules/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/aureleoules/followers",
+         "following_url" : "https://api.github.com/users/aureleoules/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/aureleoules/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/aureleoules",
+         "id" : 22493292,
+         "login" : "aureleoules",
+         "node_id" : "MDQ6VXNlcjIyNDkzMjky",
+         "organizations_url" : "https://api.github.com/users/aureleoules/orgs",
+         "received_events_url" : "https://api.github.com/users/aureleoules/received_events",
+         "repos_url" : "https://api.github.com/users/aureleoules/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/aureleoules/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/aureleoules/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/aureleoules"
+      }
+   },
+   {
+      "author_association" : "NONE",
+      "body" : "I've addressed the nits, thanks for your reviews.",
+      "created_at" : "2022-04-12T11:49:29Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#issuecomment-1096623230",
+      "id" : 1096623230,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24812",
+      "node_id" : "IC_kwDOABII585BXSR-",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1096623230/reactions"
+      },
+      "updated_at" : "2022-04-12T11:49:29Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1096623230",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/22493292?v=4",
+         "events_url" : "https://api.github.com/users/aureleoules/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/aureleoules/followers",
+         "following_url" : "https://api.github.com/users/aureleoules/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/aureleoules/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/aureleoules",
+         "id" : 22493292,
+         "login" : "aureleoules",
+         "node_id" : "MDQ6VXNlcjIyNDkzMjky",
+         "organizations_url" : "https://api.github.com/users/aureleoules/orgs",
+         "received_events_url" : "https://api.github.com/users/aureleoules/received_events",
+         "repos_url" : "https://api.github.com/users/aureleoules/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/aureleoules/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/aureleoules/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/aureleoules"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r849417483"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/849417483"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "maybe\r\n```suggestion\r\n        format_internal_error(\"Unreachable code reached (non-fatal)\", \\\r\n```",
+      "commit_id" : "f9cffe268e8a1feed978576021d1689b548444cb",
+      "created_at" : "2022-04-13T12:20:22Z",
+      "diff_hunk" : "@@ -80,4 +86,23 @@ T&& inline_assertion_check(T&& val, [[maybe_unused]] const char* file, [[maybe_u\n  */\n #define Assume(val) inline_assertion_check<false>(val, __FILE__, __LINE__, __func__, #val)\n \n+/**\n+ * NONFATAL_UNREACHABLE() is a macro that is used to mark unreachable code. It throws a NonFatalCheckError.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define NONFATAL_UNREACHABLE()                            \\\n+    throw NonFatalCheckError(                             \\\n+        format_internal_error(\"Unreachable code reached\", \\",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r849417483",
+      "id" : 849417483,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII584yoRUL",
+      "original_commit_id" : "1e4d38267feb69bab20ed06367d0a0adcd211068",
+      "original_line" : 95,
+      "original_position" : 57,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : null,
+      "pull_request_review_id" : 940881387,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/849417483/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-13T12:45:16Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/849417483",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r849439174"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/849439174"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "maybe\r\n```suggestion\r\n        std::cerr << format_internal_error(\"Unreachable code reached (fatal, aborting)\", __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT) << std::endl; \\\r\n```",
+      "commit_id" : "f9cffe268e8a1feed978576021d1689b548444cb",
+      "created_at" : "2022-04-13T12:44:51Z",
+      "diff_hunk" : "@@ -80,4 +86,23 @@ T&& inline_assertion_check(T&& val, [[maybe_unused]] const char* file, [[maybe_u\n  */\n #define Assume(val) inline_assertion_check<false>(val, __FILE__, __LINE__, __func__, #val)\n \n+/**\n+ * NONFATAL_UNREACHABLE() is a macro that is used to mark unreachable code. It throws a NonFatalCheckError.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define NONFATAL_UNREACHABLE()                            \\\n+    throw NonFatalCheckError(                             \\\n+        format_internal_error(\"Unreachable code reached\", \\\n+                              __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT))\n+\n+/**\n+ * UNREACHABLE is a macro that is used to mark unreachable code. It aborts the program.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define UNREACHABLE()                                                                                                                 \\\n+    do {                                                                                                                              \\\n+        std::cerr << format_internal_error(\"Unreachable code reached\", __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT) << std::endl; \\",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r849439174",
+      "id" : 849439174,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII584yoWnG",
+      "original_commit_id" : "1e4d38267feb69bab20ed06367d0a0adcd211068",
+      "original_line" : 104,
+      "original_position" : 66,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : null,
+      "pull_request_review_id" : 940881387,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/849439174/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-13T12:46:41Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/849439174",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r849448750"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/849448750"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "```suggestion\r\n    strprintf(\"Internal bug detected: \\\"%s\\\"\\n%s:%d (%s)\\nPlease report this issue here: %s\\n\", \\\r\n```\r\nwhich would output the following, for example:\r\n```\r\nerror code: -1\r\nerror message:\r\nInternal bug detected: \"Unreachable code reached\"\r\nwallet/rpc/addresses.cpp:38 (operator())\r\nPlease report this issue here: https://github.com/bitcoin/bitcoin/issues\r\n```\r\n",
+      "commit_id" : "f9cffe268e8a1feed978576021d1689b548444cb",
+      "created_at" : "2022-04-13T12:54:55Z",
+      "diff_hunk" : "@@ -18,8 +18,24 @@ class NonFatalCheckError : public std::runtime_error\n     using std::runtime_error::runtime_error;\n };\n \n+#define format_internal_error(msg, file, line, func, report)                                  \\\n+    strprintf(\"Internal bug detected: '%s'\\n%s:%d (%s)\\nPlease report this issue here: %s\\n\", \\",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r849448750",
+      "id" : 849448750,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII584yoY8u",
+      "original_commit_id" : "1e4d38267feb69bab20ed06367d0a0adcd211068",
+      "original_line" : 22,
+      "original_position" : 5,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : null,
+      "pull_request_review_id" : 940925249,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/849448750/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-13T13:29:46Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/849448750",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "re-ACK 63b753416abddb5f82ed32ff64a3372e65722fc2",
+      "created_at" : "2022-04-13T14:24:02Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#issuecomment-1098115172",
+      "id" : 1098115172,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24812",
+      "node_id" : "IC_kwDOABII585Bc-hk",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1098115172/reactions"
+      },
+      "updated_at" : "2022-04-13T14:24:02Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1098115172",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Might be good to adjust the rpc linter as well for the new macros: https://github.com/bitcoin/bitcoin/pull/24856\r\n\r\nCan be done in a follow-up to avoid a conflict for now.",
+      "created_at" : "2022-04-15T11:59:25Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#issuecomment-1100063563",
+      "id" : 1100063563,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24812",
+      "node_id" : "IC_kwDOABII585BkaNL",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1100063563/reactions"
+      },
+      "updated_at" : "2022-04-15T11:59:25Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1100063563",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r851597471"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851597471"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This is unused and on a second thought I wonder if there is any value in it. The current code can already use `assert(false)` just fine. Introducing another way to write `assert(false)` will just lead to bike-shedding without any benefit.",
+      "commit_id" : "63b753416abddb5f82ed32ff64a3372e65722fc2",
+      "created_at" : "2022-04-16T07:22:37Z",
+      "diff_hunk" : "@@ -80,4 +86,23 @@ T&& inline_assertion_check(T&& val, [[maybe_unused]] const char* file, [[maybe_u\n  */\n #define Assume(val) inline_assertion_check<false>(val, __FILE__, __LINE__, __func__, #val)\n \n+/**\n+ * NONFATAL_UNREACHABLE() is a macro that is used to mark unreachable code. It throws a NonFatalCheckError.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define NONFATAL_UNREACHABLE()                                        \\\n+    throw NonFatalCheckError(                                         \\\n+        format_internal_error(\"Unreachable code reached (non-fatal)\", \\\n+                              __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT))\n+\n+/**\n+ * UNREACHABLE is a macro that is used to mark unreachable code. It aborts the program.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define UNREACHABLE()                                                                                                                                   \\",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r851597471",
+      "id" : 851597471,
+      "line" : 102,
+      "node_id" : "PRRC_kwDOABII584ywlif",
+      "original_commit_id" : "63b753416abddb5f82ed32ff64a3372e65722fc2",
+      "original_line" : 102,
+      "original_position" : 64,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : 64,
+      "pull_request_review_id" : 943834076,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851597471/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-16T07:22:38Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851597471",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r851599013"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851599013"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "in favor to have a macro like `UNREACHABLE` is that we can the possibility to add more failures to the error message, that it is always good.\r\n\r\nMaybe somethings `assert(false && \"err message\")` can be a good motivation to have this macros, otherwise I agree with @MarcoFalke ",
+      "commit_id" : "63b753416abddb5f82ed32ff64a3372e65722fc2",
+      "created_at" : "2022-04-16T07:42:03Z",
+      "diff_hunk" : "@@ -80,4 +86,23 @@ T&& inline_assertion_check(T&& val, [[maybe_unused]] const char* file, [[maybe_u\n  */\n #define Assume(val) inline_assertion_check<false>(val, __FILE__, __LINE__, __func__, #val)\n \n+/**\n+ * NONFATAL_UNREACHABLE() is a macro that is used to mark unreachable code. It throws a NonFatalCheckError.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define NONFATAL_UNREACHABLE()                                        \\\n+    throw NonFatalCheckError(                                         \\\n+        format_internal_error(\"Unreachable code reached (non-fatal)\", \\\n+                              __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT))\n+\n+/**\n+ * UNREACHABLE is a macro that is used to mark unreachable code. It aborts the program.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define UNREACHABLE()                                                                                                                                   \\",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r851599013",
+      "id" : 851599013,
+      "in_reply_to_id" : 851597471,
+      "line" : 102,
+      "node_id" : "PRRC_kwDOABII584ywl6l",
+      "original_commit_id" : "63b753416abddb5f82ed32ff64a3372e65722fc2",
+      "original_line" : 102,
+      "original_position" : 64,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : 64,
+      "pull_request_review_id" : 943835139,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851599013/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-16T07:42:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851599013",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/17150045?v=4",
+         "events_url" : "https://api.github.com/users/vincenzopalazzo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vincenzopalazzo/followers",
+         "following_url" : "https://api.github.com/users/vincenzopalazzo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vincenzopalazzo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vincenzopalazzo",
+         "id" : 17150045,
+         "login" : "vincenzopalazzo",
+         "node_id" : "MDQ6VXNlcjE3MTUwMDQ1",
+         "organizations_url" : "https://api.github.com/users/vincenzopalazzo/orgs",
+         "received_events_url" : "https://api.github.com/users/vincenzopalazzo/received_events",
+         "repos_url" : "https://api.github.com/users/vincenzopalazzo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vincenzopalazzo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vincenzopalazzo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vincenzopalazzo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r851599248"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851599248"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I think that this is unreachable code, so by definition it is not something that a user will (or should) ever see. So there is not much benefit in spending time to overengineer error messages and formatting of them.",
+      "commit_id" : "63b753416abddb5f82ed32ff64a3372e65722fc2",
+      "created_at" : "2022-04-16T07:45:20Z",
+      "diff_hunk" : "@@ -80,4 +86,23 @@ T&& inline_assertion_check(T&& val, [[maybe_unused]] const char* file, [[maybe_u\n  */\n #define Assume(val) inline_assertion_check<false>(val, __FILE__, __LINE__, __func__, #val)\n \n+/**\n+ * NONFATAL_UNREACHABLE() is a macro that is used to mark unreachable code. It throws a NonFatalCheckError.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define NONFATAL_UNREACHABLE()                                        \\\n+    throw NonFatalCheckError(                                         \\\n+        format_internal_error(\"Unreachable code reached (non-fatal)\", \\\n+                              __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT))\n+\n+/**\n+ * UNREACHABLE is a macro that is used to mark unreachable code. It aborts the program.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define UNREACHABLE()                                                                                                                                   \\",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r851599248",
+      "id" : 851599248,
+      "in_reply_to_id" : 851597471,
+      "line" : 102,
+      "node_id" : "PRRC_kwDOABII584ywl-Q",
+      "original_commit_id" : "63b753416abddb5f82ed32ff64a3372e65722fc2",
+      "original_line" : 102,
+      "original_position" : 64,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : 64,
+      "pull_request_review_id" : 943835310,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851599248/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-16T07:45:21Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851599248",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r851624283"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851624283"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "> I think that this is unreachable code, so by definition it is not something that a user will (or should) ever see.\r\n\r\nIt could be useful for developers modifying code and stumbling across an unreachable block as a result.\r\nThough I agree that it's not an essential feature considering `assert(false)` works alright.",
+      "commit_id" : "ee02c8bd9aedad8cfd3c2618035fe275da025fb9",
+      "created_at" : "2022-04-16T12:44:44Z",
+      "diff_hunk" : "@@ -80,4 +86,23 @@ T&& inline_assertion_check(T&& val, [[maybe_unused]] const char* file, [[maybe_u\n  */\n #define Assume(val) inline_assertion_check<false>(val, __FILE__, __LINE__, __func__, #val)\n \n+/**\n+ * NONFATAL_UNREACHABLE() is a macro that is used to mark unreachable code. It throws a NonFatalCheckError.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define NONFATAL_UNREACHABLE()                                        \\\n+    throw NonFatalCheckError(                                         \\\n+        format_internal_error(\"Unreachable code reached (non-fatal)\", \\\n+                              __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT))\n+\n+/**\n+ * UNREACHABLE is a macro that is used to mark unreachable code. It aborts the program.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define UNREACHABLE()                                                                                                                                   \\",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r851624283",
+      "id" : 851624283,
+      "in_reply_to_id" : 851597471,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII584ywsFb",
+      "original_commit_id" : "63b753416abddb5f82ed32ff64a3372e65722fc2",
+      "original_line" : 102,
+      "original_position" : 64,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : null,
+      "pull_request_review_id" : 943853010,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851624283/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-16T12:44:45Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851624283",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/22493292?v=4",
+         "events_url" : "https://api.github.com/users/aureleoules/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/aureleoules/followers",
+         "following_url" : "https://api.github.com/users/aureleoules/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/aureleoules/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/aureleoules",
+         "id" : 22493292,
+         "login" : "aureleoules",
+         "node_id" : "MDQ6VXNlcjIyNDkzMjky",
+         "organizations_url" : "https://api.github.com/users/aureleoules/orgs",
+         "received_events_url" : "https://api.github.com/users/aureleoules/received_events",
+         "repos_url" : "https://api.github.com/users/aureleoules/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/aureleoules/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/aureleoules/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/aureleoules"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r851625632"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851625632"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Developers would already know what `assert(false)` means and what it does. Printing `PACKAGE_BUGREPORT` for them also doesn't seem to add much value.",
+      "commit_id" : "ee02c8bd9aedad8cfd3c2618035fe275da025fb9",
+      "created_at" : "2022-04-16T13:01:31Z",
+      "diff_hunk" : "@@ -80,4 +86,23 @@ T&& inline_assertion_check(T&& val, [[maybe_unused]] const char* file, [[maybe_u\n  */\n #define Assume(val) inline_assertion_check<false>(val, __FILE__, __LINE__, __func__, #val)\n \n+/**\n+ * NONFATAL_UNREACHABLE() is a macro that is used to mark unreachable code. It throws a NonFatalCheckError.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define NONFATAL_UNREACHABLE()                                        \\\n+    throw NonFatalCheckError(                                         \\\n+        format_internal_error(\"Unreachable code reached (non-fatal)\", \\\n+                              __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT))\n+\n+/**\n+ * UNREACHABLE is a macro that is used to mark unreachable code. It aborts the program.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define UNREACHABLE()                                                                                                                                   \\",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r851625632",
+      "id" : 851625632,
+      "in_reply_to_id" : 851597471,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII584ywsag",
+      "original_commit_id" : "63b753416abddb5f82ed32ff64a3372e65722fc2",
+      "original_line" : 102,
+      "original_position" : 64,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : null,
+      "pull_request_review_id" : 943854017,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851625632/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-16T13:01:32Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851625632",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r851626278"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851626278"
+         }
+      },
+      "author_association" : "NONE",
+      "body" : "Makes sense, I removed it",
+      "commit_id" : "ee02c8bd9aedad8cfd3c2618035fe275da025fb9",
+      "created_at" : "2022-04-16T13:09:26Z",
+      "diff_hunk" : "@@ -80,4 +86,23 @@ T&& inline_assertion_check(T&& val, [[maybe_unused]] const char* file, [[maybe_u\n  */\n #define Assume(val) inline_assertion_check<false>(val, __FILE__, __LINE__, __func__, #val)\n \n+/**\n+ * NONFATAL_UNREACHABLE() is a macro that is used to mark unreachable code. It throws a NonFatalCheckError.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define NONFATAL_UNREACHABLE()                                        \\\n+    throw NonFatalCheckError(                                         \\\n+        format_internal_error(\"Unreachable code reached (non-fatal)\", \\\n+                              __FILE__, __LINE__, __func__, PACKAGE_BUGREPORT))\n+\n+/**\n+ * UNREACHABLE is a macro that is used to mark unreachable code. It aborts the program.\n+ * This is used to mark code that is not yet implemented or is not yet reachable.\n+ */\n+#define UNREACHABLE()                                                                                                                                   \\",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r851626278",
+      "id" : 851626278,
+      "in_reply_to_id" : 851597471,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII584ywskm",
+      "original_commit_id" : "63b753416abddb5f82ed32ff64a3372e65722fc2",
+      "original_line" : 102,
+      "original_position" : 64,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : null,
+      "pull_request_review_id" : 943854464,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851626278/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-16T13:09:26Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851626278",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/22493292?v=4",
+         "events_url" : "https://api.github.com/users/aureleoules/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/aureleoules/followers",
+         "following_url" : "https://api.github.com/users/aureleoules/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/aureleoules/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/aureleoules",
+         "id" : 22493292,
+         "login" : "aureleoules",
+         "node_id" : "MDQ6VXNlcjIyNDkzMjky",
+         "organizations_url" : "https://api.github.com/users/aureleoules/orgs",
+         "received_events_url" : "https://api.github.com/users/aureleoules/received_events",
+         "repos_url" : "https://api.github.com/users/aureleoules/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/aureleoules/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/aureleoules/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/aureleoules"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "ACK ee02c8bd9aedad8cfd3c2618035fe275da025fb9",
+      "created_at" : "2022-04-18T10:55:26Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#issuecomment-1101310422",
+      "id" : 1101310422,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24812",
+      "node_id" : "IC_kwDOABII585BpKnW",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1101310422/reactions"
+      },
+      "updated_at" : "2022-04-18T10:55:26Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1101310422",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r857097744"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/857097744"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This will also fix a warning on current master with gcc-12:\r\n\r\n\r\n```\r\nIn file included from ./rpc/util.h:19,\r\n                 from rpc/util.cpp:8:\r\nrpc/util.cpp: In member function 'void RPCResult::ToSections(Sections&, OuterType, int) const':\r\n./util/check.h:34:9: warning: this statement may fall through [-Wimplicit-fallthrough=]\r\n   34 |         if (!(condition)) {                                       \\\r\n      |         ^~\r\nrpc/util.cpp:796:9: note: in expansion of macro 'CHECK_NONFATAL'\r\n  796 |         CHECK_NONFATAL(false); // Only for testing\r\n      |         ^~~~~~~~~~~~~~\r\nrpc/util.cpp:798:5: note: here\r\n  798 |     case Type::NONE: {\r\n      |     ^~~~\r\n",
+      "commit_id" : "ee02c8bd9aedad8cfd3c2618035fe275da025fb9",
+      "created_at" : "2022-04-24T09:37:08Z",
+      "diff_hunk" : "@@ -793,7 +794,7 @@ void RPCResult::ToSections(Sections& sections, const OuterType outer_type, const\n         return;\n     }\n     case Type::ANY: {\n-        CHECK_NONFATAL(false); // Only for testing\n+        NONFATAL_UNREACHABLE(); // Only for testing\n     }",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r857097744",
+      "id" : 857097744,
+      "line" : 798,
+      "node_id" : "PRRC_kwDOABII584zFkYQ",
+      "original_commit_id" : "ee02c8bd9aedad8cfd3c2618035fe275da025fb9",
+      "original_line" : 798,
+      "original_position" : 23,
+      "original_start_line" : null,
+      "path" : "src/rpc/util.cpp",
+      "position" : 23,
+      "pull_request_review_id" : 951179009,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/857097744/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-24T09:54:49Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/857097744",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r857099828"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/857099828"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "```suggestion\r\n    if (!val) {\r\n```\r\n\r\nnit: No need for `()`.",
+      "commit_id" : "ee02c8bd9aedad8cfd3c2618035fe275da025fb9",
+      "created_at" : "2022-04-24T09:53:20Z",
+      "diff_hunk" : "@@ -18,8 +18,24 @@ class NonFatalCheckError : public std::runtime_error\n     using std::runtime_error::runtime_error;\n };\n \n+#define format_internal_error(msg, file, line, func, report)                                    \\\n+    strprintf(\"Internal bug detected: \\\"%s\\\"\\n%s:%d (%s)\\nPlease report this issue here: %s\\n\", \\\n+              msg, file, line, func, report)\n+\n+/** Helper for CHECK_NONFATAL() */\n+template <typename T>\n+T&& inline_check_non_fatal(T&& val, const char* file, int line, const char* func, const char* assertion)\n+{\n+    if (!(val)) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r857099828",
+      "id" : 857099828,
+      "line" : 29,
+      "node_id" : "PRRC_kwDOABII584zFk40",
+      "original_commit_id" : "ee02c8bd9aedad8cfd3c2618035fe275da025fb9",
+      "original_line" : 29,
+      "original_position" : 12,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : 12,
+      "pull_request_review_id" : 951179009,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/857099828/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-24T09:54:49Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/857099828",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r857099841"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/857099841"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit: no need for newline",
+      "commit_id" : "ee02c8bd9aedad8cfd3c2618035fe275da025fb9",
+      "created_at" : "2022-04-24T09:53:30Z",
+      "diff_hunk" : "@@ -18,8 +18,24 @@ class NonFatalCheckError : public std::runtime_error\n     using std::runtime_error::runtime_error;\n };\n \n+#define format_internal_error(msg, file, line, func, report)                                    \\\n+    strprintf(\"Internal bug detected: \\\"%s\\\"\\n%s:%d (%s)\\nPlease report this issue here: %s\\n\", \\\n+              msg, file, line, func, report)\n+\n+/** Helper for CHECK_NONFATAL() */\n+template <typename T>\n+T&& inline_check_non_fatal(T&& val, const char* file, int line, const char* func, const char* assertion)\n+{\n+    if (!(val)) {\n+        throw NonFatalCheckError(\n+            format_internal_error(assertion, file, line, func, PACKAGE_BUGREPORT));\n+    }\n+",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24812#discussion_r857099841",
+      "id" : 857099841,
+      "line" : 33,
+      "node_id" : "PRRC_kwDOABII584zFk5B",
+      "original_commit_id" : "ee02c8bd9aedad8cfd3c2618035fe275da025fb9",
+      "original_line" : 33,
+      "original_position" : 16,
+      "original_start_line" : null,
+      "path" : "src/util/check.h",
+      "position" : 16,
+      "pull_request_review_id" : 951179009,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24812",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/857099841/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "updated_at" : "2022-04-24T09:54:49Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/857099841",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   }
+]
