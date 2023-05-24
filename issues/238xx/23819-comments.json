@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "cc @laanwj @0xB10C ",
       "created_at" : "2021-12-19T21:09:43Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23819#issuecomment-997461690",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK, will review in the next days.\r\n\r\nref: https://github.com/bitcoin/bitcoin/pull/23724\r\n",
       "created_at" : "2021-12-20T11:48:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23819#issuecomment-997853461",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "On Sat, Jan 01, 2022 at 01:55:29PM -0800, Sebastian Falbesoner wrote:\n>Not related to the tracepoint overhead, but maybe still worth mentioning: note that in the PR branch, `block.GetHash()` is still called more than once in `CChainState::ConnectBlock`, as there is another invocation at the very start:\n>https://github.com/bitcoin/bitcoin/blob/a1e04e10799791a728cce4430808517598c8742c/src/validation.cpp#L1869\n>(As far as I know, we enforce compiling with assertions on, i.e. NDEBUG never being set)\n\ngreat catch. I've moved the blockHash variable to above the assert, so we shave off ~16,000 instructions now.\n",
       "created_at" : "2022-01-04T17:04:29Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23819#issuecomment-1005005488",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "On Tue, Jan 04, 2022 at 10:57:28AM -0800, Sebastian Falbesoner wrote:\n>Slightly off-topic, but could you elaborate how exactly you measure the number of saved instructions (and on which architecture)? Do you statically analyse the compiled binary or do it dynamically via `perf` or alike?\n\nSee https://github.com/bitcoin/bitcoin/pull/23724#issuecomment-996919963 for the method\nand https://github.com/bitcoin/bitcoin/pull/23724#issuecomment-997455210 for where I determined that GetHash hits 8000 instructions.\n",
       "created_at" : "2022-01-04T19:05:32Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23819#issuecomment-1005092495",
@@ -141,7 +141,7 @@
       "node_id" : "IC_kwDOABII58476H6P",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -149,7 +149,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 1,
-         "total_count" : 2,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1005092495/reactions"
       },
       "updated_at" : "2022-01-04T19:05:32Z",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "On Tue, Jan 11, 2022 at 03:11:55PM -0800, Luke Dashjr wrote:\n>I'm surprised we're not caching block hashes like we do for transactions, though?\n\nWhere is it cached for transactions? I see `CMutableTransaction::GetHash` but it looks roughly the same as `CBlockHeader::GetHash`.\n",
       "created_at" : "2022-01-12T00:55:37Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23819#issuecomment-1010520083",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "On Tue, Jan 11, 2022 at 05:03:06PM -0800, Luke Dashjr wrote:\n>Check `CTransaction`\n\ngotcha, I see ComputeHash in the constructor. Yes it looks like CBlockHeader doesn't have caching, I'm guessing because it's a mutable thing?\n",
       "created_at" : "2022-01-12T02:39:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23819#issuecomment-1010573148",
@@ -365,19 +365,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "```suggestion\r\n    const uint256 block_hash{block.GetHash()};\r\n```\r\n\r\nstyle nit",
-      "commit_id" : "8f8b1969e9d15117fe89ecc377d83e3f7b8dc5c1",
+      "commit_id" : "eb8b22d5176d7abc6f93b4473df446105ca595e6",
       "created_at" : "2022-01-12T07:51:35Z",
       "diff_hunk" : "@@ -1866,7 +1866,10 @@ bool CChainState::ConnectBlock(const CBlock& block, BlockValidationState& state,\n {\n     AssertLockHeld(cs_main);\n     assert(pindex);\n-    assert(*pindex->phashBlock == block.GetHash());\n+\n+    uint256 blockHash = block.GetHash();",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23819#discussion_r782785844",
       "id" : 782785844,
-      "line" : 1870,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584uqF00",
       "original_commit_id" : "8f8b1969e9d15117fe89ecc377d83e3f7b8dc5c1",
       "original_line" : 1870,
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "src/validation.cpp",
-      "position" : 6,
+      "position" : null,
       "pull_request_review_id" : 850074210,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23819",
       "reactions" : {
@@ -395,6 +395,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-12T07:52:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/782785844",
       "user" : {
@@ -419,7 +420,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK eb8b22d5176d7abc6f93b4473df446105ca595e6\r\n\r\nI'm measuring 7 instructions. Code changes look good to me. [Still needs refactoring in the PR title](https://github.com/bitcoin/bitcoin/pull/23819#issuecomment-1010738359) :)\r\n\r\n```log\r\n(gdb) b src/validation:2161\r\nBreakpoint 1 at 0x2c57b0: file src/validation.cpp, line 2161.\r\n(gdb) b src/validation:\r\nBreakpoint 2 at 0x2c57de: file src/validation.cpp, line 2172.\r\n(gdb) run\r\n[..]\r\n\r\nThread 22 \"b-msghand\" hit Breakpoint 1, CChainState::ConnectBlock (this=0x555555d19980, block=..., state=...,\r\n    pindex=<optimized out>, view=..., fJustCheck=false) at validation.cpp:2161\r\n2161\t    LogPrint(BCLog::BENCH, \"    - Index writing: %.2fms [%.2fs (%.2fms/blk)]\\n\", MILLI * (nTime5 - nTime4), nTimeIndex * MICRO, nTimeIndex * MILLI / nBlocksTotal);\r\n(gdb) n\r\n2163\t    TRACE6(validation, block_connected,\r\n(gdb) record btrace\r\n(gdb) c\r\nContinuing.\r\n\r\nThread 22 \"b-msghand\" hit Breakpoint 2, CCheckQueueControl<CScriptCheck>::~CCheckQueueControl (\r\n    this=<optimized out>, __in_chrg=<optimized out>) at validation.cpp:2172\r\n2172\t    return true;\r\n(gdb) record info\r\nUndefined record command: \"info\".  Try \"help record\".\r\n(gdb) info record\r\n[..]\r\nRecorded 7 instructions in 1 functions (0 gaps) for thread 22 (Thread 0x7fff2e7fc640 (LWP 508792)).\r\n```\r\n\r\n@jb55 you mention 54 instructions in eb8b22d5176d7abc6f93b4473df446105ca595e6. I think your measurements include the instructions from line 2161. I'm starting the measurement in line 2163.\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/eb8b22d5176d7abc6f93b4473df446105ca595e6/src/validation.cpp#L2161-L2172",
       "created_at" : "2022-01-13T11:15:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23819#issuecomment-1012039861",
@@ -428,7 +429,7 @@
       "node_id" : "IC_kwDOABII5848UoC1",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -436,7 +437,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1012039861/reactions"
       },
       "updated_at" : "2022-01-13T11:15:52Z",

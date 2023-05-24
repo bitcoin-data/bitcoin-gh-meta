@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Strong Concept ACK",
       "created_at" : "2022-07-01T10:17:18Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25522#issuecomment-1172187562",
@@ -44,8 +44,8 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25461](https://github.com/bitcoin/bitcoin/pull/25461) (test: test RBF rule #3 by jamesob)\n* [#25373](https://github.com/bitcoin/bitcoin/pull/25373) (Support ignoring \"opt-in\" flag for RBF (aka full RBF) by luke-jr)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25461](https://github.com/bitcoin/bitcoin/pull/25461) (test: test RBF rule 3 by jamesob)\n* [#25373](https://github.com/bitcoin/bitcoin/pull/25373) (Support ignoring \"opt-in\" flag for RBF (aka full RBF) by luke-jr)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-07-01T23:48:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25522#issuecomment-1172787447",
       "id" : 1172787447,
@@ -64,7 +64,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1172787447/reactions"
       },
-      "updated_at" : "2022-07-01T23:48:07Z",
+      "updated_at" : "2022-07-04T17:40:22Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1172787447",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -99,21 +99,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/912490312"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This would fail if the scriptPubKey ends with a zero byte, e.g.:\r\n```\r\n>>> spk = bytearray(b'\\xbe\\xef\\x00')\r\n>>> spk[-1] -= 1\r\nTraceback (most recent call last):\r\n  File \"<stdin>\", line 1, in <module>\r\nValueError: byte must be in range(0, 256)\r\n```\r\nModifying it with a bit-flip is probably slightly preffered:\r\n```\r\n>>> spk[-1] ^= 1\r\n>>> spk\r\nbytearray(b'\\xbe\\xef\\x01')\r\n```\r\n\r\n```suggestion\r\n        tx.vout[0].scriptPubKey[-1] ^= 1\r\n```\r\n",
-      "commit_id" : "fa034ad54e42653abbef587fab6c1cd246ae657c",
+      "commit_id" : "fad690ba0a62dfd97ef22711b2344909fcd1fb73",
       "created_at" : "2022-07-03T13:48:56Z",
       "diff_hunk" : "@@ -115,30 +103,24 @@ def make_utxo(self, node, amount, confirmed=True, scriptPubKey=DUMMY_P2WPKH_SCRI\n                 assert new_size < mempool_size\n                 mempool_size = new_size\n \n-        return COutPoint(int(txid, 16), n)\n+        return self.wallet.get_utxo(txid=txid, vout=n)\n \n     def test_simple_doublespend(self):\n         \"\"\"Simple doublespend\"\"\"\n         # we use MiniWallet to create a transaction template with inputs correctly set,\n         # and modify the output (amount, scriptPubKey) according to our needs\n-        tx_template = self.wallet.create_self_transfer()['tx']\n-\n-        tx1a = deepcopy(tx_template)\n-        tx1a.vout = [CTxOut(1 * COIN, DUMMY_P2WPKH_SCRIPT)]\n-        tx1a_hex = tx1a.serialize().hex()\n-        tx1a_txid = self.nodes[0].sendrawtransaction(tx1a_hex, 0)\n+        tx = self.wallet.create_self_transfer()[\"tx\"]\n+        tx1a_txid = self.nodes[0].sendrawtransaction(tx.serialize().hex())\n \n         # Should fail because we haven't changed the fee\n-        tx1b = deepcopy(tx_template)\n-        tx1b.vout = [CTxOut(1 * COIN, DUMMY_2_P2WPKH_SCRIPT)]\n-        tx1b_hex = tx1b.serialize().hex()\n+        tx.vout[0].scriptPubKey[-1] -= 1",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25522#discussion_r912490312",
       "id" : 912490312,
-      "line" : 116,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5842Y39I",
       "original_commit_id" : "fa034ad54e42653abbef587fab6c1cd246ae657c",
       "original_line" : 116,
       "original_position" : 80,
       "original_start_line" : null,
       "path" : "test/functional/feature_rbf.py",
-      "position" : 80,
+      "position" : null,
       "pull_request_review_id" : 1026857612,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25522",
       "reactions" : {
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-03T13:48:57Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/912490312",
       "user" : {
@@ -168,7 +169,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Thx.\r\n\r\nThe test should be deterministically pass even with `-=1`, but I've switched to `^=1` as it is cleaner.",
-      "commit_id" : "faf9f0005ca1ebcea461f66191efdc78af744660",
+      "commit_id" : "fad690ba0a62dfd97ef22711b2344909fcd1fb73",
       "created_at" : "2022-07-04T08:06:45Z",
       "diff_hunk" : "@@ -115,30 +103,24 @@ def make_utxo(self, node, amount, confirmed=True, scriptPubKey=DUMMY_P2WPKH_SCRI\n                 assert new_size < mempool_size\n                 mempool_size = new_size\n \n-        return COutPoint(int(txid, 16), n)\n+        return self.wallet.get_utxo(txid=txid, vout=n)\n \n     def test_simple_doublespend(self):\n         \"\"\"Simple doublespend\"\"\"\n         # we use MiniWallet to create a transaction template with inputs correctly set,\n         # and modify the output (amount, scriptPubKey) according to our needs\n-        tx_template = self.wallet.create_self_transfer()['tx']\n-\n-        tx1a = deepcopy(tx_template)\n-        tx1a.vout = [CTxOut(1 * COIN, DUMMY_P2WPKH_SCRIPT)]\n-        tx1a_hex = tx1a.serialize().hex()\n-        tx1a_txid = self.nodes[0].sendrawtransaction(tx1a_hex, 0)\n+        tx = self.wallet.create_self_transfer()[\"tx\"]\n+        tx1a_txid = self.nodes[0].sendrawtransaction(tx.serialize().hex())\n \n         # Should fail because we haven't changed the fee\n-        tx1b = deepcopy(tx_template)\n-        tx1b.vout = [CTxOut(1 * COIN, DUMMY_2_P2WPKH_SCRIPT)]\n-        tx1b_hex = tx1b.serialize().hex()\n+        tx.vout[0].scriptPubKey[-1] -= 1",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25522#discussion_r912735818",
@@ -199,6 +200,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-04T08:06:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/912735818",
       "user" : {
@@ -223,6 +225,50 @@
       }
    },
    {
+      "author_association" : "MEMBER",
+      "body" : "Concept ACK, will review early next week ",
+      "created_at" : "2022-07-04T13:07:33Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25522#issuecomment-1173800356",
+      "id" : 1173800356,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25522",
+      "node_id" : "IC_kwDOABII585F9sWk",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1173800356/reactions"
+      },
+      "updated_at" : "2022-07-04T13:07:33Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1173800356",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "node_id" : "MDQ6VXNlcjczMTk3",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
+      }
+   },
+   {
       "_links" : {
          "html" : {
             "href" : "https://github.com/bitcoin/bitcoin/pull/25522#discussion_r914289012"
@@ -234,21 +280,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914289012"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Is the last part really needed?\r\n```suggestion\r\n                fee=2 * (Decimal(fee) / COIN) * n,\r\n```",
-      "commit_id" : "faf9f0005ca1ebcea461f66191efdc78af744660",
+      "commit_id" : "fad690ba0a62dfd97ef22711b2344909fcd1fb73",
       "created_at" : "2022-07-05T23:48:49Z",
       "diff_hunk" : "@@ -260,33 +240,36 @@ def branch(prevout, initial_value, max_txs, tree_width=5, fee=0.00001 * COIN, _t\n             tree_txs = list(branch(tx0_outpoint, initial_nValue, n, fee=fee))\n             assert_equal(len(tree_txs), n)\n \n-            dbl_tx = CTransaction()\n-            dbl_tx.vin = [CTxIn(tx0_outpoint, nSequence=0)]\n-            dbl_tx.vout = [CTxOut(initial_nValue - 2 * fee * n, DUMMY_P2WPKH_SCRIPT)]\n-            dbl_tx_hex = dbl_tx.serialize().hex()\n+            dbl_tx_hex = self.wallet.create_self_transfer(\n+                utxo_to_spend=tx0_outpoint,\n+                sequence=0,\n+                fee=2 * (Decimal(fee) / COIN) * n + Decimal(\"0.1\"),",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25522#discussion_r914289012",
       "id" : 914289012,
-      "line" : 246,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5842fvF0",
       "original_commit_id" : "faf9f0005ca1ebcea461f66191efdc78af744660",
       "original_line" : 246,
       "original_position" : 218,
       "original_start_line" : null,
       "path" : "test/functional/feature_rbf.py",
-      "position" : 218,
+      "position" : null,
       "pull_request_review_id" : 1029326720,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25522",
       "reactions" : {
@@ -266,6 +312,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-05T23:54:50Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914289012",
       "user" : {
@@ -334,6 +381,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T08:22:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914557413",
       "user" : {
@@ -355,6 +403,118 @@
          "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "(ci rerun after outage, now green)",
+      "created_at" : "2022-07-06T18:24:47Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25522#issuecomment-1176538749",
+      "id" : 1176538749,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25522",
+      "node_id" : "IC_kwDOABII585GII59",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1176538749/reactions"
+      },
+      "updated_at" : "2022-07-06T18:24:47Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1176538749",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25522#discussion_r915205455"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25522"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/915205455"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "https://github.com/bitcoin/bitcoin/pull/25522/commits/fac3800d2c962420303ab5c61b2f02f35b9f693a\r\n\r\n(only if you retouch) might be clearer to make this `None`",
+      "commit_id" : "fad690ba0a62dfd97ef22711b2344909fcd1fb73",
+      "created_at" : "2022-07-06T19:56:25Z",
+      "diff_hunk" : "@@ -232,12 +232,14 @@ def create_self_transfer_multi(\n         *,\n         utxos_to_spend: Optional[List[dict]] = None,\n         num_outputs=1,\n+        amount_per_output=0,",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25522#discussion_r915205455",
+      "id" : 915205455,
+      "line" : 235,
+      "node_id" : "PRRC_kwDOABII5842jO1P",
+      "original_commit_id" : "fac3800d2c962420303ab5c61b2f02f35b9f693a",
+      "original_line" : 235,
+      "original_position" : 4,
+      "original_start_line" : null,
+      "path" : "test/functional/test_framework/wallet.py",
+      "position" : 4,
+      "pull_request_review_id" : 1030626565,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25522",
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/915205455/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-07-07T14:07:50Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/915205455",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "node_id" : "MDQ6VXNlcjczMTk3",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
       }
    }
 ]

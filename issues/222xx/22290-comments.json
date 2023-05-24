@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#22981](https://github.com/bitcoin/bitcoin/pull/22981) (doc: Fix incorrect C++ named args by MarcoFalke)\n* [#22976](https://github.com/bitcoin/bitcoin/pull/22976) (scripted-diff: Rename overloaded int GetArg to GetIntArg by ryanofsky)\n* [#22901](https://github.com/bitcoin/bitcoin/pull/22901) (Improve mempool_package_limits.py by naiza2000)\n* [#22674](https://github.com/bitcoin/bitcoin/pull/22674) (validation: mempool validation and submission for packages of 1 child + parents by glozow)\n* [#22539](https://github.com/bitcoin/bitcoin/pull/22539) (Re-include RBF replacement txs in fee estimation by darosior)\n* [#22097](https://github.com/bitcoin/bitcoin/pull/22097) (validation: Move package acceptance size limit from KvB to WU by ariard)\n* [#21515](https://github.com/bitcoin/bitcoin/pull/21515) (Erlay: bandwidth-efficient transaction relay protocol by naumenkogs)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2021-06-20T17:19:13Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22290#issuecomment-864585675",
@@ -52,6 +52,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22290",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NTIwODg5MA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/865208890/reactions"
+      },
       "updated_at" : "2021-06-21T17:17:59Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/865208890",
       "user" : {
@@ -76,7 +88,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "> in this simple case I believe we could just look at two things: (a) check the target transactionâs own fee rate is sufficient to get in, and (b) check that the entire ancestor package for that target transaction also has a total fee rate sufficient to get in.\r\n\r\nThis seems reasonable.",
       "created_at" : "2021-06-21T21:37:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22290#issuecomment-865362039",
@@ -84,6 +96,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22290",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NTM2MjAzOQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/865362039/reactions"
+      },
       "updated_at" : "2021-06-21T21:37:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/865362039",
       "user" : {
@@ -108,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thank you for the thoughtful review @sdaftuar!\r\n\r\n> I think the logic here â of using the descendant fee rate as an alternate to the transactionâs fee rate â is insufficient for preventing free relay. Consider a 3 transaction package where one child transaction C has two parents, A and B, all of equal size. Suppose A and B are zero-fee transactions and C has a fee rate of 2. Then each of A and B would evaluate to having a fee rate of 1 (with C), but as a package the fee rate would be just 2/3. If the mempool min fee or min relay fee is 1, then this package would make it in despite being below the required fee rate.\r\n\r\nGreat point. I had been thinking of descendant feerate as a good marker since that's how we evict from mempool, but it is imperfect: I think we already have the case where a transaction's ancestor score is too low to be mined, but descendant score too high to be evicted. And it's additionally problematic with package relay.\r\n\r\nA proposal: if the mempool is intended to store the best candidates for mining, then we should evict in the opposite order we include in blocks, which is ancestor score.\r\nSo a transaction's `minerscore = max([ancestorfeerate(tx) for tx in {itself, all its descendants}])`. (This is with the current mining code - I suppose the definition of `minerscore` would be updated if/when block template creation changes).\r\n\r\nIf we replaced descendant feerate with `minerscore`, would that solve this problem? We go through the package, calculate everyone's ancestor feerate (including in-package and in-mempool ancestors), then we calculate everyone's `minerscore` based on that? Everyone's `minerscore` must surpass the min mempool/relay feerate. I think, then, it might not be necessary to specify/figure out which transactions are sponsees and which ones are sponsors?\r\n\r\n(Very far down the line, but just throwing a thought out there: considering feefilters with package relay, I think we would also want to use [unmodified] `minerscore` for feefiltering as well).",
       "created_at" : "2021-06-22T11:05:30Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22290#issuecomment-865887922",
@@ -116,6 +140,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22290",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NTg4NzkyMg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/865887922/reactions"
+      },
       "updated_at" : "2021-06-22T11:05:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/865887922",
       "user" : {
@@ -148,6 +184,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22290",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NjM0NzMxNw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/866347317/reactions"
+      },
       "updated_at" : "2021-06-23T02:15:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/866347317",
       "user" : {
@@ -216,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
       "created_at" : "2021-12-13T23:18:22Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22290#issuecomment-993000137",
@@ -348,7 +396,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--13523179cfe9479db18ec6c5d236f789-->\nThere hasn't been much activity lately and the patch still needs rebase. What is the status here?\n\n* Is it still relevant? â¡ï¸ Please solve the conflicts to make it ready for review and to ensure the CI passes.\n* Is it no longer relevant? â¡ï¸ Please close.\n* Did the author lose interest or time to work on this? â¡ï¸ Please close it and mark it 'Up for grabs' with the label, so that it can be picked up in the future.\n",
       "created_at" : "2022-12-22T00:44:01Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22290#issuecomment-1362260653",
@@ -489,7 +537,7 @@
       "node_id" : "IC_kwDOABII585RtJBf",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -497,7 +545,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1370787935/reactions"
       },
       "updated_at" : "2023-01-04T11:08:32Z",

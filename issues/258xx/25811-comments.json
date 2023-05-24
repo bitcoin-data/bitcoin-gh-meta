@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK 4edc6893825fd8c45c53c81c73a6a7801e1b458c",
       "created_at" : "2022-08-09T22:56:04Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25811#issuecomment-1209971546",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks for pointing this out, I hadn't considered merge conflicts in my comment but I'm honoured to be an inspiration. Reducing maintenance burden seems a good reason for these updated style guidelines.\r\n\r\nWe would still have merge conflicts for initially single name imports that then become multiple names, as showcased in the below script. Would it then be better to apply a uniform rule and always have imports be multiline? Either way, I think the rest of `example_test.py` should be updated to uniformly reflect whatever we end up with, since we now mix both.\r\n\r\n```py\r\nfrom collections import defaultdict\r\n...\r\nfrom test_framework.test_framework import BitcoinTestFramework\r\nfrom test_framework.util import (\r\n    assert_equal,\r\n)\r\n```\r\n\r\n<details>\r\n<summary>Example merge conflict for importing single -> multiple names</summary>\r\n\r\n```sh\r\nmkdir mergeconflict && cd mergeconflict && git init && git checkout -b master\r\necho âfrom typing import Listâ > main.py && git add main.py && git commit -m âinitâ\r\ngit checkout -b a\r\necho \"from typing import (\\n    List,\\n    Any,\\n)\" > main.py && git commit main.py -m \"import any\"\r\ngit checkout master && git checkout -b b\r\necho \"from typing import (\\n    Tuple,\\n    List,\\n)\" > main.py && git commit main.py -m \"import tuple\"\r\ngit checkout master && git merge a\r\ngit checkout b && git rebase master\r\n```\r\n\r\n</details",
       "created_at" : "2022-08-10T11:01:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25811#issuecomment-1210515493",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> We would still have merge conflicts for initially single name imports that then become multiple names, as showcased in the below script. Would it then be better to apply a uniform rule and always have imports be multiline? Either way, I think the rest of `example_test.py` should be updated to uniformly reflect whatever we end up with, since we now mix both.\r\n\r\nThanks for testing out the merge-conflict-scenario for single-/multi-line imports! I'd personally be fine with applying an uniform rule as it's more clear. Though one could counter-argue that there are some modules from where in almost all cases we only import one symbol, and it's probably not worth it to add two extra lines, e.g. the following, being present in every single functional test:\r\n```from test_framework.test_framework import BitcoinTestFramework```\r\n\r\nAnyways, if you (or anyone else) plans a follow-up, feel free to tag me as reviewer.",
       "created_at" : "2022-08-11T10:57:40Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25811#issuecomment-1211834526",

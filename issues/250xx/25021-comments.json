@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Strange that this happens twice in a day suddenly, without any recent changes that look related. The linked CI runs fail at different subtests, one at (\"Check a timeout less than the limit\") and one at (\"Check a timeout greater than the limit\") - so a fix should probably also affect both. ",
       "created_at" : "2022-04-29T00:11:24Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25021#issuecomment-1112766154",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I think a possible explanation would be if the `GetTime()` in the C++ code on Windows ends up rounding _up_ to a whole second. So, for example:\r\n\r\n1. expected time = int(10.5) + MAX = 10 + MAX\r\n2. 0.1 second passes\r\n3. walletpassphrase RPC is executed, asking it to keep the phrase for MAX seconds, it calculates now=ceil(10.6) + MAX = 11 + MAX // ceil() wtf!?\r\n4. 0.1 second passes\r\n5. expected with buffer = 10.7 + MAX // not truncated to whole seconds\r\n\r\nSo, we end up with actual time (11 + MAX) < expected with buffer (10.7 + MAX).\r\n\r\nIf this guess is correct, then the following should fix it:\r\n\r\n```python\r\nbefore = math.floor(time.time()) + MAX_VALUE\r\nself.nodes[0].walletpassphrase(passphrase2, MAX_VALUE + 1000) \r\nafter = math.ceil(time.time()) + MAX_VALUE \r\nactual = self.nodes[0].getwalletinfo()['unlocked_until'] \r\nassert_greater_than_or_equal(actual, before)\r\nassert_greater_than_or_equal(after, actual)\r\n```\r\n",
       "created_at" : "2022-05-06T04:27:26Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25021#issuecomment-1119249506",
@@ -319,21 +319,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869912118"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: maybe mention that this is the same as `MAX_SLEEP_TIME` in `src/wallet/rpc/encrypt.cpp`.",
-      "commit_id" : "76f8dc9bd1b4efd543dc54c17a5f8e9d512580e1",
+      "commit_id" : "189f57bd03d484f396ffe4cc88164222c57435e2",
       "created_at" : "2022-05-11T06:21:55Z",
       "diff_hunk" : "@@ -74,23 +73,22 @@ def run_test(self):\n         # Test timeout bounds\n         assert_raises_rpc_error(-8, \"Timeout cannot be negative.\", self.nodes[0].walletpassphrase, passphrase2, -10)\n \n-        self.log.info('Check a timeout less than the limit')\n-        MAX_VALUE = 100000000\n-        expected_time = int(time.time()) + MAX_VALUE - 600\n-        self.nodes[0].walletpassphrase(passphrase2, MAX_VALUE - 600)\n-        # give buffer for walletpassphrase, since it iterates over all encrypted keys\n-        expected_time_with_buffer = time.time() + MAX_VALUE - 600\n-        actual_time = self.nodes[0].getwalletinfo()['unlocked_until']\n-        assert_greater_than_or_equal(actual_time, expected_time)\n-        assert_greater_than(expected_time_with_buffer, actual_time)\n-\n-        self.log.info('Check a timeout greater than the limit')\n-        expected_time = int(time.time()) + MAX_VALUE - 1\n-        self.nodes[0].walletpassphrase(passphrase2, MAX_VALUE + 1000)\n-        expected_time_with_buffer = time.time() + MAX_VALUE\n-        actual_time = self.nodes[0].getwalletinfo()['unlocked_until']\n-        assert_greater_than_or_equal(actual_time, expected_time)\n-        assert_greater_than(expected_time_with_buffer, actual_time)\n+        timeout_limit = 100000000  # maximum time to keep the decryption key, in seconds (~3 years)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25021#discussion_r869912118",
       "id" : 869912118,
-      "line" : 77,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584z2c42",
       "original_commit_id" : "2178ad2e792180903b9d76b9921d1ed9bc7c5b4e",
       "original_line" : 76,
       "original_position" : 36,
       "original_start_line" : null,
       "path" : "test/functional/wallet_encryption.py",
-      "position" : 36,
+      "position" : null,
       "pull_request_review_id" : 968736589,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25021",
       "reactions" : {
@@ -351,6 +351,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-11T06:24:38Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869912118",
       "user" : {
@@ -388,7 +389,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Done -- seems best to avoid specifying the file to reduce future maintainance but added the constant name and documentation where it is declared; good idea.",
-      "commit_id" : "1a82609ce078e2d3e5e242d85b275b950fd6fb8f",
+      "commit_id" : "189f57bd03d484f396ffe4cc88164222c57435e2",
       "created_at" : "2022-05-12T15:15:47Z",
       "diff_hunk" : "@@ -74,23 +73,22 @@ def run_test(self):\n         # Test timeout bounds\n         assert_raises_rpc_error(-8, \"Timeout cannot be negative.\", self.nodes[0].walletpassphrase, passphrase2, -10)\n \n-        self.log.info('Check a timeout less than the limit')\n-        MAX_VALUE = 100000000\n-        expected_time = int(time.time()) + MAX_VALUE - 600\n-        self.nodes[0].walletpassphrase(passphrase2, MAX_VALUE - 600)\n-        # give buffer for walletpassphrase, since it iterates over all encrypted keys\n-        expected_time_with_buffer = time.time() + MAX_VALUE - 600\n-        actual_time = self.nodes[0].getwalletinfo()['unlocked_until']\n-        assert_greater_than_or_equal(actual_time, expected_time)\n-        assert_greater_than(expected_time_with_buffer, actual_time)\n-\n-        self.log.info('Check a timeout greater than the limit')\n-        expected_time = int(time.time()) + MAX_VALUE - 1\n-        self.nodes[0].walletpassphrase(passphrase2, MAX_VALUE + 1000)\n-        expected_time_with_buffer = time.time() + MAX_VALUE\n-        actual_time = self.nodes[0].getwalletinfo()['unlocked_until']\n-        assert_greater_than_or_equal(actual_time, expected_time)\n-        assert_greater_than(expected_time_with_buffer, actual_time)\n+        timeout_limit = 100000000  # maximum time to keep the decryption key, in seconds (~3 years)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25021#discussion_r871512449",
@@ -419,6 +420,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-12T15:15:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/871512449",
       "user" : {
@@ -531,7 +533,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Just saw this error: https://cirrus-ci.com/task/4948737314258944?logs=functional_tests#L25 in #24230\r\n\r\nLog:\r\n\r\n```\r\n node0 2022-05-12T20:03:02.859261Z [C:\\Users\\ContainerAdministrator\\AppData\\Local\\Temp\\cirrus-ci-build\\src\\rpc\\request.cpp:179] [parse] ThreadRPCServer method=walletpassphrase user=__cookie__ \r\n node0 2022-05-12T20:03:03.012258Z [C:\\Users\\ContainerAdministrator\\AppData\\Local\\Temp\\cirrus-ci-build\\src\\rpc\\server.cpp:530] [RPCRunLater] queue run of timer lockwallet(default_wallet) in 99999400 seconds (using HTTP) \r\n test  2022-05-12T20:03:03.014000Z TestFramework (ERROR): Assertion failed \r\n                                   Traceback (most recent call last):\r\n                                     File \"C:\\Users\\ContainerAdministrator\\AppData\\Local\\Temp\\cirrus-ci-build\\test\\functional\\test_framework\\test_framework.py\", line 133, in main\r\n                                       self.run_test()\r\n                                     File \"C:\\Users\\ContainerAdministrator\\AppData\\Local\\Temp\\cirrus-ci-build\\test\\functional\\wallet_encryption.py\", line 85, in run_test\r\n                                       assert_greater_than(expected_time_with_buffer, actual_time)\r\n                                     File \"C:\\Users\\ContainerAdministrator\\AppData\\Local\\Temp\\cirrus-ci-build\\test\\functional\\test_framework\\util.py\", line 56, in assert_greater_than\r\n                                       raise AssertionError(\"%s <= %s\" % (str(thing1), str(thing2)))\r\n                                   AssertionError: 1752385182.999136 <= 1752385183\r\n```\r\n",
       "created_at" : "2022-05-12T21:34:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25021#issuecomment-1125442207",
@@ -708,50 +710,6 @@
    },
    {
       "author_association" : "MEMBER",
-      "body" : "Unrelated, it might be good to not use mockable time here. libevent isn't affected by `setmocktime`, so using mockable time here is harmless but still a bit confusing:\r\n\r\n```diff\r\ndiff --git a/src/util/time.h b/src/util/time.h\r\nindex 72956ea0d7..8d160c312e 100644\r\n--- a/src/util/time.h\r\n+++ b/src/util/time.h\r\n@@ -18,6 +18,8 @@ using SteadySeconds = std::chrono::time_point<std::chrono::steady_clock, std::ch\r\n using SteadyMilliseconds = std::chrono::time_point<std::chrono::steady_clock, std::chrono::milliseconds>;\r\n using SteadyMicroseconds = std::chrono::time_point<std::chrono::steady_clock, std::chrono::microseconds>;\r\n \r\n+using SysSeconds = std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>; // std::chrono::sys_seconds (C++20)\r\n+\r\n void UninterruptibleSleep(const std::chrono::microseconds& n);\r\n \r\n /**\r\ndiff --git a/src/wallet/rpc/encrypt.cpp b/src/wallet/rpc/encrypt.cpp\r\nindex 802cc63d6d..8a663e71bd 100644\r\n--- a/src/wallet/rpc/encrypt.cpp\r\n+++ b/src/wallet/rpc/encrypt.cpp\r\n@@ -75,7 +75,7 @@ RPCHelpMan walletpassphrase()\r\n \r\n         pwallet->TopUpKeyPool();\r\n \r\n-        pwallet->nRelockTime = GetTime() + nSleepTime;\r\n+        pwallet->nRelockTime = Now<SysSeconds>().time_since_epoch().count() + nSleepTime;\r\n         relock_time = pwallet->nRelockTime;\r\n     }\r\n \r\n",
-      "created_at" : "2022-05-13T13:10:30Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25021#issuecomment-1126040884",
-      "id" : 1126040884,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25021",
-      "node_id" : "IC_kwDOABII585DHgU0",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1126040884/reactions"
-      },
-      "updated_at" : "2022-05-13T13:10:30Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1126040884",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
-         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
-         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/MarcoFalke",
-         "id" : 6399679,
-         "login" : "MarcoFalke",
-         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
-         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
-         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
-         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/MarcoFalke"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
       "body" : "> It is making the test lax by up to another second\r\n\r\nThat is true, but the point of the test is to ensure that the time limit is honored - 1. cannot be negative, 2. is capped at some limit and 3. if within the limits, then is accepted. The original test in 134cdc7cee3da7c554e40ad947a9cdcbb3069f13 contained 5 seconds buffer, so the point of the test is not to check that the value is accepted up to the second, exactly.",
       "created_at" : "2022-05-13T13:26:43Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25021#issuecomment-1126055676",
@@ -806,21 +764,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/872401870"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Would this print the values if the assertion fails?\r\n\r\n```\r\n>>> a=1\r\n>>> b=2\r\n>>> c=3\r\n>>> assert a <= b <= c\r\n>>> \r\n>>> c=0\r\n>>> assert a <= b <= c\r\nTraceback (most recent call last):\r\n  File \"<stdin>\", line 1, in <module>\r\nAssertionError\r\n>>> \r\n```\r\n\r\nIf not, then maybe revert back to using `assert_greater_than()` because seeing the values in CI logs is so precious in debugging this.",
-      "commit_id" : "1a82609ce078e2d3e5e242d85b275b950fd6fb8f",
+      "commit_id" : "189f57bd03d484f396ffe4cc88164222c57435e2",
       "created_at" : "2022-05-13T13:28:57Z",
       "diff_hunk" : "@@ -26,71 +25,72 @@ def run_test(self):\n         passphrase = \"WalletPassphrase\"\n         passphrase2 = \"SecondWalletPassphrase\"\n \n-        # Make sure the wallet isn't encrypted first\n+        self.log.info(\"Test user actions with an unencrypted wallet\")\n         msg = \"test message\"\n         address = self.nodes[0].getnewaddress(address_type='legacy')\n         sig = self.nodes[0].signmessage(address, msg)\n         assert self.nodes[0].verifymessage(address, sig, msg)\n         assert_raises_rpc_error(-15, \"Error: running with an unencrypted wallet, but walletpassphrase was called\", self.nodes[0].walletpassphrase, 'ff', 1)\n         assert_raises_rpc_error(-15, \"Error: running with an unencrypted wallet, but walletpassphrasechange was called.\", self.nodes[0].walletpassphrasechange, 'ff', 'ff')\n \n-        # Encrypt the wallet\n+        self.log.info(\"Test encryptwallet with an empty passphrase and with a valid passphrase\")\n         assert_raises_rpc_error(-8, \"passphrase cannot be empty\", self.nodes[0].encryptwallet, '')\n         self.nodes[0].encryptwallet(passphrase)\n \n-        # Test that the wallet is encrypted\n+        self.log.info(\"Test user actions with an encrypted wallet\")\n         assert_raises_rpc_error(-13, \"Please enter the wallet passphrase with walletpassphrase first\", self.nodes[0].signmessage, address, msg)\n         assert_raises_rpc_error(-15, \"Error: running with an encrypted wallet, but encryptwallet was called.\", self.nodes[0].encryptwallet, 'ff')\n         assert_raises_rpc_error(-8, \"passphrase cannot be empty\", self.nodes[0].walletpassphrase, '', 1)\n         assert_raises_rpc_error(-8, \"passphrase cannot be empty\", self.nodes[0].walletpassphrasechange, '', 'ff')\n \n-        # Check that walletpassphrase works\n-        self.nodes[0].walletpassphrase(passphrase, 2)\n+        self.log.info(\"Test walletpassphrase happy path\")\n+        self.nodes[0].walletpassphrase(passphrase=passphrase, timeout=2)\n         sig = self.nodes[0].signmessage(address, msg)\n         assert self.nodes[0].verifymessage(address, sig, msg)\n \n-        # Check that the timeout is right\n+        self.log.info(\"Test walletpassphrase timeout\")\n         time.sleep(3)\n         assert_raises_rpc_error(-13, \"Please enter the wallet passphrase with walletpassphrase first\", self.nodes[0].signmessage, address, msg)\n \n-        # Test wrong passphrase\n+        self.log.info('Test walletpassphrase with the wrong passphrase')\n         assert_raises_rpc_error(-14, \"wallet passphrase entered was incorrect\", self.nodes[0].walletpassphrase, passphrase + \"wrong\", 10)\n \n-        # Test walletlock\n-        self.nodes[0].walletpassphrase(passphrase, 84600)\n+        self.log.info(\"Test walletlock\")\n+        self.nodes[0].walletpassphrase(passphrase=passphrase, timeout=84600)\n         sig = self.nodes[0].signmessage(address, msg)\n         assert self.nodes[0].verifymessage(address, sig, msg)\n         self.nodes[0].walletlock()\n         assert_raises_rpc_error(-13, \"Please enter the wallet passphrase with walletpassphrase first\", self.nodes[0].signmessage, address, msg)\n \n-        # Test passphrase changes\n+        self.log.info(\"Test walletpassphrasechange\")\n         self.nodes[0].walletpassphrasechange(passphrase, passphrase2)\n         assert_raises_rpc_error(-14, \"wallet passphrase entered was incorrect\", self.nodes[0].walletpassphrase, passphrase, 10)\n-        self.nodes[0].walletpassphrase(passphrase2, 10)\n+        self.nodes[0].walletpassphrase(passphrase=passphrase2, timeout=10)\n         sig = self.nodes[0].signmessage(address, msg)\n         assert self.nodes[0].verifymessage(address, sig, msg)\n         self.nodes[0].walletlock()\n \n-        # Test timeout bounds\n+        self.log.info(\"Test walletpassphrase with an invalid negative timeout and a valid zero timeout\")\n         assert_raises_rpc_error(-8, \"Timeout cannot be negative.\", self.nodes[0].walletpassphrase, passphrase2, -10)\n-\n-        self.log.info('Check a timeout less than the limit')\n-        MAX_VALUE = 100000000\n-        expected_time = int(time.time()) + MAX_VALUE - 600\n-        self.nodes[0].walletpassphrase(passphrase2, MAX_VALUE - 600)\n-        # give buffer for walletpassphrase, since it iterates over all encrypted keys\n-        expected_time_with_buffer = time.time() + MAX_VALUE - 600\n-        actual_time = self.nodes[0].getwalletinfo()['unlocked_until']\n-        assert_greater_than_or_equal(actual_time, expected_time)\n-        assert_greater_than(expected_time_with_buffer, actual_time)\n-\n-        self.log.info('Check a timeout greater than the limit')\n-        expected_time = int(time.time()) + MAX_VALUE - 1\n-        self.nodes[0].walletpassphrase(passphrase2, MAX_VALUE + 1000)\n-        expected_time_with_buffer = time.time() + MAX_VALUE\n-        actual_time = self.nodes[0].getwalletinfo()['unlocked_until']\n-        assert_greater_than_or_equal(actual_time, expected_time)\n-        assert_greater_than(expected_time_with_buffer, actual_time)\n+        self.nodes[0].walletpassphrase(passphrase=passphrase2, timeout=0)\n+\n+        # Maximum time to keep the decryption key, in seconds (~3 years); see MAX_SLEEP_TIME\n+        timeout_limit = 100_000_000\n+\n+        self.log.info(\"Test walletpassphrase with a timeout less than the limit\")\n+        timeout = timeout_limit - 600\n+        before = floor(time.time()) + timeout\n+        self.nodes[0].walletpassphrase(passphrase2, timeout)\n+        after = ceil(time.time()) + timeout\n+        actual = self.nodes[0].getwalletinfo()['unlocked_until']\n+        assert before <= actual <= after",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25021#discussion_r872401870",
       "id" : 872401870,
-      "line" : 86,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584z_8vO",
       "original_commit_id" : "1a82609ce078e2d3e5e242d85b275b950fd6fb8f",
       "original_line" : 86,
       "original_position" : 107,
       "original_start_line" : null,
       "path" : "test/functional/wallet_encryption.py",
-      "position" : 107,
+      "position" : null,
       "pull_request_review_id" : 972259803,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25021",
       "reactions" : {
@@ -838,6 +796,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-13T13:28:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/872401870",
       "user" : {
@@ -906,7 +865,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Ok, in case it helps, here is another test prog I played with on my computer (not windows):\r\n\r\n```cpp\r\nint main(int, char**)\r\n{\r\n    const auto now = std::chrono::system_clock::now().time_since_epoch();\r\n    std::cout << std::chrono::duration_cast<std::chrono::seconds>(now).count() << std::endl\r\n              << std::chrono::duration_cast<std::chrono::milliseconds>(now).count() << std::endl;\r\n    return 0;\r\n}\r\n```\r\n\r\nIt prints, for example:\r\n\r\n```\r\n1652449734\r\n1652449734758\r\n```\r\n\r\nwhich confirms my implementation is rounding down, as in the [spec](https://en.cppreference.com/w/cpp/chrono/duration/duration_cast):\r\n\r\n> casting to an integer duration is subject to truncation as with any static_cast to an integer type\r\n\r\nPS: even if the problem is elsewhere I think the changes in this PR make the test more robust and readable.",
       "created_at" : "2022-05-13T13:54:29Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25021#issuecomment-1126082619",
@@ -1003,7 +962,7 @@
       "node_id" : "IC_kwDOABII585DK81f",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1011,7 +970,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1126944095/reactions"
       },
       "updated_at" : "2022-05-15T13:37:22Z",
@@ -1051,7 +1010,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "This doesn't seem right. If the Bitcoin Core clock was doing `ceil`, we'd see a failure rate of about 100%. `round` seems unlikely as well, as the failure rate would be about 50%.\r\n\r\nStatistically, the error on windows should be 10-100ms, which can't be explained by cast/round/ceil.",
-      "commit_id" : "1a82609ce078e2d3e5e242d85b275b950fd6fb8f",
+      "commit_id" : "189f57bd03d484f396ffe4cc88164222c57435e2",
       "created_at" : "2022-05-15T17:12:33Z",
       "diff_hunk" : "@@ -26,71 +25,72 @@ def run_test(self):\n         passphrase = \"WalletPassphrase\"\n         passphrase2 = \"SecondWalletPassphrase\"\n \n-        # Make sure the wallet isn't encrypted first\n+        self.log.info(\"Test user actions with an unencrypted wallet\")\n         msg = \"test message\"\n         address = self.nodes[0].getnewaddress(address_type='legacy')\n         sig = self.nodes[0].signmessage(address, msg)\n         assert self.nodes[0].verifymessage(address, sig, msg)\n         assert_raises_rpc_error(-15, \"Error: running with an unencrypted wallet, but walletpassphrase was called\", self.nodes[0].walletpassphrase, 'ff', 1)\n         assert_raises_rpc_error(-15, \"Error: running with an unencrypted wallet, but walletpassphrasechange was called.\", self.nodes[0].walletpassphrasechange, 'ff', 'ff')\n \n-        # Encrypt the wallet\n+        self.log.info(\"Test encryptwallet with an empty passphrase and with a valid passphrase\")\n         assert_raises_rpc_error(-8, \"passphrase cannot be empty\", self.nodes[0].encryptwallet, '')\n         self.nodes[0].encryptwallet(passphrase)\n \n-        # Test that the wallet is encrypted\n+        self.log.info(\"Test user actions with an encrypted wallet\")\n         assert_raises_rpc_error(-13, \"Please enter the wallet passphrase with walletpassphrase first\", self.nodes[0].signmessage, address, msg)\n         assert_raises_rpc_error(-15, \"Error: running with an encrypted wallet, but encryptwallet was called.\", self.nodes[0].encryptwallet, 'ff')\n         assert_raises_rpc_error(-8, \"passphrase cannot be empty\", self.nodes[0].walletpassphrase, '', 1)\n         assert_raises_rpc_error(-8, \"passphrase cannot be empty\", self.nodes[0].walletpassphrasechange, '', 'ff')\n \n-        # Check that walletpassphrase works\n-        self.nodes[0].walletpassphrase(passphrase, 2)\n+        self.log.info(\"Test walletpassphrase happy path\")\n+        self.nodes[0].walletpassphrase(passphrase=passphrase, timeout=2)\n         sig = self.nodes[0].signmessage(address, msg)\n         assert self.nodes[0].verifymessage(address, sig, msg)\n \n-        # Check that the timeout is right\n+        self.log.info(\"Test walletpassphrase timeout\")\n         time.sleep(3)\n         assert_raises_rpc_error(-13, \"Please enter the wallet passphrase with walletpassphrase first\", self.nodes[0].signmessage, address, msg)\n \n-        # Test wrong passphrase\n+        self.log.info('Test walletpassphrase with the wrong passphrase')\n         assert_raises_rpc_error(-14, \"wallet passphrase entered was incorrect\", self.nodes[0].walletpassphrase, passphrase + \"wrong\", 10)\n \n-        # Test walletlock\n-        self.nodes[0].walletpassphrase(passphrase, 84600)\n+        self.log.info(\"Test walletlock\")\n+        self.nodes[0].walletpassphrase(passphrase=passphrase, timeout=84600)\n         sig = self.nodes[0].signmessage(address, msg)\n         assert self.nodes[0].verifymessage(address, sig, msg)\n         self.nodes[0].walletlock()\n         assert_raises_rpc_error(-13, \"Please enter the wallet passphrase with walletpassphrase first\", self.nodes[0].signmessage, address, msg)\n \n-        # Test passphrase changes\n+        self.log.info(\"Test walletpassphrasechange\")\n         self.nodes[0].walletpassphrasechange(passphrase, passphrase2)\n         assert_raises_rpc_error(-14, \"wallet passphrase entered was incorrect\", self.nodes[0].walletpassphrase, passphrase, 10)\n-        self.nodes[0].walletpassphrase(passphrase2, 10)\n+        self.nodes[0].walletpassphrase(passphrase=passphrase2, timeout=10)\n         sig = self.nodes[0].signmessage(address, msg)\n         assert self.nodes[0].verifymessage(address, sig, msg)\n         self.nodes[0].walletlock()\n \n-        # Test timeout bounds\n+        self.log.info(\"Test walletpassphrase with an invalid negative timeout and a valid zero timeout\")\n         assert_raises_rpc_error(-8, \"Timeout cannot be negative.\", self.nodes[0].walletpassphrase, passphrase2, -10)\n-\n-        self.log.info('Check a timeout less than the limit')\n-        MAX_VALUE = 100000000\n-        expected_time = int(time.time()) + MAX_VALUE - 600\n-        self.nodes[0].walletpassphrase(passphrase2, MAX_VALUE - 600)\n-        # give buffer for walletpassphrase, since it iterates over all encrypted keys\n-        expected_time_with_buffer = time.time() + MAX_VALUE - 600\n-        actual_time = self.nodes[0].getwalletinfo()['unlocked_until']\n-        assert_greater_than_or_equal(actual_time, expected_time)\n-        assert_greater_than(expected_time_with_buffer, actual_time)\n-\n-        self.log.info('Check a timeout greater than the limit')\n-        expected_time = int(time.time()) + MAX_VALUE - 1\n-        self.nodes[0].walletpassphrase(passphrase2, MAX_VALUE + 1000)\n-        expected_time_with_buffer = time.time() + MAX_VALUE\n-        actual_time = self.nodes[0].getwalletinfo()['unlocked_until']\n-        assert_greater_than_or_equal(actual_time, expected_time)\n-        assert_greater_than(expected_time_with_buffer, actual_time)\n+        self.nodes[0].walletpassphrase(passphrase=passphrase2, timeout=0)\n+\n+        # Maximum time to keep the decryption key, in seconds (~3 years); see MAX_SLEEP_TIME\n+        timeout_limit = 100_000_000\n+\n+        self.log.info(\"Test walletpassphrase with a timeout less than the limit\")\n+        timeout = timeout_limit - 600\n+        before = floor(time.time()) + timeout\n+        self.nodes[0].walletpassphrase(passphrase2, timeout)\n+        after = ceil(time.time()) + timeout",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25021#discussion_r873198183",
@@ -1081,6 +1040,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-15T17:12:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873198183",
       "user" : {
@@ -1116,7 +1076,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/877085914"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Well, this just ignores sub-second fractions and accounts for the time passed between the calls, keeping the original intention of the test (I hope!). Do you think it could still fail on Windows?",
       "commit_id" : "189f57bd03d484f396ffe4cc88164222c57435e2",
       "created_at" : "2022-05-19T13:53:36Z",
@@ -1149,6 +1109,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-19T13:53:36Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/877085914",
       "user" : {
@@ -1214,50 +1175,6 @@
          "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/MarcoFalke"
-      }
-   },
-   {
-      "author_association" : "MEMBER",
-      "body" : "Will update to address feedback.",
-      "created_at" : "2022-05-20T09:23:13Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25021#issuecomment-1132679044",
-      "id" : 1132679044,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25021",
-      "node_id" : "IC_kwDOABII585Dg0-E",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1132679044/reactions"
-      },
-      "updated_at" : "2022-05-20T09:23:13Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1132679044",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/2415484?v=4",
-         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/jonatack/followers",
-         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/jonatack",
-         "id" : 2415484,
-         "login" : "jonatack",
-         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
-         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
-         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
-         "repos_url" : "https://api.github.com/users/jonatack/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/jonatack"
       }
    },
    {
@@ -1437,7 +1354,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I think this is an improvement over the current `master`, even not considering the test failures.",
       "created_at" : "2022-07-13T13:03:48Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25021#issuecomment-1183197825",
@@ -1657,7 +1574,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "https://cirrus-ci.com/task/4856438647422976?logs=functional_tests#L45",
       "created_at" : "2022-07-29T04:24:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25021#issuecomment-1198866149",
@@ -1833,7 +1750,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "The reason for closing - \"this won't be merged\" seems unjustified to me. If Marco did not merge it in the past, that does not mean he will not merge it in the future. Or that another maintainer will not merge it in the future.\r\n\r\nIndeed it has just one ACK. @achow101, maybe you can review this, since you are the original author of the tests.\r\n\r\nI think this PR should be reopened, IMO it is an improvement even if it does not fix the mysterious test failures.",
       "created_at" : "2022-08-10T12:32:17Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25021#issuecomment-1210608638",
@@ -2053,6 +1970,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-10T15:05:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/942570188",
       "user" : {
@@ -2253,8 +2171,8 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25750](https://github.com/bitcoin/bitcoin/pull/25750) (test: Temporarily work around Windows bug in walletpassphrase by MarcoFalke)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25878](https://github.com/bitcoin/bitcoin/pull/25878) (tests: Use mocktime for wallet encryption timeout by achow101)\n* [#25750](https://github.com/bitcoin/bitcoin/pull/25750) (test: Temporarily work around Windows bug in walletpassphrase by MarcoFalke)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-08-11T13:40:35Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25021#issuecomment-1212005243",
       "id" : 1212005243,
@@ -2273,7 +2191,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1212005243/reactions"
       },
-      "updated_at" : "2022-08-11T13:40:35Z",
+      "updated_at" : "2022-08-20T14:21:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1212005243",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -2306,7 +2224,7 @@
       "node_id" : "IC_kwDOABII585IdB87",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -2314,7 +2232,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1215569723/reactions"
       },
       "updated_at" : "2022-08-15T18:21:43Z",

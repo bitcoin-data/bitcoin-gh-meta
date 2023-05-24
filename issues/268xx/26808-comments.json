@@ -44,8 +44,8 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "```py\r\nself.log.info(\"disconnectnode: successfully disconnect node by address\")\r\naddress1 = self.nodes[0].getpeerinfo()[0]['addr']\r\nself.nodes[0].disconnectnode(address=address1)\r\nself.wait_until(lambda: len(self.nodes[0].getpeerinfo()) == 1, timeout=10)\r\nassert not [node for node in self.nodes[0].getpeerinfo() if node['addr'] == address1]\r\n```\r\n\r\nWe call `disconnectnode` and check if it worked by `getpeerinfo`. Perhaps, internally is it updating the informations before really compliting the disconnection? So, when `node0` call `disconnectnode` (to disconnect `node1`) we could check whether it really disconnected by checking `getpeerinfo` for `node1`?",
+      "author_association" : "MEMBER",
+      "body" : "```py\r\nself.log.info(\"disconnectnode: successfully disconnect node by address\")\r\naddress1 = self.nodes[0].getpeerinfo()[0]['addr']\r\nself.nodes[0].disconnectnode(address=address1)\r\nself.wait_until(lambda: len(self.nodes[0].getpeerinfo()) == 1, timeout=10)\r\nassert not [node for node in self.nodes[0].getpeerinfo() if node['addr'] == address1]\r\n```\r\n\r\nWe call `disconnectnode` and check if it worked by `getpeerinfo`. Perhaps, internally is it updating the informations before really compliting the disconnection? So, when `node0` call `disconnectnode` (to disconnect `node1`) we could check whether it really disconnected by checking `getpeerinfo` for `node1`?\r\n\r\n\r\nE.g.: Here we first remove from m_nodes (so `getpeerinfo` won't return that node anymore) and then we do the rest:\r\n```cpp\r\n if (pnode->fDisconnect)\r\n  {\r\n      // remove from m_nodes\r\n      m_nodes.erase(remove(m_nodes.begin(), m_nodes.end(), pnode), m_nodes.end());\r\n\r\n      // release outbound grant (if any)\r\n      pnode->grantOutbound.Release();\r\n\r\n      // close socket and cleanup\r\n      pnode->CloseSocketDisconnect();\r\n\r\n      // hold in disconnected pool until all refs are released\r\n      pnode->Release();\r\n      m_nodes_disconnected.push_back(pnode);\r\n  }\r\n```",
       "created_at" : "2023-02-17T14:49:21Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/26808#issuecomment-1434751546",
       "id" : 1434751546,
@@ -64,7 +64,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1434751546/reactions"
       },
-      "updated_at" : "2023-02-17T14:49:21Z",
+      "updated_at" : "2023-02-17T15:08:05Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1434751546",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/19480819?v=4",

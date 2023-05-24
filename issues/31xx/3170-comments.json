@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Maybe the regular reorgs on signet now cover this? @0xB10C?\r\n\r\nI don't think so. The idea was to keep the automatic reorgs smallish (somewhere between 1 to 12 blocks) for now. Also, I don't think SigNet is the right place to test this. I'm not sure what the _OP_RETURN disconnection failure bug_ was, but I don't think there are enough transactions on SigNet to catch something like this.\r\n\r\nHowever, I think a script that `invalidateblock` blocks one by one starting from the tip while recording `hash(dumptxoutset)` or `gettxoutsetinfo` with coinstatsindex enabled - and then, once close to genesis, `reconsiderblock` for each block and compares the hash of the UTXO set, should be doable. I'm not sure if that's what was meant in https://github.com/bitcoin/bitcoin/pull/2839#issuecomment-21302247 with _a table with the proper utxo state for every height_.",
       "created_at" : "2022-08-11T08:17:06Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/3170#issuecomment-1211682124",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "@0xB10C I think this is the issue referred as OP_RETURN disconnection failure bug: https://github.com/bitcoin/bitcoin/issues/3156",
       "created_at" : "2022-08-11T11:26:55Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/3170#issuecomment-1211862081",
@@ -155,28 +155,28 @@
       "updated_at" : "2022-08-11T11:26:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1211862081",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I've just found out that there is the [`verifychain`](https://bitcoincore.org/en/doc/22.0.0/rpc/blockchain/verifychain/) RPC and the `-checklevel` and `-checkblocks` arguments which with level 4 does a block reconnect test. I'm running `bitcoin-cli verifychain 4 0` to verify all blocks.",
       "created_at" : "2022-08-11T11:59:21Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/3170#issuecomment-1211893662",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This RPC times out after 15min. Verification seems to continue.\r\n\r\n```\r\n$ time bitcoin-cli verifychain 4 0\r\nerror: timeout on transient error: Could not connect to the server 127.0.0.1:8332 (error code 0 - \"timeout reached\")\r\n\r\nMake sure the bitcoind server is running and that you are connecting to the correct RPC port.\r\n\r\nreal    15m0.104s\r\nuser    0m0.001s\r\nsys     0m0.002s\r\n```",
       "created_at" : "2022-08-11T13:04:31Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/3170#issuecomment-1211962164",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@0xB10C I have just tested your approach (of running `verifychain`) on signet. It does complete, eventually, and records progress in debug.log\r\n\r\nI also think this approach addresses the request in OP. However, if we want to test this against mainnet I don't really see a particularly viable approach in terms of CI, without something convoluted like having a host running a pruned node that runs `verifychain 4 (tip_height-1)` on each new block (to disconnect and reconnect), and re-compiling and restarting on each new commit (or tag).\r\n\r\nPerhaps part of the maintainer release process could include running `verifychain 4 0` before a release candidate is tagged?",
       "created_at" : "2022-11-23T11:57:43Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/3170#issuecomment-1324947431",
@@ -308,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I also think this approach addresses the request in OP. However, if we want to test this against mainnet I don't really see a particularly viable approach in terms of CI, without something convoluted like having a host running a pruned node that runs `verifychain 4 (tip_height-1)` on each new block (to disconnect and reconnect), and re-compiling and restarting on each new commit (or tag).\r\n\r\nI think you would want to cover the whole chain and not only new blocks. If a bug happens to be introduced, it could break on something that's in the chain already, not only on new blocks. I agree that running this on mainnet in some sort of CI for each commit is probably not possible and overkill. Periodically on `master`, maybe once a week could be enough.\r\n\r\nAlso like the idea of having it run once before a release. However, I don't think it should be the job of a maintainer. This only adds more work and costs to a job that very few want to do. For me, it took 14h on a beefy machine with 48GB of dbcache. However, I think it could be part of the reoccurring release-candidate testing issue and other contributors could pick it up and comment that this was part of their testing. \r\n\r\nfwiw: We'd still need to up the current max dbcache of 16GB to maybe 64GB, otherwise `verifychain 4 0` will OOM. See https://github.com/bitcoin/bitcoin/pull/24851#issuecomment-1214040286",
       "created_at" : "2022-11-23T12:26:31Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/3170#issuecomment-1324984810",
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> fwiw: We'd still need to up the current max dbcache of 16GB to maybe 64GB, otherwise `verifychain 4 0` will OOM. See [#24851 (comment)](https://github.com/bitcoin/bitcoin/pull/24851#issuecomment-1214040286)\r\n\r\nInteresting, and good to know. Thanks!",
       "created_at" : "2022-11-23T13:09:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/3170#issuecomment-1325035976",

@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Note that this issue has never made it into a released version, so to avoid regression we should fix this before 0.14.\n",
       "created_at" : "2016-10-26T21:50:21Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/9027#issuecomment-256487842",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This was partially addressed in #9208. However, the issue of keeping around all blocks connected in the ConnectTrace still exists. Note that, of course, this does not present an issue during normal connect since a ConnectTrace should only ever contain one block (as ABCS will return if it made progress).\r\n\r\n#10286 will present yet another issue here. Because wallet callbacks will not force the ABC thread to pause, callbacks could pile up and even if blocks get freed from the ConnectTrace, they could still sit around in memory waiting for the callback to finish. Luckily since wallet also takes cs_main there is some ability to block the main thread from making progress, assuming locks will switch between threads and not always get taken on the same thread if there is contention, but hopefully eventually wallet can lose much of its cs_main-taking, which means wallet needs a way to pause validation if it is super, super huge and gets far behind.",
       "created_at" : "2017-06-28T20:43:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/9027#issuecomment-311783860",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Should likely be pushed to 16, as 10708 is not making 15.",
       "created_at" : "2017-07-25T20:04:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/9027#issuecomment-317855768",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Testing with `bitcoin-cli invalidateblock 00000000000000000003618a9a50c352c58fa3a7ae6d0016d2720a9aff2c2db2`, a 50k block re-org, shows that `bitcoind` memory usage peaks at ~ 10GB during this process on my system, although it cannot cause OOM:\r\n\r\n```\r\n$ grep ^VmPeak /proc/$(pidof bitcoind)/status\r\n\r\nVmPeak: 10721532 kB\r\n``` \r\n\r\nSo it seems like this may still be somewhat present, despite previous [comments](https://github.com/bitcoin/bitcoin/issues/14289#issuecomment-508778455) indicating that it had gone away, and this [comment](https://github.com/bitcoin/bitcoin/pull/15402#pullrequestreview-206878468) indicating that #15402 had fixed it somewhat more concretely.\r\n\r\nPerhaps we should close this one and keep #14289 open, although it would be nice to address the penultimate comment here first?\r\n\r\nEdit: testing a day's-worth of blocks re-org (6 * 24) used 729MB",
       "created_at" : "2022-10-25T20:31:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/9027#issuecomment-1291102752",

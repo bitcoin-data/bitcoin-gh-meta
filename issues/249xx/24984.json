@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "Fixes #24487\r\n\r\nWhen a rescan is performed during `CWallet::AttachChain()` (e.g. when loading an old wallet) but this is interrupted by a shutdown signal, the wallet will currently stop the rescan, receive a `chainStateFlushed` signal, set the saved best block to the tip and shut down. At next startup, the rescan is not continued or repeated because of this. But some blocks have never been scanned by the wallet, which could lead to an incorrect balance.\r\n\r\nFix this by ignoring `chainStateFlushed` notifications until the chain is attached. Since `CWallet::chainStateFlushed` is being manually called by `AttachChain()` anyway after finishing with the rescan, it is not a problem if intermediate notifications are ignored.\r\n\r\nManual rescans started / aborted by the `rescanblockchain` / `abortrescan` RPCs are not affected by this.\r\n\r\nI didn't choose alternative ways of fixing this issue that would delay the validationinterface registration or change anything else about the handling of `blockConnected` signals for the reasons mentioned in [this existing comment](https://github.com/bitcoin/bitcoin/blob/master/src/wallet/wallet.cpp#L2937-L2944).",
    "closed_at" : "2022-04-28T18:54:43Z",
    "closed_by" : {
@@ -79,9 +79,10 @@
    },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24984/timeline",
    "title" : "wallet: ignore chainStateFlushed notifications while attaching chain",
-   "updated_at" : "2022-04-28T18:54:43Z",
+   "updated_at" : "2022-06-06T22:13:28Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24984",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/48763452?v=4",

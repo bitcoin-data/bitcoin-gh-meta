@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Might be possible to write a unit test that ensures `BlockUntilSyncedToCurrentChain` doesn't return until after prune locks are updated. But it seems a little tricky so this PR does not have a test for now.",
       "created_at" : "2022-09-30T13:43:44Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26215#issuecomment-1263595077",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Tagged for backport, but happy to drop again if this seems too risky.\r\n\r\nThanks, I think it's probably good to backport. SInce it's just doing an atomic assignment one step later it seems safe and it's hard to think of ways it could cause a problem.",
       "created_at" : "2022-09-30T13:53:08Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26215#issuecomment-1263605775",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24230](https://github.com/bitcoin/bitcoin/pull/24230) (indexes: Stop using node internal types and locking cs_main, improve sync logic by ryanofsky)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-09-30T22:34:56Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26215#issuecomment-1264091717",
@@ -231,21 +231,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/987305684"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Maybe it could be helpful to additionally add a similar comment at the end of `BaseIndex::BlockConnected`, so that no one attempts to add references to `*this` after the call to `SetBestBlockIndex` there either, for the same reason.",
-      "commit_id" : "dd2ef55a86b85a9f1dc8cd1a7a4a0fc7ed2d7da4",
+      "commit_id" : "8891949bdcb25093d3a6703ae8228c3c3687d3a4",
       "created_at" : "2022-10-04T20:33:29Z",
       "diff_hunk" : "@@ -414,10 +414,18 @@ IndexSummary BaseIndex::GetSummary() const\n void BaseIndex::SetBestBlockIndex(const CBlockIndex* block) {\n     assert(!node::fPruneMode || AllowPrune());\n \n-    m_best_block_index = block;\n     if (AllowPrune() && block) {\n         node::PruneLockInfo prune_lock;\n         prune_lock.height_first = block->nHeight;\n         WITH_LOCK(::cs_main, m_chainstate->m_blockman.UpdatePruneLock(GetName(), prune_lock));\n     }\n+\n+    // Intentionally set m_best_block_index as the last step in this function,",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26215#discussion_r987305684",
       "id" : 987305684,
-      "line" : 423,
+      "line" : 427,
       "node_id" : "PRRC_kwDOABII58462RbU",
       "original_commit_id" : "dd2ef55a86b85a9f1dc8cd1a7a4a0fc7ed2d7da4",
-      "original_line" : 423,
+      "original_line" : 427,
       "original_position" : 11,
       "original_start_line" : null,
       "path" : "src/index/base.cpp",
-      "position" : 11,
+      "position" : 22,
       "pull_request_review_id" : 1130577545,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26215",
       "reactions" : {
@@ -263,6 +263,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-10-04T20:51:24Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/987305684",
       "user" : {
@@ -298,7 +299,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/988024821"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/26215#discussion_r987305684\r\n\r\nAgree that would be helpful. Added comment",
       "commit_id" : "8891949bdcb25093d3a6703ae8228c3c3687d3a4",
       "created_at" : "2022-10-05T14:57:32Z",
@@ -331,6 +332,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-10-05T15:09:38Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/988024821",
       "user" : {
@@ -355,7 +357,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re-ACK 8891949bdcb25093d3a6703ae8228c3c3687d3a4\r\n\r\n> I hope the PR description was clear enough explaining the change and what motivated it, so it wasn't actually neccessary to read the old discussion thread, but you could let me know if I missed anything important in the explanation.\r\n\r\nThe PR is clear, I don't think anything is missing, I just decided I wanted to follow the discussion chronologically.",
       "created_at" : "2022-10-05T18:23:15Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26215#issuecomment-1268787268",

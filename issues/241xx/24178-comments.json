@@ -88,8 +88,8 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24008](https://github.com/bitcoin/bitcoin/pull/24008) (assumeutxo: net_processing changes by jamesob)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25253](https://github.com/bitcoin/bitcoin/pull/25253) (test: add coverage for non-hex value to -minimumchainwork by brunoerg)\n* [#24008](https://github.com/bitcoin/bitcoin/pull/24008) (assumeutxo: net_processing changes by jamesob)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-01-27T22:01:38Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24178#issuecomment-1023677360",
       "id" : 1023677360,
@@ -108,7 +108,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1023677360/reactions"
       },
-      "updated_at" : "2022-05-17T11:53:55Z",
+      "updated_at" : "2022-05-31T16:00:51Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1023677360",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -233,19 +233,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Check `ActiveTip()->` isn't null?",
-      "commit_id" : "7ee8f577deaa0f5f66ac1ce31b3b12c44ea996a9",
+      "commit_id" : "a35f963edf1a14ee572abea106fb0147575e4694",
       "created_at" : "2022-02-01T12:17:15Z",
       "diff_hunk" : "@@ -3190,8 +3190,16 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type,\n         }\n \n         LOCK(cs_main);\n-        if (m_chainman.ActiveChainstate().IsInitialBlockDownload() && !pfrom.HasPermission(NetPermissionFlags::Download)) {\n-            LogPrint(BCLog::NET, \"Ignoring getheaders from peer=%d because node is in initial block download\\n\", pfrom.GetId());\n+\n+        // Note that if we were to be on a chain that forks from the checkpointed\n+        // chain, then serving those headers to a peer that has seen the\n+        // checkpointed chain would cause that peer to disconnect us. Requiring\n+        // that our chainwork exceed nMinimumChainWork is a protection against\n+        // being fed a bogus chain when we started up for the first time and\n+        // getting partitioned off the honest network for serving that chain to\n+        // others.\n+        if (m_chainman.ActiveTip()->nChainWork < nMinimumChainWork && !pfrom.HasPermission(NetPermissionFlags::Download)) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24178#discussion_r796537419",
       "id" : 796537419,
-      "line" : 3201,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584vejJL",
       "original_commit_id" : "0b015e4740ce2742981c4a07709ce738f57200f3",
       "original_line" : 3201,
       "original_position" : 14,
       "original_start_line" : null,
       "path" : "src/net_processing.cpp",
-      "position" : 14,
+      "position" : null,
       "pull_request_review_id" : 869045755,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24178",
       "reactions" : {
@@ -263,6 +263,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-01T12:18:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/796537419",
       "user" : {
@@ -331,6 +332,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-22T16:36:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/812139471",
       "user" : {

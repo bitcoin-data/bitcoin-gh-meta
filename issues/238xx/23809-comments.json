@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "~Looks like I need to still need to~:\r\n\r\n- [x] update the outbound_message tracepoint\r\n- [x] update docs",
       "created_at" : "2021-12-18T01:35:55Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23809#issuecomment-997119755",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept and tested ACK (modulo :x:). This is a important step for #23724.\r\n\r\nOne possible problem I see with this is that some tracing script will get confused when we remove and then add a new connection type: e.g. the enum with the value 5 has a new meaning. Tracepoint documentation would be outdated too.\r\n\r\n- checked (with gdb) that the net:{in,out}bound_message tracepoints now execute only a few instructions: :heavy_check_mark: \r\n- checked that the order of connection_types in `contrib/tracing/net_common.py` matches [0]: :heavy_check_mark: \r\n- checked that the order of connection_types in the tracepoint documentation `doc/tracing.md` matches [0]: :heavy_check_mark: \r\n- tested `contrib/tracing/log_raw_p2p_msgs.py`: :heavy_check_mark:\r\n- tested `contrib/tracing/p2p_monitor.py`: :heavy_check_mark: \r\n- tested `contrib/tracing/log_p2p_traffic.bt`: :x:\r\n  - tries to read argument 2 as string `$peer_type = str(arg2);` (two occurrences)\r\n  - see [1] for a inelegant patch that solves this\r\n\r\n[0] https://github.com/bitcoin/bitcoin/blob/98a2ddcd6ed01a38cd0dad7c1abc7023a60d3fd0/src/net.h#L120\r\n[1] I didn't find any other way of doing this in bpftrace. Would be nice if the if-else could at least be extracted into a function..\r\n``` patch\r\ndiff --git a/contrib/tracing/log_p2p_traffic.bt b/contrib/tracing/log_p2p_traffic.bt\r\nindex f62956aa5..f038ae1b2 100755\r\n--- a/contrib/tracing/log_p2p_traffic.bt\r\n+++ b/contrib/tracing/log_p2p_traffic.bt\r\n@@ -9,20 +9,51 @@ usdt:./src/bitcoind:net:inbound_message\r\n {\r\n   $peer_id = (int64) arg0;\r\n   $peer_addr = str(arg1);\r\n-  $peer_type = str(arg2);\r\n+  $peer_type = (int32) arg2;\r\n   $msg_type = str(arg3);\r\n   $msg_len = arg4;\r\n-  printf(\"inbound '%s' msg from peer %d (%s, %s) with %d bytes\\n\", $msg_type, $peer_id, $peer_type, $peer_addr, $msg_len);\r\n+\r\n+  $peer_type_str = \"unknown\";\r\n+  if ($peer_type == 0) {\r\n+    $peer_type_str = \"inbound\";\r\n+  } else if ($peer_type == 1) {\r\n+    $peer_type_str = \"outbound-full-relay\";\r\n+  } else if ($peer_type == 2) {\r\n+    $peer_type_str = \"manual\";\r\n+  } else if ($peer_type == 3) {\r\n+    $peer_type_str = \"feeler\";\r\n+  } else if ($peer_type == 4) {\r\n+    $peer_type_str = \"block-relay\";\r\n+  } else if ($peer_type == 5) {\r\n+    $peer_type_str = \"addr-fetch\";\r\n+  }\r\n+\r\n+  printf(\"inbound '%s' msg from peer %d (%s, %s) with %d bytes\\n\", $msg_type, $peer_id, $peer_type_str, $peer_addr, $msg_len);\r\n }\r\n\r\n usdt:./src/bitcoind:net:outbound_message\r\n {\r\n   $peer_id = (int64) arg0;\r\n   $peer_addr = str(arg1);\r\n-  $peer_type = str(arg2);\r\n+  $peer_type = (int32) arg2;\r\n   $msg_type = str(arg3);\r\n   $msg_len = arg4;\r\n\r\n-  printf(\"outbound '%s' msg to peer %d (%s, %s) with %d bytes\\n\", $msg_type, $peer_id, $peer_type, $peer_addr, $msg_len);\r\n+  $peer_type_str = \"unknown\";\r\n+  if ($peer_type == 0) {\r\n+    $peer_type_str = \"inbound\";\r\n+  } else if ($peer_type == 1) {\r\n+    $peer_type_str = \"outbound-full-relay\";\r\n+  } else if ($peer_type == 2) {\r\n+    $peer_type_str = \"manual\";\r\n+  } else if ($peer_type == 3) {\r\n+    $peer_type_str = \"feeler\";\r\n+  } else if ($peer_type == 4) {\r\n+    $peer_type_str = \"block-relay\";\r\n+  } else if ($peer_type == 5) {\r\n+    $peer_type_str = \"addr-fetch\";\r\n+  }\r\n+\r\n+  printf(\"outbound '%s' msg to peer %d (%s, %s) with %d bytes\\n\", $msg_type, $peer_id, $peer_type_str, $peer_addr, $msg_len);\r\n }\r\n```",
       "created_at" : "2021-12-18T13:24:46Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23809#issuecomment-997202354",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Should probably also change the example tracepoint in `doc/tracing.md`\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/ca7a12479a9aae6ff20de355cc28dcd2f71a74cb/doc/tracing.md?plain=1#L193",
       "created_at" : "2021-12-18T14:32:10Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23809#issuecomment-997210656",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "On Sat, Dec 18, 2021 at 06:32:22AM -0800, 0xB10C wrote:\n>Should probably also change the example tracepoint in `doc/tracing.md`\n>\n>https://github.com/bitcoin/bitcoin/blob/ca7a12479a9aae6ff20de355cc28dcd2f71a74cb/doc/tracing.md?plain=1#L193\n\ngood catch\n",
       "created_at" : "2021-12-18T18:58:48Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23809#issuecomment-997269489",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : ">[0] https://github.com/bitcoin/bitcoin/blob/98a2ddcd6ed01a38cd0dad7c1abc7023a60d3fd0/src/net.h#L120\n>[1] I didn't find any other way of doing this in bpftrace. Would be nice if the if-else could at least be extracted into a function..\n\noops missed this one. perhaps we can just use a map here. will update.\n",
       "created_at" : "2021-12-18T19:10:06Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23809#issuecomment-997271219",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "bpftrace doesn't support functions, best I could do was with a pre-processor macro but that seems like a somewhat horrible solution which now would require a build step:\r\n\r\n```diff\r\ndiff --git a/contrib/tracing/log_p2p_traffic.bt b/contrib/tracing/log_p2p_traffic.bt\r\nindex f62956aa5e..9ed8a6aa10 100755\r\n--- a/contrib/tracing/log_p2p_traffic.bt\r\n+++ b/contrib/tracing/log_p2p_traffic.bt\r\n@@ -1,15 +1,25 @@\r\n #!/usr/bin/env bpftrace\r\n \r\n+#define CONNTYPE(ct) \\\r\n+  (ct == 0 ? \"inbound\":\\\r\n+  (ct == 1 ? \"outbound-full-relay\":\\\r\n+  (ct == 2 ? \"manual\":\\\r\n+  (ct == 3 ? \"feeler\":\\\r\n+  (ct == 4 ? \"block-relay\":\\\r\n+  (ct == 5 ? \"addr-fetch\":\\\r\n+   \"unknown\"\\\r\n+  ))))))\r\n+\r\n BEGIN\r\n {\r\n-  printf(\"Logging P2P traffic\\n\")\r\n+  printf(\"Logging P2P traffic\\n\");\r\n }\r\n \r\n usdt:./src/bitcoind:net:inbound_message\r\n {\r\n   $peer_id = (int64) arg0;\r\n   $peer_addr = str(arg1);\r\n-  $peer_type = str(arg2);\r\n+  $peer_type = CONNTYPE(arg2);\r\n   $msg_type = str(arg3);\r\n   $msg_len = arg4;\r\n   printf(\"inbound '%s' msg from peer %d (%s, %s) with %d bytes\\n\", $msg_type, $peer_id, $peer_type, $peer_addr, $msg_len);\r\n@@ -19,7 +29,7 @@ usdt:./src/bitcoind:net:outbound_message\r\n {\r\n   $peer_id = (int64) arg0;\r\n   $peer_addr = str(arg1);\r\n-  $peer_type = str(arg2);\r\n+  $peer_type = CONNTYPE(arg2);\r\n   $msg_type = str(arg3);\r\n   $msg_len = arg4;\r\n```\r\n\r\nI tried with a bpf map but it was complaining about how the 64-byte(?) strings in the map were taking up too much stack size... I was able to reduce the stack size with BPFTRACE_STRLEN=32 but that conflicts with the docs for this file, since we might need it for some peer_addr logs?\r\n\r\nHonestly bpftrace is looking like a poor tool for this particular job.\r\n",
       "created_at" : "2021-12-18T20:22:19Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23809#issuecomment-997279825",
@@ -308,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> see [1] for a inelegant patch that solves this\r\n\r\nI counter your inelegant patch with my own, less readable version. with no support for basic abstractions, we might just need to hack it for now, and perhaps wait for bpftrace updates before we can clean this up. I really don't feel like adding a `cpp` build step for this simple example.\r\n\r\nI updated docs + pushed this patch: `git range-diff ca7a12479a...e049b7dae5`",
       "created_at" : "2021-12-18T20:50:00Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23809#issuecomment-997282893",
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "doing some back of the envelope calculations, the amount of instructions this saves wouldn't even be noticable across the entire duration of IBD. going to just drop it to save review time.",
       "created_at" : "2022-01-04T17:20:32Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23809#issuecomment-1005017785",
@@ -361,7 +361,7 @@
       "node_id" : "IC_kwDOABII584751q5",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -369,7 +369,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1005017785/reactions"
       },
       "updated_at" : "2022-01-04T17:20:32Z",

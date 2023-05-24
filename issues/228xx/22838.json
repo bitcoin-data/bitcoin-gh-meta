@@ -6,9 +6,10 @@
    "body" : "It is convenient to have a descriptor which specifies both receiving and change addresses in a single string. However, as discussed in https://github.com/bitcoin/bitcoin/issues/17190#issuecomment-895515768, it is not feasible to use a generic multipath specification like BIP 88 due to combinatorial blow up and that it would result in unexpected descriptors.\r\n\r\nTo resolve that problem, this PR proposes a targeted solution which allows only a single pair of 2 derivation indexes to be inserted in the place of a single derivation index. So instead of two descriptor `wpkh(xpub.../0/0/*)` and `wpkh(xpub.../0/1/*)` to represent receive and change addresses, this could be written as `wpkh(xpub.../0/<0;1>/*)`. The multipath specifier is of the form `<NUM;NUM>`. Each `NUM` can have its own hardened specifier, e.g. `<0;1h>` is valid. The multipath specifier can also only appear in one path index in the derivation path.\r\n\r\nThis results in the parser returning two descriptors. The first descriptor uses the first `NUM` in all pairs present, and the second uses the second `NUM`. In our implementation, if a multipath descriptor is not provided, a pair is still returned, but the second element is just `nullptr`.\r\n\r\nThe wallet will not output the multipath descriptors (yet). Furthermore, when a multipath descriptor is imported, it is expanded to the two descriptors and each imported on its own, with the second descriptor being implicitly for internal (change) addresses. There is no change to how the wallet stores or outputs descriptors (yet).\r\n\r\nNote that the path specifier is different from what was proposed. It uses angle brackets and the semicolon because these are unused characters available in the character set and I wanted to avoid conflicts with characters already in use in descriptors.\r\n\r\nCloses #17190 ",
    "closed_at" : null,
    "closed_by" : null,
-   "comments" : 0,
+   "comments" : 24,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22838/comments",
    "created_at" : "2021-08-30T19:46:34Z",
+   "draft" : false,
    "events_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22838/events",
    "html_url" : "https://github.com/bitcoin/bitcoin/pull/22838",
    "id" : 983140832,
@@ -32,15 +33,6 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/RPC/REST/ZMQ"
       },
       {
-         "color" : "c7def8",
-         "default" : false,
-         "description" : null,
-         "id" : 118378960,
-         "name" : "Mining",
-         "node_id" : "MDU6TGFiZWwxMTgzNzg5NjA=",
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/Mining"
-      },
-      {
          "color" : "e9f76c",
          "default" : false,
          "description" : "",
@@ -59,13 +51,28 @@
    "pull_request" : {
       "diff_url" : "https://github.com/bitcoin/bitcoin/pull/22838.diff",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22838",
+      "merged_at" : null,
       "patch_url" : "https://github.com/bitcoin/bitcoin/pull/22838.patch",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22838"
    },
+   "reactions" : {
+      "+1" : 0,
+      "-1" : 0,
+      "confused" : 0,
+      "eyes" : 0,
+      "heart" : 0,
+      "hooray" : 0,
+      "laugh" : 0,
+      "rocket" : 2,
+      "total_count" : 2,
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22838/reactions"
+   },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "open",
+   "state_reason" : null,
+   "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22838/timeline",
    "title" : "descriptors: Be able to specify change and receiving in a single descriptor string",
-   "updated_at" : "2021-08-30T19:50:22Z",
+   "updated_at" : "2023-05-22T19:08:34Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22838",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/3782274?v=4",

@@ -1,12 +1,12 @@
 {
-   "active_lock_reason" : null,
+   "active_lock_reason" : "resolved",
    "assignee" : null,
    "assignees" : [],
    "author_association" : "MEMBER",
    "body" : "`walletcreatefundedpsbt` has some interesting features that `sendtoaddress` and `sendmany` don't have:\r\n* manual coin selection\r\n* outputting a PSBT (it was controversial to add this, see #18201)\r\n* create a transaction without adding to wallet (which leads to broadcasting, unless `-walletbroadcast=0`)\r\n\r\nAt the same time `walletcreatefundedpsbt` can't broadcast a transaction, which is inconvenient for simple use cases.\r\n\r\nThis PR introduces a new `send` RPC method which creates a PSBT, signs it if possible and adds it to the wallet by default. If it can't sign all inputs, it outputs a PSBT. If `add_to_wallet` is set to `false` it will return the transaction in both PSBT and hex format.\r\n\r\nBecause it uses a PSBT internally, it will much easier to add hardware wallet support to this method (see #16546).\r\n\r\nFor `bitcoin-cli` users, it tries to keep the simplest use case easy to use:\r\n\r\n```sh\r\nbitcoin-cli -regtest send '{\"ADDRESS\": 0.1}' 1 sat/b\r\n```\r\n\r\nThis paves the way for deprecating `sendtoaddress` and `sendmany` though there's no rush. The only missing feature compared to these older methods is adding labels to a destination address.\r\n\r\nDepends on:\r\n- [x] #16377 (`[rpc] don't automatically append inputs in walletcreatefundedpsbt`)\r\n- [x] #11413 (`[wallet] [rpc] sendtoaddress/sendmany: Add explicit feerate option`)\r\n- [x] #18244 (`[rpc] have lockUnspents also lock manually selected coins`)",
    "closed_at" : "2020-09-15T02:51:54Z",
    "closed_by" : {
-      "avatar_url" : "https://avatars2.githubusercontent.com/u/3211283?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/3211283?v=4",
       "events_url" : "https://api.github.com/users/meshcollider/events{/privacy}",
       "followers_url" : "https://api.github.com/users/meshcollider/followers",
       "following_url" : "https://api.github.com/users/meshcollider/following{/other_user}",
@@ -25,22 +25,14 @@
       "type" : "User",
       "url" : "https://api.github.com/users/meshcollider"
    },
-   "comments" : 12,
+   "comments" : 13,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16378/comments",
    "created_at" : "2019-07-12T13:56:59Z",
+   "draft" : false,
    "events_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16378/events",
    "html_url" : "https://github.com/bitcoin/bitcoin/pull/16378",
    "id" : 467428350,
    "labels" : [
-      {
-         "color" : "0052cc",
-         "default" : false,
-         "description" : null,
-         "id" : 98279177,
-         "name" : "RPC/REST/ZMQ",
-         "node_id" : "MDU6TGFiZWw5ODI3OTE3Nw==",
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/RPC/REST/ZMQ"
-      },
       {
          "color" : "08a781",
          "default" : false,
@@ -49,10 +41,19 @@
          "name" : "Wallet",
          "node_id" : "MDU6TGFiZWwxNDk0MjQ=",
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/Wallet"
+      },
+      {
+         "color" : "0052cc",
+         "default" : false,
+         "description" : null,
+         "id" : 98279177,
+         "name" : "RPC/REST/ZMQ",
+         "node_id" : "MDU6TGFiZWw5ODI3OTE3Nw==",
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/RPC/REST/ZMQ"
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16378/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "MDExOlB1bGxSZXF1ZXN0Mjk3MDgyNjkz",
    "number" : 16378,
@@ -60,16 +61,31 @@
    "pull_request" : {
       "diff_url" : "https://github.com/bitcoin/bitcoin/pull/16378.diff",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/16378",
+      "merged_at" : "2020-09-15T02:51:54Z",
       "patch_url" : "https://github.com/bitcoin/bitcoin/pull/16378.patch",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16378"
    },
+   "reactions" : {
+      "+1" : 0,
+      "-1" : 0,
+      "confused" : 0,
+      "eyes" : 0,
+      "heart" : 0,
+      "hooray" : 0,
+      "laugh" : 0,
+      "rocket" : 0,
+      "total_count" : 0,
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16378/reactions"
+   },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
+   "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16378/timeline",
    "title" : "The ultimate send RPC",
-   "updated_at" : "2020-09-15T02:51:54Z",
+   "updated_at" : "2022-02-15T10:47:39Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16378",
    "user" : {
-      "avatar_url" : "https://avatars1.githubusercontent.com/u/10217?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/10217?v=4",
       "events_url" : "https://api.github.com/users/Sjors/events{/privacy}",
       "followers_url" : "https://api.github.com/users/Sjors/followers",
       "following_url" : "https://api.github.com/users/Sjors/following{/other_user}",

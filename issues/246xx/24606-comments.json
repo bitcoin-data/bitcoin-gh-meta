@@ -143,21 +143,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/830070978"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "To avoid the magic number `4201` further down, which must be equal to this `4200` here plus one:\r\n\r\n```cpp\r\nstatic constexpr int64_t MAX_TIME_ADJUSTMENT{4200};\r\n\r\n...\r\n\r\n: BasicTestingSetup{CBaseChainParams::MAIN, /*extra_args=*/{strprintf(\"-maxtimeadjustment=%d\", MAX_TIME_ADJUSTMENT).c_str()}} {}\r\n\r\n... and later on, use the constant instead of the magic number 4201 ...\r\n\r\nMultiAddTimeData(1, MAX_TIME_ADJUSTMENT + 1);\r\n",
-      "commit_id" : "5c8183737f04cc346360a19acbe00b6af78ff10f",
+      "commit_id" : "e91d40301b5624ec109dfa0ecf20f5ffb16045c6",
       "created_at" : "2022-03-18T14:46:23Z",
       "diff_hunk" : "@@ -16,7 +16,16 @@\n \n #include <boost/test/unit_test.hpp>\n \n-BOOST_FIXTURE_TEST_SUITE(timedata_tests, BasicTestingSetup)\n+/**\n+ * Set -maxtimeadjustment to 70 minutes for testing purposes; this was\n+ * previously the default value before being changed to 0 in v24.0.\n+ */\n+struct TimeDataTestingSetup : public BasicTestingSetup {\n+    TimeDataTestingSetup()\n+        : BasicTestingSetup{CBaseChainParams::MAIN, /*extra_args=*/{\"-maxtimeadjustment=4200\"}} {}",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24606#discussion_r830070978",
       "id" : 830070978,
-      "line" : 25,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584xeeDC",
       "original_commit_id" : "5c8183737f04cc346360a19acbe00b6af78ff10f",
       "original_line" : 25,
       "original_position" : 11,
       "original_start_line" : null,
       "path" : "src/test/timedata_tests.cpp",
-      "position" : 11,
+      "position" : null,
       "pull_request_review_id" : 914460430,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24606",
       "reactions" : {
@@ -175,6 +175,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-18T15:21:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/830070978",
       "user" : {
@@ -210,21 +211,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/830072180"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Does it make sense to test with a non-default value? Or should we test both old (70) and the new (0)?",
-      "commit_id" : "5c8183737f04cc346360a19acbe00b6af78ff10f",
+      "commit_id" : "e91d40301b5624ec109dfa0ecf20f5ffb16045c6",
       "created_at" : "2022-03-18T14:47:39Z",
       "diff_hunk" : "@@ -16,7 +16,16 @@\n \n #include <boost/test/unit_test.hpp>\n \n-BOOST_FIXTURE_TEST_SUITE(timedata_tests, BasicTestingSetup)\n+/**\n+ * Set -maxtimeadjustment to 70 minutes for testing purposes; this was",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24606#discussion_r830072180",
       "id" : 830072180,
-      "line" : 20,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584xeeV0",
       "original_commit_id" : "5c8183737f04cc346360a19acbe00b6af78ff10f",
       "original_line" : 20,
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "src/test/timedata_tests.cpp",
-      "position" : 6,
+      "position" : null,
       "pull_request_review_id" : 914460430,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24606",
       "reactions" : {
@@ -242,6 +243,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-18T15:21:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/830072180",
       "user" : {
@@ -277,9 +279,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/830080279"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This will now always print 0 (assuming the user did not change `-maxtimeoffset`):\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/66e2d21ef203e422eea8f0a3c7029ac59b210668/src/timedata.cpp#L107\r\n\r\nThere is a problem in the existent code that it says \"median: ...\" but prints the offset instead. They are not the same. I think it would be useful to print the median and also the unit (seconds):\r\n\r\n```diff\r\n-log_message += strprintf(\"|  median offset = %+d  (%+d minutes)\", nTimeOffset, nTimeOffset / 60);\r\n+log_message += strprintf(\"|  median offset = %+d seconds (%+d minutes)\", nMedian, nMedian / 60);\r\n```",
-      "commit_id" : "5c8183737f04cc346360a19acbe00b6af78ff10f",
+      "commit_id" : "e91d40301b5624ec109dfa0ecf20f5ffb16045c6",
       "created_at" : "2022-03-18T14:55:56Z",
       "diff_hunk" : "@@ -10,7 +10,7 @@\n #include <stdint.h>\n #include <vector>\n \n-static const int64_t DEFAULT_MAX_TIME_ADJUSTMENT = 70 * 60;\n+static constexpr int64_t DEFAULT_MAX_TIME_ADJUSTMENT{0};",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24606#discussion_r830080279",
@@ -309,6 +311,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-18T15:21:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/830080279",
       "user" : {
@@ -342,7 +345,7 @@
       "node_id" : "IC_kwDOABII584_7XXL",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -350,7 +353,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1072526795/reactions"
       },
       "updated_at" : "2022-03-18T15:34:37Z",
@@ -522,20 +525,20 @@
       },
       "author_association" : "MEMBER",
       "body" : "Thanks, done.",
-      "commit_id" : "5c8183737f04cc346360a19acbe00b6af78ff10f",
+      "commit_id" : "e91d40301b5624ec109dfa0ecf20f5ffb16045c6",
       "created_at" : "2022-03-23T12:49:44Z",
       "diff_hunk" : "@@ -16,7 +16,16 @@\n \n #include <boost/test/unit_test.hpp>\n \n-BOOST_FIXTURE_TEST_SUITE(timedata_tests, BasicTestingSetup)\n+/**\n+ * Set -maxtimeadjustment to 70 minutes for testing purposes; this was\n+ * previously the default value before being changed to 0 in v24.0.\n+ */\n+struct TimeDataTestingSetup : public BasicTestingSetup {\n+    TimeDataTestingSetup()\n+        : BasicTestingSetup{CBaseChainParams::MAIN, /*extra_args=*/{\"-maxtimeadjustment=4200\"}} {}",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24606#discussion_r833223544",
       "id" : 833223544,
       "in_reply_to_id" : 830070978,
-      "line" : 25,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584xqft4",
       "original_commit_id" : "5c8183737f04cc346360a19acbe00b6af78ff10f",
       "original_line" : 25,
       "original_position" : 11,
       "original_start_line" : null,
       "path" : "src/test/timedata_tests.cpp",
-      "position" : 11,
+      "position" : null,
       "pull_request_review_id" : 918713990,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24606",
       "reactions" : {
@@ -553,6 +556,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-23T12:49:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/833223544",
       "user" : {
@@ -621,7 +625,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> if I understand correctly, this code has been in the codebase since 2016, roughly six years now\r\n\r\nThe concept of timedata was already introduced by Satoshi, it's historical :smile: \r\n`git log -S \"Never go to sea with two chronometers; take one or three\"` points to the first commit!\r\n\r\nConcept ACK on removing it though.\r\n\r\nSo there are three possibilities discussed:\r\n\r\n1.  Remove the use of `GetAdjustedTime()` step by step (address relay, validation), making `-maxtimeadjustment` setting a null-op and deprecating it afterwards.\r\n2. Changing default `-maxtimeadjustment` to 0 and removing the use of `GetAdjustedTime()` afterwards.\r\n3.  Changing default `-maxtimeadjustment` to 0 but keeping the functionality.\r\n\r\nWhile there seems to be consensus that 3) doesn't make sense, is there much of a difference between 1) and 2) if it all happens for the 24.0 release (which seems realistic?).",
       "created_at" : "2022-03-23T13:18:27Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24606#issuecomment-1076365845",
@@ -630,7 +634,7 @@
       "node_id" : "IC_kwDOABII585AKAoV",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -638,7 +642,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1076365845/reactions"
       },
       "updated_at" : "2022-03-23T13:18:27Z",
@@ -753,7 +757,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@mzumsande, good points! I think 1. and 2. can be done in parallel. If 1. is fully completed before 24.x then 2. becomes irrelevant. Having 2. now could help with some testing by people that use pre-release, and don't change the defaults, I guess.",
       "created_at" : "2022-03-28T12:59:11Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24606#issuecomment-1080617952",
@@ -1017,6 +1021,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-07T12:35:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/845080941",
       "user" : {
@@ -1085,50 +1090,6 @@
       }
    },
    {
-      "author_association" : "MEMBER",
-      "body" : "> I think I agree with @MarcoFalke & @mzumsande and would rather move ahead with refactoring the code, i.e #24662 + validation changes, rather than a sort of interim / soft deprecation period of just changing the default. I think we have a long enough window prior to the 24.x branch off to get the refactoring done, and if for some reason that didn't happen, we could always, if still wanted, make this change just prior to branch off.\r\n> \r\n> I would also be very surprised if anyone is actually using this setting in production.\r\n\r\nA headstrong and presumptive approach would needlessly take on project and user space risk. Thus the straightforward proposal here, unless there is some sort of new urgency.",
-      "created_at" : "2022-04-07T12:51:21Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24606#issuecomment-1091696924",
-      "id" : 1091696924,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24606",
-      "node_id" : "IC_kwDOABII585BEfkc",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1091696924/reactions"
-      },
-      "updated_at" : "2022-04-07T12:51:21Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1091696924",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/2415484?v=4",
-         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/jonatack/followers",
-         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/jonatack",
-         "id" : 2415484,
-         "login" : "jonatack",
-         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
-         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
-         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
-         "repos_url" : "https://api.github.com/users/jonatack/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/jonatack"
-      }
-   },
-   {
       "_links" : {
          "html" : {
             "href" : "https://github.com/bitcoin/bitcoin/pull/24606#discussion_r845098347"
@@ -1173,6 +1134,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-07T12:52:50Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/845098347",
       "user" : {
@@ -1461,7 +1423,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I think it would also help to understand the (worst-case) consequences of having an incorrect time in cases where AdjustedTime might have ideally helped before. I had a look at the places where adjusted time is used - there are just a few: I could think of the following items:\r\n\r\n1. (gossip) address relay is very sensitive to the correct time, because addrs will not be relayed for more than 10 minutes after `nTime` of the original self-advertisement. A node with a wrong time can easily become a \"black hole\" for addr relay. This means it's not helping the network by relaying received addrs further along, but that's not really a problem for the node itself because the acceptance of addrs and the process of making outgoing connections to them is not affected.\r\n\r\n1.  a node with a wrong time will find it harder to find inbound peers (because its own self-advertisement will have a `nTime` that is off, and therefore likely not be relayed by others, see previous point). The ability to find outbound peers is not affected.\r\n\r\n1. the `nTime` field in blocks is set based on the maximum of AdjustedTime / MedianTimePast in the mining code. Validation will not allow blocks more than 2 hours in the future (MAX_FUTURE_BLOCK_TIME).  Adjusted Time cannot correct more than 70 minutes though and wouldn't correct anything if the the time was off by more, so I can't really think of a scenario in which it would have saved us to keep with the best chain before. \r\n\r\n1. header sync timeout and `CanDirectFetch()` in `net_processing`. An incorrect time may stall the header timeout / slow down IBD.\r\n\r\nAm I missing anything important?",
       "created_at" : "2022-04-21T14:05:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24606#issuecomment-1105257527",
@@ -1593,7 +1555,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.",
       "created_at" : "2022-05-26T13:32:23Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24606#issuecomment-1138583801",

@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I agree with @laanwj that the focus should be on the behavioral changes, not so much `-netinfo`.\r\nIt would be good to have more info on the rationale of https://github.com/bitcoin/bitcoin/commit/1653f97c8f3c37cd96e03cf397c31c5caf81af08 - was there a PR for this that I'm unable to find?\r\n\r\nIf removing the `IsReachable` call from `AddLocal()`, I think that  `IsPeerAddrLocalGood()` should be adjusted too for consistency.\r\n\r\nI'm unsure about this, but remember a discussion about the same topic with @vasild in #22834:\r\nI [asked](https://github.com/bitcoin/bitcoin/pull/22834#issuecomment-913233420):\r\n> IsPeerAddrLocalGood() and AddLocal() both call IsReachable() and therefore might be affected. Considering that they deal with the address used for self-advertising (and thus for getting incoming connections) I don't really understand why they make use of `IsReachable()` in the first place. Shouldn't this affect only outbound connection logic?\r\n\r\nvasild's [answer](https://github.com/bitcoin/bitcoin/pull/22834#issuecomment-914265670):\r\n\r\n> I think the logic is this - if a network is not reachable then we cannot accept connections from it. \"Reachable\" in the broader English word meaning, not the stricter -onlynet meaning. For example, a host/OS may have support for both IPv4 and IPv6 but its ISP may only support IPv4. So, an operator would run -onlynet=ipv4 to avoid attempting connections to IPv6 hosts and from advertising an IPv6 address to which the rest of the world cannot connect.",
       "created_at" : "2022-04-24T23:36:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24835#issuecomment-1107939994",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> if a network is not reachable then we cannot accept connections from it\r\n\r\napparently, this is not the case for @dergoegge. If we bind and listen on an address that is omitted from `-onlynet`, then there are downsides either way:\r\n\r\n1. As it is currently in `master`:\r\n* we will not show the listening address in `-netinfo` or in `getnetworkinfo` (bad if peers can reach that address, good otherwise)\r\n* we will not advertise it to other peers (good?)\r\n\r\n2. With this PR:\r\n* we will show the listening address in `-netinfo` or in `getnetworkinfo` (good if peers can reach that address, bad otherwise)\r\n* we will advertise it to other peers (bad? or at least a significant change in behavior)\r\n\r\nI prefer 1. because the \"bad\" is only a display issue. Other options could be to include a new section in the display: \"listening but not advertised addresses\". Or to stop bind/listening on addresses omitted from `-onlynet` (increase its scope as it currently only affects outgoing connections).\r\n\r\nPS: actually, we don't know if peers can even reach our address that is omitted from `-onlynet`. It could be the case as mentioned above that a host/OS has e.g. IPv6 support (and a configured address for some local purposes, maybe), but ISP does not support IPv6. `bitcoind` can't distinguish between this case and @dergoegge's case. It assumes the former, which looks reasonable to me.",
       "created_at" : "2022-04-25T12:45:25Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24835#issuecomment-1108523732",
@@ -308,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Would we though? afaict we try to announce the address that is best reachable for our peer.\r\n\r\nWe would at least for any existing inbound peers. So there could be the effect that if your address that is known to the network and you use `-onlynet` with another network, you'd keep on advertising it to inbound peers - if you are not known and don't get inbound connections, that won't change.\r\n\r\nCurrent behavior is that once you switch to -onlynet, you won't advertise other addresses at all, so inbound connections could become more infrequent over time (although GETDATA relay of the existing address by others is not affected).",
       "created_at" : "2022-04-27T12:59:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24835#issuecomment-1110970156",
@@ -396,7 +396,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.",
       "created_at" : "2022-06-02T20:52:06Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24835#issuecomment-1145330237",
@@ -484,7 +484,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK\r\n\r\nThinking about this more, it looks now to me that it makes sense to remove `IsReachable()` from both `AddLocal()` and from `IsPeerAddrLocalGood()`. Why? Because there is an easy way to restrict where `bitcoind` is listening using `-bind=` and thus if your `bitcoind` is listening on network X, then you want to accept incoming connections on network X (otherwise you would use `-bind=` to not listen on network X). Thus you also want to advertise your listening address for the network X (because listening on an address that nobody knows because it is not advertised makes little sense).\r\n\r\nTo answer myself:\r\n\r\n> I think the logic is this - if a network is not reachable then we cannot accept connections from it. \"Reachable\" in the broader English word meaning, not the stricter -onlynet meaning. For example, a host/OS may have support for both IPv4 and IPv6 but its ISP may only support IPv4. So, an operator would run -onlynet=ipv4 to avoid attempting connections to IPv6 hosts and from advertising an IPv6 address to which the rest of the world cannot connect.\r\n\r\nIn this case the operator, in addition to `-onlynet=ipv4`, should also use `-bind=1.2.3.4:8333` to avoid listening on the IPv6 address of his machine.\r\n\r\nI guess the initial semantic of `-onlynet` was to apply for both outgoing and incoming connections. Like \"don't touch this network at all\". But it never actually did that and morphed into \"apply to outgoing only\" over time. Maybe it should be renamed.\r\n\r\nThis PR (plus adjusting `IsPeerAddrLocalGood()`) would resolve:\r\n1. https://github.com/bitcoin/bitcoin/issues/25669\r\n2. https://github.com/bitcoin/bitcoin/issues/25336\r\n3. the display issue described in the OP of this PR\r\n\r\nA duplicate of this PR:\r\n* https://github.com/bitcoin/bitcoin/pull/25690",
       "created_at" : "2022-07-28T11:15:53Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24835#issuecomment-1198005944",

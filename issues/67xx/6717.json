@@ -1,11 +1,12 @@
 {
+   "active_lock_reason" : "resolved",
    "assignee" : null,
    "assignees" : [],
    "author_association" : "MEMBER",
    "body" : "```\nStopping nodes\nTraceback (most recent call last):\n  File \"/home/travis/build/bitcoin/bitcoin/bitcoin-i686-pc-linux-gnu/qa/rpc-tests/wallet.py\", line 254, in <module>\n    WalletTest ().main ()\n  File \"/home/travis/build/bitcoin/bitcoin/bitcoin-i686-pc-linux-gnu/qa/rpc-tests/test_framework/test_framework.py\", line 134, in main\n    stop_nodes(self.nodes)\n  File \"/home/travis/build/bitcoin/bitcoin/bitcoin-i686-pc-linux-gnu/qa/rpc-tests/test_framework/util.py\", line 218, in stop_nodes\n    node.stop()\n  File \"/home/travis/build/bitcoin/bitcoin/bitcoin-i686-pc-linux-gnu/qa/rpc-tests/test_framework/authproxy.py\", line 138, in __call__\n    response = self._request('POST', self.__url.path, postdata)\n  File \"/home/travis/build/bitcoin/bitcoin/bitcoin-i686-pc-linux-gnu/qa/rpc-tests/test_framework/authproxy.py\", line 124, in _request\n    self.__conn.request(method, path, postdata, headers)\n  File \"/usr/lib/python2.7/httplib.py\", line 958, in request\n    self._send_request(method, url, body, headers)\n  File \"/usr/lib/python2.7/httplib.py\", line 992, in _send_request\n    self.endheaders(body)\n  File \"/usr/lib/python2.7/httplib.py\", line 954, in endheaders\n    self._send_output(message_body)\n  File \"/usr/lib/python2.7/httplib.py\", line 814, in _send_output\n    self.send(msg)\n  File \"/usr/lib/python2.7/httplib.py\", line 776, in send\n    self.connect()\n  File \"/usr/lib/python2.7/httplib.py\", line 757, in connect\n    self.timeout, self.source_address)\n  File \"/usr/lib/python2.7/socket.py\", line 571, in create_connection\n    raise err\nsocket.error: [Errno 111] Connection refused\n```\n\nI think the problem is a race condition:\n- `stop` command is sent to RPC by client\n- Node queues `Bitcoin server stopping` reply (see https://github.com/bitcoin/bitcoin/blob/master/src/rpcserver.cpp#L246)\n- Node shuts down\n- Reply never arrives at client\n- Client re-tries `stop` because it assumes the connection was slammed due to a timeout (see #6695)\n- Client encounters closed port, and throws 'connection refused' error\n\nThe \"Shutdown will take long enough that the response should get back\" comment may no longer ring true with the new http server.\n\nTo solve this we'll have to make sure that the reply is always sent before the shutdown sequence is initiated.\n\nEdit: can reproduce this reliably by putting a sleep(3) between the StartShutdown and return.\n",
    "closed_at" : "2015-09-28T14:04:16Z",
    "closed_by" : {
-      "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=4",
       "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
       "followers_url" : "https://api.github.com/users/laanwj/followers",
       "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
@@ -34,6 +35,7 @@
       {
          "color" : "d4c5f9",
          "default" : false,
+         "description" : null,
          "id" : 62963516,
          "name" : "Tests",
          "node_id" : "MDU6TGFiZWw2Mjk2MzUxNg==",
@@ -41,13 +43,13 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6717/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : {
       "closed_at" : "2016-08-16T10:17:40Z",
       "closed_issues" : 78,
       "created_at" : "2015-05-01T12:31:35Z",
       "creator" : {
-         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=4",
          "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
          "followers_url" : "https://api.github.com/users/laanwj/followers",
          "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
@@ -81,13 +83,28 @@
    },
    "node_id" : "MDU6SXNzdWUxMDgxMzI2MjM=",
    "number" : 6717,
+   "performed_via_github_app" : null,
+   "reactions" : {
+      "+1" : 0,
+      "-1" : 0,
+      "confused" : 0,
+      "eyes" : 0,
+      "heart" : 0,
+      "hooray" : 0,
+      "laugh" : 0,
+      "rocket" : 0,
+      "total_count" : 0,
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6717/reactions"
+   },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : "completed",
+   "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6717/timeline",
    "title" : "Intermittent travis issue in node shutdown by RPC tests",
-   "updated_at" : "2015-09-28T14:04:16Z",
+   "updated_at" : "2021-09-08T12:34:02Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6717",
    "user" : {
-      "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=4",
       "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
       "followers_url" : "https://api.github.com/users/laanwj/followers",
       "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",

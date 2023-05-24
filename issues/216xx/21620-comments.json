@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "It's great for this to be removing the recursive locks in 09c924d3beb56a6b64d8855b1818b6e73c40ec0d and 5b8587f0bf5076d6651ec67d4a941034b5287429. Also annotating CChainState::m_chain in 8257e9ab7592a7fe459089f021053c7740004817 makes a lot of sense.\r\n\r\nThe thing I don't understand is what bug is prevented by making `m_active_chainstate` `std::atomic<CChainState*>` instead of `CChainState*`? What bugs are prevented by adding `LOCK(m_cs_chainstates);` or having `m_cs_chainstates` exist at all?\r\n\r\nNot putting EXCLUSIVE_LOCKS_REQUIRED(cs_main) on ChainstateManager methods seems like Six Flags saying congratulations, we're waiving the $100 fee to get into the park, we're just going to charge you $100 the first time you get onto any ride. It seems like this could only be appealing if you wanted to go to a `CChainState` theme park without trying any rides (accessing any data inside).\r\n",
       "created_at" : "2021-04-06T20:19:11Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21620#issuecomment-814412610",
@@ -8,6 +8,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21620",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgxNDQxMjYxMA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 1,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/814412610/reactions"
+      },
       "updated_at" : "2021-04-06T20:20:02Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/814412610",
       "user" : {
@@ -32,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* #21789 (refactor: Remove ::Params() global from CChainState by MarcoFalke)\n* #21584 (Fix assumeutxo crash due to invalid base_blockhash by MarcoFalke)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2021-04-06T23:51:22Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21620#issuecomment-814504792",
@@ -40,6 +52,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21620",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgxNDUwNDc5Mg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/814504792/reactions"
+      },
       "updated_at" : "2021-05-12T16:32:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/814504792",
       "user" : {
@@ -72,6 +96,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21620",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgxNDU0ODcyMg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/814548722/reactions"
+      },
       "updated_at" : "2021-04-07T02:08:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/814548722",
       "user" : {
@@ -96,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Will review in more detail, and I'm all for lock granularity if locks are independent. But if we're just turning one lock into two dependent locks where you acquire one lock, release it, then always acquire the other lock, it seems pointlessly complex. It increases the number of states things can be in and makes thread safety annotations less likely to catch race conditions. If there is theoretically a place where having these two locks could be better for performance, I would be curious to know where it is. The ActivateBestChain example just seems like a case of weird code organization that should be cleaned up, not a case where two locks make more sense for code as it is executed.\r\n\r\nI think the clearest thing would be for this low level code not to have any synchronization: no locks or atomics, just plain annotations stating locking assumptions so higher level code can call it correctly. I've suggested this before https://github.com/bitcoin/bitcoin/pull/19806#pullrequestreview-584279133, and it can be done separately from this PR. This PR does make other improvements, and I'm happy with all the changes, and planning to review it.\r\n\r\n\r\n",
       "created_at" : "2021-04-08T21:28:45Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21620#issuecomment-816222195",
@@ -104,6 +140,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21620",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgxNjIyMjE5NQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/816222195/reactions"
+      },
       "updated_at" : "2021-04-08T21:28:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/816222195",
       "user" : {
@@ -128,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I haven't read everything yet, and plan on doing it soon. Q for you: Does this mean that even if we hold `::cs_main`, we won't be sure that the `m_active_chainstate` won't change from under us?",
       "created_at" : "2021-04-13T01:51:21Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21620#issuecomment-818372304",
@@ -136,6 +184,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21620",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgxODM3MjMwNA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/818372304/reactions"
+      },
       "updated_at" : "2021-04-13T01:51:21Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/818372304",
       "user" : {
@@ -168,6 +228,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21620",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgxODgxNDczMA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/818814730/reactions"
+      },
       "updated_at" : "2021-04-13T15:12:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/818814730",
       "user" : {
@@ -192,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> The narrow solution in this case is maybe obviously to grab a single chainstate at the top of the function (instead of `calling` `ActiveChainstate()` for each usage)\r\n\r\nYes, please. This was on my unimplemented review suggestion followup list. https://github.com/bitcoin/bitcoin/pull/20749#discussion_r560979259 https://github.com/bitcoin/bitcoin/pull/20749#pullrequestreview-578845627 https://github.com/bitcoin/bitcoin/pull/21025#pullrequestreview-581735705 \"Best would be to have a CChainState* chain_state local variable that is initialized while cs_main is held above, and then used here.\"\r\n\r\n> but I'm trying to think about what the right arrangement of locks and annotations would be to prevent this situation in general.\r\n\r\nIt seems to me replacing synchronization with annotations in ChainstateManager (removing the locks and atomic and adding EXCLUSIVE_LOCKS_REQUIRED(cs_main) as suggested) would ensure callers use it correctly, or at least have to think about using it correctly.",
       "created_at" : "2021-04-13T15:40:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21620#issuecomment-818836912",
@@ -200,6 +272,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21620",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgxODgzNjkxMg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/818836912/reactions"
+      },
       "updated_at" : "2021-04-13T15:40:50Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/818836912",
       "user" : {
@@ -224,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Offline thread:\r\n\r\n\\<james>: I think we need cs_active_chainstate or something that functions like PNB either acquire or are annotated with to prevent the active chainstate from being swapped out during their usage\r\n\r\n\\<russ>: I'm not trying to claim adding lock annotations will prevent all Chainstatemanger callers from being buggy and wrongly assuming chainstate doesn't change when they didn't lock it. I don't think there is anything Chainstatemanager can do to prevent that unless it's going to go into the kernel and freeze all running threads. My claim is just that bugs are less likely if locking cs_main locks the chainstate and callers are forced to lock cs_main and thinking about locking when they use ChainstateManager\r\n\r\n\\<james>: The kind of sad thing is that that swap-out only happens once during runtime (i.e. when ActivateSnapshot() is called) and really we could avoid a lot of this mess if we restricted snapshots to being loaded at init time\r\n\r\n\\<russ>: I don't see what's that complicated about this. If you don't want the active chainstate to change, then you should lock cs_main. If you don't care whether the active chainstate changes then you can take a reference to the chainstate and not lock cs_main.",
       "created_at" : "2021-04-14T17:05:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21620#issuecomment-819675825",
@@ -232,6 +316,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21620",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgxOTY3NTgyNQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/819675825/reactions"
+      },
       "updated_at" : "2021-04-14T17:05:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/819675825",
       "user" : {
@@ -256,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "If there is a case where it's neccessary for code to release cs_main but prevent the active chain from changing would suggest a condition variable:\r\n\r\n```c++\r\nbool m_lock_chainstate = false;\r\nstd::condition_variable m_lock_chainstate_cv;\r\n```\r\n\r\nThen in the code that wants to update the chainstate:\r\n\r\n```c++\r\nlock_chainstate_cv.wait(cs_main, []{return !lock_chainstate;});\r\n```\r\n\r\nAnd the code that wants to lock the chainstate without holding cs_main:\r\n\r\n```c++\r\nm_lock_chainstate = true;\r\nm_lock_chainstate_cv.notify_all();\r\n\r\n...\r\n\r\nm_lock_chainstate = false;\r\nm_lock_chainstate_cv.notify_all()\r\n```",
       "created_at" : "2021-04-14T17:11:11Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21620#issuecomment-819680129",
@@ -264,6 +360,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21620",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgxOTY4MDEyOQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/819680129/reactions"
+      },
       "updated_at" : "2021-04-14T17:11:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/819680129",
       "user" : {
@@ -288,7 +396,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Actually I guess that could be equivalent to your [active_chainstate](https://github.com/bitcoin/bitcoin/pull/21620#issuecomment-819675825) mutex if it using manual locking instead of a scoped lock. So maybe I'll arrive at the same conclusion as you from a different angle. It just seems like there are a lot of solutions here, and there shouldn't be any conflict between a good solution and one that uses compiler thread safety annotations",
       "created_at" : "2021-04-14T17:20:42Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21620#issuecomment-819685974",
@@ -296,6 +404,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21620",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgxOTY4NTk3NA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/819685974/reactions"
+      },
       "updated_at" : "2021-04-14T17:22:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/819685974",
       "user" : {
@@ -328,6 +448,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21620",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgyMDMzMDc5NA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/820330794/reactions"
+      },
       "updated_at" : "2021-04-15T10:53:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/820330794",
       "user" : {
@@ -352,7 +484,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Most of the client code (eg in net_processing, rpc, etc) shouldn't need to lock chainman in most cases. Usually it's just trying to read a single piece of data (whether we're in IBD, what the current height is, fetch a CBlockIndex pointer to the tip, etc). \r\n\r\nYes, I think we are on the same page. When you just need one piece of data, this is what atomics are for and it makes sense to switch a variable from `T` to `atomic<T>` or `T*` to `atomic<T*>` so you can read it without locking. And for an API:\r\n\r\n```c++\r\nT GetData() EXCLUSIVE_LOCKS_REQUIRED(cs_main);\r\nT GetCachedData();\r\n```\r\n\r\nis nice. But you can make individual variables atomic or not without affecting anything else more broadly. I do think it makes sense to delay switching a variable from `T` to `atomic<T>` until you have at least one piece of code that's reading it without a lock.",
       "created_at" : "2021-04-15T12:09:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21620#issuecomment-820373026",
@@ -360,6 +492,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21620",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgyMDM3MzAyNg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/820373026/reactions"
+      },
       "updated_at" : "2021-04-15T12:09:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/820373026",
       "user" : {
@@ -384,7 +528,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--4a62be1de6b64f3ed646cdc7932c8cf5-->\nðµï¸ @sipa has been requested to review this pull request as specified in the REVIEWERS file.",
       "created_at" : "2021-05-03T09:32:25Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21620#issuecomment-831141850",
@@ -392,6 +536,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21620",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgzMTE0MTg1MA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/831141850/reactions"
+      },
       "updated_at" : "2021-05-03T09:32:25Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/831141850",
       "user" : {
@@ -416,7 +572,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
       "created_at" : "2021-05-12T20:46:01Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21620#issuecomment-840085400",
@@ -424,6 +580,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21620",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg0MDA4NTQwMA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/840085400/reactions"
+      },
       "updated_at" : "2021-05-12T20:46:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/840085400",
       "user" : {

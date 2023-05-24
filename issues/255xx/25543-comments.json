@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24699](https://github.com/bitcoin/bitcoin/pull/24699) (wallet: Improve AvailableCoins performance by reducing duplicated operations by achow101)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-07-05T19:57:38Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25543#issuecomment-1175442658",
@@ -44,7 +44,212 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25543#discussion_r915127257"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25543"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/915127257"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit\r\n```suggestion\r\n    BOOST_CHECK_EQUAL(CachedTxGetImmatureCredit(wallet, wtx, ISMINE_SPENDABLE), 50 * COIN);\r\n```",
+      "commit_id" : "47ea70fbb85fefeb4de9d3142a11596d292eab9b",
+      "created_at" : "2022-07-06T18:13:46Z",
+      "diff_hunk" : "@@ -350,13 +350,13 @@ BOOST_FIXTURE_TEST_CASE(coin_mark_dirty_immature_credit, TestChain100Setup)\n \n     // Call GetImmatureCredit() once before adding the key to the wallet to\n     // cache the current immature credit amount, which is 0.\n-    BOOST_CHECK_EQUAL(CachedTxGetImmatureCredit(wallet, wtx), 0);\n+    BOOST_CHECK_EQUAL(CachedTxGetImmatureCredit(wallet, wtx, ISMINE_SPENDABLE), 0);\n \n     // Invalidate the cached value, add the key, and make sure a new immature\n     // credit amount is calculated.\n     wtx.MarkDirty();\n     AddKey(wallet, coinbaseKey);\n-    BOOST_CHECK_EQUAL(CachedTxGetImmatureCredit(wallet, wtx), 50*COIN);\n+    BOOST_CHECK_EQUAL(CachedTxGetImmatureCredit(wallet, wtx, ISMINE_SPENDABLE), 50*COIN);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25543#discussion_r915127257",
+      "id" : 915127257,
+      "line" : 359,
+      "node_id" : "PRRC_kwDOABII5842i7vZ",
+      "original_commit_id" : "ba2fa8302dc3816d5b9584907135f91789846d65",
+      "original_line" : 359,
+      "original_position" : 12,
+      "original_start_line" : null,
+      "path" : "src/wallet/test/wallet_tests.cpp",
+      "position" : 12,
+      "pull_request_review_id" : 1030517014,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25543",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/915127257/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-07-06T18:13:46Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/915127257",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/22493292?v=4",
+         "events_url" : "https://api.github.com/users/aureleoules/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/aureleoules/followers",
+         "following_url" : "https://api.github.com/users/aureleoules/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/aureleoules/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/aureleoules",
+         "id" : 22493292,
+         "login" : "aureleoules",
+         "node_id" : "MDQ6VXNlcjIyNDkzMjky",
+         "organizations_url" : "https://api.github.com/users/aureleoules/orgs",
+         "received_events_url" : "https://api.github.com/users/aureleoules/received_events",
+         "repos_url" : "https://api.github.com/users/aureleoules/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/aureleoules/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/aureleoules/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/aureleoules"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25543#discussion_r915240782"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25543"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/915240782"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "While here, could you add the missing brackets to the conditional per the developer notes, or hoist `return false;` to the same line? \r\n\r\nWe require brackets with conditionals over one line due to CVE-2014-1266 (the Apple \"goto fail\" vulnerability, see also https://dwheeler.com/essays/apple-goto-fail).",
+      "commit_id" : "47ea70fbb85fefeb4de9d3142a11596d292eab9b",
+      "created_at" : "2022-07-06T20:44:52Z",
+      "diff_hunk" : "@@ -9,35 +9,21 @@\n #include <wallet/wallet.h>\n \n namespace wallet {\n-isminetype InputIsMine(const CWallet& wallet, const CTxIn &txin)\n+isminetype InputIsMine(const CWallet& wallet, const CTxIn& txin)\n {\n     AssertLockHeld(wallet.cs_wallet);\n-    std::map<uint256, CWalletTx>::const_iterator mi = wallet.mapWallet.find(txin.prevout.hash);\n-    if (mi != wallet.mapWallet.end())\n-    {\n-        const CWalletTx& prev = (*mi).second;\n-        if (txin.prevout.n < prev.tx->vout.size())\n-            return wallet.IsMine(prev.tx->vout[txin.prevout.n]);\n+    const CWalletTx* prev = wallet.GetWalletTx(txin.prevout.hash);\n+    if (prev && txin.prevout.n < prev->tx->vout.size()) {\n+        return wallet.IsMine(prev->tx->vout[txin.prevout.n]);\n     }\n     return ISMINE_NO;\n }\n \n bool AllInputsMine(const CWallet& wallet, const CTransaction& tx, const isminefilter& filter)\n {\n     LOCK(wallet.cs_wallet);\n-\n-    for (const CTxIn& txin : tx.vin)\n-    {\n-        auto mi = wallet.mapWallet.find(txin.prevout.hash);\n-        if (mi == wallet.mapWallet.end())\n-            return false; // any unknown inputs can't be from us\n-\n-        const CWalletTx& prev = (*mi).second;\n-\n-        if (txin.prevout.n >= prev.tx->vout.size())\n-            return false; // invalid input!\n-\n-        if (!(wallet.IsMine(prev.tx->vout[txin.prevout.n]) & filter))\n+    for (const CTxIn& txin : tx.vin) {\n+        if (!(InputIsMine(wallet, txin) & filter))\n             return false;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25543#discussion_r915240782",
+      "id" : 915240782,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII5842jXdO",
+      "original_commit_id" : "ba2fa8302dc3816d5b9584907135f91789846d65",
+      "original_line" : 27,
+      "original_position" : 39,
+      "original_start_line" : null,
+      "path" : "src/wallet/receive.cpp",
+      "position" : null,
+      "pull_request_review_id" : 1030682322,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25543",
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 1,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 2,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/915240782/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-07-06T20:44:52Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/915240782",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25543#discussion_r915257925"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25543"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/915257925"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "pushed",
+      "commit_id" : "47ea70fbb85fefeb4de9d3142a11596d292eab9b",
+      "created_at" : "2022-07-06T21:09:13Z",
+      "diff_hunk" : "@@ -9,35 +9,21 @@\n #include <wallet/wallet.h>\n \n namespace wallet {\n-isminetype InputIsMine(const CWallet& wallet, const CTxIn &txin)\n+isminetype InputIsMine(const CWallet& wallet, const CTxIn& txin)\n {\n     AssertLockHeld(wallet.cs_wallet);\n-    std::map<uint256, CWalletTx>::const_iterator mi = wallet.mapWallet.find(txin.prevout.hash);\n-    if (mi != wallet.mapWallet.end())\n-    {\n-        const CWalletTx& prev = (*mi).second;\n-        if (txin.prevout.n < prev.tx->vout.size())\n-            return wallet.IsMine(prev.tx->vout[txin.prevout.n]);\n+    const CWalletTx* prev = wallet.GetWalletTx(txin.prevout.hash);\n+    if (prev && txin.prevout.n < prev->tx->vout.size()) {\n+        return wallet.IsMine(prev->tx->vout[txin.prevout.n]);\n     }\n     return ISMINE_NO;\n }\n \n bool AllInputsMine(const CWallet& wallet, const CTransaction& tx, const isminefilter& filter)\n {\n     LOCK(wallet.cs_wallet);\n-\n-    for (const CTxIn& txin : tx.vin)\n-    {\n-        auto mi = wallet.mapWallet.find(txin.prevout.hash);\n-        if (mi == wallet.mapWallet.end())\n-            return false; // any unknown inputs can't be from us\n-\n-        const CWalletTx& prev = (*mi).second;\n-\n-        if (txin.prevout.n >= prev.tx->vout.size())\n-            return false; // invalid input!\n-\n-        if (!(wallet.IsMine(prev.tx->vout[txin.prevout.n]) & filter))\n+    for (const CTxIn& txin : tx.vin) {\n+        if (!(InputIsMine(wallet, txin) & filter))\n             return false;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25543#discussion_r915257925",
+      "id" : 915257925,
+      "in_reply_to_id" : 915240782,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII5842jbpF",
+      "original_commit_id" : "ba2fa8302dc3816d5b9584907135f91789846d65",
+      "original_line" : 27,
+      "original_position" : 39,
+      "original_start_line" : null,
+      "path" : "src/wallet/receive.cpp",
+      "position" : null,
+      "pull_request_review_id" : 1030706285,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25543",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/915257925/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-07-06T21:09:13Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/915257925",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/5377650?v=4",
+         "events_url" : "https://api.github.com/users/furszy/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/furszy/followers",
+         "following_url" : "https://api.github.com/users/furszy/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/furszy/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/furszy",
+         "id" : 5377650,
+         "login" : "furszy",
+         "node_id" : "MDQ6VXNlcjUzNzc2NTA=",
+         "organizations_url" : "https://api.github.com/users/furszy/orgs",
+         "received_events_url" : "https://api.github.com/users/furszy/received_events",
+         "repos_url" : "https://api.github.com/users/furszy/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/furszy/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/furszy/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/furszy"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
       "body" : "per feedback, have inlined `AllInputsMine` return statement.",
       "created_at" : "2022-07-06T21:11:26Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25543#issuecomment-1176751922",
@@ -88,7 +293,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "hey @jonatack @aureleoules, friendly ping here.",
       "created_at" : "2022-07-20T14:42:10Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25543#issuecomment-1190375469",
@@ -132,7 +337,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re-ACK 47ea70fbb85fefeb4de9d3142a11596d292eab9b",
       "created_at" : "2022-07-20T14:45:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25543#issuecomment-1190379785",

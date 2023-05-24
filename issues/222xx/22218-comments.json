@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> This looks like some benign plumbing for capnpnp IPC. I tried looking ahead at the parent PR ([#10102 (files)](https://github.com/bitcoin/bitcoin/pull/10102/files#diff-ab470dae240c184802de8bbc39f63116f54c11e2dff50ef90421aecc50b04284)) but I have to admit I can't totally tell where or how this `Context` is being used. Maybe some additional details from @ryanofsky would help here. But there's nothing obviously wrong with (or even complicated about) this changeset.\r\n\r\nThanks these structs which are empty for now just get used in commit 2516d397d54b021e37d6e7628655fe7c54d2fb06 \"Make bitcoin-gui spawn a bitcoin-node process\" from #10102:\r\n\r\n- https://github.com/bitcoin/bitcoin/blob/2516d397d54b021e37d6e7628655fe7c54d2fb06/src/ipc/context.h\r\n- https://github.com/bitcoin/bitcoin/blob/2516d397d54b021e37d6e7628655fe7c54d2fb06/src/ipc/capnp/context.h\r\n\r\nIn that commit the context structs just get some function pointer members added so init code can hook into different multiprocess events. So for example with GUI and node code running in different processes, random number seed and logging init code has to run twice instead of once during startup (because it has to run once in each process) so `ipc::Context` gets an `init_process` callback to handle the initialization transparently in the multiprocess case, and bitcoin-qt and bitcoind code doesn't have to change in the single process case.",
       "created_at" : "2021-06-15T21:52:31Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22218#issuecomment-861857887",
@@ -8,6 +8,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22218",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2MTg1Nzg4Nw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/861857887/reactions"
+      },
       "updated_at" : "2021-06-15T21:52:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/861857887",
       "user" : {
@@ -60,9 +72,22 @@
       "position" : null,
       "pull_request_review_id" : 702107209,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22218",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/666224745/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-07-08T16:00:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/666224745",
       "user" : {
@@ -115,9 +140,22 @@
       "position" : 16,
       "pull_request_review_id" : 702107209,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22218",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/666285480/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-07-08T16:00:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/666285480",
       "user" : {
@@ -170,9 +208,22 @@
       "position" : 14,
       "pull_request_review_id" : 702107209,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22218",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/666311810/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-07-08T16:00:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/666311810",
       "user" : {
@@ -208,7 +259,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/667052818"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/22218#discussion_r666285480\r\n\r\n> I think this virtual method definition would gain to be more documented.\r\n\r\nThanks, updated this comment. The use of the context struct is already documented in the struct definition so I just referenced the struct definition here to not repeat the same information two places. Also the purpose of the struct becomes more obvious in followup commits that add documented struct members.\r\n\r\n> AFAIU, it allows a controlling process to access spawned process own `IpcImpl.context()` and as such trigger callback like `init_process` you're pointing to in [2516d39](https://github.com/bitcoin/bitcoin/commit/2516d397d54b021e37d6e7628655fe7c54d2fb06).\r\n> \r\n> So as suggestions, maybe comment could be \"Allow to access spawned process context from controlling process flow\" and the high-level documentation of `class Ipc` could be extended on point 3, like\r\n> \r\n> ```\r\n> //! 3. The controlling process calls local proxy interfaces::Init object methods (e.g `makeChain`) to \r\n> //! make other proxy objects calling other remote interfaces. It can access spawned process state \r\n> //! through its ipc::Protocol::context()`\r\n> ```\r\n\r\nThis is all true, but it is very low level information that I think is covered in comments more close to the relevant code. The point of the Context struct is just to give IPC hooks access to bitcoin application state. The bitcoin application calls IPC functions and also defines some hooks that run on IPC events (when a socket is disconnected, when a special parameter like `Common.GlobalArgs` passed, etc). The hooks need to access bitcoin application state. They access it through the context struct.",
       "commit_id" : "3e33d170cc0a8f386791777f3cc597e2bd0bf2ee",
       "created_at" : "2021-07-09T15:55:20Z",
@@ -226,9 +277,22 @@
       "position" : 16,
       "pull_request_review_id" : 703189432,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22218",
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/667052818/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-07-09T17:08:37Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/667052818",
       "user" : {
@@ -264,7 +328,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/667053001"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/22218#discussion_r666224745\r\n\r\n> nit: duplicated that\r\n\r\nThanks, fixed",
       "commit_id" : "3e33d170cc0a8f386791777f3cc597e2bd0bf2ee",
       "created_at" : "2021-07-09T15:55:32Z",
@@ -282,9 +346,22 @@
       "position" : null,
       "pull_request_review_id" : 703189432,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22218",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/667053001/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-07-09T17:08:37Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/667053001",
       "user" : {
@@ -320,7 +397,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/667063993"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/22218#discussion_r666311810\r\n\r\n> Should we prefix this structure to avoid reviewers confusion with process specific contexts i.e `NodeContext`, `WalletContext` ?\r\n> \r\n> For e.g, `IpcState` or `LowLevelContext` ?\r\n\r\nIt would help to know a specific example of how someone might interpret the current names and make a mistake or a wrong assumption, because I don't understand what is less confusing about these suggestions.\r\n\r\nI am using the word \"context\" in the same way in wallet, node, and IPC code. I think \"context\" is different than \"state\" because can \"state\" refer can refer to any type of data including temporary data, while \"context\" refers to longer lasting environmental data. Like data from a high-level outer environment that is is passed through low level code, but the low level code just treats as opaque. So \"context\" seems more appropriate than \"state\". And `LowLevelContext` seems incorrect because the context struct is holding higher-level bitcoin-specific data that the lower-level IPC code is treats as opaque. It is high level data, not low level data.\r\n\r\nOn namespaces, I am using a namespace structure that mirrors the directory structure, so code in `src/interfaces/` is in the `interfaces::` namespace, code in `src/ipc/` is in the `ipc::` namespace, code in `src/ipc/capnp/` is in the `ipc::capnp::` namespace, code in `src/util/` is in the `util::` namespace, etc. This means when you see a reference to `interfaces::Node` in the code you can know where to find the definition and where it fits in the source code organization in a way that would not be possible if the class were called `NodeInterface`. Similarly, the struct name `ipc::Context` reveals a little more about that struct than the name `IpcContext` would.",
       "commit_id" : "3e33d170cc0a8f386791777f3cc597e2bd0bf2ee",
       "created_at" : "2021-07-09T16:13:13Z",
@@ -338,9 +415,22 @@
       "position" : 14,
       "pull_request_review_id" : 703189432,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22218",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/667063993/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-07-09T17:08:37Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/667063993",
       "user" : {
@@ -394,9 +484,22 @@
       "position" : 16,
       "pull_request_review_id" : 704167317,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22218",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/667970648/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-07-12T14:16:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/667970648",
       "user" : {
@@ -450,9 +553,22 @@
       "position" : 14,
       "pull_request_review_id" : 704177312,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22218",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/667978063/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-07-12T14:24:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/667978063",
       "user" : {
@@ -485,6 +601,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22218",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg3ODMyNTIxMQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/878325211/reactions"
+      },
       "updated_at" : "2021-07-12T14:26:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/878325211",
       "user" : {
@@ -509,7 +637,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Possible this could be ready for merge. It just has two ACKs, but it's only adding two empty structs and a method to access them",
       "created_at" : "2021-07-21T19:09:20Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22218#issuecomment-884427319",
@@ -517,6 +645,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22218",
       "node_id" : "IC_kwDOABII5840t0o3",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/884427319/reactions"
+      },
       "updated_at" : "2021-07-21T19:09:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/884427319",
       "user" : {

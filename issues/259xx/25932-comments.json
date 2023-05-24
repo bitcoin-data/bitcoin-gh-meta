@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [Xekyo](https://github.com/bitcoin/bitcoin/pull/25932#issuecomment-1252792490), [aureleoules](https://github.com/bitcoin/bitcoin/pull/25932#pullrequestreview-1232365395), [achow101](https://github.com/bitcoin/bitcoin/pull/25932#issuecomment-1370003422) |\n| Approach ACK | [AryanJ-NYC](https://github.com/bitcoin/bitcoin/pull/25932#issuecomment-1229088887) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.\n",
       "created_at" : "2022-09-13T15:43:05Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25932#issuecomment-1245598163",
@@ -99,9 +99,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/972373694"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK 1a2d94ac586e2ecb55994205fceec14322a949fd\r\n\r\nSince the feerate is loop invariant, that boolean will always evaluate the same across one coin selection attempt, and it would be even better to just pull it out of the loop:\r\n\r\n```suggestion\r\n    [before loop]\r\n    bool is_high_feerate = utxo_pool.at(0).fee > utxo_pool.at(0).long_term_fee;\r\n    [â¦]\r\n            (is_high_feerate && curr_waste > best_waste)) { // Don't select things which we know will be more wasteful if the waste is increasing\r\n```",
-      "commit_id" : "8ada8bb313eb95d55e9e1ac121bc6143a569e896",
+      "commit_id" : "81d4a2b14ff65fe07085ef2a967a466015370ce3",
       "created_at" : "2022-09-15T20:01:15Z",
       "diff_hunk" : "@@ -93,7 +93,7 @@ std::optional<SelectionResult> SelectCoinsBnB(std::vector<OutputGroup>& utxo_poo\n         bool backtrack = false;\n         if (curr_value + curr_available_value < selection_target || // Cannot possibly reach target with the amount remaining in the curr_available_value.\n             curr_value > selection_target + cost_of_change || // Selected value is out of range, go back and try other branch\n-            (curr_waste > best_waste && (utxo_pool.at(0).fee - utxo_pool.at(0).long_term_fee) > 0)) { // Don't select things which we know will be more wasteful if the waste is increasing\n+            (curr_waste > best_waste && (utxo_pool.at(0).fee > utxo_pool.at(0).long_term_fee))) { // Don't select things which we know will be more wasteful if the waste is increasing",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25932#discussion_r972373694",
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-15T20:01:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/972373694",
       "user" : {
@@ -168,7 +169,7 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "I considered this as well.  To my surprise moving the comparison outside of the loop didn't make any benchmark difference.  My guess is the compiler must be smart enough to do some optimization, or the benchmark tests aren't sensitive enough to detect a change.\r\n\r\nThat bieng said, I do think it's more readable outside of the for loop (and doesn't need to be compared every iteration).  @Xekyo does this look better https://github.com/bitcoin/bitcoin/pull/25932/commits/8ada8bb313eb95d55e9e1ac121bc6143a569e896?",
-      "commit_id" : "8ada8bb313eb95d55e9e1ac121bc6143a569e896",
+      "commit_id" : "81d4a2b14ff65fe07085ef2a967a466015370ce3",
       "created_at" : "2022-09-16T10:02:44Z",
       "diff_hunk" : "@@ -93,7 +93,7 @@ std::optional<SelectionResult> SelectCoinsBnB(std::vector<OutputGroup>& utxo_poo\n         bool backtrack = false;\n         if (curr_value + curr_available_value < selection_target || // Cannot possibly reach target with the amount remaining in the curr_available_value.\n             curr_value > selection_target + cost_of_change || // Selected value is out of range, go back and try other branch\n-            (curr_waste > best_waste && (utxo_pool.at(0).fee - utxo_pool.at(0).long_term_fee) > 0)) { // Don't select things which we know will be more wasteful if the waste is increasing\n+            (curr_waste > best_waste && (utxo_pool.at(0).fee > utxo_pool.at(0).long_term_fee))) { // Don't select things which we know will be more wasteful if the waste is increasing",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25932#discussion_r972861519",
@@ -199,6 +200,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-16T10:36:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/972861519",
       "user" : {
@@ -236,7 +238,7 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "Maybe this is better as two separate commits.  https://github.com/bitcoin/bitcoin/pull/25932/commits/365aca40453995163bbd17231251512f9f9a103b and https://github.com/bitcoin/bitcoin/pull/25932/commits/953ce061d5e8392d9f4c5bcedd27a2eeb08296db",
-      "commit_id" : "953ce061d5e8392d9f4c5bcedd27a2eeb08296db",
+      "commit_id" : "81d4a2b14ff65fe07085ef2a967a466015370ce3",
       "created_at" : "2022-09-16T12:26:58Z",
       "diff_hunk" : "@@ -93,7 +93,7 @@ std::optional<SelectionResult> SelectCoinsBnB(std::vector<OutputGroup>& utxo_poo\n         bool backtrack = false;\n         if (curr_value + curr_available_value < selection_target || // Cannot possibly reach target with the amount remaining in the curr_available_value.\n             curr_value > selection_target + cost_of_change || // Selected value is out of range, go back and try other branch\n-            (curr_waste > best_waste && (utxo_pool.at(0).fee - utxo_pool.at(0).long_term_fee) > 0)) { // Don't select things which we know will be more wasteful if the waste is increasing\n+            (curr_waste > best_waste && (utxo_pool.at(0).fee > utxo_pool.at(0).long_term_fee))) { // Don't select things which we know will be more wasteful if the waste is increasing",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25932#discussion_r972969826",
@@ -267,6 +269,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-16T12:26:59Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/972969826",
       "user" : {
@@ -302,9 +305,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973098386"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This is not a good description of what the algorithm does. BnB deterministically searches the combination tree of the UTXO pool and retains the input set with the _minimal waste score_ among the input sets it traverses. It doesn't guarantee to find the minimal waste score, and it doesn't guarantee to minimize the input set at high feerates. The result may end up being the minimal input set at high fees but might not be. E.g. if the feerate were 10.001 sat/vB and the LTFRE 10 sat/vB, the waste score could prefer a signficantly larger input set that results in a smaller excess over a smaller one with large excess, even while this bool classify the coin selection situation as `is_feerate_expensive = True`.\r\n\r\nMeanwhile at low feerates BnB does not guarantee to maximimize the input setâit also keeps the input set with lowest waste score. Since the depth-first search starts with the most valuable UTXOs, input sets with a smaller count are traversed before ones with larger count are visited. Even then, the UTXO types may cause a smaller count to be preferred because the total weight of older output types could be bigger than a smaller count of modern outputs. Depending on the UTXO pool size, it may very well not find the maximal input set within the 100,000 tries:\r\nit doesn't take many UTXOs for the 100,000 tries to get exhausted before all relevant combinations are visited. Depending on the variance of the present values some 400+ UTXOs can suffice already, but wallets may have thousands or even tens of thousands of UTXOs.\r\n\r\nIf you insist on adding a comment perhaps use something along the lines of:\r\n```suggestion\r\n    // Check if the current feerate is higher than the long-term feerate estimate. \r\n    // Since BnB prefers the input set with the lowest waste score, this results in a preference \r\n    // for smaller input sets at high feerates and bigger input sets at lower feerates.\r\n```\r\nYou might want to consider adding this to the comment on the function though, as that point is not well-covered there.",
-      "commit_id" : "f4994fe4a63c92cf232a5a7a41e01a49c421542d",
+      "commit_id" : "81d4a2b14ff65fe07085ef2a967a466015370ce3",
       "created_at" : "2022-09-16T14:40:01Z",
       "diff_hunk" : "@@ -87,13 +87,18 @@ std::optional<SelectionResult> SelectCoinsBnB(std::vector<OutputGroup>& utxo_poo\n     std::vector<size_t> best_selection;\n     CAmount best_waste = MAX_MONEY;\n \n+    // Check if the current feerate is expensive.  If it is expensive, we minimize the size of\n+    // the result set and thus minimizing the transaction fee.  If the fees are not expensive,\n+    // we maximize the result set to reduce the amount of UTXOs (fragmentation).",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25932#discussion_r973098386",
@@ -334,6 +337,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-09-16T16:18:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973098386",
       "user" : {
@@ -369,9 +373,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973125473"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I don't think \"expensive\" is the best term to refer to a feerate. Creating a transaction at a high feerate is expensive, but the feerate itself doesn't cost anything. Perhaps:\r\n```suggestion\r\n    bool is_feerate_high = utxo_pool.at(0).fee > utxo_pool.at(0).long_term_fee;\r\n```",
-      "commit_id" : "f4994fe4a63c92cf232a5a7a41e01a49c421542d",
+      "commit_id" : "81d4a2b14ff65fe07085ef2a967a466015370ce3",
       "created_at" : "2022-09-16T15:03:43Z",
       "diff_hunk" : "@@ -87,13 +87,18 @@ std::optional<SelectionResult> SelectCoinsBnB(std::vector<OutputGroup>& utxo_poo\n     std::vector<size_t> best_selection;\n     CAmount best_waste = MAX_MONEY;\n \n+    // Check if the current feerate is expensive.  If it is expensive, we minimize the size of\n+    // the result set and thus minimizing the transaction fee.  If the fees are not expensive,\n+    // we maximize the result set to reduce the amount of UTXOs (fragmentation).\n+    bool is_feerate_expensive = utxo_pool.at(0).fee > utxo_pool.at(0).long_term_fee;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25932#discussion_r973125473",
@@ -401,6 +405,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-16T16:18:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973125473",
       "user" : {
@@ -438,7 +443,7 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "My comment was misleading it looks like.  It's true that a true maximum or true min may not be found before the iteration limit.  Also, I appreciate you pointing out that how many or how few UTXO's are targeted can depend on how much the longterm and short term fees differ.  Perhaps we can just do without a comment here since the statement is self explanatory.  I agree that further comment on how the selection process works is better to place on the function.",
-      "commit_id" : "f4994fe4a63c92cf232a5a7a41e01a49c421542d",
+      "commit_id" : "81d4a2b14ff65fe07085ef2a967a466015370ce3",
       "created_at" : "2022-09-17T07:48:04Z",
       "diff_hunk" : "@@ -87,13 +87,18 @@ std::optional<SelectionResult> SelectCoinsBnB(std::vector<OutputGroup>& utxo_poo\n     std::vector<size_t> best_selection;\n     CAmount best_waste = MAX_MONEY;\n \n+    // Check if the current feerate is expensive.  If it is expensive, we minimize the size of\n+    // the result set and thus minimizing the transaction fee.  If the fees are not expensive,\n+    // we maximize the result set to reduce the amount of UTXOs (fragmentation).",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25932#discussion_r973555174",
@@ -469,6 +474,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-09-17T07:48:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973555174",
       "user" : {
@@ -506,7 +512,7 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "My thought process was simply that we are checking if the current fee rate is expensive compared to the longterm fee rate.  The reason I like expensive is it's a monetary term and \"high\" can pertain to many things.  Since you feel strongly about using \"high\" I'll change it to your suggestion.\r\n\r\n",
-      "commit_id" : "f4994fe4a63c92cf232a5a7a41e01a49c421542d",
+      "commit_id" : "81d4a2b14ff65fe07085ef2a967a466015370ce3",
       "created_at" : "2022-09-17T07:55:01Z",
       "diff_hunk" : "@@ -87,13 +87,18 @@ std::optional<SelectionResult> SelectCoinsBnB(std::vector<OutputGroup>& utxo_poo\n     std::vector<size_t> best_selection;\n     CAmount best_waste = MAX_MONEY;\n \n+    // Check if the current feerate is expensive.  If it is expensive, we minimize the size of\n+    // the result set and thus minimizing the transaction fee.  If the fees are not expensive,\n+    // we maximize the result set to reduce the amount of UTXOs (fragmentation).\n+    bool is_feerate_expensive = utxo_pool.at(0).fee > utxo_pool.at(0).long_term_fee;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25932#discussion_r973555855",
@@ -537,6 +543,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-17T07:55:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973555855",
       "user" : {
@@ -616,7 +623,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/975721059"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "A non-representative survey among my colleagues resulted in three out of three (including one native English speaker with a finance background) agreeing with me: a transaction is expensive when its feerate is high.\r\n\r\nI therefore maintain that feerates are âhighâ or âlowâ, not âexpensiveâ or âcheapâ.",
       "commit_id" : "81d4a2b14ff65fe07085ef2a967a466015370ce3",
       "created_at" : "2022-09-20T19:06:46Z",
@@ -649,6 +656,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-20T19:06:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/975721059",
       "user" : {
@@ -673,7 +681,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK 81d4a2b14ff65fe07085ef2a967a466015370ce3",
       "created_at" : "2022-09-20T19:08:35Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25932#issuecomment-1252792490",
@@ -761,6 +769,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-21T04:59:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/976035333",
       "user" : {

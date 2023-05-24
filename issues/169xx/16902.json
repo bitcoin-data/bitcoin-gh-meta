@@ -1,11 +1,12 @@
 {
+   "active_lock_reason" : "resolved",
    "assignee" : null,
    "assignees" : [],
    "author_association" : "MEMBER",
    "body" : "While investigating what mechanisms are possible to maximize the per-opcode verification cost of scripts, I noticed that the logic for determining whether a particular opcode is to be executed is O(n) in the nesting depth. This issue was also pointed out by Sergio Demian Lerner in https://bitslog.wordpress.com/2017/04/17/new-quadratic-delays-in-bitcoin-scripts/, and this PR implements a variant of the O(1) algorithm suggested there.\r\n\r\nThis is not a problem currently, because even with a nesting depth of 100 (the maximum possible right now due to the 201 ops limit), the slowdown caused by this on my machine is around 70 ns per opcode (or 0.25 s per block) at worst, far lower than what is possible with other opcodes.\r\n\r\nThis PR mostly serves as a proof of concept that it's possible to avoid it, which may be relevant in discussions around increasing the opcode limits in future script versions. Without it, the execution time of scripts can grow quadratically with the nesting depth, which very quickly becomes unreasonable.\r\n\r\nThis improves upon #14245 by completely removing the `vfExec` vector.",
    "closed_at" : "2020-03-14T20:04:55Z",
    "closed_by" : {
-      "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=4",
       "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
       "followers_url" : "https://api.github.com/users/laanwj/followers",
       "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
@@ -27,19 +28,11 @@
    "comments" : 15,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16902/comments",
    "created_at" : "2019-09-18T02:53:31Z",
+   "draft" : false,
    "events_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16902/events",
    "html_url" : "https://github.com/bitcoin/bitcoin/pull/16902",
    "id" : 494956982,
    "labels" : [
-      {
-         "color" : "fef2c0",
-         "default" : false,
-         "description" : "",
-         "id" : 1392286103,
-         "name" : "Needs Conceptual Review",
-         "node_id" : "MDU6TGFiZWwxMzkyMjg2MTAz",
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/Needs%20Conceptual%20Review"
-      },
       {
          "color" : "981023",
          "default" : false,
@@ -51,23 +44,39 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16902/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "MDExOlB1bGxSZXF1ZXN0MzE4NjA0NjY4",
    "number" : 16902,
+   "performed_via_github_app" : null,
    "pull_request" : {
       "diff_url" : "https://github.com/bitcoin/bitcoin/pull/16902.diff",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/16902",
+      "merged_at" : "2020-03-14T20:04:55Z",
       "patch_url" : "https://github.com/bitcoin/bitcoin/pull/16902.patch",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/16902"
    },
+   "reactions" : {
+      "+1" : 0,
+      "-1" : 0,
+      "confused" : 0,
+      "eyes" : 0,
+      "heart" : 0,
+      "hooray" : 0,
+      "laugh" : 0,
+      "rocket" : 0,
+      "total_count" : 0,
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16902/reactions"
+   },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
+   "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16902/timeline",
    "title" : "O(1) OP_IF/NOTIF/ELSE/ENDIF script implementation",
-   "updated_at" : "2020-03-14T20:04:55Z",
+   "updated_at" : "2022-02-15T11:04:17Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/16902",
    "user" : {
-      "avatar_url" : "https://avatars1.githubusercontent.com/u/548488?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=4",
       "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
       "followers_url" : "https://api.github.com/users/sipa/followers",
       "following_url" : "https://api.github.com/users/sipa/following{/other_user}",

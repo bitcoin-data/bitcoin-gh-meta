@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "The script [message-capture-parser.py](https://github.com/bitcoin/bitcoin/blob/master/contrib/message-capture/message-capture-parser.py) currently throws an \"out of bounds\" error if a message containing an empty integer vector element is tried to converted to JSON (e.g. by the BIP157 message `cfcheckpt` with empty `FilterHeaders` vector):\r\n```\r\nTraceback (most recent call last):\r\n  File \"/home/honey/bitcoin/./contrib/message-capture/message-capture-parser.py\", line 217, in <module>\r\n    main()\r\n  File \"/home/honey/bitcoin/./contrib/message-capture/message-capture-parser.py\", line 202, in main\r\n    process_file(str(capture), messages, \"recv\" in capture.stem, progress_bar)\r\n  File \"/home/honey/bitcoin/./contrib/message-capture/message-capture-parser.py\", line 162, in process_file\r\n    msg_dict[\"body\"] = to_jsonable(msg)\r\n  File \"/home/honey/bitcoin/./contrib/message-capture/message-capture-parser.py\", line 85, in to_jsonable\r\n    elif slot in HASH_INT_VECTORS and isinstance(val[0], int):\r\nIndexError: list index out of range\r\n```\r\n\r\nFix this by using the `all(...)` predicate rather to access the first element `val[0]` (which in the error case doesn't exist).",
    "closed_at" : "2022-06-14T13:17:19Z",
    "closed_by" : {

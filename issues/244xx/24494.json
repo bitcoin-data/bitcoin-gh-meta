@@ -3,7 +3,7 @@
    "assignee" : null,
    "assignees" : [],
    "author_association" : "MEMBER",
-   "body" : "Closes #24458 - the wallet always chooses 1 million sats as its change target, making it easier to fingerprint transactions created by the Core wallet. Instead of using a fixed value, choose one randomly each time (within a range). Using 50ksat (around $20) as the lower bound and `min(1 million sat, 2 * average payment value)` as the upper bound.\r\nRFC: If the payment is <25ksat, this doesn't work, so we're using the range (payment amount, 50ksat) instead.",
+   "body" : "Closes #24458 - Knapsack always chooses 1 million sats as its change target, making it easier to fingerprint transactions created by the Core wallet. Instead of using a fixed value, choose one randomly each time (within a range).\r\n\r\n`GenerateChangeTarget` works as follows:\r\n- If the payment value > 25ksat, it is randomly chosen between 50ksat and min(2 * payment_value, 1milsat)\r\n- If the payment_value <= 25ksat, the value is just 50ksat.\r\n\r\nThe SRD target is 50ksat, not randomized, since the selection does not aim for a specific target anyway.\r\n\r\n(Note the random change target was mistakenly not used yet in this PR, see #25825).",
    "closed_at" : "2022-03-25T21:04:06Z",
    "closed_by" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/863730?v=4",
@@ -25,7 +25,7 @@
       "type" : "User",
       "url" : "https://api.github.com/users/fanquake"
    },
-   "comments" : 17,
+   "comments" : 19,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24494/comments",
    "created_at" : "2022-03-07T14:52:12Z",
    "draft" : false,
@@ -79,9 +79,10 @@
    },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24494/timeline",
    "title" : "wallet: generate random change target for each tx for better privacy",
-   "updated_at" : "2022-03-25T21:04:06Z",
+   "updated_at" : "2022-08-12T09:43:31Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24494",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/25183001?v=4",

@@ -1,12 +1,12 @@
 {
-   "active_lock_reason" : null,
+   "active_lock_reason" : "resolved",
    "assignee" : null,
    "assignees" : [],
    "author_association" : "MEMBER",
    "body" : "This follows up on #18836 and #20282 to fix and improve the as-yet unreleased `upgradewallet` feature and also implement review follow-up in https://github.com/bitcoin/bitcoin/pull/18836#discussion_r519328607.\r\n\r\nThis PR fixes 4 upgradewallet issues:\r\n\r\n- this bug: https://github.com/bitcoin/bitcoin/pull/20403#discussion_r526063920\r\n- it returns nothing in the absence of an RPC error, which isn't reassuring for users\r\n- it returns the same thing both in the case of a successful upgrade and when no upgrade took place\r\n- the error message object is currently dead code\r\n\r\nThis PR fixes the above and provides:\r\n\r\n...user feedback to not silently return without upgrading\r\n```\r\n{\r\n  \"wallet_name\": \"disable private keys\",\r\n  \"previous_version\": 169900,\r\n  \"current_version\": 169900,\r\n  \"result\": \"Already at latest version. Wallet version unchanged.\"\r\n}\r\n```\r\n...better feedback after successfully upgrading\r\n```\r\n{\r\n  \"wallet_name\": \"watch-only\",\r\n  \"previous_version\": 159900,\r\n  \"current_version\": 169900,\r\n  \"result\": \"Wallet upgraded successfully from version 159900 to version 169900.\"\r\n}\r\n```\r\n...helpful error responses\r\n```\r\n{\r\n  \"wallet_name\": \"blank\",\r\n  \"previous_version\": 169900,\r\n  \"current_version\": 169900,\r\n  \"error\": \"Cannot downgrade wallet from version 169900 to version 159900. Wallet version unchanged.\"\r\n}\r\n{\r\n  \"wallet_name\": \"blank\",\r\n  \"previous_version\": 130000,\r\n  \"current_version\": 130000,\r\n  \"error\": \"Cannot upgrade a non HD split wallet from version 130000 to version 169899 without upgrading to support pre-split keypool. Please use version 169900 or no version specified.\"\r\n}\r\n```\r\nupdated help:\r\n```\r\nupgradewallet ( version )\r\n\r\nUpgrade the wallet. Upgrades to the latest version if no version number is specified.\r\nNew keys may be generated and a new wallet backup will need to be made.\r\nArguments:\r\n1. version    (numeric, optional, default=169900) The version number to upgrade to. Default is the latest wallet version.\r\n\r\nResult:\r\n{                            (json object)\r\n  \"wallet_name\" : \"str\",     (string) Name of wallet this operation was performed on\r\n  \"previous_version\" : n,    (numeric) Version of wallet before this operation\r\n  \"current_version\" : n,     (numeric) Version of wallet after this operation\r\n  \"result\" : \"str\",          (string, optional) Description of result, if no error\r\n  \"error\" : \"str\"            (string, optional) Error message (if there is one)\r\n}\r\n```",
    "closed_at" : "2020-11-25T11:48:13Z",
    "closed_by" : {
-      "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
       "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
       "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
       "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
@@ -28,19 +28,11 @@
    "comments" : 10,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20403/comments",
    "created_at" : "2020-11-16T18:21:02Z",
+   "draft" : false,
    "events_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20403/events",
    "html_url" : "https://github.com/bitcoin/bitcoin/pull/20403",
    "id" : 744058582,
    "labels" : [
-      {
-         "color" : "0052cc",
-         "default" : false,
-         "description" : null,
-         "id" : 98279177,
-         "name" : "RPC/REST/ZMQ",
-         "node_id" : "MDU6TGFiZWw5ODI3OTE3Nw==",
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/RPC/REST/ZMQ"
-      },
       {
          "color" : "08a781",
          "default" : false,
@@ -49,16 +41,25 @@
          "name" : "Wallet",
          "node_id" : "MDU6TGFiZWwxNDk0MjQ=",
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/Wallet"
+      },
+      {
+         "color" : "0052cc",
+         "default" : false,
+         "description" : null,
+         "id" : 98279177,
+         "name" : "RPC/REST/ZMQ",
+         "node_id" : "MDU6TGFiZWw5ODI3OTE3Nw==",
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/RPC/REST/ZMQ"
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20403/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : {
-      "closed_at" : null,
-      "closed_issues" : 120,
+      "closed_at" : "2021-01-15T19:50:53Z",
+      "closed_issues" : 132,
       "created_at" : "2019-12-09T08:39:58Z",
       "creator" : {
-         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=4",
          "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
          "followers_url" : "https://api.github.com/users/laanwj/followers",
          "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
@@ -84,10 +85,10 @@
       "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/milestones/45/labels",
       "node_id" : "MDk6TWlsZXN0b25lNDkxNDAxOQ==",
       "number" : 45,
-      "open_issues" : 1,
-      "state" : "open",
+      "open_issues" : 0,
+      "state" : "closed",
       "title" : "0.21.0",
-      "updated_at" : "2020-11-25T11:48:13Z",
+      "updated_at" : "2021-01-15T19:50:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/milestones/45"
    },
    "node_id" : "MDExOlB1bGxSZXF1ZXN0NTIxODQ1MDcw",
@@ -96,16 +97,31 @@
    "pull_request" : {
       "diff_url" : "https://github.com/bitcoin/bitcoin/pull/20403.diff",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/20403",
+      "merged_at" : "2020-11-25T11:48:12Z",
       "patch_url" : "https://github.com/bitcoin/bitcoin/pull/20403.patch",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/20403"
    },
+   "reactions" : {
+      "+1" : 0,
+      "-1" : 0,
+      "confused" : 0,
+      "eyes" : 0,
+      "heart" : 0,
+      "hooray" : 0,
+      "laugh" : 0,
+      "rocket" : 0,
+      "total_count" : 0,
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20403/reactions"
+   },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
+   "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20403/timeline",
    "title" : "wallet: upgradewallet fixes, improvements, test coverage",
-   "updated_at" : "2020-11-25T12:24:05Z",
+   "updated_at" : "2022-02-15T11:15:32Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20403",
    "user" : {
-      "avatar_url" : "https://avatars1.githubusercontent.com/u/2415484?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/2415484?v=4",
       "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
       "followers_url" : "https://api.github.com/users/jonatack/followers",
       "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",

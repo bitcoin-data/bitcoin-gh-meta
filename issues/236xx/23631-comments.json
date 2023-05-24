@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Is this fixing #6071 ?\r\n\r\nYes I think so, with SPV clients being inbound peers.",
       "created_at" : "2021-11-30T17:59:55Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23631#issuecomment-982882101",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK\r\n\r\nI have been thinking \"what could go wrong with this?\" but can't find a realistic adverse scenario. Need to stare a bit more at the surrounding code before full ACK.\r\n\r\nWhat about this - a node fails to create outgoing connections while incoming connections arrive just fine (could happen due to a firewall or some other network mishap (intentional or not) or addrman filled with junk). Many incoming connections arrive from honest nodes with correct times, which are ignored. How realistic is that? Is it worth considering an extension of this patch that starts collecting time samples from incoming connections if none or very few samples have been collected from outgoing connections for a long time after startup?",
       "created_at" : "2021-12-01T16:03:09Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23631#issuecomment-983787309",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> What about this - a node fails to create outgoing connections while incoming connections arrive just fine (could happen due to a firewall or some other network mishap (intentional or not) or addrman filled with junk). Many incoming connections arrive from honest nodes with correct times, which are ignored. How realistic is that?\r\n\r\nI've never heard of someone in this situation this before, maybe others have? \r\nIt seems hard to get into this, after all outbound connections must have worked at some point in the past to broadcast our address to the network before others would connect to us. Plus, the lack of timedata samples could only cause potential problems if on top of all this, our system time is seriously off.\r\n\r\n> Is it worth considering an extension of this patch that starts collecting time samples from incoming connections if none or very few samples have been collected from outgoing connections for a long time after startup?\r\n\r\nMy first reaction was that this situation is so unlikely that it wouldn't be worth the extra complexity, but I'd love to hear other opinions!",
       "created_at" : "2021-12-01T21:01:28Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23631#issuecomment-984050391",
@@ -275,7 +275,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/761218425"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit, feel free to ignore: there is already `if (!pfrom.IsInboundConn()) {` just a few lines above and the `nTimeOffset` local variable seems unnecessary.\r\n\r\n<details>\r\n<summary>dont click here</summary>\r\n\r\n```diff\r\n--- i/src/net_processing.cpp\r\n+++ w/src/net_processing.cpp\r\n@@ -2657,47 +2657,48 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type,\r\n         if (!pfrom.IsInboundConn()) {\r\n             // For non-inbound connections, we update the addrman to record\r\n             // connection success so that addrman will have an up-to-date\r\n             // notion of which peers are online and available.\r\n             //\r\n             // While we strive to not leak information about block-relay-only\r\n             // connections via the addrman, not moving an address to the tried\r\n             // table is also potentially detrimental because new-table entries\r\n             // are subject to eviction in the event of addrman collisions.  We\r\n             // mitigate the information-leak by never calling\r\n             // AddrMan::Connected() on block-relay-only peers; see\r\n             // FinalizeNode().\r\n             //\r\n             // This moves an address from New to Tried table in Addrman,\r\n             // resolves tried-table collisions, etc.\r\n             m_addrman.Good(pfrom.addr);\r\n+\r\n+            // Don't use timedata samples from inbound peers to make it\r\n+            // harder for others to tamper with our adjusted time.\r\n+            pfrom.nTimeOffset = nTime - GetTime();\r\n+            AddTimeData(pfrom.addr, pfrom.nTimeOffset);\r\n         }\r\n\r\n         std::string remoteAddr;\r\n         if (fLogIPs)\r\n             remoteAddr = \", peeraddr=\" + pfrom.addr.ToString();\r\n\r\n         LogPrint(BCLog::NET, \"receive version message: %s: version %d, blocks=%d, us=%s, txrelay=%d, peer=%d%s\\n\",\r\n                   cleanSubVer, pfrom.nVersion,\r\n                   peer->m_starting_height, addrMe.ToString(), fRelay, pfrom.GetId(),\r\n                   remoteAddr);\r\n\r\n-        int64_t nTimeOffset = nTime - GetTime();\r\n-        pfrom.nTimeOffset = nTimeOffset;\r\n-        AddTimeData(pfrom.addr, nTimeOffset);\r\n-\r\n         // If the peer is old enough to have the old alert system, send it the final alert.\r\n```\r\n</details>\r\n",
       "commit_id" : "0c85dc30e6b628f7538a67776c7eefcb84ef4f82",
       "created_at" : "2021-12-02T15:41:03Z",
@@ -307,6 +307,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-02T15:41:21Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/761218425",
       "user" : {
@@ -361,7 +362,7 @@
       "pull_request_review_id" : 821730818,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23631",
       "reactions" : {
-         "+1" : 1,
+         "+1" : 3,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -369,12 +370,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/761257482/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-02T16:21:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/761257482",
       "user" : {
@@ -454,7 +456,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/763732233"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Right!",
       "commit_id" : "0c85dc30e6b628f7538a67776c7eefcb84ef4f82",
       "created_at" : "2021-12-07T08:13:41Z",
@@ -487,6 +489,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-07T08:13:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/763732233",
       "user" : {

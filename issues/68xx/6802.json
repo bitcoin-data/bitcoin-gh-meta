@@ -1,11 +1,12 @@
 {
+   "active_lock_reason" : "resolved",
    "assignee" : null,
    "assignees" : [],
    "author_association" : "CONTRIBUTOR",
    "body" : "```\n/Applications/Xcode.app/Contents/Developer/usr/bin/make -C src qt/bitcoin-qt\nmake[1]: Circular univalue/lib/libunivalue.la <- univalue/lib/libunivalue.la dependency dropped.\n./contrib/macdeploy/macdeployqtplus Bitcoin-Qt.app -add-qt-tr da,de,es,hu,ru,uk,zh_CN,zh_TW -translations-dir= -dmg -fancy ./contrib/macdeploy/fancy.plist -verbose 2\n+ Removing old dist folder +\n+ Copying source bundle +\n+ Deploying frameworks +\nProcessing libboost_system.dylib ...\nProcessing libboost_filesystem.dylib ...\nProcessing libboost_program_options-mt.dylib ...\nProcessing libboost_thread-mt.dylib ...\nProcessing libboost_chrono-mt.dylib ...\nProcessing QtNetwork.framework ...\nLinked: dist/Bitcoin-Qt.app/Contents/Frameworks/QtNetwork.framework/Versions/Current -> 5\nTraceback (most recent call last):\n  File \"./contrib/macdeploy/macdeployqtplus\", line 617, in <module>\n    deploymentInfo = deployFrameworksForAppBundle(applicationBundle, config.strip, verbose)\n  File \"./contrib/macdeploy/macdeployqtplus\", line 372, in deployFrameworksForAppBundle\n    return deployFrameworks(frameworks, applicationBundle.path, applicationBundle.binaryPath, strip, verbose)\n  File \"./contrib/macdeploy/macdeployqtplus\", line 355, in deployFrameworks\n    dependencies = getFrameworks(deployedBinaryPath, verbose)\n  File \"./contrib/macdeploy/macdeployqtplus\", line 222, in getFrameworks\n    info = FrameworkInfo.fromOtoolLibraryLine(line.strip())\n  File \"./contrib/macdeploy/macdeployqtplus\", line 138, in fromOtoolLibraryLine\n    info.binaryName = parts[i+3]\nIndexError: list index out of range\nmake: *** [Bitcoin-Core.dmg] Error 1\n```\n\nThe value of `line` there is:\n\n``` python\n'/usr/local/Cellar/qt5/5.5.0_1/lib/QtCore.framework/QtCore (compatibility version 5.5.0, current version 5.5.0)'\n```\n\nBut it seems to expect something with the shape of this:\n\n``` python\n'/usr/local/opt/qt5/lib/QtNetwork.framework/Versions/5/QtNetwork (compatibility version 5.5.0, current version 5.5.0)'\n```\n\nNote the `Versions/5/{binaryName}` format after `.framework` in the second line.\n\nI'd be happy to contribute a patch if I can understand how it should handle these cases.\n",
    "closed_at" : "2015-12-01T13:39:49Z",
    "closed_by" : {
-      "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=4",
       "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
       "followers_url" : "https://api.github.com/users/laanwj/followers",
       "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
@@ -32,34 +33,51 @@
    "id" : 110801723,
    "labels" : [
       {
-         "color" : "5319e7",
-         "default" : false,
-         "id" : 61889416,
-         "name" : "Build system",
-         "node_id" : "MDU6TGFiZWw2MTg4OTQxNg==",
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/Build%20system"
-      },
-      {
          "color" : "660000",
          "default" : false,
+         "description" : "",
          "id" : 234879,
          "name" : "macOS",
          "node_id" : "MDU6TGFiZWwyMzQ4Nzk=",
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/macOS"
+      },
+      {
+         "color" : "5319e7",
+         "default" : false,
+         "description" : null,
+         "id" : 61889416,
+         "name" : "Build system",
+         "node_id" : "MDU6TGFiZWw2MTg4OTQxNg==",
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/Build%20system"
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6802/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "MDU6SXNzdWUxMTA4MDE3MjM=",
    "number" : 6802,
+   "performed_via_github_app" : null,
+   "reactions" : {
+      "+1" : 0,
+      "-1" : 0,
+      "confused" : 0,
+      "eyes" : 0,
+      "heart" : 0,
+      "hooray" : 0,
+      "laugh" : 0,
+      "rocket" : 0,
+      "total_count" : 0,
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6802/reactions"
+   },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : "completed",
+   "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6802/timeline",
    "title" : "IndexError when running make deploy in OS X",
-   "updated_at" : "2015-12-01T13:39:49Z",
+   "updated_at" : "2021-09-08T12:23:14Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/6802",
    "user" : {
-      "avatar_url" : "https://avatars1.githubusercontent.com/u/138426?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/138426?v=4",
       "events_url" : "https://api.github.com/users/federicobond/events{/privacy}",
       "followers_url" : "https://api.github.com/users/federicobond/followers",
       "following_url" : "https://api.github.com/users/federicobond/following{/other_user}",

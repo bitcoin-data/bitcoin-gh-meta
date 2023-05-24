@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24170](https://github.com/bitcoin/bitcoin/pull/24170) (p2p, rpc: Manual block-relay-only connections with addnode by mzumsande)\n* [#23604](https://github.com/bitcoin/bitcoin/pull/23604) (Use Sock in CNode by vasild)\n* [#23531](https://github.com/bitcoin/bitcoin/pull/23531) (Add Yggdrasil support by prusnak)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2021-12-30T11:26:27Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23900#issuecomment-1002987848",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Shouldn't handshaking be independent of advertised services? Otherwise attackers could simply advertise the wrong services for a peer when forwarding along addr messages, or mitm'ing dns seeds? I thought the idea for p2p v2 was to attempt an encrypted handshake, and if that failed, retry without encryption, and you'd just do that for all connection attempts.",
       "created_at" : "2022-01-10T08:29:55Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23900#issuecomment-1008638321",
@@ -53,7 +53,7 @@
       "node_id" : "IC_kwDOABII5848Hplx",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -61,7 +61,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1008638321/reactions"
       },
       "updated_at" : "2022-01-10T08:29:55Z",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Shouldn't handshaking be independent of advertised services?\r\n\r\nI might be missing something but don't we already use data from the advertised services in changing the nature of the connection? For example, (I'm not certain, but expect that), we do not ask pruned nodes for older blocks [when in IBD](https://github.com/bitcoin/bitcoin/blob/623745ca74cf3f54b474dac106f5802b7929503f/src/protocol.cpp#L127).\r\n\r\n> I thought the idea for p2p v2 was to attempt an encrypted handshake, and if that failed, retry without encryption, and you'd just do that for all connection attempts.\r\n\r\nThe current plan is to initiate v2 connections to peers advertising `NODE_P2P_V2` and if the handshake fails, try with a v1 handshake before moving on to another node from addrman. While the method you propose would work, attempting v2 connections with v1 nodes that do not advertise v2 support would waste bandwidth in the initial phases of deployment.\r\n\r\n> Otherwise attackers could simply advertise the wrong services for a peer when forwarding along addr messages, or mitm'ing dns seeds?\r\n\r\nThe MITM attacker could make a v2 node look like a v1 node which would result in a v1 connection, or a v1 node look like v2 which would result still in a v1 connection. Downgrade attacks are a risk mentioned in [BIP324](https://gist.github.com/dhruv/5b1275751bc98f3b64bcafce7876b489#Signaling_BIP324_support):\r\n\r\n```\r\nIf the responding peer closes the connection after receiving the handshake request, the initiating peer MAY try to connect again with the v1 p2p transport protocol. Such reconnects allow an attacker to \"downgrade\" the encryption to plaintext communication and thus, accepting v1 connections MUST not be done when the Bitcoin peer-to-peer network has almost entirely embraced v2 communication. \r\n```",
       "created_at" : "2022-01-10T19:43:24Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23900#issuecomment-1009281582",
@@ -189,19 +189,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Why only for onetry connections?",
-      "commit_id" : "43dc78e2ff1d1cbc5302c928492c2e19f322c258",
+      "commit_id" : "609ca6dd2d5b66a60959ca3cd88aac07c8eed0ad",
       "created_at" : "2022-01-10T21:25:10Z",
       "diff_hunk" : "@@ -300,6 +301,9 @@ static RPCHelpMan addnode()\n     if (strCommand == \"onetry\")\n     {\n         CAddress addr;\n+        if (!request.params[2].isNull()) {\n+            addr.nServices = ServiceFlags{static_cast<uint64_t>(request.params[2].get_int64())};",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23900#discussion_r781560060",
       "id" : 781560060,
-      "line" : 305,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584ulaj8",
       "original_commit_id" : "43dc78e2ff1d1cbc5302c928492c2e19f322c258",
       "original_line" : 305,
       "original_position" : 20,
       "original_start_line" : null,
       "path" : "src/rpc/net.cpp",
-      "position" : 20,
+      "position" : null,
       "pull_request_review_id" : 848373683,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23900",
       "reactions" : {
@@ -219,6 +219,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-10T21:25:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/781560060",
       "user" : {
@@ -243,7 +244,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I might be missing something but don't we already use data from the advertised services in changing the nature of the connection? For example, (I'm not certain, but expect that), we do not ask pruned nodes for older blocks [when in IBD](https://github.com/bitcoin/bitcoin/blob/623745ca74cf3f54b474dac106f5802b7929503f/src/protocol.cpp#L127).\r\n\r\nWe use that to decide not to connect to some peers, but when we do connect to them we treat them the same?\r\n\r\n> The current plan is to initiate v2 connections to peers advertising `NODE_P2P_V2` and if the handshake fails, try with a v1 handshake before moving on to another node from addrman. While the method you propose would work, attempting v2 connections with v1 nodes that do not advertise v2 support would waste bandwidth in the initial phases of deployment.\r\n\r\nI guess I'm thinking about it backwards: the whole point of p2p v2 is to have an incompatible handshake compared to current p2p, so if the goal is to pass around some advisory data on who supports the new handshake that helps people avoid wasting bandwidth, then using a service bit makes sense for connecting to random peers.\r\n\r\nBut if all that's only for saving bandwidth, why apply it to addnode at all? Just have addnode always try p2pv2 first and fallback -- a redundant connection attempt for addnode nodes only shouldn't be much extra bandwidth?\r\n\r\nJust feels like this is something that's only relevant for p2pv2, not a reason for addnode to know about service bits in general.\r\n\r\n(Another alternative would be to have \"p2pv2\" as an alternative to \"onetry\" to enable to p2pv2 handshake) ",
       "created_at" : "2022-01-12T09:30:46Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23900#issuecomment-1010833733",
@@ -298,7 +299,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/784508041"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I just happened to be using it like that, but, you're right - it should work for the \"add\" sub-command as well. Fixed.",
       "commit_id" : "609ca6dd2d5b66a60959ca3cd88aac07c8eed0ad",
       "created_at" : "2022-01-14T04:59:52Z",
@@ -331,6 +332,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-14T04:59:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/784508041",
       "user" : {
@@ -355,7 +357,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Changed the code to be (a slightly modified version of) the last approach suggested by @ajtowns. Instead of accepting `nServices`, the `addnode` rpc now has a boolean `p2p_v2` argument. If set to true, the peer is treated as if it were advertising `NODE_P2P_V2`. \r\n\r\nReady for further review.",
       "created_at" : "2022-01-14T05:03:22Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23900#issuecomment-1012778741",
@@ -410,7 +412,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/784510807"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This will invalidate existing fuzz seeds (I think).",
       "commit_id" : "609ca6dd2d5b66a60959ca3cd88aac07c8eed0ad",
       "created_at" : "2022-01-14T05:10:19Z",
@@ -442,6 +444,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-14T05:10:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/784510807",
       "user" : {
@@ -477,7 +480,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/785575053"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This line (+ the one in the else branch) is unnecessary, `use_p2p_v2` is already set in the initialization.",
       "commit_id" : "609ca6dd2d5b66a60959ca3cd88aac07c8eed0ad",
       "created_at" : "2022-01-17T00:32:19Z",
@@ -509,6 +512,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-17T01:00:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/785575053",
       "user" : {
@@ -562,7 +566,7 @@
       "pull_request_review_id" : 853847364,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23900",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -570,12 +574,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/785618935/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-17T03:49:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/785618935",
       "user" : {
@@ -643,6 +648,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-17T03:49:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/785619126",
       "user" : {
@@ -710,6 +716,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-17T03:49:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/785619208",
       "user" : {
@@ -777,6 +784,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-17T03:49:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/785619680",
       "user" : {
@@ -801,7 +809,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Approach ACK, but if it's specific to P2P v2 now, doesn't seem like it needs to be broken out into its own PR prior to P2P v2?",
       "created_at" : "2022-01-18T11:38:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23900#issuecomment-1015328518",
@@ -845,7 +853,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
       "created_at" : "2022-02-04T08:59:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23900#issuecomment-1029775780",
@@ -889,7 +897,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks, @ajtowns @mzumsande  @kallewoof. As @ajtowns has pointed out, this is now just specific to BIP324. The code has been rolled into #24545 so let's continue there. Closing this PR.\r\n\r\nTo address @mzumsande's point about RPC vs CLI `addnode`, I think it is ok for the RPC functionality to be a superset of the CLI so long as the additional RPC functionality is only enabling things that are used for manual testing as is the case here. But of course, curious to hear what other contributors think about this as well.\r\n\r\nI will address other comments from here in that code this week.",
       "created_at" : "2022-03-14T15:21:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23900#issuecomment-1066935145",
@@ -944,7 +952,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/838098815"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks. Done in #24545.",
       "commit_id" : "609ca6dd2d5b66a60959ca3cd88aac07c8eed0ad",
       "created_at" : "2022-03-30T04:10:54Z",
@@ -977,6 +985,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-30T04:10:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/838098815",
       "user" : {
@@ -1012,7 +1021,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/838098880"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Done in #24545.",
       "commit_id" : "609ca6dd2d5b66a60959ca3cd88aac07c8eed0ad",
       "created_at" : "2022-03-30T04:11:03Z",
@@ -1045,6 +1054,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-30T04:11:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/838098880",
       "user" : {
@@ -1080,7 +1090,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/838098993"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Done in #24545.",
       "commit_id" : "609ca6dd2d5b66a60959ca3cd88aac07c8eed0ad",
       "created_at" : "2022-03-30T04:11:19Z",
@@ -1113,6 +1123,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-30T04:11:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/838098993",
       "user" : {
@@ -1148,7 +1159,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/838099452"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "IIRC, there was a compiler warning(maybe error actually) about the order in the initializer list needing to be the same as that in the class member declaration.",
       "commit_id" : "609ca6dd2d5b66a60959ca3cd88aac07c8eed0ad",
       "created_at" : "2022-03-30T04:12:43Z",
@@ -1181,6 +1192,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-30T04:12:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/838099452",
       "user" : {
@@ -1216,7 +1228,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/838099533"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Done in #24545 ",
       "commit_id" : "609ca6dd2d5b66a60959ca3cd88aac07c8eed0ad",
       "created_at" : "2022-03-30T04:12:57Z",
@@ -1249,6 +1261,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-30T04:12:57Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/838099533",
       "user" : {

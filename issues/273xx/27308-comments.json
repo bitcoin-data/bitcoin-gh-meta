@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [ishaanam](https://github.com/bitcoin/bitcoin/pull/27308#issuecomment-1509354550), [Xekyo](https://github.com/bitcoin/bitcoin/pull/27308#issuecomment-1509552056) |\n| Concept ACK | [glozow](https://github.com/bitcoin/bitcoin/pull/27308#pullrequestreview-1354262170) |\n| Stale ACK | [furszy](https://github.com/bitcoin/bitcoin/pull/27308#pullrequestreview-1358015374) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#27195](https://github.com/bitcoin/bitcoin/pull/27195) (bumpfee: allow send coins back to yourself by furszy)\n* [#26467](https://github.com/bitcoin/bitcoin/pull/26467) (bumpfee: Allow the user to choose which output is change by achow101)\n* [#26152](https://github.com/bitcoin/bitcoin/pull/26152) (Bump unconfirmed ancestor transactions to target feerate by Xekyo)\n* [#25979](https://github.com/bitcoin/bitcoin/pull/25979) ([WIP] wallet: standardize change output detection process by furszy)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2023-03-22T23:05:09Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27308#issuecomment-1480366786",
@@ -57,7 +57,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Missed to remove the `wtx` function's arg. It's not needed anymore.",
-      "commit_id" : "26b4c66418f97b4d13989a5c6cf2a7827af4fc1e",
+      "commit_id" : "d52fa1b0a5a8eecbe1e296a44b72965717e9235b",
       "created_at" : "2023-03-26T13:04:17Z",
       "diff_hunk" : "@@ -84,15 +84,12 @@ static feebumper::Result CheckFeeRate(const CWallet& wallet, const CWalletTx& wt\n \n     CFeeRate incrementalRelayFee = std::max(wallet.chain().relayIncrementalFee(), CFeeRate(WALLET_INCREMENTAL_RELAY_FEE));\n \n-    // Given old total fee and transaction size, calculate the old feeRate\n-    const int64_t txSize = GetVirtualTransactionSize(*(wtx.tx));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27308#discussion_r1148550612",
@@ -69,7 +69,7 @@
       "original_position" : 5,
       "original_start_line" : null,
       "path" : "src/wallet/feebumper.cpp",
-      "position" : 5,
+      "position" : 14,
       "pull_request_review_id" : 1358015374,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/27308",
       "reactions" : {
@@ -125,19 +125,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "while you are here, could rename `mtx` so it doesn't shadow the function's arg (or rename the argument).",
-      "commit_id" : "26b4c66418f97b4d13989a5c6cf2a7827af4fc1e",
+      "commit_id" : "d52fa1b0a5a8eecbe1e296a44b72965717e9235b",
       "created_at" : "2023-03-26T13:06:23Z",
       "diff_hunk" : "@@ -254,6 +252,7 @@ Result CreateRateBumpTransaction(CWallet& wallet, const uint256& txid, const CCo\n             txin.scriptSig.clear();\n             txin.scriptWitness.SetNull();\n         }\n+        mtx.vout = txouts;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27308#discussion_r1148550959",
       "id" : 1148550959,
-      "line" : 255,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII585EdX8v",
       "original_commit_id" : "a1e2cae80f082d8fe93b04607b445cd609abd834",
       "original_line" : 255,
       "original_position" : 32,
       "original_start_line" : null,
       "path" : "src/wallet/feebumper.cpp",
-      "position" : 32,
+      "position" : null,
       "pull_request_review_id" : 1358015374,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/27308",
       "reactions" : {
@@ -180,7 +180,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK 26b4c66418f97b4d13989a5c6cf2a7827af4fc1e\r\n\r\nEdit: test failed on master as expected",
       "created_at" : "2023-03-31T23:27:03Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27308#issuecomment-1492717965",
@@ -235,9 +235,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1160852657"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "If I understand this test right, it checks whether the absolute fee of a smaller replacement transaction sufficiently surpasses that of a larger original transaction.\r\n\r\nI looked around in `wallet_bumpfee.py`, and had the impression that we generally seem to assume that the replacement is the same size as the original. If we donât check it yet, we should perhaps also add a test case where a larger replacement transaction supersedes a smaller originalâs feerate sufficiently (although I might have overlooked that test case).",
-      "commit_id" : "26b4c66418f97b4d13989a5c6cf2a7827af4fc1e",
+      "commit_id" : "d52fa1b0a5a8eecbe1e296a44b72965717e9235b",
       "created_at" : "2023-04-07T17:33:16Z",
       "diff_hunk" : "@@ -668,5 +670,30 @@ def test_no_more_inputs_fails(self, rbf_node, dest_address):\n     self.clear_mempool()\n \n \n+def test_feerate_checks_replaced_outputs(self, rbf_node):",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27308#discussion_r1160852657",
@@ -499,7 +499,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "reACK d52fa1b0a5a8eecbe1e296a44b72965717e9235b",
       "created_at" : "2023-04-14T22:24:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27308#issuecomment-1509354550",
@@ -543,7 +543,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "reACK https://github.com/bitcoin/bitcoin/commit/d52fa1b0a5a8eecbe1e296a44b72965717e9235b",
       "created_at" : "2023-04-15T06:01:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27308#issuecomment-1509552056",

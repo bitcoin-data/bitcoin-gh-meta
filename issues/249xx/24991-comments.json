@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`111bec2fdc...bbbb1755da`: remove `;` from python code ð¤¦\r\n\r\n`111b`, `bbbb1`, wow! today is my lucky day!",
       "created_at" : "2022-04-26T09:48:59Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#issuecomment-1109588407",
@@ -57,19 +57,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "naming suggestion (or just inline it without a local variable, as a comment is also added here)\r\n\r\n```diff\r\n-        const bool maybe_later = args.GetBoolArg(\"-listenonion\", DEFAULT_LISTEN_ONION);\r\n-        if (onlynet_used_with_onion && !maybe_later) {\r\n+        const bool listen_onion_disabled{!args.GetBoolArg(\"-listenonion\", DEFAULT_LISTEN_ONION)};\r\n+        if (onlynet_used_with_onion && listen_onion_disabled) {\r\n```\r\n",
-      "commit_id" : "bbbb1755daf7b8c98a8f565a1d9f82599313b3c8",
+      "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-04-26T12:09:11Z",
       "diff_hunk" : "@@ -1361,11 +1368,14 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)\n     if (onion_proxy.IsValid()) {\n         SetProxy(NET_ONION, onion_proxy);\n     } else {\n-        if (args.IsArgSet(\"-onlynet\") && IsReachable(NET_ONION)) {\n+        // If -listenonion is set, then we will (try to) connect to the Tor control port\n+        // later from the torcontrol thread and may retrieve the onion proxy from there.\n+        const bool maybe_later = args.GetBoolArg(\"-listenonion\", DEFAULT_LISTEN_ONION);\n+        if (onlynet_used_with_onion && !maybe_later) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#discussion_r858635116",
       "id" : 858635116,
-      "line" : 1374,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584zLbts",
       "original_commit_id" : "bbbb1755daf7b8c98a8f565a1d9f82599313b3c8",
       "original_line" : 1374,
       "original_position" : 29,
       "original_start_line" : null,
       "path" : "src/init.cpp",
-      "position" : 29,
+      "position" : null,
       "pull_request_review_id" : 953266071,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24991",
       "reactions" : {
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-26T12:20:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858635116",
       "user" : {
@@ -124,15 +125,15 @@
       },
       "author_association" : "MEMBER",
       "body" : "Maybe consider something like this as a more helpful error message:\r\n```diff\r\n-                _(\"Outbound connections restricted to Tor (-onlynet=onion) but the proxy for \"\r\n-                  \"reaching the Tor network is not provided: none of -proxy, -onion or \"\r\n-                  \"-listenonion is given\"));\r\n+                _(\"The -onlynet=onion configuration option was passed to restrict outbound\"\r\n+                  \" connections to Tor, but the proxy for reaching the Tor network was not\"\r\n+                  \" provided: none of -proxy, -onion or -listenonion was given\"));\r\n```\r\n",
-      "commit_id" : "bbbb1755daf7b8c98a8f565a1d9f82599313b3c8",
+      "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-04-26T12:18:11Z",
       "diff_hunk" : "@@ -1361,11 +1368,14 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)\n     if (onion_proxy.IsValid()) {\n         SetProxy(NET_ONION, onion_proxy);\n     } else {\n-        if (args.IsArgSet(\"-onlynet\") && IsReachable(NET_ONION)) {\n+        // If -listenonion is set, then we will (try to) connect to the Tor control port\n+        // later from the torcontrol thread and may retrieve the onion proxy from there.\n+        const bool maybe_later = args.GetBoolArg(\"-listenonion\", DEFAULT_LISTEN_ONION);\n+        if (onlynet_used_with_onion && !maybe_later) {\n             return InitError(\n                 _(\"Outbound connections restricted to Tor (-onlynet=onion) but the proxy for \"\n-                  \"reaching the Tor network is not provided (no -proxy= and no -onion= given) or \"\n-                  \"it is explicitly forbidden (-onion=0)\"));\n+                  \"reaching the Tor network is not provided: none of -proxy, -onion or \"\n+                  \"-listenonion is given\"));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#discussion_r858643418",
       "id" : 858643418,
-      "line" : 1378,
+      "line" : 1343,
       "node_id" : "PRRC_kwDOABII584zLdva",
       "original_commit_id" : "bbbb1755daf7b8c98a8f565a1d9f82599313b3c8",
-      "original_line" : 1378,
+      "original_line" : 1343,
       "original_position" : 35,
       "original_start_line" : null,
       "path" : "src/init.cpp",
@@ -154,6 +155,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-26T12:20:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858643418",
       "user" : {
@@ -191,19 +193,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "maybe keep the test without explicit listenonion=0 (not sure, didn't review deeply yet)\r\n```diff\r\n-        self.log.info(\"Test passing -onlynet=onion without -proxy, -onion or -listenonion raises expected init error\")\r\n-        self.nodes[1].extra_args = [\"-onlynet=onion\", \"-listenonion=0\"]\r\n         msg = (\r\n             \"Error: Outbound connections restricted to Tor (-onlynet=onion) but \"\r\n             \"the proxy for reaching the Tor network is not provided: \"\r\n             \"none of -proxy, -onion or -listenonion is given\"\r\n         )\r\n+\r\n+        self.log.info(\"Test passing -onlynet=onion without -proxy or -onion raises expected init error\")\r\n+        self.nodes[1].extra_args = [\"-onlynet=onion\", \"-listen\"]\r\n+        self.nodes[1].assert_start_raises_init_error(expected_msg=msg)\r\n+\r\n+        self.log.info(\"Test passing -onlynet=onion and -listen, without -proxy or -onion, and with -listenonion disabled raises expected init error\")\r\n+        self.nodes[1].extra_args = [\"-onlynet=onion\", \"-listen\", \"-listenonion=0\"]\r\n         self.nodes[1].assert_start_raises_init_error(expected_msg=msg)\r\n```\r\n",
-      "commit_id" : "bbbb1755daf7b8c98a8f565a1d9f82599313b3c8",
+      "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-04-26T12:19:50Z",
       "diff_hunk" : "@@ -335,20 +335,29 @@ def networks_dict(d):\n         msg = \"Error: Invalid -i2psam address or hostname: 'def:xyz'\"\n         self.nodes[1].assert_start_raises_init_error(expected_msg=msg)\n \n+        self.log.info(\"Test passing -onlynet=onion with -onion=0/-noonion raises expected init error\")\n         msg = (\n             \"Error: Outbound connections restricted to Tor (-onlynet=onion) but \"\n-            \"the proxy for reaching the Tor network is not provided (no -proxy= \"\n-            \"and no -onion= given) or it is explicitly forbidden (-onion=0)\"\n+            \"the proxy for reaching the Tor network is explicitly forbidden: -onion=0\"\n         )\n-        self.log.info(\"Test passing -onlynet=onion without -proxy or -onion raises expected init error\")\n-        self.nodes[1].extra_args = [\"-onlynet=onion\"]\n-        self.nodes[1].assert_start_raises_init_error(expected_msg=msg)\n-\n-        self.log.info(\"Test passing -onlynet=onion with -onion=0/-noonion raises expected init error\")\n         for arg in [\"-onion=0\", \"-noonion\"]:\n             self.nodes[1].extra_args = [\"-onlynet=onion\", arg]\n             self.nodes[1].assert_start_raises_init_error(expected_msg=msg)\n \n+        self.log.info(\"Test passing -onlynet=onion without -proxy, -onion or -listenonion raises expected init error\")\n+        self.nodes[1].extra_args = [\"-onlynet=onion\", \"-listenonion=0\"]\n+        msg = (\n+            \"Error: Outbound connections restricted to Tor (-onlynet=onion) but \"\n+            \"the proxy for reaching the Tor network is not provided: \"\n+            \"none of -proxy, -onion or -listenonion is given\"\n+        )\n+        self.nodes[1].assert_start_raises_init_error(expected_msg=msg)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#discussion_r858644855",
       "id" : 858644855,
-      "line" : 354,
+      "line" : 350,
       "node_id" : "PRRC_kwDOABII584zLeF3",
       "original_commit_id" : "bbbb1755daf7b8c98a8f565a1d9f82599313b3c8",
-      "original_line" : 354,
+      "original_line" : 350,
       "original_position" : 27,
       "original_start_line" : null,
       "path" : "test/functional/feature_proxy.py",
-      "position" : 27,
+      "position" : 26,
       "pull_request_review_id" : 953266071,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24991",
       "reactions" : {
@@ -221,6 +223,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-26T13:56:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858644855",
       "user" : {
@@ -377,7 +380,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`bbbb1755da...c313568a97`: address suggestions",
       "created_at" : "2022-04-29T13:21:06Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#issuecomment-1113303666",
@@ -432,9 +435,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/861795947"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Done.",
-      "commit_id" : "c313568a97bbac41d7f372f62594e440a515e1f5",
+      "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-04-29T13:21:26Z",
       "diff_hunk" : "@@ -1361,11 +1368,14 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)\n     if (onion_proxy.IsValid()) {\n         SetProxy(NET_ONION, onion_proxy);\n     } else {\n-        if (args.IsArgSet(\"-onlynet\") && IsReachable(NET_ONION)) {\n+        // If -listenonion is set, then we will (try to) connect to the Tor control port\n+        // later from the torcontrol thread and may retrieve the onion proxy from there.\n+        const bool maybe_later = args.GetBoolArg(\"-listenonion\", DEFAULT_LISTEN_ONION);\n+        if (onlynet_used_with_onion && !maybe_later) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#discussion_r861795947",
@@ -465,6 +468,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-29T13:21:26Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/861795947",
       "user" : {
@@ -500,22 +504,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/861796090"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Done.",
-      "commit_id" : "c313568a97bbac41d7f372f62594e440a515e1f5",
+      "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-04-29T13:21:38Z",
       "diff_hunk" : "@@ -1361,11 +1368,14 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)\n     if (onion_proxy.IsValid()) {\n         SetProxy(NET_ONION, onion_proxy);\n     } else {\n-        if (args.IsArgSet(\"-onlynet\") && IsReachable(NET_ONION)) {\n+        // If -listenonion is set, then we will (try to) connect to the Tor control port\n+        // later from the torcontrol thread and may retrieve the onion proxy from there.\n+        const bool maybe_later = args.GetBoolArg(\"-listenonion\", DEFAULT_LISTEN_ONION);\n+        if (onlynet_used_with_onion && !maybe_later) {\n             return InitError(\n                 _(\"Outbound connections restricted to Tor (-onlynet=onion) but the proxy for \"\n-                  \"reaching the Tor network is not provided (no -proxy= and no -onion= given) or \"\n-                  \"it is explicitly forbidden (-onion=0)\"));\n+                  \"reaching the Tor network is not provided: none of -proxy, -onion or \"\n+                  \"-listenonion is given\"));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#discussion_r861796090",
       "id" : 861796090,
       "in_reply_to_id" : 858643418,
-      "line" : null,
+      "line" : 1343,
       "node_id" : "PRRC_kwDOABII584zXfb6",
       "original_commit_id" : "bbbb1755daf7b8c98a8f565a1d9f82599313b3c8",
-      "original_line" : 1378,
+      "original_line" : 1343,
       "original_position" : 35,
       "original_start_line" : null,
       "path" : "src/init.cpp",
-      "position" : null,
+      "position" : 35,
       "pull_request_review_id" : 957724307,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24991",
       "reactions" : {
@@ -533,6 +537,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-29T13:21:38Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/861796090",
       "user" : {
@@ -568,22 +573,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/861798766"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Since now the behavior depends on the `-listenonion` value, I added two tests - one with `1` and one with `0`. Leaving the test without an explicit `-listenonion` would mean relying on some parameter interaction or that the testing framework uses a specific value. This could result in a test failure if it is changed.",
-      "commit_id" : "c313568a97bbac41d7f372f62594e440a515e1f5",
+      "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-04-29T13:24:45Z",
       "diff_hunk" : "@@ -335,20 +335,29 @@ def networks_dict(d):\n         msg = \"Error: Invalid -i2psam address or hostname: 'def:xyz'\"\n         self.nodes[1].assert_start_raises_init_error(expected_msg=msg)\n \n+        self.log.info(\"Test passing -onlynet=onion with -onion=0/-noonion raises expected init error\")\n         msg = (\n             \"Error: Outbound connections restricted to Tor (-onlynet=onion) but \"\n-            \"the proxy for reaching the Tor network is not provided (no -proxy= \"\n-            \"and no -onion= given) or it is explicitly forbidden (-onion=0)\"\n+            \"the proxy for reaching the Tor network is explicitly forbidden: -onion=0\"\n         )\n-        self.log.info(\"Test passing -onlynet=onion without -proxy or -onion raises expected init error\")\n-        self.nodes[1].extra_args = [\"-onlynet=onion\"]\n-        self.nodes[1].assert_start_raises_init_error(expected_msg=msg)\n-\n-        self.log.info(\"Test passing -onlynet=onion with -onion=0/-noonion raises expected init error\")\n         for arg in [\"-onion=0\", \"-noonion\"]:\n             self.nodes[1].extra_args = [\"-onlynet=onion\", arg]\n             self.nodes[1].assert_start_raises_init_error(expected_msg=msg)\n \n+        self.log.info(\"Test passing -onlynet=onion without -proxy, -onion or -listenonion raises expected init error\")\n+        self.nodes[1].extra_args = [\"-onlynet=onion\", \"-listenonion=0\"]\n+        msg = (\n+            \"Error: Outbound connections restricted to Tor (-onlynet=onion) but \"\n+            \"the proxy for reaching the Tor network is not provided: \"\n+            \"none of -proxy, -onion or -listenonion is given\"\n+        )\n+        self.nodes[1].assert_start_raises_init_error(expected_msg=msg)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#discussion_r861798766",
       "id" : 861798766,
       "in_reply_to_id" : 858644855,
-      "line" : 354,
+      "line" : 350,
       "node_id" : "PRRC_kwDOABII584zXgFu",
       "original_commit_id" : "bbbb1755daf7b8c98a8f565a1d9f82599313b3c8",
-      "original_line" : 354,
+      "original_line" : 350,
       "original_position" : 27,
       "original_start_line" : null,
       "path" : "test/functional/feature_proxy.py",
-      "position" : 27,
+      "position" : 26,
       "pull_request_review_id" : 957728322,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24991",
       "reactions" : {
@@ -601,6 +606,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-29T13:24:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/861798766",
       "user" : {
@@ -669,7 +675,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@schildbach, no, the issue itself (described in https://github.com/bitcoin/bitcoin/issues/24980) is that startup would abort with an error if `-onlynet=onion` is given without `-proxy` and without `-onion`. Those options specify the proxy for connecting to the Tor network. However there is a 3rd way to provide a Tor proxy - if `-listenonion=1` is given, then we would connect to the \"Tor control center\" and retrieve the IP address/port of the Tor proxy from there.\r\n\r\nThis PR aims to fix that problem by relaxing the startup check to allow startup with `-onlynet=onion` without `-proxy`, without `-onion` if `-listenonion` is given.",
       "created_at" : "2022-05-02T07:25:56Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#issuecomment-1114572461",
@@ -713,51 +719,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-05-20T09:23:15Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#issuecomment-1132679086",
-      "id" : 1132679086,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24991",
-      "node_id" : "IC_kwDOABII585Dg0-u",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1132679086/reactions"
-      },
-      "updated_at" : "2022-05-20T09:23:15Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1132679086",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`c313568a97...28ae912f50`: rebase due to conflicts\r\n\r\nPreviously invalidated ACK from @dunxen \r\n",
       "created_at" : "2022-05-23T09:23:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#issuecomment-1134415967",
@@ -845,7 +807,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK, will review closely soon. I think it would be nice to get this fixed for 24.0. ",
       "created_at" : "2022-09-02T20:52:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#issuecomment-1235886272",
@@ -889,7 +851,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25989](https://github.com/bitcoin/bitcoin/pull/25989) (init: abort if i2p/cjdns are chosen via -onlynet but are unreachable by mzumsande)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-09-04T08:30:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#issuecomment-1236288272",
@@ -946,15 +908,15 @@
       },
       "author_association" : "MEMBER",
       "body" : "nit, use the same (more explicit) phrasing here as for the error message below, and consistent verb tense\r\n```diff\r\n-                    _(\"Outbound connections restricted to Tor (-onlynet=onion) but the proxy for \"\r\n-                      \"reaching the Tor network is explicitly forbidden: -onion=0\"));\r\n+                    _(\"The -onlynet=onion configuration option was passed to restrict outbound\"\r\n+                      \" connections to Tor, but the proxy for reaching the Tor network was explicitly forbidden: -onion=0\"));\r\n```\r\n",
-      "commit_id" : "28ae912f501e1a09bd050dcf35ecf712374f743f",
+      "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-09-05T10:02:21Z",
       "diff_hunk" : "@@ -1348,13 +1348,20 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)\n         onion_proxy = addrProxy;\n     }\n \n+    const bool onlynet_used_with_onion{args.IsArgSet(\"-onlynet\") && IsReachable(NET_ONION)};\n+\n     // -onion can be used to set only a proxy for .onion, or override normal proxy for .onion addresses\n     // -noonion (or -onion=0) disables connecting to .onion entirely\n     // An empty string is used to not override the onion proxy (in which case it defaults to -proxy set above, or none)\n     std::string onionArg = args.GetArg(\"-onion\", \"\");\n     if (onionArg != \"\") {\n         if (onionArg == \"0\") { // Handle -noonion/-onion=0\n             onion_proxy = Proxy{};\n+            if (onlynet_used_with_onion) {\n+                return InitError(\n+                    _(\"Outbound connections restricted to Tor (-onlynet=onion) but the proxy for \"\n+                      \"reaching the Tor network is explicitly forbidden: -onion=0\"));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#discussion_r962729075",
       "id" : 962729075,
-      "line" : 1363,
+      "line" : 1322,
       "node_id" : "PRRC_kwDOABII5845YhRz",
       "original_commit_id" : "28ae912f501e1a09bd050dcf35ecf712374f743f",
-      "original_line" : 1363,
+      "original_line" : 1322,
       "original_position" : 16,
       "original_start_line" : null,
       "path" : "src/init.cpp",
@@ -976,6 +938,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-05T10:33:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/962729075",
       "user" : {
@@ -1013,19 +976,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "- these two lines can be combined to one, i.e. `self.start_node(1, extra_args=[\"-onlynet=onion\", \"-listenonion=1\"])`\r\n- maybe check that Tor is successfully up with assert_debug_log\r\n\r\n```diff\r\n         self.log.info(\"Test passing -onlynet=onion without -proxy or -onion but with -listenonion=1 is ok\")\r\n-        self.nodes[1].extra_args = [\"-onlynet=onion\", \"-listenonion=1\"]\r\n-        self.start_node(1)\r\n+        with self.nodes[1].assert_debug_log([\"[tor] Authentication successful\"]):\r\n+            self.start_node(1, extra_args=[\"-onlynet=onion\", \"-listenonion=1\"])\r\n         self.stop_node(1)\r\n```\r\n",
-      "commit_id" : "28ae912f501e1a09bd050dcf35ecf712374f743f",
+      "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-09-05T10:33:04Z",
       "diff_hunk" : "@@ -336,20 +336,29 @@ def networks_dict(d):\n         msg = \"Error: Invalid -i2psam address or hostname: 'def:xyz'\"\n         self.nodes[1].assert_start_raises_init_error(expected_msg=msg)\n \n+        self.log.info(\"Test passing -onlynet=onion with -onion=0/-noonion raises expected init error\")\n         msg = (\n             \"Error: Outbound connections restricted to Tor (-onlynet=onion) but \"\n-            \"the proxy for reaching the Tor network is not provided (no -proxy= \"\n-            \"and no -onion= given) or it is explicitly forbidden (-onion=0)\"\n+            \"the proxy for reaching the Tor network is explicitly forbidden: -onion=0\"\n         )\n-        self.log.info(\"Test passing -onlynet=onion without -proxy or -onion raises expected init error\")\n-        self.nodes[1].extra_args = [\"-onlynet=onion\"]\n-        self.nodes[1].assert_start_raises_init_error(expected_msg=msg)\n-\n-        self.log.info(\"Test passing -onlynet=onion with -onion=0/-noonion raises expected init error\")\n         for arg in [\"-onion=0\", \"-noonion\"]:\n             self.nodes[1].extra_args = [\"-onlynet=onion\", arg]\n             self.nodes[1].assert_start_raises_init_error(expected_msg=msg)\n \n+        self.log.info(\"Test passing -onlynet=onion without -proxy, -onion or -listenonion raises expected init error\")\n+        self.nodes[1].extra_args = [\"-onlynet=onion\", \"-listenonion=0\"]\n+        msg = (\n+            \"Error: The -onlynet=onion configuration option was passed to restrict outbound\"\n+            \" connections to Tor, but the proxy for reaching the Tor network was not\"\n+            \" provided: none of -proxy, -onion or -listenonion was given\"\n+        )\n+        self.nodes[1].assert_start_raises_init_error(expected_msg=msg)\n+\n+        self.log.info(\"Test passing -onlynet=onion without -proxy or -onion but with -listenonion=1 is ok\")\n+        self.nodes[1].extra_args = [\"-onlynet=onion\", \"-listenonion=1\"]\n+        self.start_node(1)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#discussion_r962755616",
       "id" : 962755616,
-      "line" : 359,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5845Ynwg",
       "original_commit_id" : "28ae912f501e1a09bd050dcf35ecf712374f743f",
       "original_line" : 359,
       "original_position" : 31,
       "original_start_line" : null,
       "path" : "test/functional/feature_proxy.py",
-      "position" : 31,
+      "position" : null,
       "pull_request_review_id" : 1096201497,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24991",
       "reactions" : {
@@ -1043,6 +1006,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-05T10:34:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/962755616",
       "user" : {
@@ -1078,7 +1042,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/963002512"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Would be good to have consistent wording here and for I2P and CJDNS in https://github.com/bitcoin/bitcoin/pull/25989.\r\n\r\n`master`:\r\n\r\n> Outbound connections restricted to Tor (-onlynet=onion) but the proxy for  reaching the Tor network is not provided ...\r\n\r\nthis PR:\r\n\r\n> Outbound connections restricted to Tor (-onlynet=onion) but the proxy for reaching the Tor network is explicitly forbidden: -onion=0\r\n\r\n> The -onlynet=onion configuration option was passed to restrict outbound connections to Tor, but the proxy for reaching the Tor network was not provided ...\r\n\r\nhttps://github.com/bitcoin/bitcoin/pull/25989\r\n\r\n> Outbound connections restricted to CJDNS (-onlynet=cjdns) but -cjdnsreachable is not provided\r\n\r\n> Outbound connections restricted to i2p (-onlynet=i2p) but -i2psam is not provided",
       "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-09-05T15:18:33Z",
@@ -1111,6 +1075,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-05T15:18:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/963002512",
       "user" : {
@@ -1135,7 +1100,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`28ae912f50...2d0b4e4ff6`: rebase because this was old (no clear conflicts though) + pick suggestion + reword error message for consistency with the other message in this PR and with https://github.com/bitcoin/bitcoin/pull/25989.\r\n\r\nInvalidates ACKs from @dunxen, @jonatack \r\n",
       "created_at" : "2022-09-05T15:56:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#issuecomment-1237245591",
@@ -1190,7 +1155,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/963030837"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I combined the two lines to one, as suggested.\r\n\r\nHowever, expecting \"[tor] Authentication successful\" in the log failed for me because it tried to talk to a Tor daemon on `127.0.0.1:9051`, not to the Python one from the testing framework at `self.conf2.addr`, because when overriding `extra_args` the setting `-onion=...` which was in `extra_args` is lost.",
       "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-09-05T16:04:00Z",
@@ -1223,6 +1188,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-05T16:04:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/963030837",
       "user" : {
@@ -1258,7 +1224,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/963031546"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I changed the second message in this PR to be consistent with the rest:\r\n\r\n> Outbound connections restricted to Tor (-onlynet=onion) but the proxy for reaching the Tor network is not provided: none of -proxy, -onion or -listenonion is given",
       "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-09-05T16:05:18Z",
@@ -1291,6 +1257,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-05T16:05:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/963031546",
       "user" : {
@@ -1326,7 +1293,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/963866133"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Since `DEFAULT_LISTEN_ONION=true`, this makes the InitError go away in some cases where it would be useful -  in particular in the (probably very typical) case where a user just starts `./bitcoind -onlynet=onion` without providing any additional configuration and hopes everything works together out of the box. The user would have to actively set `-listenonion=0` or `listen=0` to still get this error.\r\n\r\nI wonder if it might be more helpful to change the InitError to a info/warning (something along the lines of \"Did you maybe forgot to provide a tor proxy? Disregard this if you use torcontrol\") that is not conditional on `-listenonion` Not a strong suggestion though, I am not sure either way.",
       "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-09-06T15:39:57Z",
@@ -1358,6 +1325,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-06T15:49:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/963866133",
       "user" : {
@@ -1437,7 +1405,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/964691570"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> this makes the InitError go away in some cases where it would be useful ... `./bitcoind -onlynet=onion`\r\n\r\nThat is exactly the case where we do not want an init error -- the problem described in https://github.com/bitcoin/bitcoin/issues/24980 which this PR aims to fix. Because it could as well work out of the box, giving an init error is too strict and is relaxed by this PR.\r\n\r\nNow, it is true that we do not know for sure, at this stage, at startup, whether we would be able to connect to torcontrol and retrieve the proxy address from it. I think it is proper to allow startup and later, if the tor control thread fails to retrieve the proxy it will log the relevant error. That is similar (but not identical) to the case where `-proxy=` is given and at startup we do not know if it will work and actually proxy connections. Maybe later we would find out that nobody is listening on the given proxy address and will log an error then.\r\n\r\nThat is, we give init errors only if we are sure, guaranteed that it will not work.\r\n\r\n> I wonder if it might be more helpful to change the InitError to a info/warning\r\n\r\nI am a bit confused. Do you mean to keep the init error as it is in this PR, but in the case where we silently allow startup (the new relaxation in this PR) to log a warning? I think it would not be necessary because it could be annoying for the cases when all is ok. For the cases when it is not, then the tor control thread will log a proper message if/when the problem occurs. Also, \"Disregard this if you use torcontrol\" -- `-torcontrol` is irrelevant here -- even if not specified it has a reasonable default. The relevant setting is `-listenonion=1`.\r\n\r\nOff topic rant: I find the name `listenonion` confusing, it should be something like `-auto_create_tor_listening_service_via_torcontrol` because `-listenonion` does not control whether or not we _listen_ on `127.0.0.1:8334` and the tor service could be setup in `tor.conf` (the \"static\" way in which we should have `-listenonion=0`, but would still be listening and accepting incoming tor connections).",
       "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-09-07T10:53:53Z",
@@ -1470,6 +1438,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-07T10:53:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/964691570",
       "user" : {
@@ -1505,7 +1474,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/965187925"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I was just thinking about the scenario where a user installs and starts tor, then `./bitcoind -onlynet=onion`, but didn't setup a Onion Service as described in `tor.md` because they didn't read the doc.\r\nIn that case they wouldn't make outbound connections and I think also get no error or warning from the torcontrol Thread unless they have `debug=tor` enabled.\r\n",
       "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-09-07T19:13:12Z",
@@ -1538,6 +1507,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-07T19:13:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/965187925",
       "user" : {
@@ -1562,7 +1532,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Tested ACK 2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-09-07T19:13:29Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24991#issuecomment-1239776614",
@@ -1617,7 +1587,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/965680314"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> but didn't setup a Onion Service as described in `tor.md`\r\n\r\nThere are two ways - [automatic](https://github.com/bitcoin/bitcoin/blame/2557429d2b82fe5ba308b940bcf14c3047634345/doc/tor.md#L70) and [manual](https://github.com/bitcoin/bitcoin/blame/2557429d2b82fe5ba308b940bcf14c3047634345/doc/tor.md#L162), which one do you mean?\r\n\r\nWhat you describe above _could_ work with the automatic way:\r\n1. `bitcoind` finds the tor control at `127.0.0.1:9051` (no need to specify `-torcontrol=127.0.0.1:9051` since that is the default).\r\n2. The tor daemon tells `bitcoind` where is the tor cookie file and `bitcoind` is able to read it. Authentication is successful.\r\n3. `bitcoind` automatically creates the onion service and starts listening and accepting incoming tor connections (locally at `127.0.0.1:8334`)\r\n4. `bitcoind` retrieves the address of the socks5 tor proxy from tor control and sets `-onion` to it, for making outbound connections to tor peers.\r\n\r\nIf 2. fails then there will be some error in the log, either from [`TorController::auth_cb()`](https://github.com/bitcoin/bitcoin/blob/2557429d2b82fe5ba308b940bcf14c3047634345/src/torcontrol.cpp#L459) or from [`TorController::protocolinfo_cb()`](https://github.com/bitcoin/bitcoin/blob/2557429d2b82fe5ba308b940bcf14c3047634345/src/torcontrol.cpp#L562-L595).\r\n\r\nIf 4. fails, there will be an error from [`TorController::get_socks_cb()`](https://github.com/bitcoin/bitcoin/blob/2557429d2b82fe5ba308b940bcf14c3047634345/src/torcontrol.cpp#L337).",
       "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-09-08T08:47:34Z",
@@ -1650,6 +1620,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-08T08:47:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/965680314",
       "user" : {
@@ -1718,6 +1689,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-08T14:32:09Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/966047671",
       "user" : {
@@ -1753,7 +1725,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/966269858"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I mean the automatic way.\r\nIf step 1) is not successful, there will be  repeated messages:\r\n```\r\n[tor] Error connecting to Tor control socket\r\n[tor] Not connected to Tor control port 127.0.0.1:9051, trying to reconnect\r\n```\r\nthat are usually hidden in the `tor` debug category, because with `-listenonion=1` being the default, we probably don't even intend to use anything but clearnet and don't need to see those. These messages would become kind of relevant though if we used `-onlynet=onion` because we'd not find any peers without being able to find tor control, so it might be helpful to log something unconditionally in this case.\r\nBut these are logging nits that don't have to be discussed in this PR and certainly shouldn't hold it off, so I think you should just go ahead and resolve this thread.",
       "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-09-08T18:04:30Z",
@@ -1786,6 +1758,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-08T18:04:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/966269858",
       "user" : {
@@ -1821,7 +1794,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/967057251"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> ... a user installs and starts tor, then ./bitcoind -onlynet=onion ...\r\n\r\nFor 1. to fail, then tor is not listening on `127.0.0.1:9051` which it does by default. So, maybe the user did not install and start tor or did so, but fiddled with its config and changed the listening address.\r\n\r\nAnyway, maybe this change makes sense:\r\n\r\n```diff\r\n--- i/src/torcontrol.cpp\r\n+++ w/src/torcontrol.cpp\r\n@@ -612,13 +612,26 @@ void TorController::disconnected_cb(TorControlConnection& _conn)\r\n     if (service.IsValid())\r\n         RemoveLocal(service);\r\n     service = CService();\r\n     if (!reconnect)\r\n         return;\r\n\r\n-    LogPrint(BCLog::TOR, \"Not connected to Tor control port %s, trying to reconnect\\n\", m_tor_control_\r\n+    const auto onlynets = gArgs.GetArgs(\"-onlynet\");\r\n+    if (gArgs.IsArgSet(\"-onlynet\") &&\r\n+        std::any_of(onlynets.begin(), onlynets.end(), [](const auto& n) {\r\n+            return ParseNetwork(n) == NET_ONION;\r\n+        })) {\r\n+        LogPrintf(\"Not connected to Tor control port %s, trying to reconnect. \"\r\n+                  \"Use -listenonion=0 to disable the tor control thread.\\n\",\r\n+                  m_tor_control_center);\r\n+    } else {\r\n+        LogPrint(BCLog::TOR,\r\n+                 \"Not connected to Tor control port %s, trying to reconnect. \"\r\n+                 \"Use -listenonion=0 to disable the tor control thread.\\n\",\r\n+                 m_tor_control_center);\r\n+    }\r\n\r\n     // Single-shot timer for reconnect. Use exponential backoff.\r\n```\r\n\r\nKeep it in the debug log only if `-onlynet=onion` is not given, because for users that did not install tor and do not care about tor and just run `bitcoind` this would be just noise.",
       "commit_id" : "2d0b4e4ff66e60c85f86c526a53f8fb242ebb7d0",
       "created_at" : "2022-09-09T13:12:35Z",
@@ -1854,6 +1827,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-09T13:12:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/967057251",
       "user" : {

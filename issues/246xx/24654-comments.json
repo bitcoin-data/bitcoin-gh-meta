@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Changing the `Assert` macro to something like:\r\n\r\n```c++\r\nvoid assertion_fail(const char* file, int line, const char* func, const char* assertion)\r\n{\r\n    auto str = strprintf(\"%s:%s %s: Assertion `%s' failed.\\n\", file, line, func, assertion);\r\n    fwrite(str.data(), 1, str.size(), stderr);\r\n    std::abort();\r\n}\r\n\r\ntemplate <typename T>\r\ninline T inline_assertion_check(T&& val, const char* file, int line, const char* func, const char* assertion)\r\n{\r\n    if (!val) assertion_fail(file, line, func, assertion);\r\n    return std::forward<T>(val);\r\n}\r\n\r\n#define Assert(val) inline_assertion_check(val, __FILE__, __LINE__, __func__, #val)\r\n```\r\n\r\nmight work to avoid this -- that way `val` is evaluated in the original context where all the locks and this pointers are already known about. I'm not sure if this handles all C++'s various copy/move rules as well as the current Assert does though. It also gives up on re-using `assert()` and just manually reports file/line/function.",
       "created_at" : "2022-03-24T02:50:11Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24654#issuecomment-1077013976",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@sipa I can't convince myself that returning `T&&` wouldn't mess up lifetimes somehow and return a dangling reference... Trying it out, it seems like `T` as the return-type might invoke the move constructor while `T&&` might not, so what you say at least seems plausible. I think the current approach (with a lambda) also invokes the move constructor; though destruction happens in a different order...",
       "created_at" : "2022-03-25T13:53:04Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24654#issuecomment-1079050084",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@sipa I think my concern is that `f(1+2) + 4` might be interpreted as \"pass 3 to f, then destruct 3, then add 4 to whatever  f returned\" which would cause a problem if f were returning the 3 object that was just destructed. But I think \"[All temporary objects are destroyed as the last step in evaluating the full-expression that (lexically) contains the point where they were created,](https://en.cppreference.com/w/cpp/language/lifetime)\" means that's not allowed?",
       "created_at" : "2022-03-25T17:20:59Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24654#issuecomment-1079239416",
@@ -273,7 +273,7 @@
       "node_id" : "IC_kwDOABII585AVBES",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -281,7 +281,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1079251218/reactions"
       },
       "updated_at" : "2022-03-25T17:34:12Z",
@@ -308,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "https://github.com/ajtowns/bitcoin/commits/202203-assume has a couple of commits implementing this approach if anyone wants to take a look",
       "created_at" : "2022-03-26T03:06:46Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24654#issuecomment-1079580448",
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "PR'd as #24714",
       "created_at" : "2022-03-30T03:16:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24654#issuecomment-1082577941",

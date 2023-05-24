@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#23497](https://github.com/bitcoin/bitcoin/pull/23497) (Add `src/node/` and `src/wallet/` code to `node::` and `wallet::` namespaces by ryanofsky)\n* [#22932](https://github.com/bitcoin/bitcoin/pull/22932) (Guard CBlockIndex::nStatus by cs_main, require GetBlockPos/GetUndoPos to hold cs_main by jonatack)\n* [#15606](https://github.com/bitcoin/bitcoin/pull/15606) (assumeutxo by jamesob)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-01-05T06:32:59Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23974#issuecomment-1005418998",
@@ -55,9 +55,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/778853318"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"Make blockstorage globals private members of BlockManager\" (fad81b7a0f8ea300708321c3fcae7f75cade14ba)\r\n\r\nIs this a pure refactor, or is there some change in behavior here? It seems like these lines are being moved from `UnloadBlockIndex` to `BlockManager::Unload` but neither function is directly calling the other.\r\n\r\nIt might be good to move this change to a separate commit before the \"make private members\" commit with an explanation about why it's safe. Not saying it's unsafe. It's just not obviously safe.",
-      "commit_id" : "e33965474c93525d3e6fc5132018fc72d5520260",
+      "commit_id" : "fa68a6c2fc6754c160e0f98007785602201b3c47",
       "created_at" : "2022-01-05T14:19:54Z",
       "diff_hunk" : "@@ -348,6 +331,11 @@ void BlockManager::Unload()\n     }\n \n     m_block_index.clear();\n+\n+    vinfoBlockFile.clear();\n+    nLastBlockFile = 0;\n+    setDirtyBlockIndex.clear();\n+    setDirtyFileInfo.clear();",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23974#discussion_r778853318",
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-01-05T14:20:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/778853318",
       "user" : {
@@ -124,7 +125,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "`UnloadBlockIndex` calls `chainman.Unload()`, which again should call `BlockManager::Unload`. So only change should be the destruction order",
-      "commit_id" : "e33965474c93525d3e6fc5132018fc72d5520260",
+      "commit_id" : "fa68a6c2fc6754c160e0f98007785602201b3c47",
       "created_at" : "2022-01-05T14:23:11Z",
       "diff_hunk" : "@@ -348,6 +331,11 @@ void BlockManager::Unload()\n     }\n \n     m_block_index.clear();\n+\n+    vinfoBlockFile.clear();\n+    nLastBlockFile = 0;\n+    setDirtyBlockIndex.clear();\n+    setDirtyFileInfo.clear();",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23974#discussion_r778855826",
@@ -155,6 +156,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-01-05T14:23:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/778855826",
       "user" : {
@@ -190,9 +192,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/778868958"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> `UnloadBlockIndex` calls `chainman.Unload()`, which again should call `BlockManager::Unload`. So only change should be the destruction order\r\n\r\nSo there is no code in some other place calling `BlockManager::Unload` and now having extra state cleared?\r\n\r\nIf you put this change in a separate commit and explicitly say whether it's _supposed_ to change behavior and maybe say how it doesn't change behavior, it can make it easier for future reviewers and future regression bugfixers, who I think would logically be asking these questions.",
-      "commit_id" : "e33965474c93525d3e6fc5132018fc72d5520260",
+      "commit_id" : "fa68a6c2fc6754c160e0f98007785602201b3c47",
       "created_at" : "2022-01-05T14:39:07Z",
       "diff_hunk" : "@@ -348,6 +331,11 @@ void BlockManager::Unload()\n     }\n \n     m_block_index.clear();\n+\n+    vinfoBlockFile.clear();\n+    nLastBlockFile = 0;\n+    setDirtyBlockIndex.clear();\n+    setDirtyFileInfo.clear();",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23974#discussion_r778868958",
@@ -223,6 +225,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-01-05T14:39:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/778868958",
       "user" : {
@@ -291,6 +294,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-01-05T15:29:17Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/778912434",
       "user" : {
@@ -326,7 +330,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/779112149"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Thanks Ryan.\r\n\r\nOk, you finally convinced me",
       "commit_id" : "fa68a6c2fc6754c160e0f98007785602201b3c47",
       "created_at" : "2022-01-05T20:21:11Z",
@@ -359,6 +363,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-01-05T20:21:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/779112149",
       "user" : {
@@ -470,6 +475,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-07T12:17:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/780228630",
       "user" : {
@@ -537,6 +543,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-07T13:38:17Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/780267759",
       "user" : {
@@ -605,6 +612,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-08T08:40:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/780647277",
       "user" : {

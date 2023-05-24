@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "MEMBER",
+      "author_association" : "CONTRIBUTOR",
       "body" : "to test this out, reviewers can apply this diff locally\r\n\r\n```diff\r\n- bool CheckInputScripts(const CTransaction& tx, TxValidationState& state, const CCoinsViewCache& inputs, unsigned int flags, bool cacheSigStore, bool cacheFullScriptStore, PrecomputedTransactionData& txdata, std::vector<CScriptCheck>* pvChecks)\r\n+ RecursiveMutex cs_new;\r\n+ bool CheckInputScripts(const CTransaction& tx, TxValidationState& state, const CCoinsViewCache& inputs, unsigned int flags, bool cacheSigStore, bool cacheFullScriptStore, PrecomputedTransactionData& txdata, std::vector<CScriptCheck>* pvChecks) EXCLUSIVE_LOCKS_REQUIRED(cs_new)\r\n```\r\n\r\nand see that the compiler warns about the call site from `ConnectBlock`: \r\n```cpp\r\nvalidation.cpp:2136:35: warning: calling function 'CheckInputScripts' requires holding mutex 'cs_new' exclusively [-Wthread-safety-analysis]\r\n            if (fScriptChecks && !CheckInputScripts(tx, tx_state, view, flags, fCacheResults, fCacheResults, txsdata[i], g_parallel_script_checks ? &vChecks : nullptr)) {\r\n```\r\n\r\nbut there is no warning from the call site from `CheckInputsFromMempoolAndCache` or `PolicyScriptChecks`. \r\n\r\nthen you can apply the annotation to the declaration instead of the definition, and see that all the call sites generate warnings. ",
       "created_at" : "2021-02-16T19:53:49Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21202#issuecomment-780079853",
@@ -8,6 +8,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21202",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc4MDA3OTg1Mw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/780079853/reactions"
+      },
       "updated_at" : "2021-02-16T19:53:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/780079853",
       "user" : {
@@ -60,9 +72,22 @@
       "position" : null,
       "pull_request_review_id" : 591839377,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21202",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/577326939/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-02-17T23:58:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/577326939",
       "user" : {
@@ -115,9 +140,22 @@
       "position" : null,
       "pull_request_review_id" : 591840002,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21202",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/577327455/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-02-17T23:58:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/577327455",
       "user" : {
@@ -150,6 +188,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21202",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc4MDMwMTg3Ng==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/780301876/reactions"
+      },
       "updated_at" : "2021-02-17T05:06:59Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/780301876",
       "user" : {
@@ -185,7 +235,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/578028724"
          }
       },
-      "author_association" : "MEMBER",
+      "author_association" : "CONTRIBUTOR",
       "body" : "good call, added annotation there too.",
       "commit_id" : "25c57d640992255ed67964a44b17afbfd4bed0cf",
       "created_at" : "2021-02-17T23:59:38Z",
@@ -203,9 +253,22 @@
       "position" : null,
       "pull_request_review_id" : 592730315,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21202",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/578028724/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-02-17T23:59:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/578028724",
       "user" : {
@@ -241,7 +304,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/578028908"
          }
       },
-      "author_association" : "MEMBER",
+      "author_association" : "CONTRIBUTOR",
       "body" : "fixed",
       "commit_id" : "25c57d640992255ed67964a44b17afbfd4bed0cf",
       "created_at" : "2021-02-18T00:00:06Z",
@@ -259,9 +322,22 @@
       "position" : null,
       "pull_request_review_id" : 592730508,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21202",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/578028908/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-02-18T00:00:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/578028908",
       "user" : {
@@ -286,7 +362,7 @@
       }
    },
    {
-      "author_association" : "MEMBER",
+      "author_association" : "CONTRIBUTOR",
       "body" : "thanks for the review @hebasto, took all your suggestions.\r\n\r\n> If this pr a case to apply #20986?\r\n\r\ndone",
       "created_at" : "2021-02-18T00:00:44Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21202#issuecomment-780934661",
@@ -294,6 +370,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21202",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc4MDkzNDY2MQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/780934661/reactions"
+      },
       "updated_at" : "2021-02-18T00:00:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/780934661",
       "user" : {
@@ -326,6 +414,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21202",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc4MzIwMzY5Mw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/783203693/reactions"
+      },
       "updated_at" : "2021-02-22T08:46:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/783203693",
       "user" : {
@@ -350,7 +450,7 @@
       }
    },
    {
-      "author_association" : "MEMBER",
+      "author_association" : "CONTRIBUTOR",
       "body" : "@promag where are other examples of forward declaring functions from the tests? I see examples for other files eg. `denialofservice_tests` have declarations for orphan handling stuff from `net_processing`. But I'm not seeing other declarations for internal `validation.cpp` functions. I'm definitely open to the pattern of test-only header files, but in this case, seems like it might be a bit of overkill to have an additional header file for just one function? Unless I'm missing something?",
       "created_at" : "2021-02-22T19:33:57Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21202#issuecomment-783619761",
@@ -358,6 +458,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21202",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc4MzYxOTc2MQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/783619761/reactions"
+      },
       "updated_at" : "2021-02-22T19:33:57Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/783619761",
       "user" : {

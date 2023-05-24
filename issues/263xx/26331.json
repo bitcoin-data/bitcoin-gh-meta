@@ -6,7 +6,7 @@
    "body" : "Attempt to fix #26112.\r\n\r\nAs suggested by sipa in https://github.com/bitcoin/bitcoin/issues/26112#issuecomment-1249683401:\r\n> CCoinsViewErrorCatcher, the wrapper class used around CCoinsViewDB that's supposed to detect these problems and forcefully exit the application, has an override for GetCoins. But in CheckTxInputs, HaveInputs is first invoked, which on its turn calls HaveCoin. HaveCoin is implemented in CCoinsViewDB, but not in CCoinsViewErrorCatcher, and thus the disk read exception escapes.\r\n> A solution may be to just add an override for HaveCoin in CCoinsViewErrorCatcher.\r\n\r\nI implemented `CCoinsViewErrorCatcher::HaveCoin` and also added a periodic disk space check that shutdowns the node if there is not enough space left on disk, the minimum here is 50MB.\r\n\r\nFor reviewers, it's possible to saturate disk space to test the PR by creating large files with `fallocate -l 50G test.bin`",
    "closed_at" : null,
    "closed_by" : null,
-   "comments" : 0,
+   "comments" : 1,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26331/comments",
    "created_at" : "2022-10-18T09:29:31Z",
    "draft" : false,
@@ -44,7 +44,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26331/timeline",
    "title" : "Implement `CCoinsViewErrorCatcher::HaveCoin` and check disk space periodically",
-   "updated_at" : "2022-10-18T09:34:52Z",
+   "updated_at" : "2023-04-25T15:22:29Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26331",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/22493292?v=4",

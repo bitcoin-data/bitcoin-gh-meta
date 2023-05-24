@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2022-03-08T17:11:30Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24505#issuecomment-1062008731",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK 6c629fe292bbb14d65455158fa38e869bdb17921",
       "created_at" : "2022-03-10T07:05:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24505#issuecomment-1063730389",
@@ -365,7 +365,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "- s/opening/creating/\r\n- s/Legacy/legacy/\r\n- be unambiguous that the wallet was still created\r\n\r\nsuggestion:\r\n```suggestion\r\n        warnings.push_back(_(\"Wallet successfully created, but be aware that the legacy wallet type is expected to be deprecated, and support for creating legacy wallets may be removed in the future\"));\r\n```",
-      "commit_id" : "8118304df138d3da6f361f18d8a4c46f40a83708",
+      "commit_id" : "61152183ab18960c8b42cf22ff7168762946678e",
       "created_at" : "2022-03-10T10:14:43Z",
       "diff_hunk" : "@@ -275,6 +275,11 @@ std::shared_ptr<CWallet> CreateWallet(WalletContext& context, const std::string&\n         wallet_creation_flags |= WALLET_FLAG_BLANK_WALLET;\n     }\n \n+    // Legacy wallets are being deprecated, warn if a newly created wallet is legacy\n+    if (!(wallet_creation_flags & WALLET_FLAG_DESCRIPTORS)) {\n+        warnings.push_back(_(\"The Legacy wallet type is being deprecated. Support for opening Legacy wallets will be removed in the future\"));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24505#discussion_r823559300",
@@ -395,6 +395,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-10T10:19:37Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/823559300",
       "user" : {
@@ -476,7 +477,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Added `Wallet created successfully` and lowercase `legacy.` However there is no \"expected to be\" or \"may\" about the removal of the legacy wallet. It _will_ be removed in the future, whether that's in a few years, or in fifty. Additionally, this warning is to inform users that their newly created legacy wallet will have issues with being opened in the future. It's already created, so warning that creation will be removed is useless. `opening` is the correct word to use.",
-      "commit_id" : "8118304df138d3da6f361f18d8a4c46f40a83708",
+      "commit_id" : "61152183ab18960c8b42cf22ff7168762946678e",
       "created_at" : "2022-03-10T10:52:09Z",
       "diff_hunk" : "@@ -275,6 +275,11 @@ std::shared_ptr<CWallet> CreateWallet(WalletContext& context, const std::string&\n         wallet_creation_flags |= WALLET_FLAG_BLANK_WALLET;\n     }\n \n+    // Legacy wallets are being deprecated, warn if a newly created wallet is legacy\n+    if (!(wallet_creation_flags & WALLET_FLAG_DESCRIPTORS)) {\n+        warnings.push_back(_(\"The Legacy wallet type is being deprecated. Support for opening Legacy wallets will be removed in the future\"));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24505#discussion_r823592835",
@@ -507,6 +508,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-10T10:52:09Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/823592835",
       "user" : {
@@ -575,6 +577,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-10T11:56:27Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/823641988",
       "user" : {
@@ -611,7 +614,7 @@
          }
       },
       "author_association" : "MEMBER",
-      "body" : "missing space \r\n```text\r\n6. descriptors             (boolean, optional, default=true) Create a native descriptor wallet. The wallet will use descriptors internally to handle address creation.Setting to 'false' will create a legacy wallet, however the legacy wallet type is being deprecated andsupport for creating and opening legacy wallets will be removed in the future.\r\n```\r\nsuggested diff with added space and minor grammar fixups\r\n```suggestion\r\n                                                                       \" Setting to \\\"false\\\" will create a legacy wallet; however, the legacy wallet type is being deprecated and \"\r\n```",
+      "body" : "missing spaces\r\n```text\r\n6. descriptors             (boolean, optional, default=true) Create a native descriptor wallet. The wallet will use descriptors internally to handle address creation.Setting to 'false' will create a legacy wallet, however the legacy wallet type is being deprecated andsupport for creating and opening legacy wallets will be removed in the future.\r\n```\r\nsuggested diff with added spaces and minor grammar fixups\r\n```suggestion\r\n                                                                       \" Setting to \\\"false\\\" will create a legacy wallet; however, the legacy wallet type is being deprecated and \"\r\n```",
       "commit_id" : "61152183ab18960c8b42cf22ff7168762946678e",
       "created_at" : "2022-03-10T12:01:23Z",
       "diff_hunk" : "@@ -315,7 +315,9 @@ static RPCHelpMan createwallet()\n             {\"blank\", RPCArg::Type::BOOL, RPCArg::Default{false}, \"Create a blank wallet. A blank wallet has no keys or HD seed. One can be set using sethdseed.\"},\n             {\"passphrase\", RPCArg::Type::STR, RPCArg::Optional::OMITTED_NAMED_ARG, \"Encrypt the wallet with this passphrase.\"},\n             {\"avoid_reuse\", RPCArg::Type::BOOL, RPCArg::Default{false}, \"Keep track of coin reuse, and treat dirty and clean coins differently with privacy considerations in mind.\"},\n-            {\"descriptors\", RPCArg::Type::BOOL, RPCArg::Default{true}, \"Create a native descriptor wallet. The wallet will use descriptors internally to handle address creation\"},\n+            {\"descriptors\", RPCArg::Type::BOOL, RPCArg::Default{true}, \"Create a native descriptor wallet. The wallet will use descriptors internally to handle address creation.\"\n+                                                                       \"Setting to 'false' will create a legacy wallet, however the legacy wallet type is being deprecated and\"",
@@ -642,7 +645,8 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
-      "updated_at" : "2022-03-10T12:55:42Z",
+      "subject_type" : "line",
+      "updated_at" : "2022-03-13T16:04:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/823645834",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/2415484?v=4",
@@ -709,6 +713,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-10T12:03:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/823647433",
       "user" : {
@@ -777,6 +782,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-10T12:33:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/823670591",
       "user" : {
@@ -845,6 +851,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-10T12:33:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/823670636",
       "user" : {
@@ -913,7 +920,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "reACK 61152183ab18960c8b42cf22ff7168762946678e",
       "created_at" : "2022-03-14T07:17:20Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24505#issuecomment-1066453902",

@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\nA summary of reviews will appear here.\n",
       "created_at" : "2022-11-25T10:13:17Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26571#issuecomment-1327284379",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Are the interface_usdt_*.py functional test run for you in your local docker? I think they might be skipped anyway?",
       "created_at" : "2022-11-25T10:23:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26571#issuecomment-1327294936",
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > I don't think you can run this test in docker...\n> \n> > Yea. This doesn't work in Docker on Cirrus, and running locally it wouldn't work without at least modifying additional container permissions (not even sure it'd work then).\n> \n> > Are the interface_usdt_*.py functional test run for you in your local docker?\n> \n> On my Ubuntu 22.04:\n> ```\n> $ MAKEJOBS=\"-j16\" FILE_ENV=\"./ci/test/00_setup_env_native_asan.sh\" ./ci/test_run_all.sh\n> ...\n> interface_usdt_coinselection.py                        | â Skipped | 1 s\n> interface_usdt_net.py                                  | â Skipped | 1 s\n> interface_usdt_utxocache.py                            | â Skipped | 1 s\n> interface_usdt_validation.py                           | â Skipped | 1 s\n> ...\n> ```\n\nAs expected, the tests are skipped. The tests check for privileges (required to attach to the tracepoints via the Linux kernel) and I'd expect that most users will run their local CI with their unprivileged user.\n\nedit: To be clear: I think we should skip the install of the packages for local CI runs. Doesn't make sense to install the packages only for them not being used. ",
       "created_at" : "2022-11-27T16:42:19Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26571#issuecomment-1328291498",
@@ -440,7 +440,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > What system/kernel can you suggest me to try on to confirm or deny your conjecture?\r\n> \r\n> Not sure, but for example on Fedora 36 (fresh install):\r\n> \r\n> ```\r\n> $ dnf install podman -y\r\n> $ podman run -it --rm ubuntu:jammy\r\n> \r\n> export DEBIAN_FRONTEND=noninteractive && apt update && apt install htop git vim -y && git clone https://github.com/bitcoin/bitcoin.git ./bitcoin-core && cd ./bitcoin-core\r\n> \r\n> DANGER_RUN_CI_ON_HOST=\"1\" MAKEJOBS=\"-j9\" FILE_ENV=\"./ci/test/00_setup_env_native_asan.sh\" ./ci/test_run_all.sh\r\n> ```\r\n> \r\n> The failure will be:\r\n> \r\n> ```\r\n>  test  2022-11-28T09:52:31.579000Z TestFramework (INFO): hook into the coin_selection tracepoints \r\n>  test  2022-11-28T09:52:31.614000Z TestFramework (ERROR): Unexpected exception caught during testing \r\n>                                    Traceback (most recent call last):\r\n>                                      File \"/bitcoin-core/ci/scratch/build/bitcoin-x86_64-pc-linux-gnu/test/functional/test_framework/test_framework.py\", line 133, in main\r\n>                                        self.run_test()\r\n>                                      File \"/bitcoin-core/ci/scratch/build/bitcoin-x86_64-pc-linux-gnu/test/functional/interface_usdt_coinselection.py\", line 166, in run_test\r\n>                                        self.bpf = BPF(text=coinselection_tracepoints_program, usdt_contexts=[ctx], debug=0)\r\n>                                      File \"/usr/lib/python3/dist-packages/bcc/__init__.py\", line 476, in __init__\r\n>                                        raise Exception(\"Failed to compile BPF module %s\" % (src_file or \"<text>\"))\r\n>                                    Exception: Failed to compile BPF module <text>\r\n> \r\n> \r\n> interface_usdt_coinselection.py                        | â Failed  | 1 s\r\n> ```\r\n\r\nDocker containers don't bring their own kernel. They share the kernel from the host OS. Tracing with [bcc](https://github.com/iovisor/bcc) on a Ubuntu 22.04 container on a Ubuntu 22.04 works, because the kernel and the kernel headers used to compile the BPF byte code on the host and in the container are the same. Most other host OS and container OS combinations won't work.\r\n\r\nThere is libbpf (a new BPF library in the Linux kernel), which [as far as I understand](https://nakryiko.com/posts/bpf-portability-and-co-re/) should work in docker containers too. It would be nice to use this in the future, once there are Python bindings and its API is somewhat stable. An alternative is to run the tests in a VM...",
       "created_at" : "2022-11-28T11:01:06Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26571#issuecomment-1328886515",
@@ -572,7 +572,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Not sure. I think it is good to fail early instead of silently wasting several hours of CPU and then prod the dev to start from scratch.\r\n\r\nI would have proposed an alternative to this PR that only runs the USDT interface tests in Cirrus and never locally. But if I understand you correctly, that's not what we want, correct? Passing the CI locally first and then only falling in Cirrus wastes several hours of CPU and the dev needs to start from scratch.",
       "created_at" : "2022-11-28T12:10:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26571#issuecomment-1328971146",

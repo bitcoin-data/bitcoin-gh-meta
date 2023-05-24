@@ -11,9 +11,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/904003912"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "MEMBER",
       "body" : "This is not an issue in this test, but is it generally a concern that with this particular usage pattern the `spend_{2,3}[\"new_utxo\"]` remains in the MiniWallet's internal utxo list because of its addition through the preceding `wallet.sendrawtransaction` call?  and hence a subsequent usage of the `*_self_transfer` method might spend it?",
-      "commit_id" : "fa0b23211746d8c400fd7de51b1f3c5ecdaf4ccc",
+      "commit_id" : "fa83c0c44ff2072f7c3e56000edc805321bcf41a",
       "created_at" : "2022-06-22T16:40:10Z",
       "diff_hunk" : "@@ -68,10 +68,8 @@ def run_test(self):\n         assert_raises_rpc_error(-26, 'non-final', self.nodes[0].sendrawtransaction, timelock_tx)\n \n         self.log.info(\"Create spend_2_1 and spend_3_1\")\n-        spend_2_utxo = wallet.get_utxo(txid=spend_2['txid'])\n-        spend_2_1 = wallet.create_self_transfer(utxo_to_spend=spend_2_utxo)\n-        spend_3_utxo = wallet.get_utxo(txid=spend_3['txid'])\n-        spend_3_1 = wallet.create_self_transfer(utxo_to_spend=spend_3_utxo)\n+        spend_2_1 = wallet.create_self_transfer(utxo_to_spend=spend_2[\"new_utxo\"])\n+        spend_3_1 = wallet.create_self_transfer(utxo_to_spend=spend_3[\"new_utxo\"])",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25445#discussion_r904003912",
@@ -43,6 +43,7 @@
       "side" : "RIGHT",
       "start_line" : 71,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-06-22T17:15:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/904003912",
       "user" : {
@@ -83,8 +84,8 @@
          "heart" : 0,
          "hooray" : 0,
          "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
+         "rocket" : 1,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1164209109/reactions"
       },
       "updated_at" : "2022-06-23T09:57:01Z",
@@ -210,21 +211,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906223485"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "MEMBER",
       "body" : "maybe this should now mention that it also removes spent utxos? something like \"...and update the internal utxo list\" instead of \"add\"",
-      "commit_id" : "fa0b23211746d8c400fd7de51b1f3c5ecdaf4ccc",
+      "commit_id" : "fa83c0c44ff2072f7c3e56000edc805321bcf41a",
       "created_at" : "2022-06-24T16:32:11Z",
       "diff_hunk" : "@@ -110,13 +113,22 @@ def rescan_utxos(self):\n         res = self._test_node.scantxoutset(action=\"start\", scanobjects=[self.get_descriptor()])\n         assert_equal(True, res['success'])\n         for utxo in res['unspents']:\n-            self._utxos.append({'txid': utxo['txid'], 'vout': utxo['vout'], 'value': utxo['amount'], 'height': utxo['height']})\n+            self._utxos.append(self._create_utxo(txid=utxo[\"txid\"], vout=utxo[\"vout\"], value=utxo[\"amount\"], height=utxo[\"height\"]))\n \n     def scan_tx(self, tx):\n         \"\"\"Scan the tx for self._scriptPubKey outputs and add them to self._utxos\"\"\"",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25445#discussion_r906223485",
       "id" : 906223485,
-      "line" : 119,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5842A999",
       "original_commit_id" : "fa0b23211746d8c400fd7de51b1f3c5ecdaf4ccc",
       "original_line" : 119,
       "original_position" : 18,
       "original_start_line" : null,
       "path" : "test/functional/test_framework/wallet.py",
-      "position" : 18,
+      "position" : null,
       "pull_request_review_id" : 1018713555,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25445",
       "reactions" : {
@@ -242,6 +243,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-24T17:02:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906223485",
       "user" : {
@@ -310,6 +312,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T09:11:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907158292",
       "user" : {
@@ -334,7 +337,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "MEMBER",
       "body" : "re-ACK fa83c0c44ff2072f7c3e56000edc805321bcf41a ð",
       "created_at" : "2022-06-27T12:41:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25445#issuecomment-1167303868",
@@ -422,6 +425,7 @@
       "side" : "RIGHT",
       "start_line" : 71,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T13:01:27Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907363127",
       "user" : {
@@ -457,7 +461,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907404690"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "MEMBER",
       "body" : "I would agree that is not such of a big deal, maybe until this kind of usage leads to unexpected behavior. I cannot see a way to prevent that, and neither I checked for existing or thought about future cases where usage of node's `sendrawtransaction` & `generate` might be required alongside MiniWallet usage. ",
       "commit_id" : "fa83c0c44ff2072f7c3e56000edc805321bcf41a",
       "created_at" : "2022-06-27T13:41:42Z",
@@ -490,6 +494,7 @@
       "side" : "RIGHT",
       "start_line" : 71,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T13:41:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907404690",
       "user" : {
@@ -511,6 +516,50 @@
          "subscriptions_url" : "https://api.github.com/users/kouloumos/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/kouloumos"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Posthumous crACK; looks good!",
+      "created_at" : "2022-06-27T14:23:08Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25445#issuecomment-1167420009",
+      "id" : 1167420009,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25445",
+      "node_id" : "IC_kwDOABII585FlWpp",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1167420009/reactions"
+      },
+      "updated_at" : "2022-06-27T14:23:08Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1167420009",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/73197?v=4",
+         "events_url" : "https://api.github.com/users/jamesob/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jamesob/followers",
+         "following_url" : "https://api.github.com/users/jamesob/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jamesob/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jamesob",
+         "id" : 73197,
+         "login" : "jamesob",
+         "node_id" : "MDQ6VXNlcjczMTk3",
+         "organizations_url" : "https://api.github.com/users/jamesob/orgs",
+         "received_events_url" : "https://api.github.com/users/jamesob/received_events",
+         "repos_url" : "https://api.github.com/users/jamesob/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jamesob/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jamesob"
       }
    }
 ]

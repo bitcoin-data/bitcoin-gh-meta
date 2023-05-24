@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "Fixes #24076\r\n\r\nCoinstatsindex currently writes the MuHash (`DB_MUHASH`) to disk in `CoinStatsIndex::WriteBlock()` and `CoinStatsIndex::ReverseBlock()`, but the best synced block is written in `BaseIndex::Commit()`. These are called at different points in time, both during the ThreadSync phase, and also after the initial sync is finished and validation callbacks (`BlockConnected()` vs `ChainStateFlushed()`) perform the syncing.\r\n\r\nAs a result, the index DB is temporarily in an inconsistent state, and if bitcoind is terminated uncleanly (so that there is no time to call `Commit()` by receiving an interrupt or by flushing the chainstate) this leads to problems:\r\nOn the next startup, `Init()` will read the best block and a MuHash that corresponds to a different (higher) block. Indexing will  be picked up at the the best block processing some blocks again, but since MuHash is a rolling hash, it will process some utxos twice and the muhashes for all future blocks will be wrong, as was observed in #24076.\r\n\r\nFix this by always committing `DB_MUHASH` together with `DB_BEST_BLOCK`.\r\n\r\nNote that the block data for the index is still written at different times, but this does not corrupt the index - at worst, these entries will be processed another time and overwritten after an unclean shutdown and restart.",
    "closed_at" : "2022-03-09T10:45:32Z",
    "closed_by" : {
@@ -44,7 +44,7 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24138/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "PR_kwDOABII584xf5t0",
    "number" : 24138,
@@ -70,9 +70,10 @@
    },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24138/timeline",
    "title" : "index: Commit MuHash and best block together for coinstatsindex",
-   "updated_at" : "2022-03-09T10:49:49Z",
+   "updated_at" : "2023-03-09T10:18:14Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24138",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/48763452?v=4",

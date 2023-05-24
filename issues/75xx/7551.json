@@ -1,11 +1,12 @@
 {
+   "active_lock_reason" : "resolved",
    "assignee" : null,
    "assignees" : [],
    "author_association" : "CONTRIBUTOR",
    "body" : "As discussed in PR https://github.com/bitcoin/bitcoin/pull/6570 this is a new rpc call `importmulti` that receives an array of JSON objects representing the intention of importing a public key, a private key, an address and script/p2sh:\n\n```\nbitcoin-cli importmulti '[\n  {\n    \"timestamp\": 1455191478,\n    \"type\": \"privkey\",\n    \"value\": \"<private key>\"\n  },\n  {\n    \"label\": \"example 1\",\n    \"timestamp\": 1455191480,\n    \"type\": \"pubkey\",\n    \"value\": \"<public key>\"\n  }\n]' '{\"rescan\":true}'\n```\n\nand rescans (if not disabled in second argument) the chain from the block that has a timestamp lowest than the lowest timestamp found in all requests, preventing scanning from genesis.\n\nThe output is an array with the status of each request:\n\n```\noutput: [ { \"result\": true } , { \"result\": true } ]\n```\n\nArguments:\n\n```\n1. json request array     (json, required) Data to be imported\n  [\n    {\n      \"type\": \"privkey | pubkey | address | script\", (string, required) Type of address\n      \"value\": \"...\",                       (string, required) Value of the address\n      \"timestamp\": 1454686740,              (integer, optional) Timestamp\n      \"label\": \"...\"                        (string, optional) Label\n      \"p2sh\": true | false                  (bool, optional, default=false) Value is a P2SH (type=script only)\n    }\n  ,...\n  ]\n2. json options                 (json, optional) Options\n```\n\nSome notes: \n- If one of the import requests has no timestamp then it should rescan from Genesis (if rescan is not disabled).\n- If all requests fail then it won't rescan the chain. \n\n**Edit**: As suggested by @promag i've replaced the second argument (optional) `bool` to JSON to be easier specify new options and added a new `type=\"script\"` to support only script values, so can `type=\"address\"` work only with addresses. \n",
    "closed_at" : "2016-10-20T07:04:46Z",
    "closed_by" : {
-      "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=4",
       "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
       "followers_url" : "https://api.github.com/users/laanwj/followers",
       "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
@@ -27,6 +28,7 @@
    "comments" : 61,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/7551/comments",
    "created_at" : "2016-02-17T17:45:12Z",
+   "draft" : false,
    "events_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/7551/events",
    "html_url" : "https://github.com/bitcoin/bitcoin/pull/7551",
    "id" : 134350874,
@@ -34,6 +36,7 @@
       {
          "color" : "7cf575",
          "default" : false,
+         "description" : null,
          "id" : 64583,
          "name" : "Feature",
          "node_id" : "MDU6TGFiZWw2NDU4Mw==",
@@ -42,6 +45,7 @@
       {
          "color" : "08a781",
          "default" : false,
+         "description" : null,
          "id" : 149424,
          "name" : "Wallet",
          "node_id" : "MDU6TGFiZWwxNDk0MjQ=",
@@ -49,13 +53,13 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/7551/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : {
       "closed_at" : "2017-03-08T16:39:44Z",
       "closed_issues" : 156,
       "created_at" : "2016-06-13T14:18:51Z",
       "creator" : {
-         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
          "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
          "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
          "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
@@ -89,19 +93,35 @@
    },
    "node_id" : "MDExOlB1bGxSZXF1ZXN0NTk2ODEyNzg=",
    "number" : 7551,
+   "performed_via_github_app" : null,
    "pull_request" : {
       "diff_url" : "https://github.com/bitcoin/bitcoin/pull/7551.diff",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/7551",
+      "merged_at" : "2016-10-20T07:04:46Z",
       "patch_url" : "https://github.com/bitcoin/bitcoin/pull/7551.patch",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/7551"
    },
+   "reactions" : {
+      "+1" : 0,
+      "-1" : 0,
+      "confused" : 0,
+      "eyes" : 0,
+      "heart" : 0,
+      "hooray" : 0,
+      "laugh" : 0,
+      "rocket" : 0,
+      "total_count" : 0,
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/7551/reactions"
+   },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
+   "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/7551/timeline",
    "title" : "Add importmulti RPC call",
-   "updated_at" : "2016-10-25T05:34:51Z",
+   "updated_at" : "2021-09-08T11:41:54Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/7551",
    "user" : {
-      "avatar_url" : "https://avatars3.githubusercontent.com/u/4319748?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/4319748?v=4",
       "events_url" : "https://api.github.com/users/pedrobranco/events{/privacy}",
       "followers_url" : "https://api.github.com/users/pedrobranco/followers",
       "following_url" : "https://api.github.com/users/pedrobranco/following{/other_user}",

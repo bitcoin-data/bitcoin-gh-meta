@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "This PR attempts to fix an intermittent Init issue encountered during the stress testing of #23289, which relates to the pruning-compatible filter reconstruction logic introduced in #15946. \r\n\r\nThe problem would occur when the node starts with `-txindex=1` but `ThreadSync` is interrupted after it sets `m_best_block_index` to Genesis, and before it gets do any further work.\r\nIn that case, during the next restart of the node, an Init error would be thrown because  `BaseIndex::Init()` tries to backtrack from the tip to the last block which has been successfully indexed (here: Genesis), but the backtracking logic didn't work properly in this case: \r\nThe loop \r\n`while (block_to_test && block->pprev && (block->pprev->nStatus & BLOCK_HAVE_DATA))` checks if a predecessor exists **before** performing the check `block_to_test == block` and then possbily setting `prune_violation = false` \r\nIf `block_to_test` and `block` are the Genesis block this check will not be reached because `block->pprev` does not exist.\r\n\r\nTo reproduce this bug on regtest:\r\n1) start a node with a fresh datadir using `-txindex=1` (or any other index)\r\n2) stop and restart without any index\r\n3) mine a block\r\n3) stop and restart again with the index enabled \r\n->InitError `Error: txindex best block of the index goes beyond pruned data. (...)`\r\n\r\nFix this by requiring that we have the data for the block of the current iteration `block` (instead of requiring it for the predecessor `block->pprev`) \r\nThat way, the check for `block_to_test == block` is also reached when `block_to_test` is the Genesis block.\r\nNo longer requiring the data of `block->pprev` also means that we can now prune up to `m_best_block_index` height without requiring a reindex (one block more than before). I added this edge case to `feature_blockfilterindex_prune.py`, the new version should fail on master.\r\n\r\n",
    "closed_at" : "2021-12-13T12:39:15Z",
    "closed_by" : {
@@ -44,7 +44,7 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/23365/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "PR_kwDOABII584ttaK8",
    "number" : 23365,
@@ -70,9 +70,10 @@
    },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/23365/timeline",
    "title" : "index: Fix backwards search for bestblock",
-   "updated_at" : "2021-12-13T12:39:15Z",
+   "updated_at" : "2022-12-14T10:02:58Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/23365",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/48763452?v=4",

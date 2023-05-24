@@ -308,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK af7a40c1830c16cb0005a4fb121f631e01be9f80\r\n(the previous push with the two changes)\r\n\r\nBoth warnings are legit because no move will happen in either case.\r\n\r\nBut consider this, like @sipa suggested above, would avoid copying:\r\n\r\n<details>\r\n<summary>diff</summary>\r\n\r\n```diff\r\ndiff --git i/src/chain.cpp w/src/chain.cpp\r\nindex 19c35b5012..66a0830394 100644\r\n--- i/src/chain.cpp\r\n+++ w/src/chain.cpp\r\n@@ -46,13 +46,13 @@ std::vector<uint256> LocatorEntries(const CBlockIndex* index)\r\n     }\r\n     return have;\r\n }\r\n\r\n CBlockLocator GetLocator(const CBlockIndex* index)\r\n {\r\n-    return CBlockLocator{std::move(LocatorEntries(index))};\r\n+    return CBlockLocator{LocatorEntries(index)};\r\n }\r\n\r\n CBlockLocator CChain::GetLocator() const\r\n {\r\n     return ::GetLocator(Tip());\r\n }\r\ndiff --git i/src/primitives/block.h w/src/primitives/block.h\r\nindex 76aba6c899..8c51d280b8 100644\r\n--- i/src/primitives/block.h\r\n+++ w/src/primitives/block.h\r\n@@ -120,13 +120,13 @@ public:\r\n struct CBlockLocator\r\n {\r\n     std::vector<uint256> vHave;\r\n\r\n     CBlockLocator() {}\r\n\r\n-    explicit CBlockLocator(const std::vector<uint256>& vHaveIn) : vHave(vHaveIn) {}\r\n+    explicit CBlockLocator(std::vector<uint256>&& vHaveIn) : vHave(std::move(vHaveIn)) {}\r\n\r\n     SERIALIZE_METHODS(CBlockLocator, obj)\r\n     {\r\n         int nVersion = s.GetVersion();\r\n         if (!(s.GetType() & SER_GETHASH))\r\n             READWRITE(nVersion);\r\n```\r\n</details>\r\n",
       "created_at" : "2022-08-31T12:54:58Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25963#issuecomment-1232901221",
@@ -484,7 +484,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "With a by-value argument there is construct+move+move, with an rval argument, there is construct+move:\r\n\r\n<details>\r\n<summary>rv.cc</summary>\r\n\r\n```cpp\r\n#include <iostream>\r\n\r\n/* The rule of five. */\r\nclass R5\r\n{\r\npublic:\r\n    R5(int x, double y)\r\n    {\r\n        x_ = x;\r\n        y_ = y;\r\n        std::cout << \"R5::R5() this=\" << this << \" x=\" << x_ << \", y=\" << y_ << std::endl;\r\n    }\r\n\r\n    ~R5()\r\n    {\r\n        std::cout << \"R5::~R5() this=\" << this << \" x=\" << x_ << \", y=\" << y_ << std::endl;\r\n    }\r\n\r\n    R5(const R5& other)\r\n    {\r\n        std::cout << \"R5::R5(const R5&) this=\" << this << \" other=\" << &other << \" x=\" << other.x_\r\n                  << \", y=\" << other.y_ << std::endl;\r\n        x_ = other.x_;\r\n        y_ = other.y_;\r\n    }\r\n\r\n    R5(R5&& other)\r\n    {\r\n        std::cout << \"R5::R5(R5&&) this=\" << this << \" other=\" << &other << \" x=\" << other.x_\r\n                  << \", y=\" << other.y_ << std::endl;\r\n        x_ = other.x_;\r\n        y_ = other.y_;\r\n        other.x_ = 0;\r\n        other.y_ = 0;\r\n    }\r\n\r\n    R5& operator=(const R5& other)\r\n    {\r\n        std::cout << \"R5::operator=(const R5&) this=\" << this << \" x=\" << x_ << \", y=\" << y_\r\n                  << \" other=\" << &other << \" x=\" << other.x_ << \", y=\" << other.y_ << std::endl;\r\n        x_ = other.x_;\r\n        y_ = other.y_;\r\n        return *this;\r\n    }\r\n\r\n    R5& operator=(R5&& other)\r\n    {\r\n        std::cout << \"R5::operator=(R5&&) this=\" << this << \" x=\" << x_ << \", y=\" << y_\r\n                  << \" other=\" << &other << \" x=\" << other.x_ << \", y=\" << other.y_ << std::endl;\r\n        x_ = other.x_;\r\n        y_ = other.y_;\r\n        other.x_ = 0;\r\n        other.y_ = 0;\r\n        return *this;\r\n    }\r\n\r\n    std::ostream& operator<<(std::ostream& os) { return os << \"(x=\" << x_ << \", y=\" << y_ << \")\"; }\r\n\r\n    int x_;\r\n    double y_;\r\n};\r\n\r\nclass CBlockLocator\r\n{\r\npublic:\r\n#if 0\r\n    explicit CBlockLocator(R5 r5) : m_r5{std::move(r5)} {}\r\n#else\r\n    explicit CBlockLocator(R5&& r5) : m_r5{std::move(r5)} {}\r\n#endif\r\n\r\n    R5 m_r5;\r\n};\r\n\r\nCBlockLocator f3()\r\n{\r\n    R5 r5{2, 3.4};\r\n    return CBlockLocator{std::move(r5)};\r\n}\r\n\r\nint main(int, char**)\r\n{\r\n    f3();\r\n    return 0;\r\n}\r\n```\r\n\r\n</details>\r\n\r\noutput with `R5 r5` arg:\r\n\r\n```\r\nR5::R5() this=0x7fffffffe5e8 x=2, y=3.4\r\nR5::R5(R5&&) this=0x7fffffffe5d8 other=0x7fffffffe5e8 x=2, y=3.4\r\nR5::R5(R5&&) this=0x7fffffffe610 other=0x7fffffffe5d8 x=2, y=3.4\r\nR5::~R5() this=0x7fffffffe5d8 x=0, y=0\r\nR5::~R5() this=0x7fffffffe5e8 x=0, y=0\r\nR5::~R5() this=0x7fffffffe610 x=2, y=3.4\r\n```\r\n\r\noutput with `R5&& r5` arg:\r\n\r\n```\r\nR5::R5() this=0x7fffffffe5e8 x=2, y=3.4\r\nR5::R5(R5&&) this=0x7fffffffe610 other=0x7fffffffe5e8 x=2, y=3.4\r\nR5::~R5() this=0x7fffffffe5e8 x=0, y=0\r\nR5::~R5() this=0x7fffffffe610 x=2, y=3.4\r\n```\r\n",
       "created_at" : "2022-08-31T13:28:05Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25963#issuecomment-1232939426",
@@ -581,7 +581,7 @@
       "node_id" : "IC_kwDOABII585JfdDC",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -589,7 +589,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1232982210/reactions"
       },
       "updated_at" : "2022-08-31T14:02:51Z",
@@ -613,6 +613,50 @@
          "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> With a by-value argument there is construct+move+move, with an rval argument, there is construct+move:\r\n> rv.cc\r\n> \r\n> ```\r\n> output with `R5 r5` arg:\r\n> \r\n> ```\r\n> R5::R5() this=0x7fffffffe5e8 x=2, y=3.4\r\n> R5::R5(R5&&) this=0x7fffffffe5d8 other=0x7fffffffe5e8 x=2, y=3.4\r\n> R5::R5(R5&&) this=0x7fffffffe610 other=0x7fffffffe5d8 x=2, y=3.4\r\n> R5::~R5() this=0x7fffffffe5d8 x=0, y=0\r\n> R5::~R5() this=0x7fffffffe5e8 x=0, y=0\r\n> R5::~R5() this=0x7fffffffe610 x=2, y=3.4\r\n> ```\r\n> \r\n> output with `R5&& r5` arg:\r\n> \r\n> ```\r\n> R5::R5() this=0x7fffffffe5e8 x=2, y=3.4\r\n> R5::R5(R5&&) this=0x7fffffffe610 other=0x7fffffffe5e8 x=2, y=3.4\r\n> R5::~R5() this=0x7fffffffe5e8 x=0, y=0\r\n> R5::~R5() this=0x7fffffffe610 x=2, y=3.4\r\n> ```\r\n\r\n@vasild nice! Reproduced this locally for fun.\r\n\r\n```bash\r\nâ¿ g++ by-val-versus-rval.cpp && ./a.out \r\nR5::R5() this=0x7ffe5de81ea0 x=2, y=3.4\r\nR5::R5(R5&&) this=0x7ffe5de81eb0 other=0x7ffe5de81ea0 x=2, y=3.4\r\nR5::R5(R5&&) this=0x7ffe5de81ef0 other=0x7ffe5de81eb0 x=2, y=3.4\r\nR5::~R5() this=0x7ffe5de81eb0 x=0, y=0\r\nR5::~R5() this=0x7ffe5de81ea0 x=0, y=0\r\nR5::~R5() this=0x7ffe5de81ef0 x=2, y=3.4\r\n\r\nâ¿ g++ by-val-versus-rval.cpp && ./a.out \r\nR5::R5() this=0x7ffea6450b90 x=2, y=3.4\r\nR5::R5(R5&&) this=0x7ffea6450bd0 other=0x7ffea6450b90 x=2, y=3.4\r\nR5::~R5() this=0x7ffea6450b90 x=0, y=0\r\nR5::~R5() this=0x7ffea6450bd0 x=2, y=3.4 \r\n```",
+      "created_at" : "2022-09-02T10:05:28Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25963#issuecomment-1235313908",
+      "id" : 1235313908,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25963",
+      "node_id" : "IC_kwDOABII585JoWT0",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1235313908/reactions"
+      },
+      "updated_at" : "2022-09-02T10:05:28Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1235313908",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
       }
    }
 ]

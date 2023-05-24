@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "During IBD, there is the following stalling mechanism if we can't proceed with assigning blocks from a 1024 lookahead window because all of these blocks are either already downloaded or in-flight: We'll mark the peer from which we expect the current block that would allow us to advance our tip (and thereby move the 1024 window ahead) as a possible staller. We then give this peer 2 more seconds to deliver a block (`BLOCK_STALLING_TIMEOUT`) and if it doesn't, disconnect it and assign the critical block we need to another peer. \r\n\r\nNow the problem is that this second peer is immediately marked as a potential staller using the same mechanism and given 2 seconds as well - if our own connection is so slow that it simply takes us more than 2 seconds to download this block, that peer will also be disconnected (and so on...), leading to repeated disconnections and no progress in IBD. This has been described in #9213, and I have observed this when doing IBD  on slower connections or with Tor - sometimes there would be several minutes without progress, where all we did was disconnect peers and find new ones.\r\n\r\nThe `2s` stalling timeout was introduced in #4468, when blocks weren't full and before Segwit increased the maximum possible physical size of blocks - so I think it made a lot of sense back then.\r\nBut it would be good to revisit this timeout now. \r\n\r\nThis PR makes the timout adaptive (idea by sipa):\r\nIf we disconnect a peer for stalling, we now double the timeout for the next peer (up to a maximum of 64s). If we connect a block, we half it again up to the old value of 2 seconds. That way, peers that are comparatively slower will still get disconnected, but long phases of disconnecting all peers shouldn't happen anymore.\r\n\r\nFixes #9213",
    "closed_at" : "2023-01-27T06:54:24Z",
    "closed_by" : {
@@ -73,7 +73,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25880/timeline",
    "title" : "p2p: Make stalling timeout adaptive during IBD",
-   "updated_at" : "2023-01-27T06:54:24Z",
+   "updated_at" : "2023-01-27T20:56:15Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25880",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/48763452?v=4",

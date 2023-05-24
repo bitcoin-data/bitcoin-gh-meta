@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@kroese could you check if this solves your problem from #25688?",
       "created_at" : "2022-07-24T11:05:41Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25688#issuecomment-1193294731",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "Concept ACK ",
       "created_at" : "2022-07-24T11:38:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25688#issuecomment-1193299885",
@@ -111,24 +111,24 @@
       "updated_at" : "2022-07-24T11:38:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1193299885",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Concept NACK. `-torcontrol` _should_ override `-proxy`. (Plus, using GetProxy for the check will fail to update it when/if it changes during runtime.)\r\n\r\nFor anyone interested in following, I answered [here](https://github.com/bitcoin/bitcoin/issues/25265#issuecomment-1195891852). I would say let's keep the conceptual discussion about parameter interaction in the issue @luke-jr, so we don't have to argue the same things in two places.",
       "created_at" : "2022-07-26T19:31:18Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25688#issuecomment-1195894822",
@@ -220,7 +220,143 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25688#discussion_r948662168"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25688"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/948662168"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit: \"to set proxy\" sounds like it will set the proxy for all, ie `-proxy`. Maybe \"... to set the onion proxy\" or \"... to set it\" would be better?",
+      "commit_id" : "5624a45d8cb939ca335a674fc536e97c1583da73",
+      "created_at" : "2022-08-18T05:27:08Z",
+      "diff_hunk" : "@@ -441,10 +441,17 @@ void TorController::auth_cb(TorControlConnection& _conn, const TorControlReply&\n     if (reply.code == 250) {\n         LogPrint(BCLog::TOR, \"Authentication successful\\n\");\n \n-        // Now that we know Tor is running setup the proxy for onion addresses\n-        // if -onion isn't set to something else.\n-        if (gArgs.GetArg(\"-onion\", \"\") == \"\") {\n-            _conn.Command(\"GETINFO net/listeners/socks\", std::bind(&TorController::get_socks_cb, this, std::placeholders::_1, std::placeholders::_2));\n+        // Now that we know Tor is running, setup the proxy for onion addresses\n+        // if -onion or -proxy has not set it to something else yet.\n+        Proxy maybe_proxy;\n+        if (GetProxy(NET_ONION, maybe_proxy)) {\n+            LogPrint(BCLog::TOR, \"Onion proxy already configured for %s\\n\", maybe_proxy.proxy.ToStringIPPort());\n+        } else {\n+            if (gArgs.GetArg(\"-onion\", \"\") != \"0\" && gArgs.GetArg(\"-proxy\", \"\") != \"0\") {\n+                // Don't do this if -onion or -proxy are explicitly disabled\n+                LogPrint(BCLog::TOR, \"Onion proxy not configured yet. Trying to use TorControl connection to set proxy.\\n\");",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25688#discussion_r948662168",
+      "id" : 948662168,
+      "line" : 452,
+      "node_id" : "PRRC_kwDOABII5844i2-Y",
+      "original_commit_id" : "5624a45d8cb939ca335a674fc536e97c1583da73",
+      "original_line" : 452,
+      "original_position" : 25,
+      "original_start_line" : null,
+      "path" : "src/torcontrol.cpp",
+      "position" : 25,
+      "pull_request_review_id" : 1076714558,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25688",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/948662168/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-08-19T08:14:11Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/948662168",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/266751?v=4",
+         "events_url" : "https://api.github.com/users/vasild/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vasild/followers",
+         "following_url" : "https://api.github.com/users/vasild/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vasild/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vasild",
+         "id" : 266751,
+         "login" : "vasild",
+         "node_id" : "MDQ6VXNlcjI2Njc1MQ==",
+         "organizations_url" : "https://api.github.com/users/vasild/orgs",
+         "received_events_url" : "https://api.github.com/users/vasild/received_events",
+         "repos_url" : "https://api.github.com/users/vasild/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vasild/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vasild"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25688#discussion_r948662508"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25688"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/948662508"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit: can use `} else if (...) {` which would reduce the indentation of the block below",
+      "commit_id" : "5624a45d8cb939ca335a674fc536e97c1583da73",
+      "created_at" : "2022-08-18T05:27:49Z",
+      "diff_hunk" : "@@ -441,10 +441,17 @@ void TorController::auth_cb(TorControlConnection& _conn, const TorControlReply&\n     if (reply.code == 250) {\n         LogPrint(BCLog::TOR, \"Authentication successful\\n\");\n \n-        // Now that we know Tor is running setup the proxy for onion addresses\n-        // if -onion isn't set to something else.\n-        if (gArgs.GetArg(\"-onion\", \"\") == \"\") {\n-            _conn.Command(\"GETINFO net/listeners/socks\", std::bind(&TorController::get_socks_cb, this, std::placeholders::_1, std::placeholders::_2));\n+        // Now that we know Tor is running, setup the proxy for onion addresses\n+        // if -onion or -proxy has not set it to something else yet.\n+        Proxy maybe_proxy;\n+        if (GetProxy(NET_ONION, maybe_proxy)) {\n+            LogPrint(BCLog::TOR, \"Onion proxy already configured for %s\\n\", maybe_proxy.proxy.ToStringIPPort());\n+        } else {\n+            if (gArgs.GetArg(\"-onion\", \"\") != \"0\" && gArgs.GetArg(\"-proxy\", \"\") != \"0\") {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25688#discussion_r948662508",
+      "id" : 948662508,
+      "line" : 450,
+      "node_id" : "PRRC_kwDOABII5844i3Ds",
+      "original_commit_id" : "5624a45d8cb939ca335a674fc536e97c1583da73",
+      "original_line" : 450,
+      "original_position" : 23,
+      "original_start_line" : 449,
+      "path" : "src/torcontrol.cpp",
+      "position" : 23,
+      "pull_request_review_id" : 1076714558,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25688",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/948662508/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : 449,
+      "start_side" : "RIGHT",
+      "subject_type" : "line",
+      "updated_at" : "2022-08-19T08:14:11Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/948662508",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/266751?v=4",
+         "events_url" : "https://api.github.com/users/vasild/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vasild/followers",
+         "following_url" : "https://api.github.com/users/vasild/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vasild/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vasild",
+         "id" : 266751,
+         "login" : "vasild",
+         "node_id" : "MDQ6VXNlcjI2Njc1MQ==",
+         "organizations_url" : "https://api.github.com/users/vasild/orgs",
+         "received_events_url" : "https://api.github.com/users/vasild/received_events",
+         "repos_url" : "https://api.github.com/users/vasild/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vasild/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vasild"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
       "body" : "Closing this, see discussion in #25265.",
       "created_at" : "2022-08-28T17:04:40Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25688#issuecomment-1229508863",

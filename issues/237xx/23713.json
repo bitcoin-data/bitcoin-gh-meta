@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "Previously, the `addrman_tried_collisions` test behaved in the following way:\r\n\r\n1. add an address to addrman\r\n2. attempt to move the new address to the tried table (using `AddrMan.Good()`)\r\n3. verify that `num_addrs` matched `size()` to check for collisions in the new table\r\n\r\n`AddrMan.size()`, however, returns the number of unique address in addrman, regardless of whether they are in new or tried. This means the test would still pass for addresses where a collision did occur in the tried table. After 3 collisions in the tried table, there would eventually be a collision in the new table when trying to add a new address, which was then detected by checking `num_addrs - collisions == size()`.\r\n\r\nWhile the collision in the new table was caused by a collision in the tried table, the test is misleading as it's not directly testing for collisions in the tried table and misses 3 collisions before identifying a collision in the new table.\r\n\r\n### solution\r\n\r\nTo more directly test the tried table, I refactored `AddrMan::Good()` to return a boolean after successfully adding an address to the tried table. This makes the test much cleaner by first adding an address to new, calling `Good` to move it to the tried table, and checking if it was successful or not. It is worth noting there are other reasons, aside from collisions, which will cause `Good` to return false. That being said, this is an improvement over the previous testing methodology.\r\n\r\nAdditionally, having `Good()` return a boolean is useful outside of testing as it allows the caller to handle the case where `Good` is unable to move the entry to the tried table (e.g https://github.com/bitcoin/bitcoin/blob/a06364741358feae04813050e4225eb43fc386e3/src/rpc/net.cpp#L945).\r\n\r\n### followup\r\nAs a follow up to this PR, I plan to look at the following places `Good()` is called and see if it makes sense to handle the case where it is unable to add an entry to tried:\r\n\r\n* https://github.com/bitcoin/bitcoin/blob/a06364741358feae04813050e4225eb43fc386e3/src/rpc/net.cpp#L945\r\n* https://github.com/bitcoin/bitcoin/blob/a06364741358feae04813050e4225eb43fc386e3/src/net.cpp#L2067\r\n* https://github.com/bitcoin/bitcoin/blob/a06364741358feae04813050e4225eb43fc386e3/src/net_processing.cpp#L2708",
    "closed_at" : "2021-12-15T08:56:06Z",
    "closed_by" : {
@@ -53,7 +53,7 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/23713/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "PR_kwDOABII584vkLTa",
    "number" : 23713,
@@ -79,9 +79,10 @@
    },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/23713/timeline",
    "title" : "refactor, test: refactor addrman_tried_collisions test to directly check for collisions",
-   "updated_at" : "2021-12-15T08:56:08Z",
+   "updated_at" : "2022-12-15T10:03:07Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/23713",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/7444140?v=4",

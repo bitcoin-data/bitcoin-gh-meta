@@ -3,10 +3,10 @@
    "assignee" : null,
    "assignees" : [],
    "author_association" : "NONE",
-   "body" : "**Expected behavior:**\r\n\r\n`listtransactions \"*\" 100` in a wallet with 35 transactions should list all 35 transactions in the wallet.\r\n\r\n**Actual behavior:**\r\n\r\n`listtransactions \"*\" 100` lists 14 transactions, but does not list 21 transactions that are self-sends.\r\n\r\nNote that `getwalletinfo` returns:\r\n\r\n```\r\n  \"txcount\": 35,\r\n```\r\n\r\nSo the wallet does seem to know about the self-send transactions. (The \"missing\" transactions also show up in the GUI)\r\n\r\n**To reproduce**\r\n\r\nI have only seen the problem with one particular wallet. The only other wallet I have tested with is running on an older Bitcoin Core v0.20.1 (actually Omni Core) version and does seem to correctly list self-sends.\r\n\r\nThe wallet showing the problem is an imported HD `tpub` descriptor wallet that was created with **bitcoinj** and then the descriptors were imported via `importdescriptors`. I noticed that there is a Python functional test for `listtransactions` that checks self-sends, so perhaps the problem is related to it being a watch-only descriptor wallet with imported descriptors. It may also be relevant that the self-sends had two-outputs, both a \"destination\" and a change address.\r\n\r\nI can reliably reproduce the problem with the wallet that is showing the problem.\r\n\r\n**System information**\r\n\r\nMacBook Pro M1\r\nmacOS Monterey 12.5.1\r\n\r\n**Bitcoin Core v23.0.0** pre-built \"official\" binary.\r\n\r\nI am willing to provide additional information and/or run additional tests to help track this down.\r\n\r\n",
+   "body" : "**Expected behavior:**\r\n\r\n`listtransactions \"*\" 100` in a wallet with 35 transactions should list all 35 transactions in the wallet.\r\n\r\n(Update: and given the way `listtransactions` works there will likely be more than one array entry for each transaction, right?)\r\n\r\n**Actual behavior:**\r\n\r\n`listtransactions \"*\" 100` lists 14 transactions, but does not list 21 transactions that are self-sends.\r\n\r\nNote that `getwalletinfo` returns:\r\n\r\n```\r\n  \"txcount\": 35,\r\n```\r\n\r\nSo the wallet does seem to know about the self-send transactions. (The \"missing\" transactions also show up in the GUI)\r\n\r\n**To reproduce**\r\n\r\nI have only seen the problem with one particular wallet. The only other wallet I have tested with is running on an older Bitcoin Core v0.20.1 (actually Omni Core) version and does seem to correctly list self-sends.\r\n\r\nThe wallet showing the problem is an imported HD `tpub` descriptor wallet that was created with **bitcoinj** and then the descriptors were imported via `importdescriptors`. I noticed that there is a Python functional test for `listtransactions` that checks self-sends, so perhaps the problem is related to it being a watch-only descriptor wallet with imported descriptors. It may also be relevant that the self-sends had two-outputs, both a \"destination\" and a change address.\r\n\r\nI can reliably reproduce the problem with the wallet that is showing the problem.\r\n\r\n**System information**\r\n\r\nMacBook Pro M1\r\nmacOS Monterey 12.5.1\r\n\r\n**Bitcoin Core v23.0.0** pre-built \"official\" binary.\r\n\r\nI am willing to provide additional information and/or run additional tests to help track this down.\r\n\r\n",
    "closed_at" : null,
    "closed_by" : null,
-   "comments" : 0,
+   "comments" : 7,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26096/comments",
    "created_at" : "2022-09-14T20:52:21Z",
    "events_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26096/events",
@@ -21,6 +21,15 @@
          "name" : "Bug",
          "node_id" : "MDU6TGFiZWw2NDU4NQ==",
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/Bug"
+      },
+      {
+         "color" : "08a781",
+         "default" : false,
+         "description" : null,
+         "id" : 149424,
+         "name" : "Wallet",
+         "node_id" : "MDU6TGFiZWwxNDk0MjQ=",
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/Wallet"
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26096/labels{/name}",
@@ -32,13 +41,13 @@
    "reactions" : {
       "+1" : 0,
       "-1" : 0,
-      "confused" : 0,
+      "confused" : 1,
       "eyes" : 0,
-      "heart" : 0,
+      "heart" : 1,
       "hooray" : 0,
       "laugh" : 0,
       "rocket" : 0,
-      "total_count" : 0,
+      "total_count" : 2,
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26096/reactions"
    },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
@@ -46,7 +55,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26096/timeline",
    "title" : "`listtransactions` fails to list self-send transactions (for imported descriptor wallet)",
-   "updated_at" : "2022-09-14T20:53:11Z",
+   "updated_at" : "2023-04-03T14:23:23Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26096",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/61612?v=4",

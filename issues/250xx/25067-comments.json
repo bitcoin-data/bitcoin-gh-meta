@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.",
       "created_at" : "2022-05-05T14:11:30Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25067#issuecomment-1118604460",
@@ -101,7 +101,7 @@
       },
       "author_association" : "NONE",
       "body" : "nit:\r\n\r\n```suggestion\r\n * registered, and a std::list is used to store the callbacks that are\r\n```",
-      "commit_id" : "2911d9460b6837653594cb65b6e4f3bd7fbb7e80",
+      "commit_id" : "ca1ac1f0e0fbabbe97666aca94024afb8104da06",
       "created_at" : "2022-05-06T16:53:10Z",
       "diff_hunk" : "@@ -177,7 +179,43 @@ class CValidationInterface {\n     friend class ValidationInterfaceTest;\n };\n \n-struct MainSignalsInstance;\n+/**\n+ * MainSignalsInstance manages a list of shared_ptr<CValidationInterface>\n+ * callbacks.\n+ *\n+ * A std::unordered_map is used to track what callbacks are currently\n+ * registered, and a std::list is to used to store the callbacks that are",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25067#discussion_r867007814",
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-06T16:53:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/867007814",
       "user" : {
@@ -168,7 +169,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Thanks, fixed.",
-      "commit_id" : "2911d9460b6837653594cb65b6e4f3bd7fbb7e80",
+      "commit_id" : "ca1ac1f0e0fbabbe97666aca94024afb8104da06",
       "created_at" : "2022-05-06T17:02:20Z",
       "diff_hunk" : "@@ -177,7 +179,43 @@ class CValidationInterface {\n     friend class ValidationInterfaceTest;\n };\n \n-struct MainSignalsInstance;\n+/**\n+ * MainSignalsInstance manages a list of shared_ptr<CValidationInterface>\n+ * callbacks.\n+ *\n+ * A std::unordered_map is used to track what callbacks are currently\n+ * registered, and a std::list is to used to store the callbacks that are",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25067#discussion_r867014464",
@@ -199,6 +200,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-06T17:02:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/867014464",
       "user" : {
@@ -368,7 +370,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "For reference, with\r\n\r\n```diff\r\ndiff --git a/ci/test/06_script_b.sh b/ci/test/06_script_b.sh\r\nindex e64af2ad5..58661ff4c 100755\r\n--- a/ci/test/06_script_b.sh\r\n+++ b/ci/test/06_script_b.sh\r\n@@ -35,14 +35,13 @@ if [ \"$RUN_FUNCTIONAL_TESTS\" = \"true\" ]; then\r\n fi\r\n \r\n if [ \"${RUN_TIDY}\" = \"true\" ]; then\r\n-  export P_CI_DIR=\"${BASE_BUILD_DIR}/bitcoin-$HOST/src/\"\r\n-  CI_EXEC run-clang-tidy \"${MAKEJOBS}\"\r\n   export P_CI_DIR=\"${BASE_BUILD_DIR}/bitcoin-$HOST/\"\r\n   CI_EXEC \"python3 ${DIR_IWYU}/include-what-you-use/iwyu_tool.py\"\\\r\n           \" src/compat\"\\\r\n           \" src/init\"\\\r\n           \" src/rpc/fees.cpp\"\\\r\n           \" src/rpc/signmessage.cpp\"\\\r\n+          \" src/validationinterface.cpp\"\\\r\n           \" -p . ${MAKEJOBS} -- -Xiwyu --cxx17ns -Xiwyu --mapping_file=${BASE_BUILD_DIR}/bitcoin-$HOST/contrib/devtools/iwyu/bitcoin.core.imp\"\r\n fi\r\n \r\n```\r\n\r\n\r\nI get:\r\n\r\n```\r\nvalidationinterface.h should add these lines:\r\n#include <stddef.h>                  // for size_t\r\n#include <stdint.h>                  // for uint64_t\r\n#include \"threadsafety.h\"            // for LOCKS_EXCLUDED\r\n\r\nvalidationinterface.h should remove these lines:\r\n- class CConnman;  // lines 20-20\r\n- class uint256;  // lines 22-22\r\n\r\nvalidationinterface.cpp should add these lines:\r\n#include <assert.h>                  // for assert\r\n#include <ext/alloc_traits.h>        // for __alloc_traits<>::value_type\r\n#include <iterator>                  // for next\r\n#include <list>                      // for list<>::iterator, _List_iterator\r\n#include <vector>                    // for vector\r\n#include \"attributes.h\"              // for LIFETIMEBOUND\r\n#include \"sync.h\"                    // for AssertLockNotHeldInternal, LOCK\r\n#include \"uint256.h\"                 // for uint256\r\n",
-      "commit_id" : "c05ee1e8440f7e1030a5d9597cb6963b99fe4051",
+      "commit_id" : "ca1ac1f0e0fbabbe97666aca94024afb8104da06",
       "created_at" : "2022-05-09T14:17:32Z",
       "diff_hunk" : "@@ -17,9 +18,7 @@ class BlockValidationState;\n class CBlock;\n class CBlockIndex;\n struct CBlockLocator;\n-class CConnman;\n class CValidationInterface;\n-class uint256;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25067#discussion_r868066325",
@@ -398,6 +400,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T14:18:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868066325",
       "user" : {
@@ -479,7 +482,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Thanks. Dropped the header changes.",
-      "commit_id" : "c05ee1e8440f7e1030a5d9597cb6963b99fe4051",
+      "commit_id" : "ca1ac1f0e0fbabbe97666aca94024afb8104da06",
       "created_at" : "2022-05-09T14:37:39Z",
       "diff_hunk" : "@@ -17,9 +18,7 @@ class BlockValidationState;\n class CBlock;\n class CBlockIndex;\n struct CBlockLocator;\n-class CConnman;\n class CValidationInterface;\n-class uint256;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25067#discussion_r868088225",
@@ -510,6 +513,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T14:37:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868088225",
       "user" : {
@@ -622,8 +626,8 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "Code ACK ca1ac1f\r\n\r\nTiny nit for the renaming commit ca1ac1f: \r\nIsn't the \"main\" word in `MainSignalsImpl` coming from the previous monolithic `main.cpp` file existence?. Probably could be changed for something else as now the `MainSignalsImpl` is just a generic container class for the \"validation interface\" events subscribers.",
+      "author_association" : "MEMBER",
+      "body" : "Code ACK ca1ac1f\r\n\r\nTiny nit for the renaming ca1ac1f: \r\nIsn't the \"main\" word in `MainSignalsImpl` coming from the previous monolithic `main.cpp` file existence?. Probably could be changed for something else as now the `MainSignalsImpl` is just a generic container class for the \"validation interface\" events subscribers.",
       "created_at" : "2022-05-15T14:59:31Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25067#issuecomment-1126958655",
       "id" : 1126958655,
@@ -642,7 +646,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1126958655/reactions"
       },
-      "updated_at" : "2022-05-15T14:59:31Z",
+      "updated_at" : "2022-05-15T22:57:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1126958655",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/5377650?v=4",
@@ -663,6 +667,50 @@
          "subscriptions_url" : "https://api.github.com/users/furszy/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/furszy"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> Isn't the \"main\" word in `MainSignalsImpl` coming from the previous monolithic `main.cpp` file existence?\r\n\r\nHm, perhaps (thanks for reviewing!) I've been reading it to mean \"main signals\" as in \"primary signals\" and there are also CMainSignals and GetMainSignals in validationinterface.{h,cpp}, so I don't have a strong opinion.",
+      "created_at" : "2022-05-16T16:18:26Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25067#issuecomment-1127871760",
+      "id" : 1127871760,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25067",
+      "node_id" : "IC_kwDOABII585DOfUQ",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1127871760/reactions"
+      },
+      "updated_at" : "2022-05-16T16:18:49Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1127871760",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
       }
    }
 ]

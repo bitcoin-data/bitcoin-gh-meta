@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24789](https://github.com/bitcoin/bitcoin/pull/24789) (init, index: disallow indexes when running reindex-chainstate by mzumsande)\n* [#24230](https://github.com/bitcoin/bitcoin/pull/24230) (indexes: Stop using node internal types and locking cs_main, improve sync logic by ryanofsky)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-03-21T19:25:16Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24630#issuecomment-1074327485",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Might be better to fix the indexes to tolerate it?\r\n\r\nI can see the point that a corruption in the chainstate db shouldn't make it necessary to rebuild a block-based index.\r\nSo I think we'd need to prevent that a block that is already indexed is processed a second time on `BlockConnected()` signals. That could mean querying the index database for an existing entry, and if it's identical to the new one (e.g. by comparing height and hash), stop the processing.\r\n\r\nDo you think that this should be specific to `-reindex-chainstate` or would all of this also apply to `-reindex`? I'm not sure if corruption in the blockindex db would require us to rebuild an external index, as is currently done.",
       "created_at" : "2022-03-25T12:35:25Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24630#issuecomment-1078987636",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I think `-reindex` rewrites the blocks on disk, so at least txindex will need to be rewritten as well?\r\n\r\nDoes it really? I always thought it just rebuilds the blocks/index database plus the *rev files, but does not alter the *blk files.\r\nBut yes, if we can't reindex up to the index's bestblock for some reason, and have to switch to IBD at some point, in that case txindex will definitely need to be rewritten.",
       "created_at" : "2022-03-25T14:23:31Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24630#issuecomment-1079077683",
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> So IMO, we should move forward with this PR, but also figure out why the existing rewind logic is malfunctioning...\r\n\r\nI think it's because of the order in init:\r\n1. `LoadChainstate()` wipes the chainstate\r\n2. `Init()` in index/base reads the index info including the `DB_BEST_BLOCK` locator corresponding to the previous index height, but will then set the best block index to `nullptr` because we have no chain (`FindForkInGlobalIndex()` returns `nullptr`).\r\n3. When `BlockConnected` notifications arrive `Rewind()` is not executed because there is no previous height to rewind from.",
       "created_at" : "2022-03-26T22:41:24Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24630#issuecomment-1079788178",
@@ -396,7 +396,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "It's good to do something about this, but it seems like an extreme workaround to wipe index data when the \"-reindex-chainstate\" option is used. Nothing about \"-reindex-chainstate\" name or documentation suggests that it will wipe other indexes. Other more mild workarounds might be:\r\n\r\n1. Just warn that indexes can't currently be enabled when the \"-reindex-chainstate\" is in use and don't start them.\r\n2. Delay starting indexes when \"-reindex-chainstate\" is used until the new chainstate tip catches up to the previous tip\r\n3. Add a new \"-reindex-everything\" option that does what this PR does and wipes all indexes. If the \"-reindex-chainstate\" option is used when indexes are enabled it could fail and suggest temporary disabling the indexes or using \"-reindex-everything\" as alternatives.\r\n\r\nProbably an ideal fix could be entirely contained in the BaseIndex class. It could just avoid doing any work and not consider any any index to be synced until the first BlockConnected notification arrives which is not an ancestor of the index's known best block. This behavior could be conditional on \"-reindex-chainstate\" or it could just be generic behavior.\r\n\r\nIndexes already do have some current behavior that is a little lazy like this. For example, indexes currently don't handle BlockDisconnected events, but instead wait for the next BlockConnected event before they rewind.\r\n",
       "created_at" : "2022-03-29T19:18:55Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24630#issuecomment-1082277474",
@@ -440,7 +440,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Nothing about \"-reindex-chainstate\" name or documentation suggests that it will wipe other indexes.\r\n\r\nGood point, actually it could also be mentioned in the \"-reindex\" help that the indexes data is wiped: (\"Rebuild chain state and block index from the blk*.dat files on disk\"). So \"-reindex\" is currently \"-reindex-everything\" (including the Block Index database).\r\n\r\nOption 1) should be trivial to implement, but the warning could be missed by the user who then wonders why the index isn't running.\r\n\r\n> Delay starting indexes when \"-reindex-chainstate\" is used until the new chainstate tip catches up to the previous tip\r\n> Probably an ideal fix could be entirely contained in the BaseIndex class. It could just avoid doing any work and not consider any any index to be synced until the first BlockConnected notification arrives which is not an ancestor of the index's known best block.\r\n\r\nThe challenge I see here, as well as for option 2), is that the reindexing happens in the loadblk thread which can run well until after the node has started. So we don't only need to ignore `BlockConnected` notifications until then, we'd also have to delay the Init part of the index, because we can't derive what the best block is from the saved `DB_BEST_BLOCK` locator without a chain.\r\n\r\nI'll try to make a milder option work, putting the PR into draft until then.",
       "created_at" : "2022-03-29T20:28:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24630#issuecomment-1082343151",
@@ -484,7 +484,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : ">  we'd also have to delay the Init part of the index, because we can't derive what the best block is from the saved `DB_BEST_BLOCK` locator without a chain.\r\n\r\nI think we just need `CBlockTreeDB` index in `blocks/index/` which is not wiped when `fReindexChainState` is true:\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/ecf692b466860f44334a1da967fc2559da913bec/src/node/chainstate.cpp#L41\r\n\r\nwhich is different than the `CoinsDB` index in `chainstate/` which is wiped:\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/ecf692b466860f44334a1da967fc2559da913bec/src/node/chainstate.cpp#L84-L87\r\n\r\nto determine whether blockConnected block is ancestor of the index locator or previous coins tip.\r\n\r\nBut these things are more for long term fixes. For a short term fix I think just disabling other indexes when -reindex-chainstate is used or just showing a startup error that says indexes can't be enabled while -reindex-chainstate is enabled would already be improvements over status quo if status quo is to corrupt the indexes.\r\n\r\n(Would suggest opening a new PR if you implement a new approach, too, so older comments here can be easily understood, and so different approaches can be compared)",
       "created_at" : "2022-03-29T21:00:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24630#issuecomment-1082368673",
@@ -528,7 +528,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> But these things are more for long term fixes. For a short term fix I think just disabling other indexes when -reindex-chainstate is used or just showing a startup error that says indexes can't be enabled while -reindex-chainstate is enabled would already be improvements over status quo if status quo is to corrupt the indexes.\r\n> \r\n> (Would suggest opening a new PR if you implement a new approach, too, so older comments here can be easily understood, and so different approaches can be compared)\r\n\r\nSee #24789 for an alternative that just disallows the interaction.",
       "created_at" : "2022-04-06T15:57:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24630#issuecomment-1090435423",
@@ -572,7 +572,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> See #24789 for an alternative that just disallows the interaction.\r\n\r\nI do think #24789 is a better alternative to this PR in it's current form (cf531ba531ceb78a94b911fdb8f8d5bfea455380), because it currently it clears and rebuilds all the indexes if `-reindex-chainstate` is used. Clearing the indexes is better than corrupting them, but still seems like a surprising and potentially undesirable behavior. Code and tests in this PR seem like a useful start for getting the indexing options to work better together, though.",
       "created_at" : "2022-04-20T01:13:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24630#issuecomment-1103323443",
@@ -616,7 +616,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Closed in favor of #24789",
       "created_at" : "2022-04-21T14:16:37Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24630#issuecomment-1105274935",

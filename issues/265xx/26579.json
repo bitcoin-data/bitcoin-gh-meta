@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "I have bitcoind serving cfilters to an LND node on my local network on separate machines. Both have `192.168.1.x` IP addresses and they connect fine using neutrino. However, the LND node does not appear in the `bitcoin-cli -netinfo` table.\r\n\r\nThe reason is because if you look at the `getpeerinfo` response:\r\n\r\n```\r\n{\r\n  \"id\": 11728,\r\n  \"addr\": \"192.168.1.153:64367\",\r\n  \"addrbind\": \"192.168.1.13:8333\",\r\n  \"addrlocal\": \"192.168.1.13:8333\",\r\n  \"network\": \"not_publicly_routable\",\r\n  \"services\": \"0000000000000048\",\r\n  \"servicesnames\": [\r\n    \"WITNESS\",\r\n    \"COMPACT_FILTERS\"\r\n  ],\r\n...\r\n```\r\n\r\n...so bitcoin-cli ignores the peer here:\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/9c47eb450346937b3d7ee21b9e669b5c91a7ed6c/src/bitcoin-cli.cpp#L477-L479\r\n\r\n...expecting one of these strings only:\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/9c47eb450346937b3d7ee21b9e669b5c91a7ed6c/src/bitcoin-cli.cpp#L58\r\n\r\nI'm happy to fix / add this myself unless there's a reason? Maybe instead of skipping the peer we can just add an \"unknown network\" category, or \"other\" ...?\r\n\r\ncc: @jonatack ",
    "closed_at" : "2023-02-15T08:21:07Z",
    "closed_by" : {

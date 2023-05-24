@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "To me it looks like that it is not just the tests that would be problematic:\r\n\r\n1. This `CDBBatch::Write()` call would internally invoke the `CDiskBlockIndex` serialization method:\r\nhttps://github.com/bitcoin/bitcoin/blob/5e49b2a2529adc737175ebdcbf312635c52b05f6/src/txdb.cpp#L280\r\n\r\n2. This `CDBIterator::GetValue()` call would internally invoke the `CDiskBlockIndex` deserialization method:\r\nhttps://github.com/bitcoin/bitcoin/blob/5e49b2a2529adc737175ebdcbf312635c52b05f6/src/txdb.cpp#L309\r\n\r\nBoth `Write()` and `GetValue()` are too generic and we can't tag them as requiring `cs_main` or acquire `cs_main` from within them.\r\n\r\nSo, we have some methods in the (non-test) code that invoke `CDiskBlockIndex` ser/deser and can't acquire `cs_main` or require their callers to acquire it.",
       "created_at" : "2022-03-07T14:49:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24199#issuecomment-1060769137",
@@ -231,7 +231,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/821942074"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"Drop lock and thread safety analysis in CDiskBlockIndex serialization\" (0e052eb04fa07fc4915c11faa8866ab759365dc4)\r\n\r\nIt'd be nice to do this without disabling thread safety checks. Though I can see it would require more work, and maybe better to do separately or as a followup. (IMO ideally we would have a linter to make sure every `NO_THREAD_SAFETY_ANALYSIS` usage was accompanied by a link to a github issue where we could discuss the plan to reenable thread safety checks.)\r\n\r\nIn this case it looks like most obvious way of removing `NO_THREAD_SAFETY_ANALYSIS` would be to replace public guarded variables with private unguarded variables, changing:\r\n\r\n```c++\r\npublic:\r\n    int nFile GUARDED_BY(::cs_main){0};\r\n    unsigned int nDataPos GUARDED_BY(::cs_main){0};\r\n    unsigned int nUndoPos GUARDED_BY(::cs_main){0};\r\n    uint32_t nStatus GUARDED_BY(::cs_main){0};\r\n```\r\n\r\nto:\r\n\r\n```c++\r\nprivate:\r\n    int m_file_num = 0;\r\n    unsigned int m_data_pos = 0;\r\n    unsigned int m_undo_pos = 0;\r\n    uint32_t m_status = 0;\r\n```\r\n\r\nAnd add `EXCLUSIVE_LOCKS_REQUIRED` accessor methods as needed to ensure variables are always accessed with the right locks held.",
       "commit_id" : "0e052eb04fa07fc4915c11faa8866ab759365dc4",
       "created_at" : "2022-03-08T18:16:41Z",
@@ -263,6 +263,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-08T18:43:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/821942074",
       "user" : {
@@ -298,7 +299,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/822371673"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Hmm, how would that be different than the current code?\r\n\r\ncurrent: `LOCK(cs_main); read nStatus`\r\nproposed: `LOCK(cs_main); call GetNStatus()`\r\n\r\nand the ser/deser methods would still need to acquire `cs_main`, no?\r\n\r\nThe access to all `nStatus`/`nDataPos`/`nUndoPos` from within ser/deser has to happen in one atomic block. I mean that this is not ok:\r\n```\r\nlock\r\nread nStatus\r\nunlock\r\nlock\r\nread nDataPos\r\nunlock\r\n```\r\nit has to be\r\n```\r\nlock\r\nread nStatus\r\nread nDataPos\r\nunlock\r\n```",
       "commit_id" : "0e052eb04fa07fc4915c11faa8866ab759365dc4",
       "created_at" : "2022-03-09T07:54:18Z",
@@ -331,6 +332,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-09T07:54:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/822371673",
       "user" : {
@@ -399,6 +401,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-09T08:20:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/822390873",
       "user" : {
@@ -434,7 +437,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/822470287"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@ryanofsky, now I see your point - to change the members of the parent class `CBlockIndex` to be not-tagged as guarded by `cs_main` and change them to private, in the hopes that the methods that touch them respect the implicit guarding. Then, access them without guarding from the child class `CDiskBlockIndex`. I do not like this much because the members in `CBlockIndex` need to be guarded, but will be without a `GUARDED_BY()` tag. Hmm...\r\n\r\n@MarcoFalke, I did not realize this before, thanks for pointing it out!\r\n> If there is a missing lock then it can at most be missed while copying the data\r\n\r\nthere is not - both users of `CDiskBlockIndex` own `cs_main` when creating such objects.",
       "commit_id" : "0e052eb04fa07fc4915c11faa8866ab759365dc4",
       "created_at" : "2022-03-09T09:52:14Z",
@@ -467,6 +470,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-09T09:53:25Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/822470287",
       "user" : {
@@ -535,6 +539,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-09T09:55:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/822473212",
       "user" : {
@@ -570,7 +575,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/822528035"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "yeah, I needed a few days to grasp that :exploding_head: ",
       "commit_id" : "0e052eb04fa07fc4915c11faa8866ab759365dc4",
       "created_at" : "2022-03-09T10:57:54Z",
@@ -603,6 +608,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-09T10:57:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/822528035",
       "user" : {
@@ -638,7 +644,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/822653623"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : ">  I do not like this much because the members in CBlockIndex need to be guarded, but will be without a GUARDED_BY() tag.\r\n\r\nI should probably explain reasoning behind what I suggested yesterday. I don't think this is a question what anybody likes or doesn't like, but a question of what's right and wrong. It's wrong to annotate these struct members as being guarded by cs_main, because they aren't guarded by it. The whole struct is not even guarded by cs_main, just certain instances of it are. What *is* guarded by cs_main is the `m_block_index` map and pointers & references to CBlockIndex instances specifically inside that map. \r\n\r\nThe correct way to annotate this code would be not to annotate anything in CBlockIndex (Ideally I would rename it to `struct BlockInfo` and make it plain struct with no methods), but to not expose this low-level struct to high level application code. Higher level code would use a `BlockReference` accessor class that has a `BlockInfo&` member and methods appropriately annotated with EXCLUSIVE_LOCKS_REQUIRED(cs_main) to enforce the access pattern which enables our lock usage. `CBlockIndex*` pointers throughout the code would be replaced by `BlockReference` objects. In my ideal world, this would look something like:\r\n\r\n```c++\r\nstruct BlockInfo {\r\n   uint256 hash;\r\n   int height = 0;\r\n   BlockInfo* prev = nullptr;\r\n   /// ... more members here ... ///\r\n};\r\n\r\nstruct BlockState : public BlockInfo {\r\n  int flags = 0;\r\n  int file_num = -1;\r\n  unsigned data_pos = 0;\r\n  unsigned undo_pos = 0;\r\n};\r\n\r\nclass BlockReference {\r\nprivate:\r\n   BlockState& m_block;\r\npublic:\r\n   BlockInfo& info() const { return m_block; }\r\n   BlockState& state() EXCLUSIVE_LOCKS_REQUIRED(cs_main) { return m_block; }\r\n   BlockReference prev() const { return {static_cast<BlockState&>(*Assert(m_block.prev))}; }\r\n   // Could add more fine-grained accessors like height() or flags() or whatever.\r\n};\r\n\r\nclass BlockManager {\r\nprivate:\r\n  std::unordered_set<BlockState> m_blocks GUARDED_BY(cs_main);\r\npublic:\r\n  BlockReference FindBlock(const uint256& hash) EXCLUSIVE_LOCKS_REQUIRED(cs_main);\r\n   /// ... more stuff ... ///\r\n}\r\n```\r\n\r\nThe appoach I suggested yesterday does the same thing but keeps everything mushed into the same CBlockIndex class/struct hybrid instead of splitting it out. It would be pretty easy to implement what I suggested yesterday as a followup to this PR to re-enable thread safety checking. In any case I was not suggesting doing something bigger like that in this PR.",
       "commit_id" : "0e052eb04fa07fc4915c11faa8866ab759365dc4",
       "created_at" : "2022-03-09T13:35:38Z",
@@ -671,6 +677,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-09T13:39:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/822653623",
       "user" : {
@@ -706,7 +713,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/823521820"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "_to use another wording (not like/dislike):_\r\n\r\nIt is a [design smell](https://en.wikipedia.org/wiki/Design_smell) to have a variable without `GUARDED_BY()` and rely on `EXCLUSIVE_LOCKS_REQUIRED()` on some methods to protect it. This way, if the code goes wrong (like, new access is added to the variable from a function not marked with `EXCLUSIVE_LOCKS_REQUIRED()`) then the compiler has no way to detect that. This defeats the purpose of thread safety annotations which is to **enforce** proper access and detect mistakes if the code goes wrong.\r\n\r\nYour [suggestion above](https://github.com/bitcoin/bitcoin/pull/24199#discussion_r821942074) does that:\r\n> replace public guarded variables with private unguarded variables ... And add `EXCLUSIVE_LOCKS_REQUIRED` accessor methods as needed to ensure variables are always accessed with the right locks held.",
       "commit_id" : "0e052eb04fa07fc4915c11faa8866ab759365dc4",
       "created_at" : "2022-03-10T09:36:09Z",
@@ -739,6 +746,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-10T09:36:09Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/823521820",
       "user" : {
@@ -807,6 +815,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-10T09:44:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/823530377",
       "user" : {
@@ -842,7 +851,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/823670409"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> It is a [design smell](https://en.wikipedia.org/wiki/Design_smell) to have a variable without `GUARDED_BY()` and rely on `EXCLUSIVE_LOCKS_REQUIRED()` on some methods to protect it. This way, if the code goes wrong (like, new access is added to the variable from a function not marked with `EXCLUSIVE_LOCKS_REQUIRED()`) then the compiler has no way to detect that. This defeats the purpose of thread safety annotations which is to **enforce** proper access and detect mistakes if the code goes wrong.\r\n\r\nThese are mostly incorrect claims made without specific reasoning or justification. If you have an inner variable that does *not* require lucking, and an outer data structure containing the variable, or an outer pointer pointing to the variable, or an outer function accessing the variable, and the outer container/pointer/function *does* require locking, the correct way of annotating the code is to _not annotate_ the variable, and _to annotate_ the outer container/pointer/function.\r\n\r\nIf you look at the actual code I posted in https://github.com/bitcoin/bitcoin/pull/24199#discussion_r822653623, you can see that the compiler will detect all unsafe accesses. If you want to talk about a code smell, NO_THREAD_SAFETY_ANALYSIS is the code smell, and the design in that post shows how to get rid of it.\r\n\r\nThat said, there is a difference between the bigger change I posted yesterday https://github.com/bitcoin/bitcoin/pull/24199#discussion_r822653623, and the smaller suggestion https://github.com/bitcoin/bitcoin/pull/24199#discussion_r821942074 I posted two days ago. In both cases the compiler can guarantee thread safety outside of chain.h/chain.cpp if these files are annotated correctly. But in the bigger change where I split up CBlockIndex class into separate BlockInfo / BlockState / BlockReference components, it's easy to annotate everything correctly, while in the smaller change where CBlockIndex is kept as a monolithic class, what you are saying about it being trickier to see notice missing EXCLUSIVE_LOCKS_REQUIRED annotations on CBlockIndex methods is true.\r\n\r\nIf you want to argue that using incorrect annotations is better than using correct ones for practical reasons (e.g. it is better to use NO_THREAD_SAFETY_ANALYSIS in one method, so the rest of the file is easier to maintain), that's fine. But let's not create confusion about what correct annotations are and what incorrect annotations are. Correct annotations do not require using NO_THREAD_SAFETY_ANALYSIS, and that's just the most obvious clue.",
       "commit_id" : "0e052eb04fa07fc4915c11faa8866ab759365dc4",
       "created_at" : "2022-03-10T12:33:11Z",
@@ -875,6 +884,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-10T12:33:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/823670409",
       "user" : {
@@ -910,7 +920,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/827927512"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Wrt `NO_THREAD_SAFETY_ANALYSIS` I tend to agree with @luke-jr: https://github.com/bitcoin/bitcoin/pull/24199#issuecomment-1025479698. This is why I did not ACK this PR, which contains `NO_THREAD_SAFETY_ANALYSIS`. Personally, I do not see a good and elegant solution to the problem this PR aims to fix (yet).",
       "commit_id" : "0e052eb04fa07fc4915c11faa8866ab759365dc4",
       "created_at" : "2022-03-16T11:58:44Z",
@@ -943,6 +953,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-16T11:58:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/827927512",
       "user" : {
@@ -967,7 +978,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [ryanofsky](https://github.com/bitcoin/bitcoin/pull/24199#pullrequestreview-903405458) |\n| Concept NACK | [luke-jr](https://github.com/bitcoin/bitcoin/pull/24199#issuecomment-1025353705) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25862](https://github.com/bitcoin/bitcoin/pull/25862) (refactor, kernel: Remove gArgs accesses from dbwrapper and txdb by ryanofsky)\n* [#19463](https://github.com/bitcoin/bitcoin/pull/19463) (Prune locks by luke-jr)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2022-08-17T23:26:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24199#issuecomment-1218641707",
@@ -1187,7 +1198,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n",
       "created_at" : "2023-02-17T23:35:53Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24199#issuecomment-1435396126",
@@ -1228,6 +1239,50 @@
          "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Closing temporarily so that I can re-open it -- am still interested to work on this.",
+      "created_at" : "2023-04-25T11:09:20Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24199#issuecomment-1521606641",
+      "id" : 1521606641,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24199",
+      "node_id" : "IC_kwDOABII585asd_x",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1521606641/reactions"
+      },
+      "updated_at" : "2023-04-25T11:09:20Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1521606641",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
       }
    }
 ]

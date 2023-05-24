@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Not sure if that is the same cause because the unclean shutdown is initiated already during init there, but if I use `-coinstatsindex` instead of `-txindex` in `feature_init.py`, that test fails for me.",
       "created_at" : "2022-01-19T11:51:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24076#issuecomment-1016392954",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Oh, interesting, I am investigating, thanks for tagging me @Sjors ",
       "created_at" : "2022-01-19T20:06:08Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24076#issuecomment-1016825504",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "just fyi, the `feature_init` fail I mentioned is unrelated to this and not so serious.\r\n(The problem there is that `BaseIndex::CommitInternal` doesn't check if `m_best_block_index == nullptr`, which can happen if init is interrupted very early before indexing anything. In that case, DB_BEST_BLOCK is written with a block locator corresponding to the [tip](https://github.com/bitcoin/bitcoin/blob/06b6369766137756648b3cb62c8f385cca234e69/src/chain.cpp#L31-L32), and on the next start we think the index is fully synced when we actually aren't synced at all. Might still open a small fix for this in the next days.)",
       "created_at" : "2022-01-20T00:17:21Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24076#issuecomment-1016989638",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I have tried to reproduce this by `kill -9`ing the process but was not successful so far. I think something like this is also the best we could do in an automated test. However I opened #24133 that should address the issue by failing loudly if the restart is indeed the source of the issue.\r\n\r\n@akovalenko Thanks a lot for reporting, you have already given a lot of information but since I couldn't reproduce the issue yet it would be great if you could give me more details. Any of the following would be very helpful:\r\n\r\n- Was only the `muhash` value out of sync or also the other outputs of the index that are also returned with the non index `gettxoutsetinfo muhash null false`?\r\n- If you have any real outputs of the `gettxoutsetinfo` calls after it got out of sync that would be great!\r\n- If you could dissect or observe the next time if the index got indeed out of sync at the restart or at another point that would be even better. If you still have the corrupted index you could use https://github.com/bitcoin/bitcoin/pull/19792 to dump the whole index and upload the result, then I could go search for the offending height as well.\r\n- If you do these planned failures regularly you could also maybe run #24133 with one of them to see if that catches the issue.",
       "created_at" : "2022-01-23T16:49:51Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24076#issuecomment-1019523468",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I could reproduce this manually on regtest with the standard 200 chain used in the functional tests - adding a sleep to `ThreadSync()` after block 100 so I could conveniently `kill -9` the process. See #24138 for an explanation and a fix.",
       "created_at" : "2022-01-24T14:13:49Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24076#issuecomment-1020143731",

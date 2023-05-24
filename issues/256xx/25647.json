@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "Benefits:\r\n1. more accurate waste calculation for knapsack. Waste calculation is now consistent with tx building code. Before we always assumed change for knapsack even when the solution is changeless4. \r\n2. simpler tx building code. Only create change output when it's needed\r\n3. makes it easier to correctly account for fees for CPFP inputs (should be done in a follow up) \r\n\r\nIn the first three commits we fix the code to accurately track selection target in `SelectionResult::m_target`\r\nThen we introduce new variable `min_change` that represents the minimum viable change amount\r\nThen we introduce `SelectionResult::GetChange()` which incapsulates dropping change for fee logic and uses correct values of `SelectionResult::m_target`\r\nThen we use `SelectionResult::GetChange()` in both tx building and waste calculation code\r\n\r\nThis PR is a refactoring and shouldn't change the behaviour.\r\nThere is only one known small change (arguably a bug fix). Before we dropped change output if it's smaller than `cost_of_change` after paying change fees. This is incorrect as `cost_of_change` already includes `change_fee`. ",
    "closed_at" : "2022-08-22T16:43:27Z",
    "closed_by" : {

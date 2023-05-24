@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "This picks up the last commit from #19843.\r\n\r\nPreviously, we would prepare to self-announce to a new peer while parsing a `version` message from that peer.\r\nThis is redundant, because we do something very similar in `MaybeSendAddr()`, which is called from `SendMessages()` after\r\nthe version handshake is finished.\r\n\r\nThere are a couple of differences:\r\n\r\n1) `MaybeSendAddr()` self-advertises to all peers we do address relay with, not just outbound ones.\r\n2) `GetLocalAddrForPeer()` called from `MaybeSendAddr()` makes a probabilistic decision to either advertise what they think we are or what we think we are, while `PushAddress()` on `version` deterministically only does the former if the address from the latter is unroutable.\r\n3) During `version` processing, we haven't received a potential sendaddrv2 message from our peer yet, so self-advertisements with addresses from addrV2-only networks would always be dropped in `PushAddress()`.\r\n\r\nSince it's confusing to have two slightly different mechanisms for self-advertising, and the one in `MaybeSendAddr()` is better, remove the one in `version`.",
    "closed_at" : "2022-12-12T09:14:33Z",
    "closed_by" : {
@@ -73,7 +73,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26199/timeline",
    "title" : "p2p: Don't self-advertise during version processing",
-   "updated_at" : "2022-12-12T09:14:34Z",
+   "updated_at" : "2022-12-12T16:30:47Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26199",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/48763452?v=4",

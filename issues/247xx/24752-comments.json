@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25005](https://github.com/bitcoin/bitcoin/pull/25005) (wallet: remove extra wtx lookup in 'AvailableCoins' + several code cleanups. by furszy)\n* [#24845](https://github.com/bitcoin/bitcoin/pull/24845) (wallet: createTransaction, return proper error description for  \"too-long-mempool-chain\" + introduce generic Result classes by furszy)\n* [#24699](https://github.com/bitcoin/bitcoin/pull/24699) (wallet: Improve AvailableCoins performance by reducing duplicated operations by achow101)\n* [#23475](https://github.com/bitcoin/bitcoin/pull/23475) (wallet: add config to prioritize a solution that doesn't create change in coin selection by brunoerg)\n* [#20640](https://github.com/bitcoin/bitcoin/pull/20640) (wallet, refactor: return out-params of CreateTransaction() as optional struct by theStack)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-04-05T00:56:03Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24752#issuecomment-1088165344",
@@ -57,19 +57,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "```suggestion\r\n    SelectionResult result(selection_target, /*force_no_change=*/true);\r\n```\r\nAnywhere you are adding/touching named args, please use the [style from the developer docs](https://github.com/bitcoin/bitcoin/blob/master/doc/developer-notes.md#coding-style-c-named-arguments).",
-      "commit_id" : "3c106cc578eb2682fb5eab6b03fe3f5e108034b9",
+      "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-04-07T10:26:18Z",
       "diff_hunk" : "@@ -62,9 +62,9 @@ struct {\n \n static const size_t TOTAL_TRIES = 100000;\n \n-std::optional<SelectionResult> SelectCoinsBnB(std::vector<OutputGroup>& utxo_pool, const CAmount& selection_target, const CAmount& cost_of_change)\n+std::optional<SelectionResult> SelectCoinsBnB(std::vector<OutputGroup>& utxo_pool, const CAmount& selection_target, const CAmount& upper_bound)\n {\n-    SelectionResult result(selection_target);\n+    SelectionResult result(selection_target, /* force_no_change=*/ true);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24752#discussion_r844973896",
       "id" : 844973896,
-      "line" : 67,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584yXUdI",
       "original_commit_id" : "3c106cc578eb2682fb5eab6b03fe3f5e108034b9",
       "original_line" : 67,
       "original_position" : 8,
       "original_start_line" : null,
       "path" : "src/wallet/coinselection.cpp",
-      "position" : 8,
+      "position" : null,
       "pull_request_review_id" : 934837861,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24752",
       "reactions" : {
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-07T10:26:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/844973896",
       "user" : {
@@ -122,22 +123,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/845368222"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Sure, will fix that",
-      "commit_id" : "3c106cc578eb2682fb5eab6b03fe3f5e108034b9",
+      "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-04-07T16:51:52Z",
       "diff_hunk" : "@@ -62,9 +62,9 @@ struct {\n \n static const size_t TOTAL_TRIES = 100000;\n \n-std::optional<SelectionResult> SelectCoinsBnB(std::vector<OutputGroup>& utxo_pool, const CAmount& selection_target, const CAmount& cost_of_change)\n+std::optional<SelectionResult> SelectCoinsBnB(std::vector<OutputGroup>& utxo_pool, const CAmount& selection_target, const CAmount& upper_bound)\n {\n-    SelectionResult result(selection_target);\n+    SelectionResult result(selection_target, /* force_no_change=*/ true);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24752#discussion_r845368222",
       "id" : 845368222,
       "in_reply_to_id" : 844973896,
-      "line" : 67,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584yY0ue",
       "original_commit_id" : "3c106cc578eb2682fb5eab6b03fe3f5e108034b9",
       "original_line" : 67,
       "original_position" : 8,
       "original_start_line" : null,
       "path" : "src/wallet/coinselection.cpp",
-      "position" : 8,
+      "position" : null,
       "pull_request_review_id" : 935395728,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24752",
       "reactions" : {
@@ -155,6 +156,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-07T16:51:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/845368222",
       "user" : {
@@ -179,7 +181,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@achow101 take a look. I reworked my BnB optimization and all the tests pass now. I think the next step would be to do simulations and see how this affects coin selection at large (but locally it fixes some of the edge cases found in #24580)",
       "created_at" : "2022-04-07T16:55:08Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24752#issuecomment-1091981193",
@@ -223,50 +225,6 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-04-26T18:42:54Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24752#issuecomment-1110131314",
-      "id" : 1110131314,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24752",
-      "node_id" : "IC_kwDOABII585CK0Jy",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1110131314/reactions"
-      },
-      "updated_at" : "2022-04-26T18:42:54Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1110131314",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
       "_links" : {
          "html" : {
             "href" : "https://github.com/bitcoin/bitcoin/pull/24752#discussion_r860571366"
@@ -278,9 +236,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/860571366"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "fixed",
-      "commit_id" : "9e9c114e5850f7f7e6baedba96018affbd8050f1",
+      "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-04-28T07:29:41Z",
       "diff_hunk" : "@@ -62,9 +62,9 @@ struct {\n \n static const size_t TOTAL_TRIES = 100000;\n \n-std::optional<SelectionResult> SelectCoinsBnB(std::vector<OutputGroup>& utxo_pool, const CAmount& selection_target, const CAmount& cost_of_change)\n+std::optional<SelectionResult> SelectCoinsBnB(std::vector<OutputGroup>& utxo_pool, const CAmount& selection_target, const CAmount& upper_bound)\n {\n-    SelectionResult result(selection_target);\n+    SelectionResult result(selection_target, /* force_no_change=*/ true);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24752#discussion_r860571366",
@@ -311,6 +269,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-28T07:29:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/860571366",
       "user" : {
@@ -346,7 +305,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868328003"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Note for reviewers/myself: It should be 10 vB for non-segwit transactions, and 42 WU for segwit transactions (as the witness adds the two fields `marker` and `flag` that don't scale with the count of inputs. So, this is correct for non-segwit transactions, but would be short for a segwit transaction.",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-09T18:54:41Z",
@@ -378,6 +337,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T20:24:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868328003",
       "user" : {
@@ -413,7 +373,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868347706"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Note to other reviewers: it wasn't obvious to me at first why this replacement is possible, but I found that `use_max_sig` is directly calculated from `CCoinControl` values. Perhaps this could be mentioned in the commit message.\r\n\r\n> ./src/wallet/wallet.cpp:        const bool use_max_sig = coin_control && (coin_control->fAllowWatchOnly || coin_control->IsExternalSelected(txin.prevout));\r\n",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-09T19:14:48Z",
@@ -445,6 +405,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T20:24:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868347706",
       "user" : {
@@ -480,7 +441,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868361193"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I see how this is just a refactor, and doesn't change the result, but it's not clear to me why it's being done. Could you add a sentence of motivation to the commit message?",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-09T19:26:53Z",
@@ -512,6 +473,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T20:24:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868361193",
       "user" : {
@@ -547,7 +509,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868369284"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Nice catch!",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-09T19:34:45Z",
@@ -579,6 +541,7 @@
       "side" : "RIGHT",
       "start_line" : 397,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T20:24:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868369284",
       "user" : {
@@ -614,8 +577,8 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868374271"
          }
       },
-      "author_association" : "CONTRIBUTOR",
-      "body" : "`force_no_change = false` feels like a potential braintwister a brain twister. Perhaps it would be better to call this `allow_change` and invert the boolean values.\r\n\r\n```suggestion\r\n    /** Do not allow change even if more than enough inputs are selected */\r\n    bool m_allow_change{true};\r\n```",
+      "author_association" : "MEMBER",
+      "body" : "`force_no_change = false` feels like a potential brain twister. Perhaps it would be better to call this `allow_change` and invert the boolean values.\r\n\r\n```suggestion\r\n    /** Do not allow change even if more than enough inputs are selected */\r\n    bool m_allow_change{true};\r\n```",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-09T19:39:55Z",
       "diff_hunk" : "@@ -258,15 +258,17 @@ struct SelectionResult\n     bool m_use_effective{false};\n     /** The computed waste */\n     std::optional<CAmount> m_waste;\n+    /** Force no change even if more than enough inputs are selected */\n+    bool m_force_no_change{false};",
@@ -646,7 +609,8 @@
       "side" : "RIGHT",
       "start_line" : 265,
       "start_side" : "RIGHT",
-      "updated_at" : "2022-05-09T20:24:06Z",
+      "subject_type" : "line",
+      "updated_at" : "2022-05-10T13:38:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868374271",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/4060799?v=4",
@@ -681,7 +645,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868376362"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "See below\r\n```suggestion\r\n    SelectionResult result(selection_target, SelectionAlgorithm::BNB, /*allow_change=*/false);\r\n```",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-09T19:41:56Z",
@@ -713,6 +677,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T20:24:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868376362",
       "user" : {
@@ -748,7 +713,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868377710"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "see above\r\n```suggestion\r\n    explicit SelectionResult(const CAmount target, SelectionAlgorithm algo, const bool allow_change = true)\r\n        : m_target(target), m_algo(algo), m_allow_change(allow_change) {}\r\n```",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-09T19:43:19Z",
@@ -780,6 +745,7 @@
       "side" : "RIGHT",
       "start_line" : 269,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T20:24:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868377710",
       "user" : {
@@ -815,7 +781,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868383563"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I don't understand what's going on here. I'm actually now wondering why we need `m_use_effective` in the first place if it's just the negation of `m_subtract_fee_outputs` on the group.",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-09T19:49:08Z",
@@ -847,6 +813,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T20:24:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868383563",
       "user" : {
@@ -882,7 +849,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868388727"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This feels like it should be mentioned in the commit message and should perhaps be a separate commit than \"Return change from SelectionResult\". I see that this might be useful to construct input sets with a specific UTXO included, but I have a hard time following how it fits into the bigger picture.",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-09T19:54:01Z",
@@ -914,6 +881,7 @@
       "side" : "RIGHT",
       "start_line" : 456,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T20:24:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868388727",
       "user" : {
@@ -949,7 +917,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868394832"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Nice! :heart:\r\nI was also thinking about us returning the change value in the `SelectionResult` in the context of automatic CPFP for unconfirmed inputs when the parent transaction has a lower feerate and we need to add fees for that. This is great!",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-09T19:59:20Z",
@@ -981,6 +949,7 @@
       "side" : "RIGHT",
       "start_line" : 506,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T20:24:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868394832",
       "user" : {
@@ -1016,7 +985,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868400777"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I wish we had canonical terms to consistently disambiguate the selection target and the recipient output total, especially because it additionally sometimes includes cost of change and a minimum change.\r\n\r\nWhat do you all think about something along the lines of:\r\n- `recipients_total`: sum of recipient output values (excluding change)\r\n- `selection_target`: the value the coin selection needs to raise to pay for the payload including change for algorithms that allow change\r\n\r\nDo we need another term for `selection_target` without change?",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-09T20:05:32Z",
@@ -1048,6 +1017,7 @@
       "side" : "RIGHT",
       "start_line" : 257,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T20:24:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868400777",
       "user" : {
@@ -1083,7 +1053,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868403748"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I think we got something like this via #24644 now.",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-09T20:08:28Z",
@@ -1115,6 +1085,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T20:24:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868403748",
       "user" : {
@@ -1150,7 +1121,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868406613"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Wasn't this what we introduced `SelectionResult.Merge(â¦)` above for?",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-09T20:11:31Z",
@@ -1182,6 +1153,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T20:24:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868406613",
       "user" : {
@@ -1217,7 +1189,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868408331"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Would this perhaps still need to check whether the remainder is greater than the dust threshold?",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-09T20:13:22Z",
@@ -1249,6 +1221,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T20:24:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868408331",
       "user" : {
@@ -1284,7 +1257,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868413078"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I have the impression that this commit makes changes to how coin selection works with preselected inputs and in addition introduces that SelectionResult returns change. While both changes look worthwhile to me, it would be easier to follow if they were separate commits if not separate PRs. Am I missing some special reason why doing all of this at once is advantageous?",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-09T20:18:11Z",
@@ -1316,6 +1289,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T20:24:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868413078",
       "user" : {
@@ -1351,7 +1325,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868417805"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "That's an interesting upper bound. Much better than just completely unbounded, but definitely gives some room for bigger `excess` amounts than before. Is this still a WIP-value to give you more wiggle room or is this what you finally identified as the appropriate upper bound? Curious about your thought process here.",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-09T20:23:01Z",
@@ -1383,6 +1357,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T20:24:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868417805",
       "user" : {
@@ -1418,7 +1393,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868858918"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "For clarity. The size required to store output counter added below. So in case of <253 outputs `tx_noinputs_size` will be 11vB for both segwit and non-segwit txs. This overshoots the target a bit for non-segwit, but this is much better than selecting not enough coins.",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-10T06:25:52Z",
@@ -1451,6 +1426,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-10T06:25:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868858918",
       "user" : {
@@ -1486,7 +1462,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868861407"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Yes, I just made it non const to allow merging two `SelectionResult`s",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-10T06:29:49Z",
@@ -1505,7 +1481,7 @@
       "pull_request_review_id" : 967235259,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24752",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1513,12 +1489,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868861407/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-10T06:29:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868861407",
       "user" : {
@@ -1554,7 +1531,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868880476"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "To fix inefficiencies identified #24580 we need to increase upper limit by the opportunity cost of spending one extra input. We don't know what type that one extra input would be.\r\n\r\nThe range of possible values is from the cost of p2tr (57.5vb) to the cost of p2pkh (148vb). The chosen value is in the middle of that range. \r\n\r\n- If you have only p2pkh inputs in your wallet: the new upper bound is lower than optimal, but still better than current bound as it extends the set of possible BnB solutions.\r\n- If you have only p2tr inputs: the new bound is higher than optimal, but also better than current bound. Same reasoning applies here as for the BnB without upper limit. We produce more BnB solutions and later choose what solution is economically more efficient. But unlike BnB without upper limit we don't risk dropping ridiculous amounts to fees.\r\n\r\nAn alternative way to pick the value would be to examine available UTXOs and take an average input size or something like this. This is more complicated and I'm not sure if it makes a meaningful difference. ",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-10T06:56:29Z",
@@ -1587,6 +1564,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-10T06:56:29Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868880476",
       "user" : {
@@ -1622,7 +1600,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868884647"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I don't think so, because `m_cost_of_change` is higher than dust",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-10T07:01:52Z",
@@ -1655,6 +1633,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-10T07:01:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868884647",
       "user" : {
@@ -1690,7 +1669,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868885595"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Will do. The reason is to have the correct value (without CHANGE_LOWER) for `SelectionResult.m_target`",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-10T07:03:12Z",
@@ -1723,6 +1702,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-10T07:03:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868885595",
       "user" : {
@@ -1758,7 +1738,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868885737"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Will do",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-10T07:03:25Z",
@@ -1791,6 +1771,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-10T07:03:26Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868885737",
       "user" : {
@@ -1826,7 +1807,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868887333"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "meh.. I'm ambivalent about this. What do others think?",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-10T07:05:27Z",
@@ -1859,6 +1840,7 @@
       "side" : "RIGHT",
       "start_line" : 265,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-05-10T07:05:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868887333",
       "user" : {
@@ -1894,7 +1876,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868888591"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I'll work on splitting this into a separate commit",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-10T07:07:05Z",
@@ -1927,6 +1909,7 @@
       "side" : "RIGHT",
       "start_line" : 456,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-05-10T07:07:05Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868888591",
       "user" : {
@@ -1962,7 +1945,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868890021"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "+1 to the terms. I don't think we need another one for `selection_target` without change. Currently we know in most cases whether we need change or not. BnB - always no change, Knapsack and SRD always change, unless sffo.",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-10T07:08:51Z",
@@ -1995,6 +1978,7 @@
       "side" : "RIGHT",
       "start_line" : 257,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-05-10T07:08:51Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868890021",
       "user" : {
@@ -2030,7 +2014,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868891698"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Not sure what did you mean by this. This is the case when the selected inputs are not enough and we just return null value. There's no merging going on.",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-10T07:10:50Z",
@@ -2063,6 +2047,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-10T07:10:50Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868891698",
       "user" : {
@@ -2098,7 +2083,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868893882"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I intended this to not change the behavior. The reason why we need `Merge` is to correctly track `SelectionResult::m_target`. Right now in case with preselected inputs `m_target` will be reduced by the amount of preselected inputs and this leads to incorrect result in `SelectionResult::GetChange`\r\n\r\nI'll split the commits and try to explain better why this is needed",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-10T07:13:36Z",
@@ -2117,7 +2102,7 @@
       "pull_request_review_id" : 967281011,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24752",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -2125,12 +2110,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868893882/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-10T07:13:36Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868893882",
       "user" : {
@@ -2166,7 +2152,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868896848"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I should probably add a comment to the code once we agree on the value",
       "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
       "created_at" : "2022-05-10T07:17:15Z",
@@ -2185,7 +2171,7 @@
       "pull_request_review_id" : 967284951,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24752",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -2193,12 +2179,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868896848/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-10T07:17:15Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868896848",
       "user" : {
@@ -2223,7 +2210,283 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24752#discussion_r869250868"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24752"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869250868"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Good, although Knapsack can actually produce results without change, but it takes care of the change amount internally.",
+      "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
+      "created_at" : "2022-05-10T13:40:07Z",
+      "diff_hunk" : "@@ -254,6 +254,10 @@ struct SelectionResult\n private:\n     /** Set of inputs selected by the algorithm to use in the transaction */\n     std::set<COutput> m_selected_inputs;\n+    /** The target the algorithm selected for. Note that this may not be equal to the recipient amount as it can include non-input fees */\n+    CAmount m_target;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24752#discussion_r869250868",
+      "id" : 869250868,
+      "in_reply_to_id" : 868400777,
+      "line" : 258,
+      "node_id" : "PRRC_kwDOABII584zz7c0",
+      "original_commit_id" : "5ee8f6c23e8485869604d33a03a8b352a0fc43ba",
+      "original_line" : 258,
+      "original_position" : 5,
+      "original_start_line" : 257,
+      "path" : "src/wallet/coinselection.h",
+      "position" : 5,
+      "pull_request_review_id" : 967795297,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24752",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869250868/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : 257,
+      "start_side" : "RIGHT",
+      "subject_type" : "line",
+      "updated_at" : "2022-05-10T13:40:32Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869250868",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/4060799?v=4",
+         "events_url" : "https://api.github.com/users/Xekyo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Xekyo/followers",
+         "following_url" : "https://api.github.com/users/Xekyo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Xekyo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Xekyo",
+         "id" : 4060799,
+         "login" : "Xekyo",
+         "node_id" : "MDQ6VXNlcjQwNjA3OTk=",
+         "organizations_url" : "https://api.github.com/users/Xekyo/orgs",
+         "received_events_url" : "https://api.github.com/users/Xekyo/received_events",
+         "repos_url" : "https://api.github.com/users/Xekyo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Xekyo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Xekyo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Xekyo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24752#discussion_r869252615"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24752"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869252615"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Right, but if the preset inputs are less than the target, wouldn't we be supposed to select additional inputs and build a transaction? I thought that's what you introduced the merge for.",
+      "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
+      "created_at" : "2022-05-10T13:41:38Z",
+      "diff_hunk" : "@@ -434,9 +434,17 @@ std::optional<SelectionResult> SelectCoins(const CWallet& wallet, const std::vec\n              */\n             preset_inputs.Insert(out, /*ancestors=*/ 0, /*descendants=*/ 0, /*positive_only=*/ false);\n         }\n+        if (preset_inputs.GetSelectionAmount() < nTargetValue) return std::nullopt;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24752#discussion_r869252615",
+      "id" : 869252615,
+      "in_reply_to_id" : 868406613,
+      "line" : 438,
+      "node_id" : "PRRC_kwDOABII584zz74H",
+      "original_commit_id" : "5ee8f6c23e8485869604d33a03a8b352a0fc43ba",
+      "original_line" : 437,
+      "original_position" : 4,
+      "original_start_line" : null,
+      "path" : "src/wallet/spend.cpp",
+      "position" : 4,
+      "pull_request_review_id" : 967799027,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24752",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869252615/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-05-10T13:41:38Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869252615",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/4060799?v=4",
+         "events_url" : "https://api.github.com/users/Xekyo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Xekyo/followers",
+         "following_url" : "https://api.github.com/users/Xekyo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Xekyo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Xekyo",
+         "id" : 4060799,
+         "login" : "Xekyo",
+         "node_id" : "MDQ6VXNlcjQwNjA3OTk=",
+         "organizations_url" : "https://api.github.com/users/Xekyo/orgs",
+         "received_events_url" : "https://api.github.com/users/Xekyo/received_events",
+         "repos_url" : "https://api.github.com/users/Xekyo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Xekyo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Xekyo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Xekyo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24752#discussion_r869256103"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24752"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869256103"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Ah right, because it includes the cost of future spending.",
+      "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
+      "created_at" : "2022-05-10T13:43:37Z",
+      "diff_hunk" : "@@ -434,9 +434,17 @@ std::optional<SelectionResult> SelectCoins(const CWallet& wallet, const std::vec\n              */\n             preset_inputs.Insert(out, /*ancestors=*/ 0, /*descendants=*/ 0, /*positive_only=*/ false);\n         }\n+        if (preset_inputs.GetSelectionAmount() < nTargetValue) return std::nullopt;\n+\n+        if (preset_inputs.GetSelectionAmount() > nTargetValue + coin_selection_params.m_cost_of_change) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24752#discussion_r869256103",
+      "id" : 869256103,
+      "in_reply_to_id" : 868408331,
+      "line" : 440,
+      "node_id" : "PRRC_kwDOABII584zz8un",
+      "original_commit_id" : "5ee8f6c23e8485869604d33a03a8b352a0fc43ba",
+      "original_line" : 439,
+      "original_position" : 6,
+      "original_start_line" : null,
+      "path" : "src/wallet/spend.cpp",
+      "position" : 6,
+      "pull_request_review_id" : 967807047,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24752",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869256103/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-05-10T13:43:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869256103",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/4060799?v=4",
+         "events_url" : "https://api.github.com/users/Xekyo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Xekyo/followers",
+         "following_url" : "https://api.github.com/users/Xekyo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Xekyo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Xekyo",
+         "id" : 4060799,
+         "login" : "Xekyo",
+         "node_id" : "MDQ6VXNlcjQwNjA3OTk=",
+         "organizations_url" : "https://api.github.com/users/Xekyo/orgs",
+         "received_events_url" : "https://api.github.com/users/Xekyo/received_events",
+         "repos_url" : "https://api.github.com/users/Xekyo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Xekyo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Xekyo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Xekyo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24752#discussion_r869264474"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24752"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869264474"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Perhaps it should just use the default output type, that way it will automatically upgrade as wallets progress to P2TR eventually. The current default seems like a reasonable choice at this time.\r\n\r\n:thinking: Having the bound definitely feels a lot better than unbounded. A whole input's fee still feels like a lot of additional fees. It's obviously only the worst case, but I'm curious to see how that fares in simulations. Do you need to make more logic changes or do you think I could take it for a spin on a few different scenarios?",
+      "commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
+      "created_at" : "2022-05-10T13:49:13Z",
+      "diff_hunk" : "@@ -382,9 +382,10 @@ std::optional<SelectionResult> AttemptSelection(const CWallet& wallet, const CAm\n     // Vector of results. We will choose the best one based on waste.\n     std::vector<SelectionResult> results;\n \n+    const auto cost_of_extra_input = coin_selection_params.m_effective_feerate.GetFee(DUMMY_NESTED_P2WPKH_INPUT_SIZE);\n     // Note that unlike KnapsackSolver, we do not include the fee for creating a change output as BnB will not create a change output.\n     std::vector<OutputGroup> positive_groups = GroupOutputs(wallet, coins, coin_selection_params, eligibility_filter, true /* positive_only */);\n-    if (auto bnb_result{SelectCoinsBnB(positive_groups, nTargetValue, coin_selection_params.m_cost_of_change)}) {\n+    if (auto bnb_result{SelectCoinsBnB(positive_groups, nTargetValue, coin_selection_params.m_cost_of_change + cost_of_extra_input)}) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24752#discussion_r869264474",
+      "id" : 869264474,
+      "in_reply_to_id" : 868417805,
+      "line" : 388,
+      "node_id" : "PRRC_kwDOABII584zz-xa",
+      "original_commit_id" : "b009a99839dd062709e0c0be1972ef62cd96b1c2",
+      "original_line" : 388,
+      "original_position" : 8,
+      "original_start_line" : null,
+      "path" : "src/wallet/spend.cpp",
+      "position" : 8,
+      "pull_request_review_id" : 967819031,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24752",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869264474/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-05-10T13:53:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869264474",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/4060799?v=4",
+         "events_url" : "https://api.github.com/users/Xekyo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Xekyo/followers",
+         "following_url" : "https://api.github.com/users/Xekyo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Xekyo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Xekyo",
+         "id" : 4060799,
+         "login" : "Xekyo",
+         "node_id" : "MDQ6VXNlcjQwNjA3OTk=",
+         "organizations_url" : "https://api.github.com/users/Xekyo/orgs",
+         "received_events_url" : "https://api.github.com/users/Xekyo/received_events",
+         "repos_url" : "https://api.github.com/users/Xekyo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Xekyo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Xekyo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Xekyo"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
       "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
       "created_at" : "2022-05-17T12:06:21Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24752#issuecomment-1128786137",
@@ -2267,7 +2530,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Update:\r\n[I did some simulations](https://github.com/achow101/coin-selection-simulation/pull/10/commits/cbe0346dcbe70dfa862da3abb13875e7ae3b1c0a) for this branch.\r\nThe results were that\r\n \r\n -  the cost increased when the BnB window was relaxed\r\n - the number of changeless solutions was reduced\r\n \r\n FWIU, @S3RK had a similar result with his simulations so far. There was a bug discovered in how the waste is calculated for Knapsack in some instances, but I don't expect this bug to impact the overall trend.\r\n \r\nMore experiments to follow, and it may be interesting to explore the opposite, i.e. see  whether reducing the window size in which BnB produces solutions improves results instead.",
       "created_at" : "2022-05-27T20:53:49Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24752#issuecomment-1140029982",
@@ -2311,7 +2574,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> The results were that\r\n> \r\n> * the cost increased when the BnB window was relaxed\r\n> * the number of changeless solutions was reduced\r\n\r\nI don't think this is the correct interpretation of the data. e.g. for `bustabit-tiny-hot-wallet_2019-2020-per-day`\r\n* total cost remained the same.\r\n   * average balance: baseline - 14.6401 vs branch - 14.6396\r\n   * average total fees: baseline - 0.4950 vs branch - 0.4954\r\n   * average total cost: baseline - 0.4958 vs branch - 0.4963\r\n* the number of changeless solutions very slightly increased (~ +3% but we see more knapsack solutions and it's not clear if the difference is significant or due to randomness)\r\n   * average for baseline - 1668.2 vs branch - 1721.6\r\n\r\nI see similar picture for `bustabit-tiny-hot-wallet_peak-and-tail` and for my own simulations.\r\n\r\nOverall it's not clear whether increasing the upper limit is beneficial. I'm closing this now and will send refactoring PRs separately.",
       "created_at" : "2022-06-22T06:50:38Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24752#issuecomment-1162715336",

@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2022-05-10T10:36:56Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25096#issuecomment-1122217816",
@@ -101,7 +101,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "This `GetAddresses` function is only called for inbound connections, AFAICT, so this is safe, but if it were ever invoked for outbound ones, `requestor.addrBind.GetPort()` would not return a useful number (outbound connections have a OS randomly-assigned local port, I believe). Perhaps add a comment to explain, or explicitly use 0 if the connection is outbound?",
-      "commit_id" : "224d765d0c3924ef175f874085db0d73e33ae51c",
+      "commit_id" : "292828cd7744ec7eadede4ad54aa2117087c5435",
       "created_at" : "2022-05-10T13:53:48Z",
       "diff_hunk" : "@@ -2801,6 +2801,7 @@ std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addres\n     uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_ADDRCACHE)\n         .Write(requestor.ConnectedThroughNetwork())\n         .Write(local_socket_bytes.data(), local_socket_bytes.size())\n+        .Write(requestor.addrBind.GetPort())",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25096#discussion_r869270366",
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-10T13:53:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869270366",
       "user" : {
@@ -168,7 +169,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Good point! Changed it to pass 0 for outbound connections and added a comment.",
-      "commit_id" : "224d765d0c3924ef175f874085db0d73e33ae51c",
+      "commit_id" : "292828cd7744ec7eadede4ad54aa2117087c5435",
       "created_at" : "2022-05-10T19:00:42Z",
       "diff_hunk" : "@@ -2801,6 +2801,7 @@ std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addres\n     uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_ADDRCACHE)\n         .Write(requestor.ConnectedThroughNetwork())\n         .Write(local_socket_bytes.data(), local_socket_bytes.size())\n+        .Write(requestor.addrBind.GetPort())",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25096#discussion_r869588098",
@@ -199,6 +200,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-10T19:00:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869588098",
       "user" : {
@@ -223,7 +225,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24571](https://github.com/bitcoin/bitcoin/pull/24571) (p2p: Prevent block index fingerprinting by sending additional getheaders messages by dergoegge)\n* [#23127](https://github.com/bitcoin/bitcoin/pull/23127) (tests: Use test framework utils where possible by vincenzopalazzo)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-05-10T19:45:42Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25096#issuecomment-1122794418",
@@ -280,7 +282,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Before this change, all inbound onion connections get the same cache_id. After this change, every different onion would generate a new cache_id. Am i right?",
-      "commit_id" : "224d765d0c3924ef175f874085db0d73e33ae51c",
+      "commit_id" : "292828cd7744ec7eadede4ad54aa2117087c5435",
       "created_at" : "2022-05-12T07:06:29Z",
       "diff_hunk" : "@@ -2801,6 +2801,9 @@ std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addres\n     uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_ADDRCACHE)\n         .Write(requestor.ConnectedThroughNetwork())\n         .Write(local_socket_bytes.data(), local_socket_bytes.size())\n+        // For outbound connections, the port of the bound address is randomly\n+        // assigend by the OS and would therefore not be useful for seeding.\n+        .Write(requestor.IsInboundConn() ? requestor.addrBind.GetPort() : 0)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25096#discussion_r871019738",
@@ -292,7 +294,7 @@
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "src/net.cpp",
-      "position" : 6,
+      "position" : 9,
       "pull_request_review_id" : 970352885,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25096",
       "reactions" : {
@@ -310,6 +312,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-12T07:06:29Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/871019738",
       "user" : {
@@ -347,7 +350,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "> Before this change, all inbound onion connections get the same cache_id.\r\n\r\nYes and all other incoming connections to 127.0.0.1:* also get the same cache_id.\r\n\r\n> After this change, every different onion would generate a new cache_id.\r\n\r\nAfter this change all incoming connections to 127.0.0.1 binds get the same cache_id if the bound port is the same.\r\ne.g.: All connections to 127.0.0.1:8333 will get the same cache_id \"a\" and all connections to 127.0.0.1:8334 will get the same cache_id \"b\".",
-      "commit_id" : "224d765d0c3924ef175f874085db0d73e33ae51c",
+      "commit_id" : "292828cd7744ec7eadede4ad54aa2117087c5435",
       "created_at" : "2022-05-12T14:31:03Z",
       "diff_hunk" : "@@ -2801,6 +2801,9 @@ std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addres\n     uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_ADDRCACHE)\n         .Write(requestor.ConnectedThroughNetwork())\n         .Write(local_socket_bytes.data(), local_socket_bytes.size())\n+        // For outbound connections, the port of the bound address is randomly\n+        // assigend by the OS and would therefore not be useful for seeding.\n+        .Write(requestor.IsInboundConn() ? requestor.addrBind.GetPort() : 0)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25096#discussion_r871455227",
@@ -360,7 +363,7 @@
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "src/net.cpp",
-      "position" : 6,
+      "position" : 9,
       "pull_request_review_id" : 970958009,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25096",
       "reactions" : {
@@ -378,6 +381,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-12T14:31:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/871455227",
       "user" : {
@@ -415,7 +419,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "I assume the bound port would be the same for all Tor connections, right?",
-      "commit_id" : "224d765d0c3924ef175f874085db0d73e33ae51c",
+      "commit_id" : "292828cd7744ec7eadede4ad54aa2117087c5435",
       "created_at" : "2022-05-16T05:03:46Z",
       "diff_hunk" : "@@ -2801,6 +2801,9 @@ std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addres\n     uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_ADDRCACHE)\n         .Write(requestor.ConnectedThroughNetwork())\n         .Write(local_socket_bytes.data(), local_socket_bytes.size())\n+        // For outbound connections, the port of the bound address is randomly\n+        // assigend by the OS and would therefore not be useful for seeding.\n+        .Write(requestor.IsInboundConn() ? requestor.addrBind.GetPort() : 0)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25096#discussion_r873325279",
@@ -428,7 +432,7 @@
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "src/net.cpp",
-      "position" : 6,
+      "position" : 9,
       "pull_request_review_id" : 973398656,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25096",
       "reactions" : {
@@ -446,6 +450,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T05:03:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873325279",
       "user" : {
@@ -483,7 +488,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "You can have more than one onion bind (not the default) by using `-bind=<addr>=onion` multiple times. In that case not all Tor connections would have the same bound port.\r\n\r\nexample:\r\n```\r\n-bind=127.0.0.1:5555=onion\r\n-bind=127.0.0.1:6666=onion\r\n```\r\nWith this config any inbound Tor connection will have `addrBind` set to `127.0.0.1:5555` or `127.0.0.1:6666`.\r\n",
-      "commit_id" : "224d765d0c3924ef175f874085db0d73e33ae51c",
+      "commit_id" : "292828cd7744ec7eadede4ad54aa2117087c5435",
       "created_at" : "2022-05-16T16:07:53Z",
       "diff_hunk" : "@@ -2801,6 +2801,9 @@ std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addres\n     uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_ADDRCACHE)\n         .Write(requestor.ConnectedThroughNetwork())\n         .Write(local_socket_bytes.data(), local_socket_bytes.size())\n+        // For outbound connections, the port of the bound address is randomly\n+        // assigend by the OS and would therefore not be useful for seeding.\n+        .Write(requestor.IsInboundConn() ? requestor.addrBind.GetPort() : 0)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25096#discussion_r873907885",
@@ -496,7 +501,7 @@
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "src/net.cpp",
-      "position" : 6,
+      "position" : 9,
       "pull_request_review_id" : 974220425,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25096",
       "reactions" : {
@@ -514,6 +519,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T16:07:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873907885",
       "user" : {
@@ -549,9 +555,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873974865"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I'm not sure if this is matters a lot, but I think that aside from the intended change for inbound onion connections, this also changes the behavior for addrs for which `HasLinkedIPv4()` ist true, because `ConnectedThroughNetwork()` calls `CNetAddr::GetNetClass()` instead of `CNetAddr::GetNetwork()`.\r\n",
-      "commit_id" : "224d765d0c3924ef175f874085db0d73e33ae51c",
+      "commit_id" : "292828cd7744ec7eadede4ad54aa2117087c5435",
       "created_at" : "2022-05-16T17:16:51Z",
       "diff_hunk" : "@@ -2799,8 +2799,11 @@ std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addres\n {\n     auto local_socket_bytes = requestor.addrBind.GetAddrBytes();\n     uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_ADDRCACHE)\n-        .Write(requestor.addr.GetNetwork())\n+        .Write(requestor.ConnectedThroughNetwork())",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25096#discussion_r873974865",
@@ -581,6 +587,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T17:17:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873974865",
       "user" : {
@@ -662,23 +669,23 @@
       },
       "author_association" : "MEMBER",
       "body" : "This indexing is hard to read. Perhaps you could try using named variables instead?",
-      "commit_id" : "224d765d0c3924ef175f874085db0d73e33ae51c",
+      "commit_id" : "292828cd7744ec7eadede4ad54aa2117087c5435",
       "created_at" : "2022-05-17T07:26:29Z",
       "diff_hunk" : "@@ -60,16 +69,28 @@ def run_test(self):\n         N = 5\n         cur_mock_time = int(time.time())\n         for i in range(N):\n-            addr_receiver = self.nodes[0].add_p2p_connection(AddrReceiver())\n-            addr_receiver.send_and_ping(msg_getaddr())\n+            addr_receiver_local = self.nodes[0].add_p2p_connection(AddrReceiver())\n+            addr_receiver_local.send_and_ping(msg_getaddr())\n+            addr_receiver_onion1 = self.nodes[0].add_p2p_connection(AddrReceiver(), dstport=self.onion_port1)\n+            addr_receiver_onion1.send_and_ping(msg_getaddr())\n+            addr_receiver_onion2 = self.nodes[0].add_p2p_connection(AddrReceiver(), dstport=self.onion_port2)\n+            addr_receiver_onion2.send_and_ping(msg_getaddr())\n+\n             # Trigger response\n             cur_mock_time += 5 * 60\n             self.nodes[0].setmocktime(cur_mock_time)\n-            addr_receiver.wait_until(addr_receiver.addr_received)\n-            responses.append(addr_receiver.get_received_addrs())\n-        for response in responses[1:]:\n-            assert_equal(response, responses[0])\n-        assert(len(response) == MAX_ADDR_TO_SEND)\n+            addr_receiver_local.wait_until(addr_receiver_local.addr_received)\n+            addr_receiver_onion1.wait_until(addr_receiver_onion1.addr_received)\n+            addr_receiver_onion2.wait_until(addr_receiver_onion2.addr_received)\n+            responses.append(addr_receiver_local.get_received_addrs())\n+            responses.append(addr_receiver_onion1.get_received_addrs())\n+            responses.append(addr_receiver_onion2.get_received_addrs())\n+\n+        for i in range(0, len(responses) - 3):\n+            assert(responses[i] != responses[i+1])",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25096#discussion_r874460290",
       "id" : 874460290,
-      "line" : 90,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5840HzSC",
       "original_commit_id" : "224d765d0c3924ef175f874085db0d73e33ae51c",
       "original_line" : 90,
       "original_position" : 52,
       "original_start_line" : null,
       "path" : "test/functional/p2p_getaddr_caching.py",
-      "position" : 52,
+      "position" : null,
       "pull_request_review_id" : 974963903,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25096",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -686,12 +693,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/874460290/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-17T07:26:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/874460290",
       "user" : {
@@ -729,7 +737,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Good catch, I did not notice this. I don't know enough about these IPv6 addresses that contain IPv4 addresses but it does not seem to matter here. It might be that inbound connections on IPv6 that come from these special IPv6 addresses get their own addr cache but that does not seem bad to me. It is mildly confusing that we have 3 different functions that return the network type for an address.\r\n\r\n@naumenkogs It looks like you were the one that introduced `CNetAddr::GetNetClass()`, what do you think about this?\r\n",
-      "commit_id" : "224d765d0c3924ef175f874085db0d73e33ae51c",
+      "commit_id" : "292828cd7744ec7eadede4ad54aa2117087c5435",
       "created_at" : "2022-05-18T10:59:41Z",
       "diff_hunk" : "@@ -2799,8 +2799,11 @@ std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addres\n {\n     auto local_socket_bytes = requestor.addrBind.GetAddrBytes();\n     uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_ADDRCACHE)\n-        .Write(requestor.addr.GetNetwork())\n+        .Write(requestor.ConnectedThroughNetwork())",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25096#discussion_r875757803",
@@ -760,6 +768,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-18T10:59:41Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/875757803",
       "user" : {
@@ -797,7 +806,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Got rid of the `responses` list entirely in favor of simply comparing to the last received response.",
-      "commit_id" : "f5e1269fbeaaf37fdb3945381231d5ff9834e42e",
+      "commit_id" : "292828cd7744ec7eadede4ad54aa2117087c5435",
       "created_at" : "2022-05-18T12:15:33Z",
       "diff_hunk" : "@@ -60,16 +69,28 @@ def run_test(self):\n         N = 5\n         cur_mock_time = int(time.time())\n         for i in range(N):\n-            addr_receiver = self.nodes[0].add_p2p_connection(AddrReceiver())\n-            addr_receiver.send_and_ping(msg_getaddr())\n+            addr_receiver_local = self.nodes[0].add_p2p_connection(AddrReceiver())\n+            addr_receiver_local.send_and_ping(msg_getaddr())\n+            addr_receiver_onion1 = self.nodes[0].add_p2p_connection(AddrReceiver(), dstport=self.onion_port1)\n+            addr_receiver_onion1.send_and_ping(msg_getaddr())\n+            addr_receiver_onion2 = self.nodes[0].add_p2p_connection(AddrReceiver(), dstport=self.onion_port2)\n+            addr_receiver_onion2.send_and_ping(msg_getaddr())\n+\n             # Trigger response\n             cur_mock_time += 5 * 60\n             self.nodes[0].setmocktime(cur_mock_time)\n-            addr_receiver.wait_until(addr_receiver.addr_received)\n-            responses.append(addr_receiver.get_received_addrs())\n-        for response in responses[1:]:\n-            assert_equal(response, responses[0])\n-        assert(len(response) == MAX_ADDR_TO_SEND)\n+            addr_receiver_local.wait_until(addr_receiver_local.addr_received)\n+            addr_receiver_onion1.wait_until(addr_receiver_onion1.addr_received)\n+            addr_receiver_onion2.wait_until(addr_receiver_onion2.addr_received)\n+            responses.append(addr_receiver_local.get_received_addrs())\n+            responses.append(addr_receiver_onion1.get_received_addrs())\n+            responses.append(addr_receiver_onion2.get_received_addrs())\n+\n+        for i in range(0, len(responses) - 3):\n+            assert(responses[i] != responses[i+1])",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25096#discussion_r875819796",
@@ -828,6 +837,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-18T12:15:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/875819796",
       "user" : {
@@ -865,7 +875,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "I also don't think this `HasLinkedIPv4` difference matters. I don't have a preference here.",
-      "commit_id" : "f5e1269fbeaaf37fdb3945381231d5ff9834e42e",
+      "commit_id" : "292828cd7744ec7eadede4ad54aa2117087c5435",
       "created_at" : "2022-05-23T07:44:06Z",
       "diff_hunk" : "@@ -2799,8 +2799,11 @@ std::vector<CAddress> CConnman::GetAddresses(CNode& requestor, size_t max_addres\n {\n     auto local_socket_bytes = requestor.addrBind.GetAddrBytes();\n     uint64_t cache_id = GetDeterministicRandomizer(RANDOMIZER_ID_ADDRCACHE)\n-        .Write(requestor.addr.GetNetwork())\n+        .Write(requestor.ConnectedThroughNetwork())",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25096#discussion_r879120580",
@@ -896,6 +906,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-23T07:44:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/879120580",
       "user" : {
@@ -975,7 +986,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/886966466"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "typo: assigned",
       "commit_id" : "292828cd7744ec7eadede4ad54aa2117087c5435",
       "created_at" : "2022-06-01T15:48:49Z",
@@ -1007,6 +1018,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-02T16:23:26Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/886966466",
       "user" : {
@@ -1042,7 +1054,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/888144871"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: for completeness maybe also check that the onion networks have different caches after the mocktime bump.",
       "commit_id" : "292828cd7744ec7eadede4ad54aa2117087c5435",
       "created_at" : "2022-06-02T16:15:12Z",
@@ -1074,6 +1086,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-02T16:23:26Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/888144871",
       "user" : {
@@ -1186,7 +1199,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Code Review ACK 292828cd7744ec7eadede4ad54aa2117087c5435",
       "created_at" : "2022-06-03T13:57:01Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25096#issuecomment-1145991805",
@@ -1317,6 +1330,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-08T15:51:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/892558783",
       "user" : {
@@ -1385,6 +1399,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-08T16:09:56Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/892578512",
       "user" : {

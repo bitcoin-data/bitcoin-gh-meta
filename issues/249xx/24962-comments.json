@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.",
       "created_at" : "2022-04-25T00:55:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24962#issuecomment-1107957884",
@@ -20,7 +20,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1107957884/reactions"
       },
-      "updated_at" : "2022-04-26T15:19:27Z",
+      "updated_at" : "2022-05-13T22:34:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1107957884",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -57,19 +57,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "```suggestion\r\n        std::memmove(first.ptr, last.ptr, endp - reinterpret_cast<char*>(last.ptr));\r\n```\r\n\r\nMaybe switch to `std::memmove`, which comes with the documentation:\r\n\r\nhttps://en.cppreference.com/w/cpp/string/byte/memmove\r\n\r\n> If the objects are [potentially-overlapping](https://en.cppreference.com/w/cpp/language/object#Subobjects) or not [TriviallyCopyable](https://en.cppreference.com/w/cpp/named_req/TriviallyCopyable), the behavior of memmove is not specified and [may be undefined](http://stackoverflow.com/questions/29777492).",
-      "commit_id" : "1ed610d3892917240589ca55720340838154742d",
+      "commit_id" : "11e79084845a78e2421ea3abafe0de5a54ca2bde",
       "created_at" : "2022-04-25T07:20:12Z",
       "diff_hunk" : "@@ -410,17 +413,9 @@ class prevector {\n         // necessary to switch to the (more efficient) directly allocated\n         // representation (with capacity N and size <= N).\n         iterator p = first;\n-        char* endp = (char*)&(*end());\n-        if (!std::is_trivially_destructible<T>::value) {\n-            while (p != last) {\n-                (*p).~T();\n-                _size--;\n-                ++p;\n-            }\n-        } else {\n-            _size -= last - p;\n-        }\n-        memmove(&(*first), &(*last), endp - ((char*)(&(*last))));\n+        char* endp = reinterpret_cast<char*>(end().ptr);\n+        _size -= last - p;\n+        memmove(first.ptr, last.ptr, endp - reinterpret_cast<char*>(last.ptr));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24962#discussion_r857324636",
       "id" : 857324636,
-      "line" : 418,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584zGbxc",
       "original_commit_id" : "1ed610d3892917240589ca55720340838154742d",
       "original_line" : 418,
       "original_position" : 70,
       "original_start_line" : null,
       "path" : "src/prevector.h",
-      "position" : 70,
+      "position" : null,
       "pull_request_review_id" : 951437955,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24962",
       "reactions" : {
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-25T07:20:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/857324636",
       "user" : {
@@ -111,7 +112,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Light Concept ACK\r\n(I'm not deeply familiar with templates, type traits, etc. but from a higher level perspective, removing unused code and fixing UB seems like a good idea!)",
       "created_at" : "2022-04-25T12:39:53Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24962#issuecomment-1108518593",
@@ -168,20 +169,20 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "I'll change all occurrences of memmove in that file, plus memcpy as well, right? Then I'll include `cstring` instead of `string.h`",
-      "commit_id" : "1ed610d3892917240589ca55720340838154742d",
+      "commit_id" : "11e79084845a78e2421ea3abafe0de5a54ca2bde",
       "created_at" : "2022-04-25T15:13:24Z",
       "diff_hunk" : "@@ -410,17 +413,9 @@ class prevector {\n         // necessary to switch to the (more efficient) directly allocated\n         // representation (with capacity N and size <= N).\n         iterator p = first;\n-        char* endp = (char*)&(*end());\n-        if (!std::is_trivially_destructible<T>::value) {\n-            while (p != last) {\n-                (*p).~T();\n-                _size--;\n-                ++p;\n-            }\n-        } else {\n-            _size -= last - p;\n-        }\n-        memmove(&(*first), &(*last), endp - ((char*)(&(*last))));\n+        char* endp = reinterpret_cast<char*>(end().ptr);\n+        _size -= last - p;\n+        memmove(first.ptr, last.ptr, endp - reinterpret_cast<char*>(last.ptr));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24962#discussion_r857742046",
       "id" : 857742046,
       "in_reply_to_id" : 857324636,
-      "line" : 418,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584zIBre",
       "original_commit_id" : "1ed610d3892917240589ca55720340838154742d",
       "original_line" : 418,
       "original_position" : 70,
       "original_start_line" : null,
       "path" : "src/prevector.h",
-      "position" : 70,
+      "position" : null,
       "pull_request_review_id" : 952040334,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24962",
       "reactions" : {
@@ -199,6 +200,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-25T15:13:24Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/857742046",
       "user" : {
@@ -236,20 +238,20 @@
       },
       "author_association" : "MEMBER",
       "body" : "Oh, if the changes are more expensive, then maybe do it in another commit or pull request.",
-      "commit_id" : "1ed610d3892917240589ca55720340838154742d",
+      "commit_id" : "11e79084845a78e2421ea3abafe0de5a54ca2bde",
       "created_at" : "2022-04-25T15:28:01Z",
       "diff_hunk" : "@@ -410,17 +413,9 @@ class prevector {\n         // necessary to switch to the (more efficient) directly allocated\n         // representation (with capacity N and size <= N).\n         iterator p = first;\n-        char* endp = (char*)&(*end());\n-        if (!std::is_trivially_destructible<T>::value) {\n-            while (p != last) {\n-                (*p).~T();\n-                _size--;\n-                ++p;\n-            }\n-        } else {\n-            _size -= last - p;\n-        }\n-        memmove(&(*first), &(*last), endp - ((char*)(&(*last))));\n+        char* endp = reinterpret_cast<char*>(end().ptr);\n+        _size -= last - p;\n+        memmove(first.ptr, last.ptr, endp - reinterpret_cast<char*>(last.ptr));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24962#discussion_r857757172",
       "id" : 857757172,
       "in_reply_to_id" : 857324636,
-      "line" : 418,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584zIFX0",
       "original_commit_id" : "1ed610d3892917240589ca55720340838154742d",
       "original_line" : 418,
       "original_position" : 70,
       "original_start_line" : null,
       "path" : "src/prevector.h",
-      "position" : 70,
+      "position" : null,
       "pull_request_review_id" : 952062267,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24962",
       "reactions" : {
@@ -267,6 +269,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-25T15:28:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/857757172",
       "user" : {
@@ -388,7 +391,7 @@
       "node_id" : "IC_kwDOABII585CWkqw",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -396,7 +399,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1113213616/reactions"
       },
       "updated_at" : "2022-04-29T11:51:59Z",
@@ -467,6 +470,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-29T16:23:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/861945198",
       "user" : {
@@ -535,6 +539,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-29T16:12:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/861946686",
       "user" : {
@@ -647,6 +652,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-29T16:11:09Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/861951263",
       "user" : {
@@ -715,6 +721,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-29T16:12:36Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/861952345",
       "user" : {
@@ -783,6 +790,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-29T16:27:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/861963365",
       "user" : {
@@ -851,6 +859,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-30T07:50:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/862326859",
       "user" : {
@@ -918,6 +927,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-30T08:06:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/862328184",
       "user" : {
@@ -972,7 +982,7 @@
       "pull_request_review_id" : 958474556,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24962",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -980,12 +990,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/862335941/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-30T09:37:29Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/862335941",
       "user" : {
@@ -1010,14 +1021,35 @@
       }
    },
    {
-      "author_association" : "NONE",
-      "body" : "> review ACK [11e7908](https://github.com/bitcoin/bitcoin/commit/11e79084845a78e2421ea3abafe0de5a54ca2bde) ð¯\r\n> \r\n> I checked that the code is unused at run-time. Also, in light of silent merge conflicts, the added static_assert should ensure that any code that tried to use it fails to compile. According to https://eel.is/c++draft/class#prop-1.3 is_trivially_copyable_v is false if is_trivially_destructible_v is false.\r\n> \r\n> I have not verified that this is actually UB, but the provided example seems to imply so. Regardless, removing code because it is unused seems good enough.\r\n> \r\n> Show signature\r\n\r\nhello Marco. do you check your telegrams? some one need your reply by tele.",
-      "created_at" : "2022-05-01T04:18:55Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24962#issuecomment-1114127654",
-      "id" : 1114127654,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24962",
-      "node_id" : "IC_kwDOABII585CaD0m",
-      "performed_via_github_app" : null,
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24962#discussion_r877222719"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24962"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/877222719"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Somewhat followed up in #25172.",
+      "commit_id" : "11e79084845a78e2421ea3abafe0de5a54ca2bde",
+      "created_at" : "2022-05-19T15:36:36Z",
+      "diff_hunk" : "@@ -410,17 +413,9 @@ class prevector {\n         // necessary to switch to the (more efficient) directly allocated\n         // representation (with capacity N and size <= N).\n         iterator p = first;\n-        char* endp = (char*)&(*end());\n-        if (!std::is_trivially_destructible<T>::value) {\n-            while (p != last) {\n-                (*p).~T();\n-                _size--;\n-                ++p;\n-            }\n-        } else {\n-            _size -= last - p;\n-        }\n-        memmove(&(*first), &(*last), endp - ((char*)(&(*last))));\n+        char* endp = reinterpret_cast<char*>(end().ptr);\n+        _size -= last - p;\n+        memmove(first.ptr, last.ptr, endp - reinterpret_cast<char*>(last.ptr));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24962#discussion_r877222719",
+      "id" : 877222719,
+      "in_reply_to_id" : 857324636,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII5840SVs_",
+      "original_commit_id" : "1ed610d3892917240589ca55720340838154742d",
+      "original_line" : 418,
+      "original_position" : 70,
+      "original_start_line" : null,
+      "path" : "src/prevector.h",
+      "position" : null,
+      "pull_request_review_id" : 978811403,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24962",
       "reactions" : {
          "+1" : 0,
          "-1" : 0,
@@ -1028,29 +1060,33 @@
          "laugh" : 0,
          "rocket" : 0,
          "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1114127654/reactions"
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/877222719/reactions"
       },
-      "updated_at" : "2022-05-01T04:18:55Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1114127654",
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-05-19T15:36:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/877222719",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/54730576?v=4",
-         "events_url" : "https://api.github.com/users/Meru852/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/Meru852/followers",
-         "following_url" : "https://api.github.com/users/Meru852/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/Meru852/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/863730?v=4",
+         "events_url" : "https://api.github.com/users/fanquake/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/fanquake/followers",
+         "following_url" : "https://api.github.com/users/fanquake/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/fanquake/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/Meru852",
-         "id" : 54730576,
-         "login" : "Meru852",
-         "node_id" : "MDQ6VXNlcjU0NzMwNTc2",
-         "organizations_url" : "https://api.github.com/users/Meru852/orgs",
-         "received_events_url" : "https://api.github.com/users/Meru852/received_events",
-         "repos_url" : "https://api.github.com/users/Meru852/repos",
+         "html_url" : "https://github.com/fanquake",
+         "id" : 863730,
+         "login" : "fanquake",
+         "node_id" : "MDQ6VXNlcjg2MzczMA==",
+         "organizations_url" : "https://api.github.com/users/fanquake/orgs",
+         "received_events_url" : "https://api.github.com/users/fanquake/received_events",
+         "repos_url" : "https://api.github.com/users/fanquake/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/Meru852/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/Meru852/subscriptions",
+         "starred_url" : "https://api.github.com/users/fanquake/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/fanquake/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/Meru852"
+         "url" : "https://api.github.com/users/fanquake"
       }
    }
 ]

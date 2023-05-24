@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "This adds functional tests for the USDT tracepoints added in https://github.com/bitcoin/bitcoin/pull/22006 and https://github.com/bitcoin/bitcoin/pull/22902. This partially fixes #23296. The tests **are probably skipped** on most systems as these tests require:\r\n- a Linux system with a kernel that supports BPF (and available kernel headers)\r\n- that Bitcoin Core is compiled with tracepoints for USDT support (default when compiled with depends)\r\n- [bcc](https://github.com/iovisor/bcc) installed\r\n- the tests are run with a privileged user that is able to e.g. do BPF syscalls and load BPF maps\r\n\r\nThe tests are not yet run in our CI as the CirrusCI containers lack the required permissions (see https://github.com/bitcoin/bitcoin/issues/23296#issuecomment-1024920845). Running the tests in a VM in the CI could work, but I haven't experimented with this yet. The priority was to get the actual tests done first to ensure the tracepoints work as intended for the v23.0 release. Running the tracepoint tests in the CI is planned as the next step to finish #23296.\r\n\r\nThe tests can, however, be run against e.g. release candidates by hand. Additionally, they provide a starting point for tests for future tracepoints. PRs adding new tracepoint should include tests. This makes reviewing these PRs easier.\r\n\r\nThe tests require privileges to execute BPF sycalls (`CAP_SYS_ADMIN` before Linux kernel 5.8 and `CAP_BPF` and `CAP_PERFMON` on 5.8+) and permissions to `/sys/kernel/debug/tracing/`. It's currently recommended to run the tests in a virtual machine (or on a VPS) where it's sensible to use the `root` user to gain these privileges. Never run python scripts you haven't carefully reviewed with `root` permissions! It's unclear if a non-root user can even gain the required privileges. This needs more experimenting.\r\n\r\nThe goal here is to test the tracepoint interface to make sure the [documented interface](https://github.com/bitcoin/bitcoin/blob/master/doc/tracing.md#tracepoint-documentation) does not break by accident. The tracepoints expose implementation details. This means we also need to rely on implementation details of Bitcoin Core in these functional tests to trigger the tracepoints. An example is the test of the `utxocache:flush` tracepoint: On Bitcoin Core shutdown, the UTXO cache is flushed twice. The corresponding tracepoint test expects two flushes, too - if not, the test fails. Changing implementation details could cause these tests to fail and the tracepoint API to break. However, we purposefully treat the tracepoints only as [**semi-stable**](https://github.com/bitcoin/bitcoin/blob/master/doc/tracing.md#semi-stable-api). The tracepoints should not block refactors or changes to other internals.\r\n",
    "closed_at" : "2022-04-06T11:07:50Z",
    "closed_by" : {
@@ -44,7 +44,7 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24358/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "PR_kwDOABII584y77Ru",
    "number" : 24358,
@@ -70,9 +70,10 @@
    },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24358/timeline",
    "title" : "test: USDT tracepoint interface tests",
-   "updated_at" : "2022-04-06T11:20:50Z",
+   "updated_at" : "2023-04-06T14:42:18Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24358",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/19157360?v=4",

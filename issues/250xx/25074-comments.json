@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2022-05-06T12:54:17Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25074#issuecomment-1119586198",
@@ -101,19 +101,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "`current_time` is stale here. Maybe instead of moving this, it'd be better to just `SetBestBlockIndex(pindex->pprev);`?",
-      "commit_id" : "75f53f1e1fc6917eac40e51ce7b6bec2717bd526",
+      "commit_id" : "7171ebc7cbd911fa7ccad732ea7f73bce30928ee",
       "created_at" : "2022-05-09T21:39:13Z",
       "diff_hunk" : "@@ -185,6 +178,13 @@ void BaseIndex::ThreadSync()\n                            __func__, pindex->GetBlockHash().ToString());\n                 return;\n             }\n+\n+            if (last_locator_write_time + SYNC_LOCATOR_WRITE_INTERVAL < current_time) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25074#discussion_r868492947",
       "id" : 868492947,
-      "line" : 182,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584zxCaT",
       "original_commit_id" : "75f53f1e1fc6917eac40e51ce7b6bec2717bd526",
       "original_line" : 182,
       "original_position" : 19,
       "original_start_line" : null,
       "path" : "src/index/base.cpp",
-      "position" : 19,
+      "position" : null,
       "pull_request_review_id" : 966860653,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25074",
       "reactions" : {
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-09T21:39:17Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/868492947",
       "user" : {
@@ -166,22 +167,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869806954"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25074#discussion_r868492947\r\n\r\n> `current_time` is stale here. Maybe instead of moving this, it'd be better to just `SetBestBlockIndex(pindex->pprev);`?\r\n\r\nYeah probably the reason this bug was introduced is that original author was trying to avoid `current_time` being stale. But `pindex->pprev` would be the wrong best block index to use in the `Rewind()` case above. It would be pointing to parent of the rewind block instead of the block that was actually rewound to. I guess this would be better than current behavior, but still technically incorrect, and seems like it would be fragile even if current index subclasses are ok with it.\r\n\r\nI think using stale rewind time is ok and probably better than the alternatives, even if it seems a little wonky. This is all replaced anyway in 1819bdb7cb0634dad2e07daccfe7e8a122a943d6 from #24230, as Martin noted in https://github.com/bitcoin/bitcoin/pull/24230#discussion_r866785619\r\n\r\n",
-      "commit_id" : "75f53f1e1fc6917eac40e51ce7b6bec2717bd526",
+      "commit_id" : "7171ebc7cbd911fa7ccad732ea7f73bce30928ee",
       "created_at" : "2022-05-11T02:02:26Z",
       "diff_hunk" : "@@ -185,6 +178,13 @@ void BaseIndex::ThreadSync()\n                            __func__, pindex->GetBlockHash().ToString());\n                 return;\n             }\n+\n+            if (last_locator_write_time + SYNC_LOCATOR_WRITE_INTERVAL < current_time) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25074#discussion_r869806954",
       "id" : 869806954,
       "in_reply_to_id" : 868492947,
-      "line" : 182,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584z2DNq",
       "original_commit_id" : "75f53f1e1fc6917eac40e51ce7b6bec2717bd526",
       "original_line" : 182,
       "original_position" : 19,
       "original_start_line" : null,
       "path" : "src/index/base.cpp",
-      "position" : 19,
+      "position" : null,
       "pull_request_review_id" : 968587279,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25074",
       "reactions" : {
@@ -199,6 +200,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-11T02:06:25Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869806954",
       "user" : {
@@ -236,20 +238,20 @@
       },
       "author_association" : "MEMBER",
       "body" : ">But pindex->pprev would be the wrong best block index to use in the Rewind() case above. It would be pointing to parent of the rewind block instead of the block that was actually rewound to. I guess this would be better than current behavior, but still technically incorrect,\r\n\r\nI don't see how it would even be incorrect... After the rewind, `pindex` is changed to the block one beyond that which the index should be current to...?",
-      "commit_id" : "75f53f1e1fc6917eac40e51ce7b6bec2717bd526",
+      "commit_id" : "7171ebc7cbd911fa7ccad732ea7f73bce30928ee",
       "created_at" : "2022-05-11T02:26:35Z",
       "diff_hunk" : "@@ -185,6 +178,13 @@ void BaseIndex::ThreadSync()\n                            __func__, pindex->GetBlockHash().ToString());\n                 return;\n             }\n+\n+            if (last_locator_write_time + SYNC_LOCATOR_WRITE_INTERVAL < current_time) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25074#discussion_r869815696",
       "id" : 869815696,
       "in_reply_to_id" : 868492947,
-      "line" : 182,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584z2FWQ",
       "original_commit_id" : "75f53f1e1fc6917eac40e51ce7b6bec2717bd526",
       "original_line" : 182,
       "original_position" : 19,
       "original_start_line" : null,
       "path" : "src/index/base.cpp",
-      "position" : 19,
+      "position" : null,
       "pull_request_review_id" : 968598687,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25074",
       "reactions" : {
@@ -267,6 +269,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-11T02:26:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869815696",
       "user" : {
@@ -302,22 +305,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869821236"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I don't see how it would even be incorrect... After the rewind, `pindex` is changed to the block one beyond that which the index should be current to...?\r\n\r\nOops, you're right. I didn't notice NextSyncBlock was returning the next block after the fork. So I think your `pindex->pprev` suggestion is good and makes sense, and probably a little better than the current fix, though I think both fixes are fine.",
-      "commit_id" : "75f53f1e1fc6917eac40e51ce7b6bec2717bd526",
+      "commit_id" : "7171ebc7cbd911fa7ccad732ea7f73bce30928ee",
       "created_at" : "2022-05-11T02:41:40Z",
       "diff_hunk" : "@@ -185,6 +178,13 @@ void BaseIndex::ThreadSync()\n                            __func__, pindex->GetBlockHash().ToString());\n                 return;\n             }\n+\n+            if (last_locator_write_time + SYNC_LOCATOR_WRITE_INTERVAL < current_time) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25074#discussion_r869821236",
       "id" : 869821236,
       "in_reply_to_id" : 868492947,
-      "line" : 182,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584z2Gs0",
       "original_commit_id" : "75f53f1e1fc6917eac40e51ce7b6bec2717bd526",
       "original_line" : 182,
       "original_position" : 19,
       "original_start_line" : null,
       "path" : "src/index/base.cpp",
-      "position" : 19,
+      "position" : null,
       "pull_request_review_id" : 968605709,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25074",
       "reactions" : {
@@ -335,6 +338,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-11T02:41:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/869821236",
       "user" : {
@@ -403,7 +407,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24230](https://github.com/bitcoin/bitcoin/pull/24230) (indexes: Stop using node internal types and locking cs_main, improve sync logic by ryanofsky)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-05-12T09:17:42Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25074#issuecomment-1124733511",
@@ -458,9 +462,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/871905238"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I changed it to Luke's suggestion and adjusted the commit message, thanks.\r\nWhile this is simpler, `current_time` being a bit stale shouldn't ever be a serious problem in my opinion -  I think of updating the best block / committing it every 30s as a non-essential but nice-to-have feature that may save users some time in case of shutdowns, if we removed this block completely, it shouldn't break anything.",
-      "commit_id" : "9d4509b64ee333ef4587c77fb0d52e8e720a28c4",
+      "commit_id" : "7171ebc7cbd911fa7ccad732ea7f73bce30928ee",
       "created_at" : "2022-05-13T00:12:41Z",
       "diff_hunk" : "@@ -185,6 +178,13 @@ void BaseIndex::ThreadSync()\n                            __func__, pindex->GetBlockHash().ToString());\n                 return;\n             }\n+\n+            if (last_locator_write_time + SYNC_LOCATOR_WRITE_INTERVAL < current_time) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25074#discussion_r871905238",
@@ -491,6 +495,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-13T10:05:24Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/871905238",
       "user" : {
@@ -515,7 +520,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I pushed an update, implementing Luke's [suggestion](https://github.com/bitcoin/bitcoin/pull/25074#discussion_r868492947).\r\n\r\n> I wonder if it would make sense to always re-index the initial best block too, just to avoid accidentally running with such corruption undetected.\r\n\r\nIt does get detected for the coinstatsindex, leading to an init error - that's how I encountered this, playing around with uprobes that send kill signals to bitcoind ([branch](https://github.com/mzumsande/bitcoin/commit/706967b5880bdc04605ffac334da19f02ebad7d3)). But other indexes may not. \r\nSince this should not be possible unless there is a logic bug in the index code, checking on startup that there is an indexed entry for the best block / aborting otherwise may be another way instead of attempting to recover ?",
       "created_at" : "2022-05-13T00:31:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25074#issuecomment-1125544043",
@@ -570,9 +575,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/876478322"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"index: Don't commit a best block before indexing it during sync\" (9d4509b64ee333ef4587c77fb0d52e8e720a28c4)\r\n\r\nI think commit description saying previous code leaves the \"index database temporarily in an inconsistent state\" is a little misleading, because the bug could permanently corrupt the index if node is killed before the block is committed. I'd drop the word \"temporarily\" and maybe mention that this could lead to corruption if the sync is interrupted at a bad time.\r\n\r\nAlso could add: \r\n\r\n```\r\nCo-authored-by: Luke Dashjr <luke-jr+git@utopios.org>\r\n```\r\n\r\nsince he spotted the simpler fix",
-      "commit_id" : "9d4509b64ee333ef4587c77fb0d52e8e720a28c4",
+      "commit_id" : "7171ebc7cbd911fa7ccad732ea7f73bce30928ee",
       "created_at" : "2022-05-19T00:21:01Z",
       "diff_hunk" : "@@ -168,7 +168,7 @@ void BaseIndex::ThreadSync()\n             }\n \n             if (last_locator_write_time + SYNC_LOCATOR_WRITE_INTERVAL < current_time) {\n-                SetBestBlockIndex(pindex);\n+                SetBestBlockIndex(pindex->pprev);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25074#discussion_r876478322",
@@ -602,6 +607,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-19T00:34:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/876478322",
       "user" : {
@@ -637,7 +643,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/876935589"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Done both. I meant \"temporarily\" as in \"until the committed best block is indexed\" and made that more clear in the commit message and the OP.",
       "commit_id" : "7171ebc7cbd911fa7ccad732ea7f73bce30928ee",
       "created_at" : "2022-05-19T11:22:45Z",
@@ -656,7 +662,7 @@
       "pull_request_review_id" : 978402064,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25074",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -664,12 +670,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/876935589/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-19T11:25:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/876935589",
       "user" : {
@@ -694,7 +701,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "[9d4509b](https://github.com/bitcoin/bitcoin/commit/9d4509b64ee333ef4587c77fb0d52e8e720a28c4) -> [7171ebc](https://github.com/bitcoin/bitcoin/commit/7171ebc7cbd911fa7ccad732ea7f73bce30928ee): Updated the commit message and the PR description.\r\n\r\n> I was thinking probably it would be possible write a unit test for this with a mock BaseIndex subclass that overrides the `CommitInternal()` and `WriteBlock()` methods and checks that commit is called with the last block written, not the next block about to be written during sync. I don't think this is necessary however, since the bug is pretty theoretical and seems unlikely to happen in practice.\r\n\r\nI think that having a test-only mock index is a really interesting idea, and that it could help with increasing the test coverage. I'd be interested to look into this as a follow-up, with the goal of improving the test coverage of the base index logic more broadly (not only with respect to this issue, I think if the mock index class tested only this it might be a bit overkill). \r\n\r\n",
       "created_at" : "2022-05-19T11:39:59Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25074#issuecomment-1131581453",

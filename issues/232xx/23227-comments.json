@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#22875](https://github.com/bitcoin/bitcoin/pull/22875) (Fix Racy ParseOpCode function initialization by JeremyRubin)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2021-10-08T18:59:44Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23227#issuecomment-939053273",
@@ -99,25 +99,25 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/725608515"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: personally I think the code is slightly more readable if at least the first condition doesn't use implicit conversion from the std::optional (since we use `auto` above the type of num is not immediately visible)\r\n```suggestion\r\n            if (!num.has_value() || num > int64_t{0xffffffff} || num < -1 * int64_t{0xffffffff}) {\r\n```",
-      "commit_id" : "fa0c2f92aa226c51b36220c2b31b029b6188f8aa",
+      "commit_id" : "fa43e7c2d9dc5e2df70acd2019bdd24023c1d333",
       "created_at" : "2021-10-10T09:28:11Z",
       "diff_hunk" : "@@ -66,16 +66,16 @@ CScript ParseScript(const std::string& s)\n                    (w.front() == '-' && w.size() > 1 && std::all_of(w.begin() + 1, w.end(), ::IsDigit)))\n         {\n             // Number\n-            int64_t n = LocaleIndependentAtoi<int64_t>(w);\n+            const auto num{ToIntegral<int64_t>(w)};\n \n             // limit the range of numbers ParseScript accepts in decimal\n             // since numbers outside -0xFFFFFFFF...0xFFFFFFFF are illegal in scripts\n-            if (n > int64_t{0xffffffff} || n < -1 * int64_t{0xffffffff}) {\n+            if (!num || num > int64_t{0xffffffff} || num < -1 * int64_t{0xffffffff}) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23227#discussion_r725608515",
       "id" : 725608515,
-      "line" : 73,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584rP-hD",
       "original_commit_id" : "fa0c2f92aa226c51b36220c2b31b029b6188f8aa",
       "original_line" : 73,
       "original_position" : 10,
       "original_start_line" : null,
       "path" : "src/core_read.cpp",
-      "position" : 54,
+      "position" : null,
       "pull_request_review_id" : 775648906,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23227",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -125,12 +125,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/725608515/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-10-10T09:35:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/725608515",
       "user" : {
@@ -199,6 +200,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-10-11T07:35:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/725860120",
       "user" : {

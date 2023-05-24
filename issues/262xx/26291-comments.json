@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "#15169 proposed having net_processing not ban nodes for txs that didn't meet soft fork rules, which then allowed dropping the `MANDATORY_SCRIPT_VERIFY_FLAGS` constant entirely. Is that a better approach?\r\n\r\nOther previous discussion of the topic: https://github.com/bitcoin/bitcoin/pull/23536#pullrequestreview-905402394 https://github.com/bitcoin/bitcoin/pull/5696\r\n\r\n(EDIT: I was poking at this because I got an error about a taproot consensus rule that said it was \"non-mandatory\", which seemed misleading)",
       "created_at" : "2022-10-11T05:25:17Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26291#issuecomment-1274104323",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Seems like this could result in banning pre-Segwit and pre-Taproot nodes?\r\n\r\nIt would only impact nodes that produce/relay invalid segwit/taproot spends, ie ones that don't implement standardness checks. It also only triggers discouragement not banning, so affected peers can still reconnect. If we don't want to do that, we should probably drop `MaybePunishNodeForTx` entirely.",
       "created_at" : "2022-10-25T16:59:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26291#issuecomment-1290869190",
@@ -97,7 +97,7 @@
       "node_id" : "IC_kwDOABII585M8RnG",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -105,7 +105,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1290869190/reactions"
       },
       "updated_at" : "2022-10-25T16:59:47Z",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Approach ACK\r\n\r\nThe `non-mandatory` part is very misleading for actual consensus issues. Worse, the `TxValidationResult` is explicitly `TX_NOT_STANDARD`. \r\n\r\nI got about halfway through a very similar change before I found this PR. I don't think the risk of discouraging old nodes is all that high. As you said, it's only those who eschew standardness checks. We probably wouldn't want them to keep sending us incomplete or invalid data anyway.\r\n\r\n",
       "created_at" : "2023-01-23T19:56:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26291#issuecomment-1400897110",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| Concept ACK | [instagibbs](https://github.com/bitcoin/bitcoin/pull/26291#issuecomment-1476478682), [glozow](https://github.com/bitcoin/bitcoin/pull/26291#issuecomment-1479684455) |\n| Approach ACK | [john-moffett](https://github.com/bitcoin/bitcoin/pull/26291#issuecomment-1400897110) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n",
       "created_at" : "2023-01-23T19:56:41Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26291#issuecomment-1400897144",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Completely unsure on increasing the scope of what we disconnect for. Are we seeing these messages in the wild?\r\n\r\nI've added logging for `TX_NOT_STANDARD` in `MaybePunishNodeForTx`. After 20 hours or so running that on a listening node, I've had a couple of instances of rejections for `dust` (via `IsStandardTx` for outputs matching `IsDust`), but so far that's it.",
       "created_at" : "2023-03-21T13:25:49Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26291#issuecomment-1477834856",
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> wrt how the `TxValidationResult` types are used in `MaybePunishNodeForTx`, is something like this what `TX_RECENT_CONSENSUS_CHANGE` was intended for?\r\n\r\nSee #15141 where `RECENT_CONSENSUS_CHANGE` was introduced, and #11639 where it was discussed more (under the name `SOFT_FORK`). (Note that at that time, it applied to both blocks and txs, the validation results weren't separated  until #15921 -- so some of the discussion there focuses more on blocks that violate recent soft fork rules rather than txs)",
       "created_at" : "2023-03-22T15:23:45Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26291#issuecomment-1479772800",
@@ -396,7 +396,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > Completely unsure on increasing the scope of what we disconnect for. Are we seeing these messages in the wild?\r\n> \r\n> I've added logging for `TX_NOT_STANDARD` in `MaybePunishNodeForTx`. After 20 hours or so running that on a listening node, I've had a couple of instances of rejections for `dust` (via `IsStandardTx` for outputs matching `IsDust`), but so far that's it.\r\n\r\nI've been running this on mainnet for a week now and have only caught non-standard tx failures for dust, so, no, I don't think we're seeing these in the wild. FWIW, my node discarded 505 non-standard txs, all due to the dust rule, and 493 of those txs were from a single node. Example discarded tx:\r\n\r\n```\r\n2023-03-28T06:35:05Z non-standard tx 95cfc86ba6e3141a991ad296fe6c3dba96879446bdac6a053529e08d97328f9a from peer=XXX: dust\r\n```",
       "created_at" : "2023-03-28T06:54:05Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26291#issuecomment-1486312984",

@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [achow101](https://github.com/bitcoin/bitcoin/pull/25939#issuecomment-1476594222), [Xekyo](https://github.com/bitcoin/bitcoin/pull/25939#issuecomment-1500618548) |\n| Approach ACK | [w0xlt](https://github.com/bitcoin/bitcoin/pull/25939#pullrequestreview-1089285624) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25796](https://github.com/bitcoin/bitcoin/pull/25796) (rpc: add `descriptorprocesspsbt` rpc by ishaanam)\n* [#21283](https://github.com/bitcoin/bitcoin/pull/21283) (Implement BIP 370 PSBTv2 by achow101)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2022-08-27T14:26:08Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25939#issuecomment-1229202496",
@@ -57,7 +57,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "In 687d6c20a4d6fc99cf4ae5794dd4203ea446a8f2 \"rpc, tests: in `utxoupdatepsbt` also look for the transaction in the txindex\"\r\n\r\nChecking `!coins.empty()` again is redundant. Also, we may still want to add the witness_utxo even if a non_witness_utxo exists.\r\n\r\nWe add the different utxo types depending on the script type. For legacy scripts, only non_witness_utxo should be added. For Segwit v0, both non_witness_utxo and witness_utxo should be added, For Segwit v1+, only witness_utxo should be added. This RPC should (try) to adhere to these guidelines.",
-      "commit_id" : "05f4340ac6614a85056039028df5671e01dcd957",
+      "commit_id" : "6e9f8bb050785dbc754b6bb493aad9139908ef98",
       "created_at" : "2022-11-10T17:47:50Z",
       "diff_hunk" : "@@ -172,44 +172,68 @@ PartiallySignedTransaction ProcessPSBT(const std::string& psbt_string, const std\n         throw JSONRPCError(RPC_DESERIALIZATION_ERROR, strprintf(\"TX decode failed %s\", error));\n     }\n \n-    // Fetch previous transactions (inputs):\n-    CCoinsView viewDummy;\n-    CCoinsViewCache view(&viewDummy);\n-    {\n-        NodeContext& node = EnsureAnyNodeContext(context);\n-        const CTxMemPool& mempool = EnsureMemPool(node);\n-        ChainstateManager& chainman = EnsureChainman(node);\n-        LOCK2(cs_main, mempool.cs);\n-        CCoinsViewCache &viewChain = chainman.ActiveChainstate().CoinsTip();\n-        CCoinsViewMemPool viewMempool(&viewChain, mempool);\n-        view.SetBackend(viewMempool); // temporarily switch cache backend to db+mempool view\n+    // Fetch previous transactions:\n+    // First, look in the txindex and the mempool\n+    if (g_txindex) g_txindex->BlockUntilSyncedToCurrentChain();\n+    const NodeContext& node = EnsureAnyNodeContext(context);\n \n-        for (const CTxIn& txin : psbtx.tx->vin) {\n-            view.AccessCoin(txin.prevout); // Load entries from viewChain into view; can fail.\n-        }\n-\n-        view.SetBackend(viewDummy); // switch back to avoid locking mempool for too long\n-    }\n+    // If we can't find the corresponding full transaction for all of our inputs,\n+    // this will be used to find just the utxos for the segwit inputs for which\n+    // the full transaction isn't found\n+    std::map<COutPoint, Coin> coins;\n \n-    // Fill the inputs\n-    const PrecomputedTransactionData txdata = PrecomputePSBTData(psbtx);\n     for (unsigned int i = 0; i < psbtx.tx->vin.size(); ++i) {\n-        PSBTInput& input = psbtx.inputs.at(i);\n+        PSBTInput& psbt_input = psbtx.inputs.at(i);\n+        const CTxIn& tx_in = psbtx.tx->vin.at(i);\n \n-        if (input.non_witness_utxo || !input.witness_utxo.IsNull()) {\n-            continue;\n+        if (psbt_input.non_witness_utxo) continue;\n+\n+        CTransactionRef tx;\n+\n+        // Look in the txindex\n+        if (g_txindex) {\n+            uint256 block_hash;\n+            g_txindex->FindTx(tx_in.prevout.hash, block_hash, tx);\n         }\n+        // If we still don't have it look in the mempool\n+        if (!tx) {\n+            tx = node.mempool->get(tx_in.prevout.hash);\n+        }\n+        if (tx) {\n+            psbt_input.non_witness_utxo = tx;\n+        } else {\n+            coins[tx_in.prevout]; // Create empty map entry keyed by prevout\n+        }\n+    }\n \n-        const Coin& coin = view.AccessCoin(psbtx.tx->vin[i].prevout);\n+    // If we still haven't found all of the inputs, look for the missing ones in the utxo set\n+    if (!coins.empty()) {\n+        FindCoins(node, coins);\n+        for (unsigned int i = 0; i < psbtx.tx->vin.size(); ++i) {\n+            PSBTInput& input = psbtx.inputs.at(i);\n+\n+            // If there are still missing utxos, add them if they were found in the utxo set\n+            if (!coins.empty() && !input.non_witness_utxo) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25939#discussion_r1019443666",
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-10T17:47:50Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1019443666",
       "user" : {
@@ -122,9 +123,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1020783886"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Also, we may still want to add the witness_utxo even if a non_witness_utxo exists.\r\n\r\nIf the `non_witness_utxo` exists and a segwit output is being spent, `SignPSBTInput` will add the `witness_utxo`.\r\n> For Segwit v1+, only witness_utxo should be added.\r\n\r\nI have updated this commit to adhere to this, but this [comment](https://github.com/bitcoin/bitcoin/blob/master/src/psbt.cpp#L417-L419) indicates something a bit different: \r\n> We can remove the non_witness_utxo if and only if there are no non-segwit or segwit v0\r\n    inputs in this transaction.\r\n\r\nSo does the `non_witness_utxo` need to be present for a Segwit v1 input if there is another non-segwit input int he transaction?",
-      "commit_id" : "05f4340ac6614a85056039028df5671e01dcd957",
+      "commit_id" : "6e9f8bb050785dbc754b6bb493aad9139908ef98",
       "created_at" : "2022-11-12T17:03:45Z",
       "diff_hunk" : "@@ -172,44 +172,68 @@ PartiallySignedTransaction ProcessPSBT(const std::string& psbt_string, const std\n         throw JSONRPCError(RPC_DESERIALIZATION_ERROR, strprintf(\"TX decode failed %s\", error));\n     }\n \n-    // Fetch previous transactions (inputs):\n-    CCoinsView viewDummy;\n-    CCoinsViewCache view(&viewDummy);\n-    {\n-        NodeContext& node = EnsureAnyNodeContext(context);\n-        const CTxMemPool& mempool = EnsureMemPool(node);\n-        ChainstateManager& chainman = EnsureChainman(node);\n-        LOCK2(cs_main, mempool.cs);\n-        CCoinsViewCache &viewChain = chainman.ActiveChainstate().CoinsTip();\n-        CCoinsViewMemPool viewMempool(&viewChain, mempool);\n-        view.SetBackend(viewMempool); // temporarily switch cache backend to db+mempool view\n+    // Fetch previous transactions:\n+    // First, look in the txindex and the mempool\n+    if (g_txindex) g_txindex->BlockUntilSyncedToCurrentChain();\n+    const NodeContext& node = EnsureAnyNodeContext(context);\n \n-        for (const CTxIn& txin : psbtx.tx->vin) {\n-            view.AccessCoin(txin.prevout); // Load entries from viewChain into view; can fail.\n-        }\n-\n-        view.SetBackend(viewDummy); // switch back to avoid locking mempool for too long\n-    }\n+    // If we can't find the corresponding full transaction for all of our inputs,\n+    // this will be used to find just the utxos for the segwit inputs for which\n+    // the full transaction isn't found\n+    std::map<COutPoint, Coin> coins;\n \n-    // Fill the inputs\n-    const PrecomputedTransactionData txdata = PrecomputePSBTData(psbtx);\n     for (unsigned int i = 0; i < psbtx.tx->vin.size(); ++i) {\n-        PSBTInput& input = psbtx.inputs.at(i);\n+        PSBTInput& psbt_input = psbtx.inputs.at(i);\n+        const CTxIn& tx_in = psbtx.tx->vin.at(i);\n \n-        if (input.non_witness_utxo || !input.witness_utxo.IsNull()) {\n-            continue;\n+        if (psbt_input.non_witness_utxo) continue;\n+\n+        CTransactionRef tx;\n+\n+        // Look in the txindex\n+        if (g_txindex) {\n+            uint256 block_hash;\n+            g_txindex->FindTx(tx_in.prevout.hash, block_hash, tx);\n         }\n+        // If we still don't have it look in the mempool\n+        if (!tx) {\n+            tx = node.mempool->get(tx_in.prevout.hash);\n+        }\n+        if (tx) {\n+            psbt_input.non_witness_utxo = tx;\n+        } else {\n+            coins[tx_in.prevout]; // Create empty map entry keyed by prevout\n+        }\n+    }\n \n-        const Coin& coin = view.AccessCoin(psbtx.tx->vin[i].prevout);\n+    // If we still haven't found all of the inputs, look for the missing ones in the utxo set\n+    if (!coins.empty()) {\n+        FindCoins(node, coins);\n+        for (unsigned int i = 0; i < psbtx.tx->vin.size(); ++i) {\n+            PSBTInput& input = psbtx.inputs.at(i);\n+\n+            // If there are still missing utxos, add them if they were found in the utxo set\n+            if (!coins.empty() && !input.non_witness_utxo) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25939#discussion_r1020783886",
@@ -155,6 +156,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-12T17:03:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1020783886",
       "user" : {
@@ -192,7 +194,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "I think if there is at least one witv0 or legacy input in a transaction, the non_witness_utxo record of all inputs should be kept.",
-      "commit_id" : "f26d600d55d86099206456f394a422436d5f3ec3",
+      "commit_id" : "6e9f8bb050785dbc754b6bb493aad9139908ef98",
       "created_at" : "2022-11-13T15:05:37Z",
       "diff_hunk" : "@@ -172,44 +172,68 @@ PartiallySignedTransaction ProcessPSBT(const std::string& psbt_string, const std\n         throw JSONRPCError(RPC_DESERIALIZATION_ERROR, strprintf(\"TX decode failed %s\", error));\n     }\n \n-    // Fetch previous transactions (inputs):\n-    CCoinsView viewDummy;\n-    CCoinsViewCache view(&viewDummy);\n-    {\n-        NodeContext& node = EnsureAnyNodeContext(context);\n-        const CTxMemPool& mempool = EnsureMemPool(node);\n-        ChainstateManager& chainman = EnsureChainman(node);\n-        LOCK2(cs_main, mempool.cs);\n-        CCoinsViewCache &viewChain = chainman.ActiveChainstate().CoinsTip();\n-        CCoinsViewMemPool viewMempool(&viewChain, mempool);\n-        view.SetBackend(viewMempool); // temporarily switch cache backend to db+mempool view\n+    // Fetch previous transactions:\n+    // First, look in the txindex and the mempool\n+    if (g_txindex) g_txindex->BlockUntilSyncedToCurrentChain();\n+    const NodeContext& node = EnsureAnyNodeContext(context);\n \n-        for (const CTxIn& txin : psbtx.tx->vin) {\n-            view.AccessCoin(txin.prevout); // Load entries from viewChain into view; can fail.\n-        }\n-\n-        view.SetBackend(viewDummy); // switch back to avoid locking mempool for too long\n-    }\n+    // If we can't find the corresponding full transaction for all of our inputs,\n+    // this will be used to find just the utxos for the segwit inputs for which\n+    // the full transaction isn't found\n+    std::map<COutPoint, Coin> coins;\n \n-    // Fill the inputs\n-    const PrecomputedTransactionData txdata = PrecomputePSBTData(psbtx);\n     for (unsigned int i = 0; i < psbtx.tx->vin.size(); ++i) {\n-        PSBTInput& input = psbtx.inputs.at(i);\n+        PSBTInput& psbt_input = psbtx.inputs.at(i);\n+        const CTxIn& tx_in = psbtx.tx->vin.at(i);\n \n-        if (input.non_witness_utxo || !input.witness_utxo.IsNull()) {\n-            continue;\n+        if (psbt_input.non_witness_utxo) continue;\n+\n+        CTransactionRef tx;\n+\n+        // Look in the txindex\n+        if (g_txindex) {\n+            uint256 block_hash;\n+            g_txindex->FindTx(tx_in.prevout.hash, block_hash, tx);\n         }\n+        // If we still don't have it look in the mempool\n+        if (!tx) {\n+            tx = node.mempool->get(tx_in.prevout.hash);\n+        }\n+        if (tx) {\n+            psbt_input.non_witness_utxo = tx;\n+        } else {\n+            coins[tx_in.prevout]; // Create empty map entry keyed by prevout\n+        }\n+    }\n \n-        const Coin& coin = view.AccessCoin(psbtx.tx->vin[i].prevout);\n+    // If we still haven't found all of the inputs, look for the missing ones in the utxo set\n+    if (!coins.empty()) {\n+        FindCoins(node, coins);\n+        for (unsigned int i = 0; i < psbtx.tx->vin.size(); ++i) {\n+            PSBTInput& input = psbtx.inputs.at(i);\n+\n+            // If there are still missing utxos, add them if they were found in the utxo set\n+            if (!coins.empty() && !input.non_witness_utxo) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25939#discussion_r1020917822",
@@ -223,6 +225,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-13T15:05:37Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1020917822",
       "user" : {
@@ -258,9 +261,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1023354480"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I think if there is at least one witv0 or legacy input in a transaction, the non_witness_utxo record of all inputs should be kept.\r\n\r\nThis is also what `walletprocesspsbt` does, so I have update this PR to do that as well.",
-      "commit_id" : "f26d600d55d86099206456f394a422436d5f3ec3",
+      "commit_id" : "6e9f8bb050785dbc754b6bb493aad9139908ef98",
       "created_at" : "2022-11-15T23:25:13Z",
       "diff_hunk" : "@@ -172,44 +172,68 @@ PartiallySignedTransaction ProcessPSBT(const std::string& psbt_string, const std\n         throw JSONRPCError(RPC_DESERIALIZATION_ERROR, strprintf(\"TX decode failed %s\", error));\n     }\n \n-    // Fetch previous transactions (inputs):\n-    CCoinsView viewDummy;\n-    CCoinsViewCache view(&viewDummy);\n-    {\n-        NodeContext& node = EnsureAnyNodeContext(context);\n-        const CTxMemPool& mempool = EnsureMemPool(node);\n-        ChainstateManager& chainman = EnsureChainman(node);\n-        LOCK2(cs_main, mempool.cs);\n-        CCoinsViewCache &viewChain = chainman.ActiveChainstate().CoinsTip();\n-        CCoinsViewMemPool viewMempool(&viewChain, mempool);\n-        view.SetBackend(viewMempool); // temporarily switch cache backend to db+mempool view\n+    // Fetch previous transactions:\n+    // First, look in the txindex and the mempool\n+    if (g_txindex) g_txindex->BlockUntilSyncedToCurrentChain();\n+    const NodeContext& node = EnsureAnyNodeContext(context);\n \n-        for (const CTxIn& txin : psbtx.tx->vin) {\n-            view.AccessCoin(txin.prevout); // Load entries from viewChain into view; can fail.\n-        }\n-\n-        view.SetBackend(viewDummy); // switch back to avoid locking mempool for too long\n-    }\n+    // If we can't find the corresponding full transaction for all of our inputs,\n+    // this will be used to find just the utxos for the segwit inputs for which\n+    // the full transaction isn't found\n+    std::map<COutPoint, Coin> coins;\n \n-    // Fill the inputs\n-    const PrecomputedTransactionData txdata = PrecomputePSBTData(psbtx);\n     for (unsigned int i = 0; i < psbtx.tx->vin.size(); ++i) {\n-        PSBTInput& input = psbtx.inputs.at(i);\n+        PSBTInput& psbt_input = psbtx.inputs.at(i);\n+        const CTxIn& tx_in = psbtx.tx->vin.at(i);\n \n-        if (input.non_witness_utxo || !input.witness_utxo.IsNull()) {\n-            continue;\n+        if (psbt_input.non_witness_utxo) continue;\n+\n+        CTransactionRef tx;\n+\n+        // Look in the txindex\n+        if (g_txindex) {\n+            uint256 block_hash;\n+            g_txindex->FindTx(tx_in.prevout.hash, block_hash, tx);\n         }\n+        // If we still don't have it look in the mempool\n+        if (!tx) {\n+            tx = node.mempool->get(tx_in.prevout.hash);\n+        }\n+        if (tx) {\n+            psbt_input.non_witness_utxo = tx;\n+        } else {\n+            coins[tx_in.prevout]; // Create empty map entry keyed by prevout\n+        }\n+    }\n \n-        const Coin& coin = view.AccessCoin(psbtx.tx->vin[i].prevout);\n+    // If we still haven't found all of the inputs, look for the missing ones in the utxo set\n+    if (!coins.empty()) {\n+        FindCoins(node, coins);\n+        for (unsigned int i = 0; i < psbtx.tx->vin.size(); ++i) {\n+            PSBTInput& input = psbtx.inputs.at(i);\n+\n+            // If there are still missing utxos, add them if they were found in the utxo set\n+            if (!coins.empty() && !input.non_witness_utxo) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25939#discussion_r1023354480",
@@ -291,6 +294,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-15T23:25:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1023354480",
       "user" : {
@@ -359,51 +363,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n",
-      "created_at" : "2023-01-17T10:12:24Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25939#issuecomment-1385149441",
-      "id" : 1385149441,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25939",
-      "node_id" : "IC_kwDOABII585Sj7QB",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1385149441/reactions"
-      },
-      "updated_at" : "2023-01-17T10:12:24Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1385149441",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Rebased",
       "created_at" : "2023-01-19T04:08:11Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25939#issuecomment-1396413665",
@@ -502,7 +462,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1140555629"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I see that youâre just moving this code, but could you add a little more explanation here? When I was reviewing this, I was first trying to find out what `non_witness_utxos` and `witness_utxos` were, when we needed them, and finally learned per the previous PR when we could drop them. My understanding is that we can only drop `non_witness_utxos` when all inputs are segwit v1.\r\n\r\nI would suspect that we might also be able to drop `witness_utxos` on non-segwit inputs when we do have the corresponding `non_witness_utxos`, and vice versa, drop the `non_witness_utxos` on segwit inputs, if we do have the `witness_utxos` for them. Is that accurate?\r\n\r\n```suggestion\r\n/** Reduces the size of the PSBT by dropping unnecessary `non_witness_utxos` (i.e. previous transactions) from a psbt when all inputs are segwit v1. */\r\n```",
       "commit_id" : "6e9f8bb050785dbc754b6bb493aad9139908ef98",
       "created_at" : "2023-03-17T18:07:13Z",
@@ -570,7 +530,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1140562949"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "It seems to me that this comment might fit better before line 192.",
       "commit_id" : "6e9f8bb050785dbc754b6bb493aad9139908ef98",
       "created_at" : "2023-03-17T18:13:55Z",
@@ -638,7 +598,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1140565987"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "```suggestion\r\n        // The `non_witness_utxo` is the whole previous transaction\r\n        if (psbt_input.non_witness_utxo) continue;\r\n```",
       "commit_id" : "6e9f8bb050785dbc754b6bb493aad9139908ef98",
       "created_at" : "2023-03-17T18:16:49Z",
@@ -706,7 +666,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1141227595"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Done",
       "commit_id" : "6e9f8bb050785dbc754b6bb493aad9139908ef98",
       "created_at" : "2023-03-19T00:59:19Z",
@@ -775,7 +735,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1141227618"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Yes, I've moved it.",
       "commit_id" : "6e9f8bb050785dbc754b6bb493aad9139908ef98",
       "created_at" : "2023-03-19T00:59:31Z",
@@ -844,7 +804,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1141229127"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I see that youâre just moving this code, but could you add a little more explanation here?\r\n\r\nDone as per your suggestion above.\r\n> I would suspect that we might also be able to drop witness_utxos on non-segwit inputs when we do have the corresponding non_witness_utxos,\r\n\r\nI don't think `witness_utxo`s should ever get added to non-segwit inputs. \r\n> and vice versa, drop the non_witness_utxos on segwit inputs, if we do have the witness_utxos for them.\r\n\r\nCurrently I'm not sure, though in https://github.com/bitcoin/bitcoin/pull/25939#discussion_r1020917822 sipa said that in this situation all `non_witness_utxo`s should be kept. Even if this is not the case, changing this behavior would be out of the scope of this PR. ",
       "commit_id" : "6e9f8bb050785dbc754b6bb493aad9139908ef98",
       "created_at" : "2023-03-19T01:15:36Z",
@@ -946,7 +906,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK 6e9f8bb050785dbc754b6bb493aad9139908ef98",
       "created_at" : "2023-04-07T20:32:28Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25939#issuecomment-1500618548",

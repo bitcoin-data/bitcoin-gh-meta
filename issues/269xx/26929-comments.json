@@ -1,7 +1,7 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| Concept ACK | [stickies-v](https://github.com/bitcoin/bitcoin/pull/26929#pullrequestreview-1263473805) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [stickies-v](https://github.com/bitcoin/bitcoin/pull/26929#pullrequestreview-1269382574) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n",
       "created_at" : "2023-01-20T11:12:22Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26929#issuecomment-1398237495",
       "id" : 1398237495,
@@ -20,7 +20,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1398237495/reactions"
       },
-      "updated_at" : "2023-01-20T12:05:08Z",
+      "updated_at" : "2023-01-25T13:52:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1398237495",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -99,7 +99,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1082422648"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Feels like a `util::Result` return type would be more appropriate here?",
       "commit_id" : "fafeddfe0e6748e9769ad3dd526a6c0eaf6f4aac",
       "created_at" : "2023-01-20T12:04:20Z",
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-20T12:05:05Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1082422648",
       "user" : {
@@ -199,6 +200,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-20T12:09:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1082429724",
       "user" : {
@@ -234,7 +236,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1082464732"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Yeah it would benefit from #25665 but could do it with today's implementation already as well. I didn't realize we need a `UniValue` object (instead of just the string) in `HandleRequest`, though, so that makes this a bit more verbose than I hoped. Just found it a bit confusing to have a `UniValue` act as a variant, but that's probably personal preference.\r\n\r\nNo strong view either way, just thinking out loud. Feel free to close.\r\n\r\n<details>\r\n<summary>git diff</summary>\r\n\r\n```diff\r\ndiff --git a/src/rpc/util.cpp b/src/rpc/util.cpp\r\nindex 5f44b82aa..30528bd09 100644\r\n--- a/src/rpc/util.cpp\r\n+++ b/src/rpc/util.cpp\r\n@@ -11,6 +11,7 @@\r\n #include <script/signingprovider.h>\r\n #include <tinyformat.h>\r\n #include <util/check.h>\r\n+#include <util/result.h>\r\n #include <util/strencodings.h>\r\n #include <util/string.h>\r\n #include <util/system.h>\r\n@@ -559,9 +560,9 @@ UniValue RPCHelpMan::HandleRequest(const JSONRPCRequest& request) const\r\n     UniValue arg_mismatch{UniValue::VOBJ};\r\n     for (size_t i{0}; i < m_args.size(); ++i) {\r\n         const auto& arg{m_args.at(i)};\r\n-        UniValue match{arg.MatchesType(request.params[i])};\r\n-        if (!match.isTrue()) {\r\n-            arg_mismatch.pushKV(strprintf(\"Position %s (%s)\", i, arg.m_names), std::move(match));\r\n+        auto match{arg.MatchesType(request.params[i])};\r\n+        if (!match) {\r\n+            arg_mismatch.pushKV(strprintf(\"Position %s (%s)\", i, arg.m_names), UniValue{UniValue::VType::VSTR, util::ErrorString(match).original});\r\n         }\r\n     }\r\n     if (!arg_mismatch.empty()) {\r\n@@ -717,7 +718,7 @@ static std::optional<UniValue::VType> ExpectedType(RPCArg::Type type)\r\n     NONFATAL_UNREACHABLE();\r\n }\r\n \r\n-UniValue RPCArg::MatchesType(const UniValue& request) const\r\n+util::Result<bool> RPCArg::MatchesType(const UniValue& request) const\r\n {\r\n     if (m_opts.skip_type_check) return true;\r\n     if (IsOptional() && request.isNull()) return true;\r\n@@ -725,7 +726,7 @@ UniValue RPCArg::MatchesType(const UniValue& request) const\r\n     if (!exp_type) return true; // nothing to check\r\n \r\n     if (*exp_type != request.getType()) {\r\n-        return strprintf(\"JSON value of type %s is not of expected type %s\", uvTypeName(request.getType()), uvTypeName(*exp_type));\r\n+        return util::Error{Untranslated(strprintf(\"JSON value of type %s is not of expected type %s\", uvTypeName(request.getType()), uvTypeName(*exp_type)))};\r\n     }\r\n     return true;\r\n }\r\ndiff --git a/src/rpc/util.h b/src/rpc/util.h\r\nindex 0d60e29fa..c374ee528 100644\r\n--- a/src/rpc/util.h\r\n+++ b/src/rpc/util.h\r\n@@ -16,6 +16,7 @@\r\n #include <script/standard.h>\r\n #include <univalue.h>\r\n #include <util/check.h>\r\n+#include <util/result.h>\r\n \r\n #include <string>\r\n #include <variant>\r\n@@ -213,7 +214,7 @@ struct RPCArg {\r\n      * Check whether the request JSON type matches.\r\n      * Returns true if type matches, or object describing error(s) if not.\r\n      */\r\n-    UniValue MatchesType(const UniValue& request) const;\r\n+    util::Result<bool> MatchesType(const UniValue& request) const;\r\n \r\n     /** Return the first of all aliases */\r\n     std::string GetFirstName() const;\r\n```\r\n</details>",
       "commit_id" : "fafeddfe0e6748e9769ad3dd526a6c0eaf6f4aac",
       "created_at" : "2023-01-20T12:34:42Z",
@@ -267,6 +269,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-20T12:35:29Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1082464732",
       "user" : {
@@ -302,7 +305,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1082467981"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Although I think with https://github.com/bitcoin/bitcoin/pull/25665 merged I'd definitely prefer having the `util::Result<void, UniValue>` return type, just for readability.",
       "commit_id" : "fafeddfe0e6748e9769ad3dd526a6c0eaf6f4aac",
       "created_at" : "2023-01-20T12:37:04Z",
@@ -335,6 +338,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-20T12:37:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1082467981",
       "user" : {
@@ -403,6 +407,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-20T12:44:56Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1082478974",
       "user" : {
@@ -438,7 +443,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1082577837"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I think my diff does work? I'm not sure what the follow up and its requirements are, but the diff compiles, and seems to work fine e.g. for this call. But I agree that making the calling code more verbose is not ideal, so probably best to drop this approach.\r\n\r\n<details>\r\n<summary>./src/bitcoin-cli -signet getmempoolancestors tx 5</summary>\r\n\r\n```\r\nerror code: -3\r\nerror message:\r\nWrong type passed:\r\n{\r\n    \"Position 1 (verbose)\": \"JSON value of type number is not of expected type bool\"\r\n}\r\n```\r\n</details>\r\n\r\n\r\nI don't mean to bikeshed, but here's another approach without `util::Result` that may be more appropriate by returning `std::pair<bool, UniValue>`. Still slightly more verbose than currently, but could be worth it if compatible with 2/2? I'll give up after this :-D\r\n\r\n<details>\r\n<summary>git diff</summary>\r\n\r\n```diff\r\ndiff --git a/src/rpc/util.cpp b/src/rpc/util.cpp\r\nindex 5f44b82aa..e0c6aec67 100644\r\n--- a/src/rpc/util.cpp\r\n+++ b/src/rpc/util.cpp\r\n@@ -559,9 +559,9 @@ UniValue RPCHelpMan::HandleRequest(const JSONRPCRequest& request) const\r\n     UniValue arg_mismatch{UniValue::VOBJ};\r\n     for (size_t i{0}; i < m_args.size(); ++i) {\r\n         const auto& arg{m_args.at(i)};\r\n-        UniValue match{arg.MatchesType(request.params[i])};\r\n-        if (!match.isTrue()) {\r\n-            arg_mismatch.pushKV(strprintf(\"Position %s (%s)\", i, arg.m_names), std::move(match));\r\n+        auto [match, error] = arg.MatchesType(request.params[i]);\r\n+        if (!match) {\r\n+            arg_mismatch.pushKV(strprintf(\"Position %s (%s)\", i, arg.m_names), std::move(error.value()));\r\n         }\r\n     }\r\n     if (!arg_mismatch.empty()) {\r\n@@ -717,17 +717,17 @@ static std::optional<UniValue::VType> ExpectedType(RPCArg::Type type)\r\n     NONFATAL_UNREACHABLE();\r\n }\r\n \r\n-UniValue RPCArg::MatchesType(const UniValue& request) const\r\n+std::pair<bool, std::optional<UniValue>> RPCArg::MatchesType(const UniValue& request) const\r\n {\r\n-    if (m_opts.skip_type_check) return true;\r\n-    if (IsOptional() && request.isNull()) return true;\r\n+    if (m_opts.skip_type_check) return {true, std::nullopt};\r\n+    if (IsOptional() && request.isNull()) return {true, std::nullopt};\r\n     const auto exp_type{ExpectedType(m_type)};\r\n-    if (!exp_type) return true; // nothing to check\r\n+    if (!exp_type) return {true, std::nullopt}; // nothing to check\r\n \r\n     if (*exp_type != request.getType()) {\r\n-        return strprintf(\"JSON value of type %s is not of expected type %s\", uvTypeName(request.getType()), uvTypeName(*exp_type));\r\n+        return {false, strprintf(\"JSON value of type %s is not of expected type %s\", uvTypeName(request.getType()), uvTypeName(*exp_type))};\r\n     }\r\n-    return true;\r\n+    return {true, std::nullopt};\r\n }\r\n \r\n std::string RPCArg::GetFirstName() const\r\ndiff --git a/src/rpc/util.h b/src/rpc/util.h\r\nindex 0d60e29fa..2d5f882fe 100644\r\n--- a/src/rpc/util.h\r\n+++ b/src/rpc/util.h\r\n@@ -213,7 +213,7 @@ struct RPCArg {\r\n      * Check whether the request JSON type matches.\r\n      * Returns true if type matches, or object describing error(s) if not.\r\n      */\r\n-    UniValue MatchesType(const UniValue& request) const;\r\n+    std::pair<bool, std::optional<UniValue>> MatchesType(const UniValue& request) const;\r\n \r\n     /** Return the first of all aliases */\r\n     std::string GetFirstName() const;\r\n```\r\n</details>",
       "commit_id" : "fafeddfe0e6748e9769ad3dd526a6c0eaf6f4aac",
       "created_at" : "2023-01-20T14:03:52Z",
@@ -471,6 +476,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-20T14:04:22Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1082577837",
       "user" : {
@@ -539,6 +545,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-20T14:13:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1082590785",
       "user" : {
@@ -574,7 +581,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1082608076"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> but seems worse than just std::optional<UniValue>\r\n\r\nFrom a code brevity perspective, yes, but from a readability perspective I don't think so, because then boolean evaluation of `MatchesType` is the negation of what the name implies.",
       "commit_id" : "fafeddfe0e6748e9769ad3dd526a6c0eaf6f4aac",
       "created_at" : "2023-01-20T14:25:08Z",
@@ -607,6 +614,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-20T14:25:57Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1082608076",
       "user" : {
@@ -675,6 +683,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-20T14:45:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1082640658",
       "user" : {
@@ -710,7 +719,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1086659972"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I don't think this is an appropriate place for this test?\r\n\r\nE.g. renaming `rpc_named_arguments.py` -> `rpc_arguments.py` and adding it there seems more logical to me.",
       "commit_id" : "fafeddfe0e6748e9769ad3dd526a6c0eaf6f4aac",
       "created_at" : "2023-01-25T13:46:09Z",
@@ -742,6 +751,7 @@
       "side" : "RIGHT",
       "start_line" : 433,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2023-01-25T13:52:50Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1086659972",
       "user" : {
@@ -810,6 +820,7 @@
       "side" : "RIGHT",
       "start_line" : 433,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2023-01-25T14:04:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1086681113",
       "user" : {
@@ -845,7 +856,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1086695163"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Oh yes, I'm not arguing against checking for an RPC's specific argument types within the RPC-specific test file in general, that can help with regressions etc.\r\n\r\nSince this PR is about type checking in general (and not about `getnetworkhashps`), I think it'd be good to have a test that checks the correct error message is raised - and that should be a test dedicated to just that? If for some unrelated reason in the future `_test_getnetworkhashps()` gets deleted because the method is deprecated, we'd unintentionally remove test coverage on this PR too.",
       "commit_id" : "fafeddfe0e6748e9769ad3dd526a6c0eaf6f4aac",
       "created_at" : "2023-01-25T14:16:33Z",
@@ -878,6 +889,7 @@
       "side" : "RIGHT",
       "start_line" : 433,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2023-01-25T14:27:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1086695163",
       "user" : {
@@ -946,6 +958,7 @@
       "side" : "RIGHT",
       "start_line" : 433,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2023-01-25T14:25:25Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1086706371",
       "user" : {

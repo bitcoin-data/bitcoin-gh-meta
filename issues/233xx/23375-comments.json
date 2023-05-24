@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK \r\n\r\ngoing to test soon..",
       "created_at" : "2021-10-27T19:33:02Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23375#issuecomment-953246512",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Interesting. I assumed that `generate` will add the coinbases in the \"right\" order (oldest first) and I assumed `sorted()` in python to be a stable sort (not changing the order for equal elements).\r\n\r\nYour assumptions regarding `generate` and `sorted()` being stable sort seem to be right (https://stackoverflow.com/questions/1915376/is-pythons-sorted-function-guaranteed-to-be-stable). Still we have problems for two reasons:\r\n* due to ascending sort order and popping off the last element, we take the UTXO with the _highest_ block number, not the lowest; example from rpc_blockchain.py before and after sorting:\r\n```\r\n-------------------\r\n--- BEFORE SORT ---\r\n-------------------\r\n{..., 'value': Decimal('50.00000000'), 'height': 1}\r\n{..., 'value': Decimal('50.00000000'), 'height': 2}\r\n.....\r\n{..., 'value': Decimal('50.00000000'), 'height': 149}\r\n{..., 'value': Decimal('25.00000000'), 'height': 150}\r\n{..., 'value': Decimal('25.00000000'), 'height': 151}\r\n.....\r\n{..., 'value': Decimal('25.00000000'), 'height': 206}\r\n\r\n------------------\r\n--- AFTER SORT ---\r\n------------------\r\n{..., 'value': Decimal('25.00000000'), 'height': 150}\r\n{..., 'value': Decimal('25.00000000'), 'height': 151}\r\n.....\r\n{..., 'value': Decimal('25.00000000'), 'height': 206}\r\n{..., 'value': Decimal('50.00000000'), 'height': 1}          <--- we want to pick this one (oldest)\r\n{..., 'value': Decimal('50.00000000'), 'height': 2}\r\n.....\r\n{..., 'value': Decimal('50.00000000'), 'height': 149}        <--- that one is actually picked (newest)\r\n\r\n```\r\n* the `scantxoutset` RPC doesn't return its result `res['unspents']` ordered by block height, i.e. one would need to sort this first before appending to `self._utxos`.\r\n\r\nThose two problems could be solved on their own (sort in descending order and pop off the first element works I guess?), but rather than always taking care to append to the UTXOs in the right order (which is i.e. impossible if `generate` would be called _before_ `rescan_utxos`), I think the most clean solution is to simply save the block height and use it as second sort criteria.\r\n",
       "created_at" : "2021-10-28T14:09:02Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23375#issuecomment-953883095",
@@ -175,6 +175,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-10-28T15:46:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/738524785",
       "user" : {
@@ -242,6 +243,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-10-28T15:46:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/738525259",
       "user" : {
@@ -277,7 +279,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/738546843"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Right now `scan_tx` is used only immediately after broadcasting a transaction (internally in MiniWallet.sendrawtransaction(), and in one instance in wallet_bumpfee.py), i.e. on unconfirmed txs. I don't think it makes much sense to ever call it for confirmed transactions (though I could miss something) -- setting the 'height' field is particularly important for coinbase UTXOs, and those seem to be all tackled by `MiniWallet.generate` (explicitely generate block to MiniWallet address) and `MiniWallet.rescan_utxo` (scan in pre-mined chain for MiniWallet address).",
       "commit_id" : "d2c4904ef707e2023ceb8dfbfe61a92c4060e100",
       "created_at" : "2021-10-28T16:10:16Z",
@@ -296,7 +298,7 @@
       "pull_request_review_id" : 792087692,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23375",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -304,12 +306,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/738546843/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-10-28T16:10:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/738546843",
       "user" : {
@@ -345,7 +348,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/739128919"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@theStack thanks for the explanation, I was in doubt about it but now it is clear for me.",
       "commit_id" : "d2c4904ef707e2023ceb8dfbfe61a92c4060e100",
       "created_at" : "2021-10-29T10:44:27Z",
@@ -378,6 +381,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-10-29T10:44:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/739128919",
       "user" : {
@@ -415,11 +419,11 @@
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/954648483/reactions"
       },
       "updated_at" : "2021-10-29T10:55:28Z",

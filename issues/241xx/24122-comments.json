@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@shaavan @w0xlt: Thanks for your feedback, I agree that adding thread safety assertions and annotations is a good idea. Added a commit doing that -- note though that the `LOCKS_EXCLUDED` annotation is only possible for one method (`PeerManagerImpl::ProcessMessages`), as for the other (`CConnman::SocketHandlerConnected`) the elements that cointain the loop are in a list rather than a direct parameter that can be accessed.",
       "created_at" : "2022-01-22T20:54:40Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24122#issuecomment-1019356374",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25109](https://github.com/bitcoin/bitcoin/pull/25109) (Strengthen AssertLockNotHeld assertions by ajtowns)\n* [#24931](https://github.com/bitcoin/bitcoin/pull/24931) (Strengthen thread safety assertions by ajtowns)\n* [#24474](https://github.com/bitcoin/bitcoin/pull/24474) (Additional thread safety annotations for CNode/Peer by ajtowns)\n* [#21527](https://github.com/bitcoin/bitcoin/pull/21527) (net_processing: lock clean up by ajtowns)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-01-23T09:11:00Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24122#issuecomment-1019443432",
@@ -101,19 +101,19 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "Can we add `AssertLockNotHeld` above this line?\r\n\r\n```suggestion\r\n            AssertLockNotHeld(node.m_process_msgs_mutex);\r\n            LOCK(node.m_process_msgs_mutex);\r\n```",
-      "commit_id" : "9add3f9c3486284bea6f91061a561c475ff4666a",
+      "commit_id" : "9c0b2687ca0f7b6698e12caee35ddfcb5f8d0370",
       "created_at" : "2022-01-23T14:21:41Z",
       "diff_hunk" : "@@ -22,8 +22,8 @@ void ConnmanTestMsg::NodeReceiveMsgBytes(CNode& node, Span<const uint8_t> msg_by\n             nSizeAdded += it->m_raw_message_size;\n         }\n         {\n-            LOCK(node.cs_vProcessMsg);\n-            node.vProcessMsg.splice(node.vProcessMsg.end(), node.vRecvMsg, node.vRecvMsg.begin(), it);\n+            LOCK(node.m_process_msgs_mutex);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24122#discussion_r790283504",
       "id" : 790283504,
-      "line" : 25,
+      "line" : 26,
       "node_id" : "PRRC_kwDOABII584vGsTw",
       "original_commit_id" : "9add3f9c3486284bea6f91061a561c475ff4666a",
-      "original_line" : 25,
+      "original_line" : 26,
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "src/test/util/net.cpp",
-      "position" : 6,
+      "position" : 7,
       "pull_request_review_id" : 860329104,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24122",
       "reactions" : {
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-23T14:22:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/790283504",
       "user" : {
@@ -166,7 +167,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/790758256"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Good catch, done! Also added the thread safety annotation to the corresponding method `ConnmanTestMsg::NodeReceiveMsgBytes`.",
       "commit_id" : "9c0b2687ca0f7b6698e12caee35ddfcb5f8d0370",
       "created_at" : "2022-01-24T13:46:39Z",
@@ -199,6 +200,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-24T13:46:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/790758256",
       "user" : {
@@ -223,7 +225,75 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24122#discussion_r790825186"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24122"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/790825186"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Reading the code makes me strongly believe that the value of `nProcessQueueSize` must correspond to the `m_process_msgs` content. To preserve this invariant of the `CNode` class I'm suggesting:\r\n```suggestion\r\n    size_t nProcessQueueSize GUARDED_BY(m_process_msgs_mutex){0};\r\n```",
+      "commit_id" : "9c0b2687ca0f7b6698e12caee35ddfcb5f8d0370",
+      "created_at" : "2022-01-24T14:57:32Z",
+      "diff_hunk" : "@@ -413,8 +413,8 @@ class CNode\n     Mutex cs_hSocket;\n     Mutex cs_vRecv;\n \n-    RecursiveMutex cs_vProcessMsg;\n-    std::list<CNetMessage> vProcessMsg GUARDED_BY(cs_vProcessMsg);\n+    Mutex m_process_msgs_mutex;\n+    std::list<CNetMessage> m_process_msgs GUARDED_BY(m_process_msgs_mutex);\n     size_t nProcessQueueSize{0};",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24122#discussion_r790825186",
+      "id" : 790825186,
+      "line" : 418,
+      "node_id" : "PRRC_kwDOABII584vIwji",
+      "original_commit_id" : "9c0b2687ca0f7b6698e12caee35ddfcb5f8d0370",
+      "original_line" : 418,
+      "original_position" : 8,
+      "original_start_line" : null,
+      "path" : "src/net.h",
+      "position" : 8,
+      "pull_request_review_id" : 861076744,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24122",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/790825186/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-01-24T15:15:47Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/790825186",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
       "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
       "created_at" : "2022-05-16T13:05:57Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24122#issuecomment-1127648499",
@@ -267,7 +337,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--13523179cfe9479db18ec6c5d236f789-->There hasn't been much activity lately and the patch still needs rebase. What is the status here?\n\n* Is it still relevant? â¡ï¸ Please solve the conflicts to make it ready for review and to ensure the CI passes.\n* Is it no longer relevant? â¡ï¸ Please close.\n* Did the author lose interest or time to work on this? â¡ï¸ Please close it and mark it 'Up for grabs' with the label, so that it can be picked up in the future.\n",
       "created_at" : "2022-08-01T10:51:04Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24122#issuecomment-1201037289",
@@ -333,6 +403,50 @@
       },
       "updated_at" : "2022-10-12T18:57:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1276603201",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Closing this as it has not had any activity in a while. If you are interested in continuing work on this, please leave a comment so that it can be reopened.",
+      "created_at" : "2022-11-10T17:12:57Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24122#issuecomment-1310620411",
+      "id" : 1310620411,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24122",
+      "node_id" : "IC_kwDOABII585OHnr7",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1310620411/reactions"
+      },
+      "updated_at" : "2022-11-10T17:12:57Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1310620411",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/3782274?v=4",
          "events_url" : "https://api.github.com/users/achow101/events{/privacy}",

@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`LegacyScriptPubKeyMan::cs_KeyStore` can still be acquired before `cs_main`:\r\n\r\nLock `cs_KeyStore`:\r\nhttps://github.com/achow101/bitcoin/blob/9454cbfbd6f9da257b8f87e8186c421c54966857/src/wallet/wallet.cpp#L2309\r\n\r\nCall `ChainImpl::findBlock()`:\r\nhttps://github.com/achow101/bitcoin/blob/9454cbfbd6f9da257b8f87e8186c421c54966857/src/wallet/wallet.cpp#L2350\r\nwhich locks `cs_main`:\r\nhttps://github.com/achow101/bitcoin/blob/9454cbfbd6f9da257b8f87e8186c421c54966857/src/node/interfaces.cpp#L481",
       "created_at" : "2021-07-19T08:17:11Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22492#issuecomment-882345613",
@@ -8,6 +8,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22492",
       "node_id" : "IC_kwDOABII5840l4aN",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882345613/reactions"
+      },
       "updated_at" : "2021-07-19T08:17:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882345613",
       "user" : {
@@ -45,24 +57,37 @@
       },
       "author_association" : "MEMBER",
       "body" : "nit: Wouldn't import be faster than generate?\r\n\r\n```py\r\nw3.importprivkey(privkey=self.nodes[0].get_deterministic_priv_key().key, label='coinbase_import')",
-      "commit_id" : "9454cbfbd6f9da257b8f87e8186c421c54966857",
+      "commit_id" : "9b85a5e2f7e003ca8621feaac9bdd304d19081b4",
       "created_at" : "2021-07-19T08:56:15Z",
       "diff_hunk" : "@@ -209,6 +209,15 @@ def run_test(self):\n         with self.nodes[0].assert_debug_log(['Flushing wallet.dat'], timeout=20):\n             self.nodes[0].getnewaddress()\n \n+        # Make sure that dumpwallet doesn't have a lock order issue when there is an unconfirmed tx and it is reloaded\n+        # See https://github.com/bitcoin/bitcoin/issues/22489\n+        self.nodes[0].createwallet(\"w3\")\n+        w3 = self.nodes[0].get_wallet_rpc(\"w3\")\n+        w3.generatetoaddress(101, w3.getnewaddress())",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22492#discussion_r672115720",
       "id" : 672115720,
-      "line" : 216,
+      "line" : null,
       "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY3MjExNTcyMA==",
       "original_commit_id" : "9454cbfbd6f9da257b8f87e8186c421c54966857",
       "original_line" : 216,
       "original_position" : 8,
       "original_start_line" : null,
       "path" : "test/functional/wallet_dump.py",
-      "position" : 8,
+      "position" : null,
       "pull_request_review_id" : 709312956,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22492",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/672115720/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-07-19T09:01:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/672115720",
       "user" : {
@@ -95,6 +120,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22492",
       "node_id" : "IC_kwDOABII5840l_8P",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882376463/reactions"
+      },
       "updated_at" : "2021-07-19T09:01:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882376463",
       "user" : {
@@ -119,7 +156,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "What code path is waiting to acquire `cs_keystore` while `cs_main` is acquired? (EDIT: It is [this `requestMempoolTransactions` call](https://github.com/bitcoin/bitcoin/blob/54e31742d208eb98ce706aaa6bbd4b023f42c3a5/src/wallet/wallet.cpp#L2867)).\r\n\r\nThe goal of #16426 was to not acquire wallet locks with `cs_main` acquired, and in general to avoid doing any slow stuff with `cs_main` acquired, so a slow wallet would not slow down the node.\r\n\r\nIt seems like the fix should be the opposite of this and whichever code path is locking `cs_keystore` while holding up `cs_main` should be changed not to do that, instead of changing these code paths.",
       "created_at" : "2021-07-19T14:39:38Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22492#issuecomment-882603654",
@@ -127,6 +164,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22492",
       "node_id" : "IC_kwDOABII5840m3aG",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882603654/reactions"
+      },
       "updated_at" : "2021-07-19T15:57:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882603654",
       "user" : {
@@ -151,7 +200,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "#15719 should fix this by no longer trying to acquire wallet locks while cs_main is held. The call order there is `CWallet::AttachChain` calling [`handleNotifications`](https://github.com/ryanofsky/bitcoin/blob/pr/pool.35/src/wallet/wallet.cpp#L2765-L2768) calling [`mempool_fn`](https://github.com/ryanofsky/bitcoin/blob/pr/pool.35/src/node/interfaces.cpp#L629) on the validationinterface queue thread, which calls [`transactionAddedToMempool`](https://github.com/ryanofsky/bitcoin/blob/pr/pool.35/src/wallet/wallet.cpp#L2754-L2758) without any locks held",
       "created_at" : "2021-07-19T15:51:46Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22492#issuecomment-882659440",
@@ -159,6 +208,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22492",
       "node_id" : "IC_kwDOABII5840nFBw",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882659440/reactions"
+      },
       "updated_at" : "2021-07-19T15:51:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882659440",
       "user" : {
@@ -191,6 +252,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22492",
       "node_id" : "IC_kwDOABII5840nHEu",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882667822/reactions"
+      },
       "updated_at" : "2021-07-19T16:02:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882667822",
       "user" : {
@@ -215,7 +288,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> #15719 looks a bit large to get into 22.0. Though, this doesn't seem like a regression (it might exist in 21.x), so maybe we just ignore it for 22.0?\r\n\r\nYes would not want to use #15719 to fix this issue if it needs to be fixed this release. I didn't verify but would guess the issue was probably introduced with #16426 like you suggested and not a recent regression.\r\n\r\nAlso, I think probably (but could be wring) there may not even be a deadlock here in release builds and this could be a debug_lockerorder false-positive. It seems like using one lock order before the wallet is loaded and a slightly different lock order after it is loaded wouldn't be a problem without the lock order debug assertions.\r\n",
       "created_at" : "2021-07-19T16:20:44Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22492#issuecomment-882681954",
@@ -223,6 +296,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22492",
       "node_id" : "IC_kwDOABII5840nKhi",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882681954/reactions"
+      },
       "updated_at" : "2021-07-19T16:20:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882681954",
       "user" : {
@@ -255,6 +340,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22492",
       "node_id" : "IC_kwDOABII5840nLfR",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882685905/reactions"
+      },
       "updated_at" : "2021-07-19T16:26:25Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882685905",
       "user" : {
@@ -287,6 +384,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22492",
       "node_id" : "IC_kwDOABII5840nM7E",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882691780/reactions"
+      },
       "updated_at" : "2021-07-19T16:35:27Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882691780",
       "user" : {
@@ -340,9 +449,22 @@
       "position" : null,
       "pull_request_review_id" : 709758831,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22492",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/672457145/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-07-19T16:35:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/672457145",
       "user" : {
@@ -367,7 +489,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> If there are more than one rpc threads loading/using wallets, it could deadlock?\r\n\r\nI don't think so either for the same reason achow said. Each wallet has it's own wallet and keystore locks, and only one thread can load a wallet at time. So whatever lock order is used by that thread for those locks during initialization does not seem relevant. I could imagine fixing this issue by adding an `IGNORE_INIT_LOCKORDER(mutex)` macro and putting something like\r\n\r\n```\r\nIGNORE_INIT_LOCKORDER(walletInstance->cs_wallet);\r\nIGNORE_INIT_LOCKORDER(walletInstance->cs_keystore);\r\n```\r\n\r\naround the loading code.\r\n\r\nBut this PR's approach of just reducing lock scopes is also pretty nice, so it does seem like a good way to go.",
       "created_at" : "2021-07-19T17:03:31Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22492#issuecomment-882709662",
@@ -375,6 +497,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22492",
       "node_id" : "IC_kwDOABII5840nRSe",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882709662/reactions"
+      },
       "updated_at" : "2021-07-19T17:03:56Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882709662",
       "user" : {
@@ -410,7 +544,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/672489609"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"Reorder dumpwallet so that cs_main functions go first\" (25d99e6511d8c43b2025a89bcd8295de755346a7)\r\n\r\nNote: this comment is good to keep here, but I just want to remind myself for later that this part will no longer be true and could be dropped with #15719, which avoids nested locking on the init thread",
       "commit_id" : "9b85a5e2f7e003ca8621feaac9bdd304d19081b4",
       "created_at" : "2021-07-19T17:23:24Z",
@@ -427,9 +561,22 @@
       "position" : 19,
       "pull_request_review_id" : 709801577,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22492",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/672489609/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-07-19T17:28:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/672489609",
       "user" : {
@@ -454,7 +601,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "<details><summary>Master Branch â</summary>\r\n\r\n1. Without `--enable-debug`: No issues https://github.com/bitcoin/bitcoin/issues/22489#issuecomment-882155569 â\r\n2. With `--enable-debug`:\r\n      (a) mempool `size` > 0: Error as mentioned in Issue description https://github.com/bitcoin/bitcoin/issues/22489#issue-947130115 â \r\n      (b) mempool `size` = 0: No issues â </details>\r\n\r\n<details><summary>PR Branch â</summary> \r\n\r\n1. Without `--enable-debug`: No issues â\r\n2. With `--enable-debug`: No issues â </details>\r\n\r\nSteps followed to test:\r\n1. If compiling with `--enable-debug` use:\r\n    ```\r\n    ./configure BDB_LIBS=\"-L${BDB_PREFIX}/lib -ldb_cxx-4.8\" BDB_CFLAGS=\"-I${BDB_PREFIX}/include\" --enable-debug\r\n   ```\r\n   Else use:\r\n   ```\r\n   ./configure BDB_LIBS=\"-L${BDB_PREFIX}/lib -ldb_cxx-4.8\" BDB_CFLAGS=\"-I${BDB_PREFIX}/include\"\r\n   ```\r\n2. Create a wallet: `bitcoin-cli createwallet \"W1\"`\r\n3. Check mempool: `bitcoin-cli getmempoolinfo`\r\n4. Dump wallet: `bitcoin-cli dumpwallet \"W1_DUMP\"`\r\n   \r\n    ",
       "created_at" : "2021-07-19T18:28:19Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22492#issuecomment-882765213",
@@ -462,31 +609,43 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22492",
       "node_id" : "IC_kwDOABII5840ne2d",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 2,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 1,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 3,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882765213/reactions"
+      },
       "updated_at" : "2021-07-19T18:28:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882765213",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
-         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/prayank23/followers",
-         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/prayank23",
-         "id" : 13405205,
-         "login" : "prayank23",
-         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
-         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
-         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
-         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/prayank23"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* #21206 by ryanofsky\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2021-07-19T19:11:55Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22492#issuecomment-882791629",
@@ -494,6 +653,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22492",
       "node_id" : "IC_kwDOABII5840nlTN",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882791629/reactions"
+      },
       "updated_at" : "2021-07-19T19:11:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/882791629",
       "user" : {
@@ -526,6 +697,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22492",
       "node_id" : "IC_kwDOABII5840pzzZ",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/883375321/reactions"
+      },
       "updated_at" : "2021-07-20T13:03:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/883375321",
       "user" : {

@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "utACK af56d63eca8a246c02506c2aef7ea8a22e2d07bb\r\n\r\nAgree we should continue searching even solution with zero waste was found. Didn't test",
       "created_at" : "2022-06-29T06:52:57Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25495#issuecomment-1169601907",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.",
       "created_at" : "2022-06-29T11:59:16Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25495#issuecomment-1169893368",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@yancyribbens: The code had an early exit when an input set happened to achieve a `waste` score of 0. Waste is calculated by comparing the current cost of spending inputs with a hypothetical long-term cost (and adding the cost of change or excess in the case of changeless solutions). Specifically, the input-component of the waste score is calculated from `input_weight Ã (feerate - longterm_feerate)`. As you can see, if the current feerate is lower than the long-term feerate, the waste score of inputs will be negative. (I [blogged about the waste metric](https://murch.one/posts/waste-metric/), if you want to read more.) By picking the input set that results in the lowest waste score, we automatically prefer spending _more_ and _heavier_ inputs at low feerates, and _fewer_ and _lighter_ inputs at high feerates. \r\n\r\nE.g. at 1â¯s/vB, we would prefer a solution with two P2PKH (2Ã148â¯B Ã (1â¯s/vB - 10â¯s/vB) = -2664â¯s)â¯inputs over a solution with three P2WPKH inputs (3Ã68â¯vB Ã (1â¯s/vB - 10â¯s/vB) = -1836â¯s), and a solution with three P2WPKH inputs over a solution with two P2WPKH inputs (2Ã68â¯vB Ã (1â¯s/vB - 10â¯s/vB) = -1224â¯s). \r\n\r\nOn the other hand, at high feerates say 60â¯s/vB, we'll prefer a solution with one P2PKH input (148â¯B Ã (60â¯s/vB - 10â¯s/vB)â¯= 7400â¯s) over one with three P2WPKH inputs (148â¯B < 3Ã68 vB), but prefer two P2WPKH inputs over one P2PKH input (2Ã68â¯vBâ¯< 148â¯B), and obviously one P2WPKH over a solution with two P2WPKH inputs.\r\n\r\nOver the course of many transactions, this causes our wallet to opportunistically use more and heavier UTXOs at low feerates, which reduces our overall transaction fees, while preventing runaway UTXO pool bloat as we have seen from strategies that always try to minimize the input set (e.g. largest first selection).\r\n\r\nSo, we don't want to maximize the UTXOs used, but we just want to prefer spending them at lower feerates when it is opportune. By starting with the biggest UTXOs, we'll find one solution as quick as possible, but the algorithm hypothetically enumerates all possible input set (except that we stop after trying 100,000 combinations). While the reverse sort order would also enumerate all, I would expect that it performs much worse to find the first solution. It would be like trying to fill a bucket with sand and rocks where we currently put the rocks first, then pour the sand, and then instead pour the sand first and then try to fit the big rocks: the smaller pieces are much more likely to fit a remaining gap.",
       "created_at" : "2022-09-02T16:30:43Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25495#issuecomment-1235698538",
@@ -229,7 +229,7 @@
       "node_id" : "IC_kwDOABII585Jp0Nq",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -237,7 +237,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1235698538/reactions"
       },
       "updated_at" : "2022-09-02T16:30:43Z",
@@ -308,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks for the feedback that the terminology is confusing. Would consequently referring to it as `waste_score` as in my blog post be less confusing? I'm afraid that overloading the term âweightâ with a second meaning in the context of transaction building would not be a good way reduce the confusion. I guess in hindsight it might have been better to invert it and call it `opportunity_cost`, `input_set_preference` or similar.",
       "created_at" : "2022-09-06T14:53:15Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25495#issuecomment-1238264483",
@@ -396,7 +396,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> In your post you describe `weight` as:\r\n> \r\n> > weight: total weight of the input set\r\n> \r\n> Which I think is a bit confusing since you're defining weight in terms of itself.\r\n\r\nOh, I'm explaining what the components of the formula, not defining terms.\r\n\r\n> Reading the history of [weight](https://en.bitcoin.it/wiki/Weight_units) it looks like it can also be called `vbytes` which to me helps make sense of what weight is (a measure of data size after some possible transform).\r\n\r\nI guess I could have added a bit more detail here in my blog post. There are four terms referring to different expressions of transaction size in Bitcoin:\r\n- size (raw byte length):  \r\n  The actual amount of bytes necessary to transfer or store a transaction. The relevant metric in the context of the pre-segwit blocksize limit. \r\n- weight\r\n  The weight of a transaction with 1â¯weightunit per byte of witness data and 4â¯weightunits per byte of non-witness data. Used in the context of the post-segwit blockweight limit.\r\n- virtual size\r\n  Derived from weight by dividing by 4, to make it more human-comparable to values people were used to before segwit.\r\n- stripped size\r\n  The remaining size of a transaction after pruning the witness data. Relevant for non-segwit only, who don't process witness data and continue to enforce the blocksize limit.\r\n\r\nThe formula works out when using weight and the feerate is given in `sat/kWU`. If the feerate were given in `sat/kvB` as Bitcoin Core usually uses, one should use the vsize.\r\n\r\n> I think `edge_weight = waste + vbytes * (feerate - longterm_feerate)` would be preferable.\r\n\r\nIt's not clear to me what you're proposing here, given that `vbytes * (feerate - longterm_feerate)` is already a component of waste. I also don't see what the inspiration for âedgeâ in this context would be.",
       "created_at" : "2022-09-13T18:16:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25495#issuecomment-1245787081",
@@ -484,7 +484,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "As a follow-up to clarify perhaps: `weight` in the context of the waste score is not at all redefined. It's exactly the same âweightâ as in the context of the block weight limit and transaction weight. I just clarify for the formula that only the weight of the inputs is relevant in the context. You could of course use the complete weight of the resulting transaction, but the weight of the transaction header and recipient outputs would be the same for all solutions and thus just shift all compared values by a fixed offset respective to comparing the weight of the inputs.",
       "created_at" : "2022-09-15T18:49:23Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25495#issuecomment-1248476008",
@@ -572,7 +572,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Let's say you're building a transaction that pays two recipients to a P2SH and a P2WSH output. Your UTXO pool consists only of segwit UTXOs, and let's say we only find two input set candidates, one with a single P2SH-P2WSH input and one with two P2WSH inputs.\r\n\r\nThe weight of the transaction with two P2WSH inputs is:\r\n\r\n        2Ã272 + 42 + 124 + 172\r\n\r\nand the weight of the transaction with one P2SH-P2WSH input is:\r\n\r\n       1Ã364 + 42 + 124 + 172\r\n       \r\nAs you can see, whatever the current feerate in that calculation the cost stemming from the transaction header and the two outputs (`42 + 124 + 172`) will be the same across all evaluated input sets and is therefore irrelevant if we're just looking for the minimal waste score.",
       "created_at" : "2022-09-16T18:45:15Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25495#issuecomment-1249693593",
@@ -660,7 +660,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Alright, I see what you mean. The point is that the difference in feerate does not need to take into account the difference in feerate for different transaction types. \r\n\r\nI'm not sure I understand what you mean. The targeted feerate is fixed across the complete transaction building process. It's a user input before we start picking inputs.\r\n\r\n> It's only important that the difference in fee changes the waste score in a way that sways the UTXO selection process, but shifting by a fixed value IE the difference in transaction weight isn't important for the selection to work.\r\n\r\nThe different weights of different input types do matter, larger outputs have a more negative waste score at low feerates and a higher waste score at high feeratesâso legacy outputs get picked preferentially at low feerates, while they get selected less at high feerates.  \r\nIt's the transaction parts of the transaction that are preset (the header and recipient outputs) that are the same for each selection attempt. We can ignore their transaction weight because they are the same regardless of what input set we pick, and therefore they don't sway the input selection.\r\n\r\n> Back to the earlier conversation, maybe we can settle on a code change PR which changes the terminology to `waste_score` instead of `waste`. Anything with `weight` in the name seems of of the question and a more radical change like `opportunity_cost` or `input_set_preference` would require too much change to existing documentation.\r\n\r\nTBH, I'm not convinced that renaming `waste` to `waste_score` is that significant an improvement of readability. Perhaps it would be more useful to add a line or two to the documentation to explain that waste can be negative and how it works.",
       "created_at" : "2022-09-18T22:06:27Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25495#issuecomment-1250395828",

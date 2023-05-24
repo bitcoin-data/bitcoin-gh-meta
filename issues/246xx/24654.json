@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "The `Assert`/`Assume` macros are implemented via lambda functions to allow the result of the assertion to both be evaluated (and trigger an abort) and be returned without having the expression be evaluated twice.\r\n\r\nThis causes some ugly namespacing issues though. Because there's a function call, clang's thread safety annotations don't get passed through (as the lambda is unannotated), possibly causing an unnecessary compiler error because the compiler loses track that a mutex is held when a guarded variable is accessed.\r\n\r\nIt also seems that gcc (but not clang) gets confused about member functions (but not member variables), eg:\r\n\r\n```c++\r\nclass TestAssert\r\n{\r\npublic:\r\n    int variable = 3;\r\n    int test_1(void) { return variable; }\r\n    int test_2(void) {\r\n        auto x = [&]() {\r\n            Assert(test_1() == 3);\r\n        };\r\n        x();\r\n        return ++variable;\r\n    }\r\n};\r\n```\r\n\r\nresults in:\r\n\r\n```\r\ntest/util_tests.cpp:91:26: error: cannot call member function âint util_tests::TestAssert::test_1()â without object\r\n   91 |             Assert(test_1() == 3);\r\n```\r\n\r\nrequiring you to write `Assert(this->test_1() == 3)` instead.",
    "closed_at" : "2022-03-31T06:20:39Z",
    "closed_by" : {
@@ -43,7 +43,7 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24654/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "I_kwDOABII585GRCgN",
    "number" : 24654,
@@ -62,9 +62,10 @@
    },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : "completed",
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24654/timeline",
    "title" : "util/check.h Assert/Assume: namespacing issues",
-   "updated_at" : "2022-03-31T06:20:39Z",
+   "updated_at" : "2023-03-31T10:22:01Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24654",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/127186?v=4",

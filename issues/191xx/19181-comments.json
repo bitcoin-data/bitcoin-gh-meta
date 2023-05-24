@@ -13,7 +13,7 @@
       },
       "author_association" : "NONE",
       "body" : "binding 1103717 to a name would make the code more readable, as the name documents the purpose of the number.",
-      "commit_id" : "915ef088095840a9b9f82ebe85ab03d8a35f4872",
+      "commit_id" : "82d4c7e3a8c70b132d81dd86b48cc8648c076a32",
       "created_at" : "2020-06-05T20:56:55Z",
       "diff_hunk" : "@@ -0,0 +1,324 @@\n+// Copyright (c) 2017 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\n+#include <crypto/muhash.h>\n+\n+#include <crypto/chacha20.h>\n+#include <crypto/common.h>\n+\n+#include <assert.h>\n+#include <stdio.h>\n+\n+#include <limits>\n+\n+namespace {\n+\n+/** Extract the lowest limb of [c0,c1,c2] into n, and left shift the number by 1 limb. */\n+#define extract3(c0,c1,c2,n) { \\\n+    (n) = c0; \\\n+    c0 = c1; \\\n+    c1 = c2; \\\n+    c2 = 0; \\\n+}\n+\n+/** Extract the lowest limb of [c0,c1] into n, and left shift the number by 1 limb. */\n+#define extract2(c0,c1,n) { \\\n+    (n) = c0; \\\n+    c0 = c1; \\\n+    c1 = 0; \\\n+}\n+\n+#if defined(__amd64__) || defined(__x86_64__)\n+\n+/** [c0,c1] = a * b */\n+#define mul(c0,c1,a,b) { \\\n+    __asm__ (\"mulq %3\" : \"=d\"(c1), \"=a\"(c0) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+}\n+\n+/** [c0,c1,c2] += a * b */\n+#define muladd3(c0,c1,c2,a,b) { \\\n+    uint64_t tl, th; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl), \"=d\"(th) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+}\n+\n+/** [c0,c1,c2] += 2 * a * b */\n+#define muldbladd3(c0,c1,c2,a,b) { \\\n+    uint64_t tl, th; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl), \"=d\"(th) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+}\n+\n+/* [c0,c1,c2] += n * [d0,d1,d2]. c0 is initially 0 */\n+#define mulnadd3(c0,c1,c2,d0,d1,d2,n) { \\\n+    uint64_t tl1, th1, tl2, th2, tl3; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl1), \"=d\"(th1) : \"a\"(d0), \"r\"((Num3072::limb_type)n) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"g\"(tl1), \"g\"(th1) : \"cc\"); \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl2), \"=d\"(th2) : \"a\"(d1), \"r\"((Num3072::limb_type)n) : \"cc\"); \\\n+    __asm__ (\"addq %2,%0; adcq %3,%1\" : \"+r\"(c1), \"+r\"(c2) : \"g\"(tl2), \"g\"(th2) : \"cc\"); \\\n+    __asm__ (\"imulq %2,%1,%0\" : \"=r\"(tl3) : \"g\"(d2), \"i\"(n) : \"cc\"); \\\n+    __asm__ (\"addq %1,%0\" : \"+r\"(c2) : \"g\"(tl3) : \"cc\"); \\\n+}\n+\n+/* [c0,c1] *= n */\n+#define muln2(c0,c1,n) { \\\n+    uint64_t th; \\\n+    __asm__ (\"mulq %2\" : \"+a\"(c0), \"=d\"(th) : \"r\"((Num3072::limb_type)n) : \"cc\"); \\\n+    __asm__ (\"imul %1,%0,%0\" : \"+r\"(c1) : \"i\"(n) : \"cc\"); \\\n+    __asm__ (\"addq %1,%0\" : \"+r\"(c1) : \"g\"(th) : \"cc\"); \\\n+}\n+\n+/** [c0,c1] += a */\n+#define add2(c0,c1,a) { \\\n+    __asm__ (\"add %2,%0; adc $0,%1\" : \"+r\"(c0), \"+r\"(c1) : \"r\"(a) : \"cc\"); \\\n+}\n+\n+#else\n+\n+/** [c0,c1] = a * b */\n+#define mul(c0,c1,a,b) { \\\n+    Num3072::double_limb_type t = (Num3072::double_limb_type)a * b; \\\n+    c2 = 0; \\\n+    c1 = t >> Num3072::LIMB_SIZE; \\\n+    c0 = t; \\\n+}\n+\n+/* [c0,c1,c2] += n * [d0,d1,d2]. c2 is 0 initially */\n+#define mulnadd3(c0,c1,c2,d0,d1,d2,n) { \\\n+    Num3072::double_limb_type t = (Num3072::double_limb_type)d0 * n + c0; \\\n+    c0 = t; \\\n+    t >>= Num3072::LIMB_SIZE; \\\n+    t += (Num3072::double_limb_type)d1 * n + c1; \\\n+    c1 = t; \\\n+    t >>= Num3072::LIMB_SIZE; \\\n+    c2 = t + d2 * n; \\\n+}\n+\n+/* [c0,c1] *= n */\n+#define muln2(c0,c1,n) { \\\n+    Num3072::double_limb_type t = (Num3072::double_limb_type)c0 * n; \\\n+    c0 = t; \\\n+    t >>= Num3072::LIMB_SIZE; \\\n+    t += (Num3072::double_limb_type)c1 * n; \\\n+    c1 = t; \\\n+    t >>= Num3072::LIMB_SIZE; \\\n+}\n+\n+/** [c0,c1,c2] += a * b */\n+#define muladd3(c0,c1,c2,a,b) { \\\n+    Num3072::limb_type tl, th; \\\n+    { \\\n+        Num3072::double_limb_type t = (Num3072::double_limb_type)a * b; \\\n+        th = t >> Num3072::LIMB_SIZE; \\\n+        tl = t; \\\n+    } \\\n+    c0 += tl; \\\n+    th += (c0 < tl) ? 1 : 0; \\\n+    c1 += th; \\\n+    c2 += (c1 < th) ? 1 : 0; \\\n+}\n+\n+/** [c0,c1,c2] += 2 * a * b */\n+#define muldbladd3(c0,c1,c2,a,b) { \\\n+    Num3072::limb_type tl, th; \\\n+    { \\\n+        Num3072::double_limb_type t = (Num3072::double_limb_type)a * b; \\\n+        th = t >> Num3072::LIMB_SIZE; \\\n+        tl = t; \\\n+    } \\\n+    c0 += tl; \\\n+    Num3072::limb_type tt = th + ((c0 < tl) ? 1 : 0); \\\n+    c1 += tt; \\\n+    c2 += (c1 < tt) ? 1 : 0; \\\n+    c0 += tl; \\\n+    th += (c0 < tl) ? 1 : 0; \\\n+    c1 += th; \\\n+    c2 += (c1 < th) ? 1 : 0; \\\n+}\n+\n+/** [c0,c1] += a */\n+#define add2(c0,c1,a) { \\\n+    c0 += (a); \\\n+    c1 += (c0 < (a)) ? 1 : 0; \\\n+}\n+\n+#endif\n+\n+bool IsOverflow(const Num3072* d)\n+{\n+    for (int i = 1; i < Num3072::LIMBS - 1; ++i) {\n+        if (d->limbs[i] != std::numeric_limits<Num3072::limb_type>::max()) return false;\n+    }\n+    if (d->limbs[0] <= std::numeric_limits<Num3072::limb_type>::max() - 1103717) return false;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#discussion_r436160721",
@@ -43,6 +43,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2020-06-11T22:05:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/436160721",
       "user" : {
@@ -80,7 +81,7 @@
       },
       "author_association" : "NONE",
       "body" : "comment wrong, or at least inconsistent with other version",
-      "commit_id" : "915ef088095840a9b9f82ebe85ab03d8a35f4872",
+      "commit_id" : "82d4c7e3a8c70b132d81dd86b48cc8648c076a32",
       "created_at" : "2020-06-05T20:58:16Z",
       "diff_hunk" : "@@ -0,0 +1,324 @@\n+// Copyright (c) 2017 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\n+#include <crypto/muhash.h>\n+\n+#include <crypto/chacha20.h>\n+#include <crypto/common.h>\n+\n+#include <assert.h>\n+#include <stdio.h>\n+\n+#include <limits>\n+\n+namespace {\n+\n+/** Extract the lowest limb of [c0,c1,c2] into n, and left shift the number by 1 limb. */\n+#define extract3(c0,c1,c2,n) { \\\n+    (n) = c0; \\\n+    c0 = c1; \\\n+    c1 = c2; \\\n+    c2 = 0; \\\n+}\n+\n+/** Extract the lowest limb of [c0,c1] into n, and left shift the number by 1 limb. */\n+#define extract2(c0,c1,n) { \\\n+    (n) = c0; \\\n+    c0 = c1; \\\n+    c1 = 0; \\\n+}\n+\n+#if defined(__amd64__) || defined(__x86_64__)\n+\n+/** [c0,c1] = a * b */\n+#define mul(c0,c1,a,b) { \\\n+    __asm__ (\"mulq %3\" : \"=d\"(c1), \"=a\"(c0) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+}\n+\n+/** [c0,c1,c2] += a * b */\n+#define muladd3(c0,c1,c2,a,b) { \\\n+    uint64_t tl, th; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl), \"=d\"(th) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+}\n+\n+/** [c0,c1,c2] += 2 * a * b */\n+#define muldbladd3(c0,c1,c2,a,b) { \\\n+    uint64_t tl, th; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl), \"=d\"(th) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+}\n+\n+/* [c0,c1,c2] += n * [d0,d1,d2]. c0 is initially 0 */\n+#define mulnadd3(c0,c1,c2,d0,d1,d2,n) { \\\n+    uint64_t tl1, th1, tl2, th2, tl3; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl1), \"=d\"(th1) : \"a\"(d0), \"r\"((Num3072::limb_type)n) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"g\"(tl1), \"g\"(th1) : \"cc\"); \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl2), \"=d\"(th2) : \"a\"(d1), \"r\"((Num3072::limb_type)n) : \"cc\"); \\\n+    __asm__ (\"addq %2,%0; adcq %3,%1\" : \"+r\"(c1), \"+r\"(c2) : \"g\"(tl2), \"g\"(th2) : \"cc\"); \\\n+    __asm__ (\"imulq %2,%1,%0\" : \"=r\"(tl3) : \"g\"(d2), \"i\"(n) : \"cc\"); \\\n+    __asm__ (\"addq %1,%0\" : \"+r\"(c2) : \"g\"(tl3) : \"cc\"); \\\n+}\n+\n+/* [c0,c1] *= n */\n+#define muln2(c0,c1,n) { \\\n+    uint64_t th; \\\n+    __asm__ (\"mulq %2\" : \"+a\"(c0), \"=d\"(th) : \"r\"((Num3072::limb_type)n) : \"cc\"); \\\n+    __asm__ (\"imul %1,%0,%0\" : \"+r\"(c1) : \"i\"(n) : \"cc\"); \\\n+    __asm__ (\"addq %1,%0\" : \"+r\"(c1) : \"g\"(th) : \"cc\"); \\\n+}\n+\n+/** [c0,c1] += a */\n+#define add2(c0,c1,a) { \\\n+    __asm__ (\"add %2,%0; adc $0,%1\" : \"+r\"(c0), \"+r\"(c1) : \"r\"(a) : \"cc\"); \\\n+}\n+\n+#else\n+\n+/** [c0,c1] = a * b */\n+#define mul(c0,c1,a,b) { \\\n+    Num3072::double_limb_type t = (Num3072::double_limb_type)a * b; \\\n+    c2 = 0; \\\n+    c1 = t >> Num3072::LIMB_SIZE; \\\n+    c0 = t; \\\n+}\n+\n+/* [c0,c1,c2] += n * [d0,d1,d2]. c2 is 0 initially */",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#discussion_r436161282",
@@ -88,7 +89,7 @@
       "line" : null,
       "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzNjE2MTI4Mg==",
       "original_commit_id" : "722700ad36a1b4fcdce7e7c69b4181c9e3fcb368",
-      "original_line" : 89,
+      "original_line" : 84,
       "original_position" : 88,
       "original_start_line" : null,
       "path" : "src/crypto/muhash.cpp",
@@ -110,6 +111,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2020-06-11T22:05:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/436161282",
       "user" : {
@@ -147,7 +149,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "The other one is wrong (c0 is incremented, but c2 is only assigned to, so it's c2 that's treated as 0 on input).",
-      "commit_id" : "915ef088095840a9b9f82ebe85ab03d8a35f4872",
+      "commit_id" : "82d4c7e3a8c70b132d81dd86b48cc8648c076a32",
       "created_at" : "2020-06-05T21:02:12Z",
       "diff_hunk" : "@@ -0,0 +1,324 @@\n+// Copyright (c) 2017 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\n+#include <crypto/muhash.h>\n+\n+#include <crypto/chacha20.h>\n+#include <crypto/common.h>\n+\n+#include <assert.h>\n+#include <stdio.h>\n+\n+#include <limits>\n+\n+namespace {\n+\n+/** Extract the lowest limb of [c0,c1,c2] into n, and left shift the number by 1 limb. */\n+#define extract3(c0,c1,c2,n) { \\\n+    (n) = c0; \\\n+    c0 = c1; \\\n+    c1 = c2; \\\n+    c2 = 0; \\\n+}\n+\n+/** Extract the lowest limb of [c0,c1] into n, and left shift the number by 1 limb. */\n+#define extract2(c0,c1,n) { \\\n+    (n) = c0; \\\n+    c0 = c1; \\\n+    c1 = 0; \\\n+}\n+\n+#if defined(__amd64__) || defined(__x86_64__)\n+\n+/** [c0,c1] = a * b */\n+#define mul(c0,c1,a,b) { \\\n+    __asm__ (\"mulq %3\" : \"=d\"(c1), \"=a\"(c0) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+}\n+\n+/** [c0,c1,c2] += a * b */\n+#define muladd3(c0,c1,c2,a,b) { \\\n+    uint64_t tl, th; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl), \"=d\"(th) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+}\n+\n+/** [c0,c1,c2] += 2 * a * b */\n+#define muldbladd3(c0,c1,c2,a,b) { \\\n+    uint64_t tl, th; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl), \"=d\"(th) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+}\n+\n+/* [c0,c1,c2] += n * [d0,d1,d2]. c0 is initially 0 */\n+#define mulnadd3(c0,c1,c2,d0,d1,d2,n) { \\\n+    uint64_t tl1, th1, tl2, th2, tl3; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl1), \"=d\"(th1) : \"a\"(d0), \"r\"((Num3072::limb_type)n) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"g\"(tl1), \"g\"(th1) : \"cc\"); \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl2), \"=d\"(th2) : \"a\"(d1), \"r\"((Num3072::limb_type)n) : \"cc\"); \\\n+    __asm__ (\"addq %2,%0; adcq %3,%1\" : \"+r\"(c1), \"+r\"(c2) : \"g\"(tl2), \"g\"(th2) : \"cc\"); \\\n+    __asm__ (\"imulq %2,%1,%0\" : \"=r\"(tl3) : \"g\"(d2), \"i\"(n) : \"cc\"); \\\n+    __asm__ (\"addq %1,%0\" : \"+r\"(c2) : \"g\"(tl3) : \"cc\"); \\\n+}\n+\n+/* [c0,c1] *= n */\n+#define muln2(c0,c1,n) { \\\n+    uint64_t th; \\\n+    __asm__ (\"mulq %2\" : \"+a\"(c0), \"=d\"(th) : \"r\"((Num3072::limb_type)n) : \"cc\"); \\\n+    __asm__ (\"imul %1,%0,%0\" : \"+r\"(c1) : \"i\"(n) : \"cc\"); \\\n+    __asm__ (\"addq %1,%0\" : \"+r\"(c1) : \"g\"(th) : \"cc\"); \\\n+}\n+\n+/** [c0,c1] += a */\n+#define add2(c0,c1,a) { \\\n+    __asm__ (\"add %2,%0; adc $0,%1\" : \"+r\"(c0), \"+r\"(c1) : \"r\"(a) : \"cc\"); \\\n+}\n+\n+#else\n+\n+/** [c0,c1] = a * b */\n+#define mul(c0,c1,a,b) { \\\n+    Num3072::double_limb_type t = (Num3072::double_limb_type)a * b; \\\n+    c2 = 0; \\\n+    c1 = t >> Num3072::LIMB_SIZE; \\\n+    c0 = t; \\\n+}\n+\n+/* [c0,c1,c2] += n * [d0,d1,d2]. c2 is 0 initially */",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#discussion_r436162768",
@@ -156,7 +158,7 @@
       "line" : null,
       "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzNjE2Mjc2OA==",
       "original_commit_id" : "722700ad36a1b4fcdce7e7c69b4181c9e3fcb368",
-      "original_line" : 89,
+      "original_line" : 84,
       "original_position" : 88,
       "original_start_line" : null,
       "path" : "src/crypto/muhash.cpp",
@@ -178,6 +180,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2020-06-11T22:05:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/436162768",
       "user" : {
@@ -213,9 +216,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/436406064"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "fixed",
-      "commit_id" : "915ef088095840a9b9f82ebe85ab03d8a35f4872",
+      "commit_id" : "82d4c7e3a8c70b132d81dd86b48cc8648c076a32",
       "created_at" : "2020-06-07T22:04:17Z",
       "diff_hunk" : "@@ -0,0 +1,324 @@\n+// Copyright (c) 2017 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\n+#include <crypto/muhash.h>\n+\n+#include <crypto/chacha20.h>\n+#include <crypto/common.h>\n+\n+#include <assert.h>\n+#include <stdio.h>\n+\n+#include <limits>\n+\n+namespace {\n+\n+/** Extract the lowest limb of [c0,c1,c2] into n, and left shift the number by 1 limb. */\n+#define extract3(c0,c1,c2,n) { \\\n+    (n) = c0; \\\n+    c0 = c1; \\\n+    c1 = c2; \\\n+    c2 = 0; \\\n+}\n+\n+/** Extract the lowest limb of [c0,c1] into n, and left shift the number by 1 limb. */\n+#define extract2(c0,c1,n) { \\\n+    (n) = c0; \\\n+    c0 = c1; \\\n+    c1 = 0; \\\n+}\n+\n+#if defined(__amd64__) || defined(__x86_64__)\n+\n+/** [c0,c1] = a * b */\n+#define mul(c0,c1,a,b) { \\\n+    __asm__ (\"mulq %3\" : \"=d\"(c1), \"=a\"(c0) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+}\n+\n+/** [c0,c1,c2] += a * b */\n+#define muladd3(c0,c1,c2,a,b) { \\\n+    uint64_t tl, th; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl), \"=d\"(th) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+}\n+\n+/** [c0,c1,c2] += 2 * a * b */\n+#define muldbladd3(c0,c1,c2,a,b) { \\\n+    uint64_t tl, th; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl), \"=d\"(th) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+}\n+\n+/* [c0,c1,c2] += n * [d0,d1,d2]. c0 is initially 0 */\n+#define mulnadd3(c0,c1,c2,d0,d1,d2,n) { \\\n+    uint64_t tl1, th1, tl2, th2, tl3; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl1), \"=d\"(th1) : \"a\"(d0), \"r\"((Num3072::limb_type)n) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"g\"(tl1), \"g\"(th1) : \"cc\"); \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl2), \"=d\"(th2) : \"a\"(d1), \"r\"((Num3072::limb_type)n) : \"cc\"); \\\n+    __asm__ (\"addq %2,%0; adcq %3,%1\" : \"+r\"(c1), \"+r\"(c2) : \"g\"(tl2), \"g\"(th2) : \"cc\"); \\\n+    __asm__ (\"imulq %2,%1,%0\" : \"=r\"(tl3) : \"g\"(d2), \"i\"(n) : \"cc\"); \\\n+    __asm__ (\"addq %1,%0\" : \"+r\"(c2) : \"g\"(tl3) : \"cc\"); \\\n+}\n+\n+/* [c0,c1] *= n */\n+#define muln2(c0,c1,n) { \\\n+    uint64_t th; \\\n+    __asm__ (\"mulq %2\" : \"+a\"(c0), \"=d\"(th) : \"r\"((Num3072::limb_type)n) : \"cc\"); \\\n+    __asm__ (\"imul %1,%0,%0\" : \"+r\"(c1) : \"i\"(n) : \"cc\"); \\\n+    __asm__ (\"addq %1,%0\" : \"+r\"(c1) : \"g\"(th) : \"cc\"); \\\n+}\n+\n+/** [c0,c1] += a */\n+#define add2(c0,c1,a) { \\\n+    __asm__ (\"add %2,%0; adc $0,%1\" : \"+r\"(c0), \"+r\"(c1) : \"r\"(a) : \"cc\"); \\\n+}\n+\n+#else\n+\n+/** [c0,c1] = a * b */\n+#define mul(c0,c1,a,b) { \\\n+    Num3072::double_limb_type t = (Num3072::double_limb_type)a * b; \\\n+    c2 = 0; \\\n+    c1 = t >> Num3072::LIMB_SIZE; \\\n+    c0 = t; \\\n+}\n+\n+/* [c0,c1,c2] += n * [d0,d1,d2]. c2 is 0 initially */",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#discussion_r436406064",
@@ -224,7 +227,7 @@
       "line" : null,
       "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzNjQwNjA2NA==",
       "original_commit_id" : "722700ad36a1b4fcdce7e7c69b4181c9e3fcb368",
-      "original_line" : 89,
+      "original_line" : 84,
       "original_position" : 88,
       "original_start_line" : null,
       "path" : "src/crypto/muhash.cpp",
@@ -246,6 +249,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2020-06-11T22:05:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/436406064",
       "user" : {
@@ -281,9 +285,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/436406147"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done, not sure if my naming is good though. But I added a comment that should be helpful.",
-      "commit_id" : "915ef088095840a9b9f82ebe85ab03d8a35f4872",
+      "commit_id" : "82d4c7e3a8c70b132d81dd86b48cc8648c076a32",
       "created_at" : "2020-06-07T22:05:19Z",
       "diff_hunk" : "@@ -0,0 +1,324 @@\n+// Copyright (c) 2017 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\n+#include <crypto/muhash.h>\n+\n+#include <crypto/chacha20.h>\n+#include <crypto/common.h>\n+\n+#include <assert.h>\n+#include <stdio.h>\n+\n+#include <limits>\n+\n+namespace {\n+\n+/** Extract the lowest limb of [c0,c1,c2] into n, and left shift the number by 1 limb. */\n+#define extract3(c0,c1,c2,n) { \\\n+    (n) = c0; \\\n+    c0 = c1; \\\n+    c1 = c2; \\\n+    c2 = 0; \\\n+}\n+\n+/** Extract the lowest limb of [c0,c1] into n, and left shift the number by 1 limb. */\n+#define extract2(c0,c1,n) { \\\n+    (n) = c0; \\\n+    c0 = c1; \\\n+    c1 = 0; \\\n+}\n+\n+#if defined(__amd64__) || defined(__x86_64__)\n+\n+/** [c0,c1] = a * b */\n+#define mul(c0,c1,a,b) { \\\n+    __asm__ (\"mulq %3\" : \"=d\"(c1), \"=a\"(c0) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+}\n+\n+/** [c0,c1,c2] += a * b */\n+#define muladd3(c0,c1,c2,a,b) { \\\n+    uint64_t tl, th; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl), \"=d\"(th) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+}\n+\n+/** [c0,c1,c2] += 2 * a * b */\n+#define muldbladd3(c0,c1,c2,a,b) { \\\n+    uint64_t tl, th; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl), \"=d\"(th) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+}\n+\n+/* [c0,c1,c2] += n * [d0,d1,d2]. c0 is initially 0 */\n+#define mulnadd3(c0,c1,c2,d0,d1,d2,n) { \\\n+    uint64_t tl1, th1, tl2, th2, tl3; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl1), \"=d\"(th1) : \"a\"(d0), \"r\"((Num3072::limb_type)n) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"g\"(tl1), \"g\"(th1) : \"cc\"); \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl2), \"=d\"(th2) : \"a\"(d1), \"r\"((Num3072::limb_type)n) : \"cc\"); \\\n+    __asm__ (\"addq %2,%0; adcq %3,%1\" : \"+r\"(c1), \"+r\"(c2) : \"g\"(tl2), \"g\"(th2) : \"cc\"); \\\n+    __asm__ (\"imulq %2,%1,%0\" : \"=r\"(tl3) : \"g\"(d2), \"i\"(n) : \"cc\"); \\\n+    __asm__ (\"addq %1,%0\" : \"+r\"(c2) : \"g\"(tl3) : \"cc\"); \\\n+}\n+\n+/* [c0,c1] *= n */\n+#define muln2(c0,c1,n) { \\\n+    uint64_t th; \\\n+    __asm__ (\"mulq %2\" : \"+a\"(c0), \"=d\"(th) : \"r\"((Num3072::limb_type)n) : \"cc\"); \\\n+    __asm__ (\"imul %1,%0,%0\" : \"+r\"(c1) : \"i\"(n) : \"cc\"); \\\n+    __asm__ (\"addq %1,%0\" : \"+r\"(c1) : \"g\"(th) : \"cc\"); \\\n+}\n+\n+/** [c0,c1] += a */\n+#define add2(c0,c1,a) { \\\n+    __asm__ (\"add %2,%0; adc $0,%1\" : \"+r\"(c0), \"+r\"(c1) : \"r\"(a) : \"cc\"); \\\n+}\n+\n+#else\n+\n+/** [c0,c1] = a * b */\n+#define mul(c0,c1,a,b) { \\\n+    Num3072::double_limb_type t = (Num3072::double_limb_type)a * b; \\\n+    c2 = 0; \\\n+    c1 = t >> Num3072::LIMB_SIZE; \\\n+    c0 = t; \\\n+}\n+\n+/* [c0,c1,c2] += n * [d0,d1,d2]. c2 is 0 initially */\n+#define mulnadd3(c0,c1,c2,d0,d1,d2,n) { \\\n+    Num3072::double_limb_type t = (Num3072::double_limb_type)d0 * n + c0; \\\n+    c0 = t; \\\n+    t >>= Num3072::LIMB_SIZE; \\\n+    t += (Num3072::double_limb_type)d1 * n + c1; \\\n+    c1 = t; \\\n+    t >>= Num3072::LIMB_SIZE; \\\n+    c2 = t + d2 * n; \\\n+}\n+\n+/* [c0,c1] *= n */\n+#define muln2(c0,c1,n) { \\\n+    Num3072::double_limb_type t = (Num3072::double_limb_type)c0 * n; \\\n+    c0 = t; \\\n+    t >>= Num3072::LIMB_SIZE; \\\n+    t += (Num3072::double_limb_type)c1 * n; \\\n+    c1 = t; \\\n+    t >>= Num3072::LIMB_SIZE; \\\n+}\n+\n+/** [c0,c1,c2] += a * b */\n+#define muladd3(c0,c1,c2,a,b) { \\\n+    Num3072::limb_type tl, th; \\\n+    { \\\n+        Num3072::double_limb_type t = (Num3072::double_limb_type)a * b; \\\n+        th = t >> Num3072::LIMB_SIZE; \\\n+        tl = t; \\\n+    } \\\n+    c0 += tl; \\\n+    th += (c0 < tl) ? 1 : 0; \\\n+    c1 += th; \\\n+    c2 += (c1 < th) ? 1 : 0; \\\n+}\n+\n+/** [c0,c1,c2] += 2 * a * b */\n+#define muldbladd3(c0,c1,c2,a,b) { \\\n+    Num3072::limb_type tl, th; \\\n+    { \\\n+        Num3072::double_limb_type t = (Num3072::double_limb_type)a * b; \\\n+        th = t >> Num3072::LIMB_SIZE; \\\n+        tl = t; \\\n+    } \\\n+    c0 += tl; \\\n+    Num3072::limb_type tt = th + ((c0 < tl) ? 1 : 0); \\\n+    c1 += tt; \\\n+    c2 += (c1 < tt) ? 1 : 0; \\\n+    c0 += tl; \\\n+    th += (c0 < tl) ? 1 : 0; \\\n+    c1 += th; \\\n+    c2 += (c1 < th) ? 1 : 0; \\\n+}\n+\n+/** [c0,c1] += a */\n+#define add2(c0,c1,a) { \\\n+    c0 += (a); \\\n+    c1 += (c0 < (a)) ? 1 : 0; \\\n+}\n+\n+#endif\n+\n+bool IsOverflow(const Num3072* d)\n+{\n+    for (int i = 1; i < Num3072::LIMBS - 1; ++i) {\n+        if (d->limbs[i] != std::numeric_limits<Num3072::limb_type>::max()) return false;\n+    }\n+    if (d->limbs[0] <= std::numeric_limits<Num3072::limb_type>::max() - 1103717) return false;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#discussion_r436406147",
@@ -314,6 +318,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2020-06-11T22:05:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/436406147",
       "user" : {
@@ -338,7 +343,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| Concept ACK | [Sjors](https://github.com/bitcoin/bitcoin/pull/19181#issuecomment-994737185) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#21590](https://github.com/bitcoin/bitcoin/pull/21590) (Safegcd-based modular inverses in MuHash3072 by sipa)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2020-06-07T23:49:29Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#issuecomment-640298276",
@@ -389,10 +394,23 @@
       "id" : 641207882,
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19181",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDY0MTIwNzg4Mg==",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/641207882/reactions"
+      },
       "updated_at" : "2020-06-09T10:48:29Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/641207882",
       "user" : {
-         "avatar_url" : "https://avatars1.githubusercontent.com/u/10217?v=4",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10217?v=4",
          "events_url" : "https://api.github.com/users/Sjors/events{/privacy}",
          "followers_url" : "https://api.github.com/users/Sjors/followers",
          "following_url" : "https://api.github.com/users/Sjors/following{/other_user}",
@@ -421,10 +439,22 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19181",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDY0MTMzNDkyOQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/641334929/reactions"
+      },
       "updated_at" : "2020-06-09T14:29:36Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/641334929",
       "user" : {
-         "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=4",
          "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
          "followers_url" : "https://api.github.com/users/laanwj/followers",
          "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
@@ -442,82 +472,6 @@
          "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/laanwj"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2020-07-30T14:29:07Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#issuecomment-666400242",
-      "id" : 666400242,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19181",
-      "node_id" : "MDEyOklzc3VlQ29tbWVudDY2NjQwMDI0Mg==",
-      "performed_via_github_app" : null,
-      "updated_at" : "2020-07-30T14:29:07Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/666400242",
-      "user" : {
-         "avatar_url" : "https://avatars2.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--13523179cfe9479db18ec6c5d236f789-->There hasn't been much activity lately and the patch still needs rebase. What is the status here?\n\n* Is it still relevant? â¡ï¸ Please solve the conflicts to make it ready for review and to ensure the CI passes.\n* Is it no longer relevant? â¡ï¸ Please close.\n* Did the author lose interest or time to work on this? â¡ï¸ Please close it and mark it 'Up for grabs' with the label, so that it can be picked up in the future.\n",
-      "created_at" : "2021-12-15T11:21:49Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#issuecomment-994694935",
-      "id" : 994694935,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19181",
-      "node_id" : "IC_kwDOABII5847SdcX",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/994694935/reactions"
-      },
-      "updated_at" : "2021-12-15T11:21:49Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/994694935",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
       }
    },
    {
@@ -565,7 +519,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks for the nudge @Sjors and @DrahtBot !\r\n\r\nI have only done a plain rebase so far, i.e. I have not checked whether further optimizations may be interesting to look into. But while I ran the benchmarks again I noticed that it currently appears that this has slower benchmarks than master on my machine. `mul` and `div` operations appear to be almost 20% slower. I will try to test on some other machines soon but if someone else can give it a spin as well it would be a great help!\r\n\r\n<details><summary>Results with this PR</summary>\r\n<p>\r\n\r\n```\r\n$ src/bench/bench_bitcoin -filter=MuHash.* -min_time=1000\r\n\r\n|               ns/op |                op/s |    err% |     total | benchmark\r\n|--------------------:|--------------------:|--------:|----------:|:----------\r\n|            7,184.06 |          139,197.00 |    0.8% |      1.07 | `MuHash`\r\n|            6,138.95 |          162,894.31 |    0.1% |      1.05 | `MuHashDiv`\r\n|            6,161.80 |          162,290.16 |    0.7% |      1.05 | `MuHashMul`\r\n|            1,016.96 |          983,326.67 |    0.3% |      1.08 | `MuHashPrecompute`\r\n```\r\n\r\n</p>\r\n</details>\r\n\r\n\r\n<details><summary>Results on master</summary>\r\n<p>\r\n\r\n```\r\n$ src/bench/bench_bitcoin -filter=MuHash.* -min_time=1000\r\n\r\n|               ns/op |                op/s |    err% |     total | benchmark\r\n|--------------------:|--------------------:|--------:|----------:|:----------\r\n|            6,225.79 |          160,622.20 |    1.6% |      1.05 | `MuHash`\r\n|            5,121.86 |          195,241.46 |    0.5% |      1.09 | `MuHashDiv`\r\n|            5,173.32 |          193,299.36 |    1.5% |      1.11 | `MuHashMul`\r\n|            1,023.41 |          977,127.42 |    0.7% |      1.08 | `MuHashPrecompute`\r\n```\r\n\r\n</p>\r\n</details>",
       "created_at" : "2021-12-19T17:52:41Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#issuecomment-997433544",
@@ -785,7 +739,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> @fjahr What kind of system/compiler/flags?\r\n\r\nHmm, this was with Intel Core i5-6287U, darwin 21.2.0 (macOS 12.1), clang 13.0.0, default configure flags except for skipping the GUI.",
       "created_at" : "2021-12-21T21:43:02Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#issuecomment-999113065",
@@ -888,9 +842,9 @@
          "eyes" : 0,
          "heart" : 0,
          "hooray" : 0,
-         "laugh" : 0,
+         "laugh" : 1,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/999138206/reactions"
       },
       "updated_at" : "2021-12-21T22:31:10Z",
@@ -930,19 +884,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Looks like this is unused.",
-      "commit_id" : "915ef088095840a9b9f82ebe85ab03d8a35f4872",
+      "commit_id" : "82d4c7e3a8c70b132d81dd86b48cc8648c076a32",
       "created_at" : "2021-12-22T02:58:24Z",
       "diff_hunk" : "@@ -29,6 +28,56 @@ inline void extract3(limb_t& c0, limb_t& c1, limb_t& c2, limb_t& n)\n     c2 = 0;\n }\n \n+#if defined(__amd64__) || defined(__x86_64__)\n+\n+/** [c0,c1] = a * b */\n+#define mul(c0,c1,a,b) { \\\n+    __asm__ (\"mulq %3\" : \"=d\"(c1), \"=a\"(c0) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+}\n+\n+/** [c0,c1,c2] += a * b */\n+#define muladd3(c0,c1,c2,a,b) { \\\n+    uint64_t tl, th; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl), \"=d\"(th) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+}\n+\n+/** [c0,c1,c2] += 2 * a * b */\n+#define muldbladd3(c0,c1,c2,a,b) { \\\n+    uint64_t tl, th; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl), \"=d\"(th) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+}\n+\n+/* [c0,c1,c2] += n * [d0,d1,d2]. c2 is initially 0 */\n+#define mulnadd3(c0,c1,c2,d0,d1,d2,n) { \\\n+    uint64_t tl1, th1, tl2, th2, tl3; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl1), \"=d\"(th1) : \"a\"(d0), \"r\"((limb_t)n) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"g\"(tl1), \"g\"(th1) : \"cc\"); \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl2), \"=d\"(th2) : \"a\"(d1), \"r\"((limb_t)n) : \"cc\"); \\\n+    __asm__ (\"addq %2,%0; adcq %3,%1\" : \"+r\"(c1), \"+r\"(c2) : \"g\"(tl2), \"g\"(th2) : \"cc\"); \\\n+    __asm__ (\"imulq %2,%1,%0\" : \"=r\"(tl3) : \"g\"(d2), \"i\"(n) : \"cc\"); \\\n+    __asm__ (\"addq %1,%0\" : \"+r\"(c2) : \"g\"(tl3) : \"cc\"); \\\n+}\n+\n+/* [c0,c1] *= n */\n+#define muln2(c0,c1,n) { \\\n+    uint64_t th; \\\n+    __asm__ (\"mulq %2\" : \"+a\"(c0), \"=d\"(th) : \"r\"((limb_t)n) : \"cc\"); \\\n+    __asm__ (\"imul %1,%0,%0\" : \"+r\"(c1) : \"i\"(n) : \"cc\"); \\\n+    __asm__ (\"addq %1,%0\" : \"+r\"(c1) : \"g\"(th) : \"cc\"); \\\n+}\n+\n+/** [c0,c1] += a */\n+#define add2(c0,c1,a) { \\",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#discussion_r773567971",
       "id" : 773567971,
-      "line" : 73,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584uG7Xj",
       "original_commit_id" : "915ef088095840a9b9f82ebe85ab03d8a35f4872",
       "original_line" : 73,
       "original_position" : 54,
       "original_start_line" : null,
       "path" : "src/crypto/muhash.cpp",
-      "position" : 54,
+      "position" : null,
       "pull_request_review_id" : 838029624,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19181",
       "reactions" : {
@@ -960,6 +914,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-22T02:58:25Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/773567971",
       "user" : {
@@ -984,7 +939,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> @fjahr Did you disable frequency scaling? Mobile CPUs by default will change frequency all the time in response to load, leading to unreliable benchmarks.\r\n\r\nI didn't but I now have and the results are consistent. And previously I had also been running them about 5 times on different days already. I also compiled with clang 9 and tried again because that is my best guess of what I was running the last time I worked on this and still got the same results. ð¤·ââï¸ ",
       "created_at" : "2021-12-26T18:59:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#issuecomment-1001227916",
@@ -1160,7 +1115,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> This seems to be just a matter of single unadressed review comment and more benchmarking. I could tak over if @fjahr is not interested anymore.\r\n\r\nThanks, but I am still happy to keep this alive. I will try to run benchmarks again myself, I am on a new machine yet again now. Of course more benchmarks help, so if you could run them as well that would be great @kristapsk .\r\n\r\nI addressed the comment from @fanquake and rebased the branch.\r\n\r\n@achow101 please reopen. I was a bit busy and forgot to respond here but I will try to not let it happen in the future :)",
       "created_at" : "2022-11-13T23:36:29Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#issuecomment-1312853651",
@@ -1215,22 +1170,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1020985236"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "jepp, I removed it",
-      "commit_id" : "915ef088095840a9b9f82ebe85ab03d8a35f4872",
+      "commit_id" : "82d4c7e3a8c70b132d81dd86b48cc8648c076a32",
       "created_at" : "2022-11-13T23:36:51Z",
       "diff_hunk" : "@@ -29,6 +28,56 @@ inline void extract3(limb_t& c0, limb_t& c1, limb_t& c2, limb_t& n)\n     c2 = 0;\n }\n \n+#if defined(__amd64__) || defined(__x86_64__)\n+\n+/** [c0,c1] = a * b */\n+#define mul(c0,c1,a,b) { \\\n+    __asm__ (\"mulq %3\" : \"=d\"(c1), \"=a\"(c0) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+}\n+\n+/** [c0,c1,c2] += a * b */\n+#define muladd3(c0,c1,c2,a,b) { \\\n+    uint64_t tl, th; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl), \"=d\"(th) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+}\n+\n+/** [c0,c1,c2] += 2 * a * b */\n+#define muldbladd3(c0,c1,c2,a,b) { \\\n+    uint64_t tl, th; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl), \"=d\"(th) : \"a\"(a), \"g\"(b) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"a\"(tl), \"d\"(th) : \"cc\"); \\\n+}\n+\n+/* [c0,c1,c2] += n * [d0,d1,d2]. c2 is initially 0 */\n+#define mulnadd3(c0,c1,c2,d0,d1,d2,n) { \\\n+    uint64_t tl1, th1, tl2, th2, tl3; \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl1), \"=d\"(th1) : \"a\"(d0), \"r\"((limb_t)n) : \"cc\"); \\\n+    __asm__ (\"addq %3,%0; adcq %4,%1; adcq $0,%2\" : \"+r\"(c0), \"+r\"(c1), \"+r\"(c2) : \"g\"(tl1), \"g\"(th1) : \"cc\"); \\\n+    __asm__ (\"mulq %3\" : \"=a\"(tl2), \"=d\"(th2) : \"a\"(d1), \"r\"((limb_t)n) : \"cc\"); \\\n+    __asm__ (\"addq %2,%0; adcq %3,%1\" : \"+r\"(c1), \"+r\"(c2) : \"g\"(tl2), \"g\"(th2) : \"cc\"); \\\n+    __asm__ (\"imulq %2,%1,%0\" : \"=r\"(tl3) : \"g\"(d2), \"i\"(n) : \"cc\"); \\\n+    __asm__ (\"addq %1,%0\" : \"+r\"(c2) : \"g\"(tl3) : \"cc\"); \\\n+}\n+\n+/* [c0,c1] *= n */\n+#define muln2(c0,c1,n) { \\\n+    uint64_t th; \\\n+    __asm__ (\"mulq %2\" : \"+a\"(c0), \"=d\"(th) : \"r\"((limb_t)n) : \"cc\"); \\\n+    __asm__ (\"imul %1,%0,%0\" : \"+r\"(c1) : \"i\"(n) : \"cc\"); \\\n+    __asm__ (\"addq %1,%0\" : \"+r\"(c1) : \"g\"(th) : \"cc\"); \\\n+}\n+\n+/** [c0,c1] += a */\n+#define add2(c0,c1,a) { \\",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#discussion_r1020985236",
       "id" : 1020985236,
       "in_reply_to_id" : 773567971,
-      "line" : 73,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII58482v-U",
       "original_commit_id" : "915ef088095840a9b9f82ebe85ab03d8a35f4872",
       "original_line" : 73,
       "original_position" : 54,
       "original_start_line" : null,
       "path" : "src/crypto/muhash.cpp",
-      "position" : 54,
+      "position" : null,
       "pull_request_review_id" : 1178321591,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19181",
       "reactions" : {
@@ -1248,6 +1203,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-13T23:36:51Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1020985236",
       "user" : {
@@ -1316,7 +1272,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Since you've force pushed to the branch, GitHub won't allow this to be reopened. I think if you push the commit that was the HEAD at the time of closing, it can be reopened. Or you can make a new PR.\r\n\r\nAlright, I pushed the old commit back to the remote branch.",
       "created_at" : "2022-11-14T23:15:25Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#issuecomment-1314532214",
@@ -1448,7 +1404,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Based on those results, if at all, those optimizations should probably only be enabled if GCC is used? (Not sure if it's worth the review and maintenance burden though.)\r\n\r\nSome of the code changes here conflict with https://github.com/bitcoin/bitcoin/pull/21590, and given that clang 14 is better than this ASM, we should maybe get benchmarks on a recent GCC (like 12.2) and see if it's faster. If not, I also wonder if there's a better way to convince GCC to output good code.\r\n\r\n @theStack Can you re-benchmark with GCC 12 ? I can also try to get some numbers on my machine.",
       "created_at" : "2023-04-25T16:13:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#issuecomment-1522066480",
@@ -1536,7 +1492,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I finally got another amd64 machine with which I can test again. I confirmed the clang-14 results others have seen and I tested with GCC 13.1. The results still look good there for me but would be great if someone else could confirm.\r\n\r\n(using `src/bench/bench_bitcoin -filter=MuHash.* -min-time=1000`)\r\n\r\nMaster:\r\n```\r\n|               ns/op |                op/s |    err% |     total | benchmark\r\n|--------------------:|--------------------:|--------:|----------:|:----------\r\n|            9,000.29 |          111,107.54 |    1.6% |      1.09 | `MuHash`\r\n|            7,424.35 |          134,691.90 |    0.0% |      1.05 | `MuHashDiv`\r\n|            7,428.86 |          134,610.13 |    0.2% |      1.06 | `MuHashMul`\r\n|            1,058.97 |          944,314.00 |    0.0% |      1.08 | `MuHashPrecompute`\r\n```\r\n\r\nThis PR:\r\n```\r\n|               ns/op |                op/s |    err% |     total | benchmark\r\n|--------------------:|--------------------:|--------:|----------:|:----------\r\n|            6,936.64 |          144,161.92 |    0.1% |      1.08 | `MuHash`\r\n|            5,596.30 |          178,689.37 |    0.2% |      1.03 | `MuHashDiv`\r\n|            5,422.52 |          184,415.94 |    0.7% |      1.08 | `MuHashMul`\r\n|            1,061.63 |          941,950.39 |    0.0% |      1.09 | `MuHashPrecompute`\r\n```\r\n\r\nI guess it makes sense to only use this when GCC is used which should work with this \r\n```\r\n#if (defined(__amd64__) || defined(__x86_64__)) && defined(__GNUC__) && !defined(__clang__)\r\n```\r\nbut I would also be curious if there is another way to tell GCC to do the same optimizations clang seems to be doing.\r\n\r\nI will also try to combine the changes here with #21590 to see what the combined impact is.\r\n",
       "created_at" : "2023-05-01T19:29:18Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#issuecomment-1530111029",
@@ -1580,7 +1536,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> `#if (defined(__amd64__) || defined(__x86_64__)) && defined(__GNUC__) && !defined(__clang__)`\r\n\r\nIf it's that niche, it's a bit unclear to me whether it's worth the hassle. I feel we should look at #21590 first. I expect this to be a much larger improvement (and since it's algorithmic, it will apply to all targets). Perhaps we don't care about this optimization here so much after #21590.",
       "created_at" : "2023-05-02T08:21:08Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#issuecomment-1531069839",
@@ -1624,7 +1580,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I have now tested SafeGCD vs SafeGCD+ASM (see https://github.com/fjahr/bitcoin/tree/pr21590-safegcd-asm) and the gains from including the ASM code are still substantial. \r\n\r\nGCC 13.1 - SafeGCD only:\r\n\r\n```\r\n|               ns/op |                op/s |    err% |     total | benchmark\r\n|--------------------:|--------------------:|--------:|----------:|:----------\r\n|            9,168.73 |          109,066.35 |    2.1% |      1.06 | `MuHash`\r\n|            7,571.75 |          132,069.88 |    0.2% |      1.05 | `MuHashDiv`\r\n|           75,079.98 |           13,319.13 |    0.0% |      1.06 | `MuHashFinalize`\r\n|            7,322.87 |          136,558.39 |    0.1% |      1.05 | `MuHashMul`\r\n|            1,052.74 |          949,904.92 |    0.0% |      1.09 | `MuHashPrecompute`\r\n```\r\n\r\nGCC 13.1 - SafeGCD + ASM:\r\n\r\n```\r\n|               ns/op |                op/s |    err% |     total | benchmark\r\n|--------------------:|--------------------:|--------:|----------:|:----------\r\n|            6,924.98 |          144,404.76 |    0.2% |      1.08 | `MuHash`\r\n|            5,631.55 |          177,571.08 |    0.1% |      1.09 | `MuHashDiv`\r\n|           70,266.78 |           14,231.48 |    0.8% |      1.05 | `MuHashFinalize`\r\n|            5,454.11 |          183,347.95 |    0.1% |      1.09 | `MuHashMul`\r\n|            1,051.74 |          950,801.50 |    0.0% |      1.09 | `MuHashPrecompute`\r\n```\r\n\r\n@real-or-random while this change here is niche in terms of the tooling+architecture it targets, the SafeGCD change only impacts the finalize operation and that has a much smaller impact on the overall computation time because of how we use MuHash in practice. When a new block comes in we do a div of all the spent TXOs and a mul of all the new UTXOs and then at the end we finalize once. So I still have a hard time deciding which one is the more valuable change. Also, while ASM might be a bit intimidating, #21590 has 10x the LOC changed and requires some understanding of the underlying theory.",
       "created_at" : "2023-05-02T14:10:55Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#issuecomment-1531553456",
@@ -1668,7 +1624,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> the SafeGCD change only impacts the finalize operation and that has a much smaller impact on the overall computation time because of how we use MuHash in practice. When a new block comes in we do a div of all the spent TXOs and a mul of all the new UTXOs and then at the end we finalize once.\r\n\r\nOkay, thanks for the numbers. I agree then, we shouldn't neglect this one.\r\n\r\n> So I still have a hard time deciding which one is the more valuable change. Also, while ASM might be a bit intimidating, https://github.com/bitcoin/bitcoin/pull/21590 has 10x the LOC changed and requires some understanding of the underlying theory.\r\n\r\nYeah, they both have their merits then, and I don't think any should be prioritized over the other. Let's do (first) whatever PR we get the ACKs on. (And yes, I expect #21590 to be harder to review...)   \r\n\r\n> but I would also be curious if there is another way to tell GCC to do the same optimizations clang seems to be doing.\r\n\r\nThat would be ideal. I'll try to have a look at this.",
       "created_at" : "2023-05-02T14:17:23Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#issuecomment-1531563808",
@@ -1712,7 +1668,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> but I would also be curious if there is another way to tell GCC to do the same optimizations clang seems to be doing.\r\n\r\n\r\nI played around with this a bit, and I don't see any obvious trick to make that work. If someone else wants to give it a try, https://gcc.godbolt.org/z/hhGfeEoKq could be a nice starting point.\r\n",
       "created_at" : "2023-05-02T16:05:51Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19181#issuecomment-1531736632",

@@ -11,9 +11,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907362233"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "```suggestion\r\n        coins.emplace_back(COutPoint(wtx->GetHash(), 0), txout, /*depth=*/6 * 24, CalculateMaximumSignedInputSize(txout, &wallet, /*use_max_sig=*/false), /*spendable=*/true, /*solvable=*/true, /*safe=*/true, wtx->GetTxTime(), /*from_me=*/true, /*fees=*/ 0);\r\n```",
-      "commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
+      "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-27T13:00:29Z",
       "diff_hunk" : "@@ -58,7 +58,8 @@ static void CoinSelection(benchmark::Bench& bench)\n     // Create coins\n     std::vector<COutput> coins;\n     for (const auto& wtx : wtxs) {\n-        coins.emplace_back(COutPoint(wtx->GetHash(), 0), wtx->tx->vout.at(0), /*depth=*/6 * 24, GetTxSpendSize(wallet, *wtx, 0), /*spendable=*/true, /*solvable=*/true, /*safe=*/true, wtx->GetTxTime(), /*from_me=*/true, /*fees=*/ 0);\n+        const auto txout = wtx->tx->vout.at(0);\n+        coins.emplace_back(COutPoint(wtx->GetHash(), 0), txout, /*depth=*/6 * 24, CalculateMaximumSignedInputSize(txout, &wallet, false), /*spendable=*/true, /*solvable=*/true, /*safe=*/true, wtx->GetTxTime(), /*from_me=*/true, /*fees=*/ 0);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#discussion_r907362233",
@@ -25,7 +25,7 @@
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "src/bench/coin_selection.cpp",
-      "position" : 6,
+      "position" : null,
       "pull_request_review_id" : 1020158652,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25481",
       "reactions" : {
@@ -43,6 +43,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T13:14:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907362233",
       "user" : {
@@ -78,9 +79,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907363971"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "why not `use_max_sig=coinControl && coinControl->fAllowWatchOnly` ?",
-      "commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
+      "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-27T13:02:20Z",
       "diff_hunk" : "@@ -198,7 +193,7 @@ CoinsResult AvailableCoins(const CWallet& wallet,\n             // Filter by spendable outputs only\n             if (!spendable && only_spendable) continue;\n \n-            int input_bytes = GetTxSpendSize(wallet, wtx, i, (coinControl && coinControl->fAllowWatchOnly));\n+            int input_bytes = CalculateMaximumSignedInputSize(output, &wallet, false);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#discussion_r907363971",
@@ -92,7 +93,7 @@
       "original_position" : 17,
       "original_start_line" : null,
       "path" : "src/wallet/spend.cpp",
-      "position" : 17,
+      "position" : null,
       "pull_request_review_id" : 1020158652,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25481",
       "reactions" : {
@@ -110,6 +111,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T13:14:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907363971",
       "user" : {
@@ -145,9 +147,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907365239"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "same as above, let's document the `use_max_sig` flag.",
-      "commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
+      "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-27T13:03:30Z",
       "diff_hunk" : "@@ -289,8 +284,9 @@ std::map<CTxDestination, std::vector<COutput>> ListCoins(const CWallet& wallet)\n             ) {\n                 CTxDestination address;\n                 if (ExtractDestination(FindNonChangeParentOutput(wallet, *wtx.tx, output.n).scriptPubKey, address)) {\n+                    const auto out = wtx.tx->vout.at(output.n);\n                     result[address].emplace_back(\n-                        COutPoint(wtx.GetHash(), output.n), wtx.tx->vout.at(output.n), depth, GetTxSpendSize(wallet, wtx, output.n), /*spendable=*/ true, /*solvable=*/ true, /*safe=*/ false, wtx.GetTxTime(), CachedTxIsFromMe(wallet, wtx, ISMINE_ALL));\n+                            COutPoint(wtx.GetHash(), output.n), out, depth, CalculateMaximumSignedInputSize(out, &wallet, false), /*spendable=*/ true, /*solvable=*/ true, /*safe=*/ false, wtx.GetTxTime(), CachedTxIsFromMe(wallet, wtx, ISMINE_ALL));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#discussion_r907365239",
@@ -159,7 +161,7 @@
       "original_position" : 28,
       "original_start_line" : null,
       "path" : "src/wallet/spend.cpp",
-      "position" : 28,
+      "position" : null,
       "pull_request_review_id" : 1020158652,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25481",
       "reactions" : {
@@ -177,6 +179,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T13:14:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907365239",
       "user" : {
@@ -212,9 +215,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907366196"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "same as above, let's document the `use_max_sig` flag.",
-      "commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
+      "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-27T13:04:30Z",
       "diff_hunk" : "@@ -447,7 +443,7 @@ std::optional<SelectionResult> SelectCoins(const CWallet& wallet, const std::vec\n             if (ptr_wtx->tx->vout.size() <= outpoint.n) {\n                 return std::nullopt;\n             }\n-            input_bytes = GetTxSpendSize(wallet, *ptr_wtx, outpoint.n, false);\n+            input_bytes = CalculateMaximumSignedInputSize(ptr_wtx->tx->vout[outpoint.n], &wallet, false);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#discussion_r907366196",
@@ -226,7 +229,7 @@
       "original_position" : 37,
       "original_start_line" : null,
       "path" : "src/wallet/spend.cpp",
-      "position" : 37,
+      "position" : null,
       "pull_request_review_id" : 1020158652,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25481",
       "reactions" : {
@@ -244,6 +247,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T13:14:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907366196",
       "user" : {
@@ -279,21 +283,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907366926"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "```suggestion\r\n    const auto& output = wtx.tx->vout.at(nInput);\r\n```",
-      "commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
+      "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-27T13:05:14Z",
       "diff_hunk" : "@@ -86,7 +86,8 @@ static void add_coin(std::vector<COutput>& coins, CWallet& wallet, const CAmount\n     auto ret = wallet.mapWallet.emplace(std::piecewise_construct, std::forward_as_tuple(txid), std::forward_as_tuple(MakeTransactionRef(std::move(tx)), TxStateInactive{}));\n     assert(ret.second);\n     CWalletTx& wtx = (*ret.first).second;\n-    coins.emplace_back(COutPoint(wtx.GetHash(), nInput), wtx.tx->vout.at(nInput), nAge, GetTxSpendSize(wallet, wtx, nInput), /*spendable=*/ true, /*solvable=*/ true, /*safe=*/ true, wtx.GetTxTime(), fIsFromMe, feerate);\n+    const auto txout = wtx.tx->vout.at(nInput);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#discussion_r907366926",
       "id" : 907366926,
-      "line" : 89,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5842FVIO",
       "original_commit_id" : "164414a97986fb7450ff137c5e60f08c29733523",
       "original_line" : 89,
       "original_position" : 5,
       "original_start_line" : null,
       "path" : "src/wallet/test/coinselector_tests.cpp",
-      "position" : 5,
+      "position" : null,
       "pull_request_review_id" : 1020158652,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25481",
       "reactions" : {
@@ -311,6 +315,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T13:14:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907366926",
       "user" : {
@@ -346,9 +351,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907367857"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "```suggestion\r\n    coins.emplace_back(COutPoint(wtx.GetHash(), nInput), txout, nAge, CalculateMaximumSignedInputSize(txout, &wallet, /*use_max_sig=*/false), /*spendable=*/ true, /*solvable=*/ true, /*safe=*/ true, wtx.GetTxTime(), fIsFromMe, feerate);\r\n```",
-      "commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
+      "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-27T13:06:11Z",
       "diff_hunk" : "@@ -86,7 +86,8 @@ static void add_coin(std::vector<COutput>& coins, CWallet& wallet, const CAmount\n     auto ret = wallet.mapWallet.emplace(std::piecewise_construct, std::forward_as_tuple(txid), std::forward_as_tuple(MakeTransactionRef(std::move(tx)), TxStateInactive{}));\n     assert(ret.second);\n     CWalletTx& wtx = (*ret.first).second;\n-    coins.emplace_back(COutPoint(wtx.GetHash(), nInput), wtx.tx->vout.at(nInput), nAge, GetTxSpendSize(wallet, wtx, nInput), /*spendable=*/ true, /*solvable=*/ true, /*safe=*/ true, wtx.GetTxTime(), fIsFromMe, feerate);\n+    const auto txout = wtx.tx->vout.at(nInput);\n+    coins.emplace_back(COutPoint(wtx.GetHash(), nInput), txout, nAge, CalculateMaximumSignedInputSize(txout, &wallet, false), /*spendable=*/ true, /*solvable=*/ true, /*safe=*/ true, wtx.GetTxTime(), fIsFromMe, feerate);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#discussion_r907367857",
@@ -360,7 +365,7 @@
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "src/wallet/test/coinselector_tests.cpp",
-      "position" : 6,
+      "position" : null,
       "pull_request_review_id" : 1020158652,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25481",
       "reactions" : {
@@ -378,6 +383,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T16:53:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907367857",
       "user" : {
@@ -413,21 +419,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907374129"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "```suggestion\r\n    wallet::CCoinControl coin_control;\r\n```",
-      "commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
+      "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-27T13:12:46Z",
       "diff_hunk" : "@@ -56,10 +56,11 @@ static void CoinSelection(benchmark::Bench& bench)\n     addCoin(3 * COIN, wallet, wtxs);\n \n     // Create coins\n+    CCoinControl coin_control:",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#discussion_r907374129",
       "id" : 907374129,
-      "line" : 59,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5842FW4x",
       "original_commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
       "original_line" : 59,
       "original_position" : 4,
       "original_start_line" : null,
       "path" : "src/bench/coin_selection.cpp",
-      "position" : 4,
+      "position" : null,
       "pull_request_review_id" : 1020158652,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25481",
       "reactions" : {
@@ -445,6 +451,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T13:14:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907374129",
       "user" : {
@@ -480,9 +487,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907513273"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This is removed in the next commit",
-      "commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
+      "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-27T15:25:25Z",
       "diff_hunk" : "@@ -58,7 +58,8 @@ static void CoinSelection(benchmark::Bench& bench)\n     // Create coins\n     std::vector<COutput> coins;\n     for (const auto& wtx : wtxs) {\n-        coins.emplace_back(COutPoint(wtx->GetHash(), 0), wtx->tx->vout.at(0), /*depth=*/6 * 24, GetTxSpendSize(wallet, *wtx, 0), /*spendable=*/true, /*solvable=*/true, /*safe=*/true, wtx->GetTxTime(), /*from_me=*/true, /*fees=*/ 0);\n+        const auto txout = wtx->tx->vout.at(0);\n+        coins.emplace_back(COutPoint(wtx->GetHash(), 0), txout, /*depth=*/6 * 24, CalculateMaximumSignedInputSize(txout, &wallet, false), /*spendable=*/true, /*solvable=*/true, /*safe=*/true, wtx->GetTxTime(), /*from_me=*/true, /*fees=*/ 0);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#discussion_r907513273",
@@ -495,7 +502,7 @@
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "src/bench/coin_selection.cpp",
-      "position" : 6,
+      "position" : null,
       "pull_request_review_id" : 1020376173,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25481",
       "reactions" : {
@@ -513,6 +520,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T15:25:25Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907513273",
       "user" : {
@@ -548,9 +556,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907513572"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I'd like to remove the flag",
-      "commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
+      "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-27T15:25:44Z",
       "diff_hunk" : "@@ -198,7 +193,7 @@ CoinsResult AvailableCoins(const CWallet& wallet,\n             // Filter by spendable outputs only\n             if (!spendable && only_spendable) continue;\n \n-            int input_bytes = GetTxSpendSize(wallet, wtx, i, (coinControl && coinControl->fAllowWatchOnly));\n+            int input_bytes = CalculateMaximumSignedInputSize(output, &wallet, false);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#discussion_r907513572",
@@ -563,7 +571,7 @@
       "original_position" : 17,
       "original_start_line" : null,
       "path" : "src/wallet/spend.cpp",
-      "position" : 17,
+      "position" : null,
       "pull_request_review_id" : 1020376606,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25481",
       "reactions" : {
@@ -581,6 +589,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T15:25:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907513572",
       "user" : {
@@ -616,9 +625,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907514124"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "It's removed in the next commit",
-      "commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
+      "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-27T15:26:17Z",
       "diff_hunk" : "@@ -289,8 +284,9 @@ std::map<CTxDestination, std::vector<COutput>> ListCoins(const CWallet& wallet)\n             ) {\n                 CTxDestination address;\n                 if (ExtractDestination(FindNonChangeParentOutput(wallet, *wtx.tx, output.n).scriptPubKey, address)) {\n+                    const auto out = wtx.tx->vout.at(output.n);\n                     result[address].emplace_back(\n-                        COutPoint(wtx.GetHash(), output.n), wtx.tx->vout.at(output.n), depth, GetTxSpendSize(wallet, wtx, output.n), /*spendable=*/ true, /*solvable=*/ true, /*safe=*/ false, wtx.GetTxTime(), CachedTxIsFromMe(wallet, wtx, ISMINE_ALL));\n+                            COutPoint(wtx.GetHash(), output.n), out, depth, CalculateMaximumSignedInputSize(out, &wallet, false), /*spendable=*/ true, /*solvable=*/ true, /*safe=*/ false, wtx.GetTxTime(), CachedTxIsFromMe(wallet, wtx, ISMINE_ALL));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#discussion_r907514124",
@@ -631,7 +640,7 @@
       "original_position" : 28,
       "original_start_line" : null,
       "path" : "src/wallet/spend.cpp",
-      "position" : 28,
+      "position" : null,
       "pull_request_review_id" : 1020377404,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25481",
       "reactions" : {
@@ -649,6 +658,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T15:26:17Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907514124",
       "user" : {
@@ -684,9 +694,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907514326"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Same as above",
-      "commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
+      "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-27T15:26:31Z",
       "diff_hunk" : "@@ -447,7 +443,7 @@ std::optional<SelectionResult> SelectCoins(const CWallet& wallet, const std::vec\n             if (ptr_wtx->tx->vout.size() <= outpoint.n) {\n                 return std::nullopt;\n             }\n-            input_bytes = GetTxSpendSize(wallet, *ptr_wtx, outpoint.n, false);\n+            input_bytes = CalculateMaximumSignedInputSize(ptr_wtx->tx->vout[outpoint.n], &wallet, false);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#discussion_r907514326",
@@ -699,7 +709,7 @@
       "original_position" : 37,
       "original_start_line" : null,
       "path" : "src/wallet/spend.cpp",
-      "position" : 37,
+      "position" : null,
       "pull_request_review_id" : 1020377728,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25481",
       "reactions" : {
@@ -717,6 +727,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T15:26:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907514326",
       "user" : {
@@ -752,9 +763,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907515131"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Can't spot the difference ",
-      "commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
+      "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-27T15:27:18Z",
       "diff_hunk" : "@@ -86,7 +86,8 @@ static void add_coin(std::vector<COutput>& coins, CWallet& wallet, const CAmount\n     auto ret = wallet.mapWallet.emplace(std::piecewise_construct, std::forward_as_tuple(txid), std::forward_as_tuple(MakeTransactionRef(std::move(tx)), TxStateInactive{}));\n     assert(ret.second);\n     CWalletTx& wtx = (*ret.first).second;\n-    coins.emplace_back(COutPoint(wtx.GetHash(), nInput), wtx.tx->vout.at(nInput), nAge, GetTxSpendSize(wallet, wtx, nInput), /*spendable=*/ true, /*solvable=*/ true, /*safe=*/ true, wtx.GetTxTime(), fIsFromMe, feerate);\n+    const auto txout = wtx.tx->vout.at(nInput);\n+    coins.emplace_back(COutPoint(wtx.GetHash(), nInput), txout, nAge, CalculateMaximumSignedInputSize(txout, &wallet, false), /*spendable=*/ true, /*solvable=*/ true, /*safe=*/ true, wtx.GetTxTime(), fIsFromMe, feerate);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#discussion_r907515131",
@@ -767,7 +778,7 @@
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "src/wallet/test/coinselector_tests.cpp",
-      "position" : 6,
+      "position" : null,
       "pull_request_review_id" : 1020378810,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25481",
       "reactions" : {
@@ -785,6 +796,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T15:27:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907515131",
       "user" : {
@@ -820,22 +832,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907515509"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks. Totally missed it",
-      "commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
+      "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-27T15:27:43Z",
       "diff_hunk" : "@@ -56,10 +56,11 @@ static void CoinSelection(benchmark::Bench& bench)\n     addCoin(3 * COIN, wallet, wtxs);\n \n     // Create coins\n+    CCoinControl coin_control:",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#discussion_r907515509",
       "id" : 907515509,
       "in_reply_to_id" : 907374129,
-      "line" : 59,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5842F5Z1",
       "original_commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
       "original_line" : 59,
       "original_position" : 4,
       "original_start_line" : null,
       "path" : "src/bench/coin_selection.cpp",
-      "position" : 4,
+      "position" : null,
       "pull_request_review_id" : 1020379345,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25481",
       "reactions" : {
@@ -853,6 +865,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T15:27:43Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907515509",
       "user" : {
@@ -877,7 +890,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24699](https://github.com/bitcoin/bitcoin/pull/24699) (wallet: Improve AvailableCoins performance by reducing duplicated operations by achow101)\n* [#24584](https://github.com/bitcoin/bitcoin/pull/24584) (wallet: avoid mixing different `OutputTypes` during coin selection by josibake)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-06-27T16:16:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#issuecomment-1167561995",
@@ -897,7 +910,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1167561995/reactions"
       },
-      "updated_at" : "2022-06-29T15:31:38Z",
+      "updated_at" : "2022-07-07T18:56:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1167561995",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -932,9 +945,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907597636"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "It it the same as this one https://github.com/bitcoin/bitcoin/pull/25481#discussion_r907362233",
-      "commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
+      "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-27T16:54:52Z",
       "diff_hunk" : "@@ -86,7 +86,8 @@ static void add_coin(std::vector<COutput>& coins, CWallet& wallet, const CAmount\n     auto ret = wallet.mapWallet.emplace(std::piecewise_construct, std::forward_as_tuple(txid), std::forward_as_tuple(MakeTransactionRef(std::move(tx)), TxStateInactive{}));\n     assert(ret.second);\n     CWalletTx& wtx = (*ret.first).second;\n-    coins.emplace_back(COutPoint(wtx.GetHash(), nInput), wtx.tx->vout.at(nInput), nAge, GetTxSpendSize(wallet, wtx, nInput), /*spendable=*/ true, /*solvable=*/ true, /*safe=*/ true, wtx.GetTxTime(), fIsFromMe, feerate);\n+    const auto txout = wtx.tx->vout.at(nInput);\n+    coins.emplace_back(COutPoint(wtx.GetHash(), nInput), txout, nAge, CalculateMaximumSignedInputSize(txout, &wallet, false), /*spendable=*/ true, /*solvable=*/ true, /*safe=*/ true, wtx.GetTxTime(), fIsFromMe, feerate);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#discussion_r907597636",
@@ -947,7 +960,7 @@
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "src/wallet/test/coinselector_tests.cpp",
-      "position" : 6,
+      "position" : null,
       "pull_request_review_id" : 1020493749,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25481",
       "reactions" : {
@@ -965,6 +978,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T16:54:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907597636",
       "user" : {
@@ -1002,20 +1016,20 @@
       },
       "author_association" : "MEMBER",
       "body" : "Or pass a nullptr instead of an empty `CCoinControl`.",
-      "commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
+      "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-27T18:26:13Z",
       "diff_hunk" : "@@ -56,10 +56,11 @@ static void CoinSelection(benchmark::Bench& bench)\n     addCoin(3 * COIN, wallet, wtxs);\n \n     // Create coins\n+    CCoinControl coin_control:",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#discussion_r907677160",
       "id" : 907677160,
       "in_reply_to_id" : 907374129,
-      "line" : 59,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5842Gg3o",
       "original_commit_id" : "ae074640fa1b7c06a152ea9bb1c8bd6728d3bab3",
       "original_line" : 59,
       "original_position" : 4,
       "original_start_line" : null,
       "path" : "src/bench/coin_selection.cpp",
-      "position" : 4,
+      "position" : null,
       "pull_request_review_id" : 1020610259,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25481",
       "reactions" : {
@@ -1033,6 +1047,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T18:26:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907677160",
       "user" : {
@@ -1068,7 +1083,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908133746"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Done. Replaced with nullptr",
       "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-28T07:29:09Z",
@@ -1101,6 +1116,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T07:29:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908133746",
       "user" : {
@@ -1136,7 +1152,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908134014"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Done",
       "commit_id" : "d54c5c8b1b1a38b5b38e6878aea0fa8d6c1ad7e9",
       "created_at" : "2022-06-28T07:29:25Z",
@@ -1169,6 +1185,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T07:29:25Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908134014",
       "user" : {
@@ -1193,7 +1210,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@furszy thanks for the review and the pointer. I don't want to add hints for the flag, because it's removed in the next commit. \r\nI made this PR compatible with #24699 and now they nicely compliment each other. \r\n008d1178c8b09aa9190b188f399fc0f5818c7499 Is fully covered by the first commit here and it does even more.\r\nc685bf545416abe719d2821e8156ff1d0bb2d749 Is taking a slightly different direction, but it's compatible with the code here\r\nIt seems either PR can go first.",
       "created_at" : "2022-06-28T07:33:24Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25481#issuecomment-1168345863",
@@ -1202,7 +1219,7 @@
       "node_id" : "IC_kwDOABII585Fo4sH",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1210,7 +1227,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1168345863/reactions"
       },
       "updated_at" : "2022-06-28T07:33:24Z",

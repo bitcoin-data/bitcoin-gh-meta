@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "`RegisterValidationInterface()` takes a bare pointer, remembers it and other threads use it afterwards. This puts a burden on the caller to properly maintain the lifetime of the object which adds complexity and is a source of bugs (https://github.com/bitcoin/bitcoin/issues/25365, https://github.com/bitcoin/bitcoin/pull/26188#discussion_r982751603).\r\n\r\n`shared_ptr` exists with the purpose of resolving that problem exactly. We already have `RegisterSharedValidationInterface()`. I think it should be possible to replace all usages of `RegisterValidationInterface()` with the \"Shared\" alternative. It is used in:\r\n\r\n* `BaseIndex::Start()` passing `this`, is already suggested in [#25365](https://github.com/bitcoin/bitcoin/issues/25365#issuecomment-1251314646) (see last paragraph), [#24230](https://github.com/bitcoin/bitcoin/pull/24230) \"already does this\".\r\n\r\n* `AppInitMain()` passing `g_zmq_notification_interface` which is a global raw ptr, can be changed to global `shared_ptr`.\r\n\r\n* `AppInitMain()` passing `node.peerman.get()` which is `unique_ptr`. Extracting the raw pointer from `unique_ptr`, saving it somewhere else and using it from other threads defeats the purpose of using `unique_ptr` because we must now manually manage the lifetime of the object. `NodeContext::peerman` should be changed from `unique_ptr` to `shared_ptr`.\r\n\r\nThis should make it possible to remove `RegisterValidationInterface()` and `UnregisterValidationInterface()` (which is already deprecated).\r\n\r\nChasing concept ACK.",
    "closed_at" : null,
    "closed_by" : null,

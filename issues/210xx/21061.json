@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "MEMBER",
+   "author_association" : "CONTRIBUTOR",
    "body" : "## Status\r\n(this section will be updated as the PR progresses, and eventually removed)\r\n- I'm reworking some of the approach, will mark ready for review once that is done. \r\n\r\n## Motivation:\r\nOur legacy rebroadcast mechanism lives in the wallet code. It rebroadcasts only & all transactions which are âmineâ, not discerning if the fee rate indicates the transaction should actually have been confirmed by now. This is bad for privacy because it leaks information that allows spy nodes to link bitcoin addresses with IP addresses, a relationship we aim to obfuscate. \r\n\r\n## PR Overview:\r\nThis PR introduces a rebroadcast mechanism in the node. Instead of only rebroadcasting our own transactions, we will notify the network about _any_ transactions we identified as missing from blocks based on fee rate expectations in our own mempool. \r\n\r\nThe new module is currently behind a configuration flag that defaults to off.\r\n\r\nThe end goal is to enable node rebroadcast by default, and remove wallet rebroadcast. This would improve privacy for a few main reasons: \r\n1. We would no longer eagerly rebroadcast all of our wallet transactions regardless of fee-rate. We add logic to rebroadcast the ones which have a competitive rate according to the current blocks being mined. \r\n2. If a spy observes a bitcoin core node rebroadcasting a transaction, it would no longer know that the node has wallet enabled. \r\n3. If a spy observed a bitcoin core node rebroadcasting a transaction, it would no longer be able to deduce with high confidence that the associated wallet is participating in that transaction.\r\n\r\n## Approach: \r\nConceptually, we want to rebroadcast transactions that we believe âshouldâ have been mined by now.  Since we expect miners to prioritize transactions with the highest package fee rates, we select high fee rate transactions that have been in our mempool for some time, but have not yet been mined. \r\n\r\nThis PR introduces a `txrebroadcast` module that encapsulates the selection logic. When `PeerManager` gets notified that we have received and processed a block, we trigger the rebroadcast logic. The module calculates the highest fee rate mempool packages that meet some additional conditions- the transaction must be > 30 minutes old, and surpass a fee threshold. This threshold is calculated by periodically (every minute) identifying the top block of transactions in our mempool, and caching the fee rate for a package to be included. We eliminate any of these candidates that we have rebroadcasted recently (last 4 hours), or already rebroadcast more than a maximum amount of times (6). We store any remaining candidates on each peerâs `setInventoryTxToSend`, which they will potentially relay next time we hit `SendMessages` for that peer (subject to general transaction relay conditions). \r\n",
    "closed_at" : "2022-03-22T14:43:03Z",
    "closed_by" : {
@@ -53,7 +53,7 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21061/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "MDExOlB1bGxSZXF1ZXN0NTY1NTkwNjcw",
    "number" : 21061,
@@ -79,9 +79,10 @@
    },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21061/timeline",
    "title" : "[p2p] Introduce node rebroadcast module ",
-   "updated_at" : "2022-03-22T14:43:04Z",
+   "updated_at" : "2023-03-22T10:20:16Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21061",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/1500952?v=4",

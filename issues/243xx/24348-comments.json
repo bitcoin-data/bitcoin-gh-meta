@@ -145,19 +145,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Could you split this out something like:\r\n```scheme\r\n;; why we are doing this\r\n(define (make-gcc-without-newlib gcc)\r\n  (package-with-extra-configure-variable gcc \"--with-newlib\" \"no\"))\r\n```\r\n\r\n```suggestion\r\n                                    #:xgcc (make-gcc-without-newlib (make-ssp-fixed-gcc base-gcc))\r\n```",
-      "commit_id" : "e4ff31c800b88e091ce2b852a80a582d806fc31f",
+      "commit_id" : "b3617a99c141d09cdec3b4dc07b6c876edf68bce",
       "created_at" : "2022-02-15T11:35:02Z",
       "diff_hunk" : "@@ -168,7 +168,7 @@ desirable for building Bitcoin Core release binaries.\"\n          (pthreads-xlibc mingw-w64-x86_64-winpthreads)\n          (pthreads-xgcc (make-gcc-with-pthreads\n                          (cross-gcc target\n-                                    #:xgcc (make-ssp-fixed-gcc base-gcc)\n+                                    #:xgcc (package-with-extra-configure-variable (make-ssp-fixed-gcc base-gcc) \"--with-newlib\" \"no\")",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24348#discussion_r806736405",
       "id" : 806736405,
-      "line" : 171,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584wFdIV",
       "original_commit_id" : "e4ff31c800b88e091ce2b852a80a582d806fc31f",
       "original_line" : 171,
       "original_position" : 5,
       "original_start_line" : null,
       "path" : "contrib/guix/manifest.scm",
-      "position" : 5,
+      "position" : null,
       "pull_request_review_id" : 882852775,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24348",
       "reactions" : {
@@ -175,6 +175,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-15T11:35:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/806736405",
       "user" : {
@@ -212,7 +213,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "> Guix builds:\r\n\r\nIf we're changing the time-machine commit we need to do builds for all HOSTS, not just Windows.",
-      "commit_id" : "e4ff31c800b88e091ce2b852a80a582d806fc31f",
+      "commit_id" : "b3617a99c141d09cdec3b4dc07b6c876edf68bce",
       "created_at" : "2022-02-15T11:35:38Z",
       "diff_hunk" : "@@ -239,7 +239,7 @@ SOURCE_DATE_EPOCH=\"${SOURCE_DATE_EPOCH:-$(git -c log.showSignature=false log --f\n time-machine() {\n     # shellcheck disable=SC2086\n     guix time-machine --url=https://git.savannah.gnu.org/git/guix.git \\\n-                      --commit=1ef7a03a148cf5f83ab1820444f6bd50d8e732d1 \\\n+                      --commit=ae03f401381e956c4c41b4cf495cbde964fa43d0 \\",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24348#discussion_r806736886",
@@ -242,6 +243,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-15T11:35:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/806736886",
       "user" : {
@@ -398,6 +400,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-15T15:44:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/806982341",
       "user" : {
@@ -422,7 +425,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "When in doubt... Always compare with debian and Fedora...\r\n\r\nDebian doesn't specify `--with-newlib`: https://salsa.debian.org/mingw-w64-team/gcc-mingw-w64/-/blob/master/debian/rules\r\nFedora explicitly specifies `--without-newlib`: https://fedora.pkgs.org/34/fedora-x86_64/mingw64-gcc-c++-10.2.1-6.fc34.x86_64.rpm.html (download and unpack the source package)\r\n\r\nWe should figure out why Guix maintainers originally felt they needed to specify `--with-newlib` for mingw-w64, but this looks like a good fix.",
       "created_at" : "2022-02-15T17:05:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24348#issuecomment-1040539574",
@@ -431,7 +434,7 @@
       "node_id" : "IC_kwDOABII584-BV-2",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -439,7 +442,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1040539574/reactions"
       },
       "updated_at" : "2022-02-15T18:46:21Z",
@@ -554,7 +557,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I would guess they didn't think about it at all. Normally it doesn't interfere, and there's some borderline cases (usually boot-loader/embedded/cross dev) where newlib is useful to have for an architecture. However, x86 newlib is x86 newlib. It's irrelevant for \"special operating systems\" like Windows.\r\n\r\nYes I talked with the person who committed the change originally, they said that they added it because it was needed for mingw-w64 cross builds but we tested everything and it's no longer needed at all. We should probably upstream a patch that removes this logic, though we don't have to thanks to the flexible package rewriting procedures.\r\n\r\nWith this context, this is likely The Right Fix.",
       "created_at" : "2022-02-16T20:52:56Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24348#issuecomment-1042300448",
@@ -563,7 +566,7 @@
       "node_id" : "IC_kwDOABII584-ID4g",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -571,7 +574,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1042300448/reactions"
       },
       "updated_at" : "2022-02-16T20:54:28Z",
@@ -639,6 +642,50 @@
          "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/laanwj"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Upstream patch: https://issues.guix.gnu.org/54212",
+      "created_at" : "2022-03-01T17:03:54Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24348#issuecomment-1055658124",
+      "id" : 1055658124,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24348",
+      "node_id" : "IC_kwDOABII584-7BCM",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1055658124/reactions"
+      },
+      "updated_at" : "2022-03-01T17:03:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1055658124",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/3445290?v=4",
+         "events_url" : "https://api.github.com/users/dongcarl/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/dongcarl/followers",
+         "following_url" : "https://api.github.com/users/dongcarl/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/dongcarl/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/dongcarl",
+         "id" : 3445290,
+         "login" : "dongcarl",
+         "node_id" : "MDQ6VXNlcjM0NDUyOTA=",
+         "organizations_url" : "https://api.github.com/users/dongcarl/orgs",
+         "received_events_url" : "https://api.github.com/users/dongcarl/received_events",
+         "repos_url" : "https://api.github.com/users/dongcarl/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/dongcarl/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/dongcarl/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/dongcarl"
       }
    }
 ]

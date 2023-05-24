@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24750](https://github.com/bitcoin/bitcoin/pull/24750) (doc: Add bash dependency of lint tests by fjahr)\n* [#24435](https://github.com/bitcoin/bitcoin/pull/24435) (test: Refactor subtree exclusion in lint tests by maxraustin)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-04-04T23:32:23Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24766#issuecomment-1088120777",
@@ -101,19 +101,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Please don't use `shell=true` if you can avoid it. Remember that a point of doing this porting is to avoid shell ambiguities.",
-      "commit_id" : "494e9918ee4311ba621f4ae965aa1bdea3b08f55",
+      "commit_id" : "4685463301a1c64c1be07725059cc94d69db104b",
       "created_at" : "2022-04-05T09:44:35Z",
       "diff_hunk" : "@@ -0,0 +1,31 @@\n+#!/usr/bin/env python3\n+#\n+# Copyright (c) 2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\n+\"\"\"\n+Warn in case of spelling errors.\n+Note: Will exit successfully regardless of spelling errors.\n+\"\"\"\n+\n+from subprocess import check_output, STDOUT, CalledProcessError\n+\n+ignore_words_file = 'test/lint/spelling.ignore-words.txt'\n+files_args = r'git ls-files -- \":(exclude)build-aux/m4/\" \":(exclude)contrib/seeds/*.txt\" \":(exclude)depends/\" \":(exclude)doc/release-notes/\" \":(exclude)src/leveldb/\" \":(exclude)src/crc32c/\" \":(exclude)src/qt/locale/\" \":(exclude)src/qt/*.qrc\" \":(exclude)src/secp256k1/\" \":(exclude)src/minisketch/\" \":(exclude)src/univalue/\" \":(exclude)contrib/builder-keys/keys.txt\" \":(exclude)contrib/guix/patches\"'\n+\n+\n+def main():\n+    files = check_output(files_args, shell=True).decode(\"utf-8\").splitlines()",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24766#discussion_r842585734",
       "id" : 842585734,
-      "line" : 19,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584yONaG",
       "original_commit_id" : "494e9918ee4311ba621f4ae965aa1bdea3b08f55",
       "original_line" : 19,
       "original_position" : 19,
       "original_start_line" : null,
       "path" : "test/lint/lint-spelling.py",
-      "position" : 19,
+      "position" : null,
       "pull_request_review_id" : 931571554,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24766",
       "reactions" : {
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-05T09:45:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/842585734",
       "user" : {
@@ -199,7 +200,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2022-04-05T17:41:18Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24766#issuecomment-1089101975",
@@ -254,7 +255,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/843308684"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "was able to avoid it, done",
       "commit_id" : "4685463301a1c64c1be07725059cc94d69db104b",
       "created_at" : "2022-04-05T22:20:35Z",
@@ -287,6 +288,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-05T22:20:36Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/843308684",
       "user" : {
@@ -311,7 +313,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Rebased and added the error handling in case codespell is not installed which I had omitted in the last push and also avoided usage of `shell=True`.",
       "created_at" : "2022-04-05T22:22:40Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24766#issuecomment-1089440770",
@@ -442,6 +444,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-06T06:11:21Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/843501630",
       "user" : {
@@ -477,7 +480,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/843525824"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "For me it does but testing on more platforms might be a good idea :)\r\n\r\n```\r\n$ test/lint/lint-spelling.py\r\nconfigure.ac:364: overriden ==> overridden\r\nconfigure.ac:860: overriden ==> overridden\r\nsrc/wallet/coinselection.h:228: Chooose ==> Choose\r\n^ Warning: codespell identified likely spelling errors. Any false positives? Add them to the list of ignored words in test/lint/spelling.ignore-words.txt\r\n```",
       "commit_id" : "4685463301a1c64c1be07725059cc94d69db104b",
       "created_at" : "2022-04-06T06:45:45Z",
@@ -510,6 +513,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-06T06:45:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/843525824",
       "user" : {
@@ -578,6 +582,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-06T07:12:21Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/843551677",
       "user" : {
@@ -645,6 +650,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-06T07:22:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/843558009",
       "user" : {
@@ -712,6 +718,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-06T07:22:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/843558638",
       "user" : {
@@ -780,6 +787,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-06T07:22:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/843559966",
       "user" : {
@@ -847,6 +855,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-06T07:22:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/843560410",
       "user" : {

@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This should fix it:\r\n\r\n<details>\r\n<summary>blind, guess, unverified, possible fix</summary>\r\n\r\n```diff\r\ndiff --git i/src/test/coinstatsindex_tests.cpp w/src/test/coinstatsindex_tests.cpp\r\nindex 2a6a777cfe..b78cac8908 100644\r\n--- i/src/test/coinstatsindex_tests.cpp\r\n+++ w/src/test/coinstatsindex_tests.cpp\r\n@@ -3,12 +3,13 @@\r\n // file COPYING or http://www.opensource.org/licenses/mit-license.php.\r\n \r\n #include <chainparams.h>\r\n #include <index/coinstatsindex.h>\r\n #include <interfaces/chain.h>\r\n #include <kernel/coinstats.h>\r\n+#include <scheduler.h>\r\n #include <test/util/setup_common.h>\r\n #include <test/util/validation.h>\r\n #include <util/time.h>\r\n #include <validation.h>\r\n \r\n #include <boost/test/unit_test.hpp>\r\n@@ -76,12 +77,16 @@ BOOST_FIXTURE_TEST_CASE(coinstatsindex_initial_sync, TestChain100Setup)\r\n \r\n     BOOST_CHECK(block_index != new_block_index);\r\n \r\n     // Shutdown sequence (c.f. Shutdown() in init.cpp)\r\n     coin_stats_index.Stop();\r\n \r\n+    // Stop the scheduler which may be using coin_stats_index (how?) before\r\n+    // coin_stats_index gets destroyed at the end of this function.\r\n+    m_node.scheduler->stop();\r\n+\r\n     // Rest of shutdown sequence and destructors happen in ~TestingSetup()\r\n }\r\n \r\n // Test shutdown between BlockConnected and ChainStateFlushed notifications,\r\n // make sure index is not corrupted and is able to reload.\r\n BOOST_FIXTURE_TEST_CASE(coinstatsindex_unclean_shutdown, TestChain100Setup)\r\n```\r\n</details>\r\n\r\nThough I do not understand how the scheduler picked the local variable `coin_stats_index` from the test.\r\n",
       "created_at" : "2022-09-16T11:40:46Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25365#issuecomment-1249260516",
@@ -101,11 +101,11 @@
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1249301796/reactions"
       },
       "updated_at" : "2022-09-16T12:26:21Z",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "It would be good to reproduce this deterministically and then confirm that the possible fix actually fixes it. I tried to reproduce it by planting a few sleeps here and there, but in vain.",
       "created_at" : "2022-09-16T14:36:28Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25365#issuecomment-1249451059",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I stared at this and I don't see how the scheduler is still using the local index variable after it is destroyed, as I suggested above. I am looking at the code as of b02411d2ddf8c010fc4e9d9ec27cae3a73e895a9 where the problem actually happened (in case it is already nonexistent in `master`).\r\n\r\nThe call to `coin_stats_index.BlockUntilSyncedToCurrentChain()` from the test will wait for that `BaseIndex::SetBestBlockIndex()` (where you added the sleep) to complete in the `b-scheduler` thread before continuing with the test.\r\n\r\nCould this be a false alarm by the thread sanitizer? What is being reported is that a read from `BaseIndex::SetBestBlockIndex()` (the `b-scheduler` thread) was followed by a write from the destructor (main thread) without a syncronization, but maybe the sanitizer cannot grasp the logic from `BlockUntilSyncedToCurrentChain()`?",
       "created_at" : "2022-09-19T13:40:15Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25365#issuecomment-1251036636",
@@ -308,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "IIUC, I would think calling `FlushBackgroundCallbacks` then `m_node.scheduler->stop()` right before the `coin_stats_index` destructor runs should fix this if just calling `FlushBackgroundCallbacks` by itself is not sufficient.\r\n\r\n> I stared at this and I don't see how the scheduler is still using the local index variable after it is destroyed \r\n\r\nThe problem isn't that the scheduler is reading the `coin_stats_index` vtable pointer after it is written by the destructor. The problem is that the scheduler is reading the vtable pointer *before* it is wriitten by the destructor, and the thread sanitizer can't find any synchronization calls that order these read/write events, so it warns that there is probably a race condition.\r\n\r\nThe earlier suggestion to add the `m_node.scheduler->stop()` would probably silence the thread sanitizer because it joins the scheduler thread, forcing the any reads to happen before the write.",
       "created_at" : "2022-09-19T14:59:37Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25365#issuecomment-1251143879",
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Yes! I actually wrote two things that contradict each other: \"I don't see how the scheduler is still using the local index variable after it is destroyed\" and \"What is being reported is that a read ... was followed by a write from the destructor\".\r\n\r\nSo, this is probably a false alarm due to the thread sanitizer not being able to grasp our synchronization logic: `SyncWithValidationInterfaceQueue()` which _should_ be called from `BaseIndex::BlockUntilSyncedToCurrentChain()`.",
       "created_at" : "2022-09-19T15:57:06Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25365#issuecomment-1251217017",
@@ -396,7 +396,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> So, this is probably a false alarm due to the thread sanitizer not being able to grasp our synchronization logic: `SyncWithValidationInterfaceQueue()` which _should_ be called from `BaseIndex::BlockUntilSyncedToCurrentChain()`.\r\n\r\nMaybe `BlockUntilSyncedToCurrentChain` is [returning true](https://github.com/bitcoin/bitcoin/blob/0b02ce914e8594e8938e527c91c07f57def4e943/src/index/base.cpp#L362-L364) without calling `SyncWithValidationInterfaceQueue()`? That would explain why TSAN doesn't know about the synchronization between the test thread write and scheduler thread read. TSAN needs to assume scheduler thread might do another read because it has no way of knowing there will not be more`BlockConnected` events in the future. In this case, I would expect putting an explicit `SyncWithValidationInterfaceQueue` call before the destructor to fix the problem.\r\n\r\nLonger term more robust solution is probably to switch indexes from `RegisterValidationInterface` to `RegisterSharedValidationInterface` so notification thread can interact with the index through a shared pointer instead of a raw pointer, and destroy the index itself. #24230 actually already does this.",
       "created_at" : "2022-09-19T17:18:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25365#issuecomment-1251314646",
@@ -484,7 +484,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I don't think tsan is smart enough to figure out synchronization primitives that are more complex than a `std::atomic` or mutex on the exact memory that is read/written.\r\n\r\nI'm not sure, but I thought it might do this because I looked at the TSAN paper yesterday to get an idea of how it works: https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/35604.pdf\r\n\r\nFigure 1 seems to show that it also detects signal/waits between threads in addition to mutex locking. Adding a SyncWithValidationInterfaceQueue call would make the test thread wait for the scheduler thread to signal it, so could fix the problem. Adding a scheduler stop would make the test thread join the scheduler thread, which might also fix it if adding sync doesn't work.",
       "created_at" : "2022-09-20T12:01:21Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25365#issuecomment-1252253029",
@@ -569,6 +569,50 @@
          "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "I can reproduce with https://github.com/bitcoin/bitcoin/issues/25365#issuecomment-1253337983.\r\n\r\nUsing just\r\n\r\n```diff\r\n@@ -420,4 +421,6 @@ void BaseIndex::SetBestBlockIndex(const CBlockIndex* block) {\r\n         prune_lock.height_first = block->nHeight;\r\n+        UninterruptibleSleep(90ms);\r\n         WITH_LOCK(::cs_main, m_chainstate->m_blockman.UpdatePruneLock(GetName(), prune_lock));\r\n     }\r\n```\r\n\r\ninstead of\r\n\r\n```diff\r\n@@ -420,4 +422,6 @@ void BaseIndex::SetBestBlockIndex(const CBlockIndex* block) {\r\n         prune_lock.height_first = block->nHeight;\r\n         WITH_LOCK(::cs_main, m_chainstate->m_blockman.UpdatePruneLock(GetName(), prune_lock));\r\n     }\r\n+    UninterruptibleSleep(90ms);\r\n+    std::cout << \"a\" << GetName() <<\"a\"<< std::endl;\r\n }\r\n```\r\n\r\nalso suffices to reproduce.\r\n\r\nChanging the local variable to a dynamically allocated one with `new` and calling `delete` at the end of the test makes the valgrind error more obvious:\r\n\r\n> Invalid read ... Address x is ... inside a block ... free'd _our delete call_ ... Block was alloc'd at _our new call_\r\n\r\nThank you, @MarcoFalke, @ryanofsky!\r\n\r\nFixed in https://github.com/bitcoin/bitcoin/pull/26188",
+      "created_at" : "2022-09-27T16:21:43Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/issues/25365#issuecomment-1259744133",
+      "id" : 1259744133,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25365",
+      "node_id" : "IC_kwDOABII585LFiuF",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1259744133/reactions"
+      },
+      "updated_at" : "2022-09-27T16:28:52Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1259744133",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/266751?v=4",
+         "events_url" : "https://api.github.com/users/vasild/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vasild/followers",
+         "following_url" : "https://api.github.com/users/vasild/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vasild/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vasild",
+         "id" : 266751,
+         "login" : "vasild",
+         "node_id" : "MDQ6VXNlcjI2Njc1MQ==",
+         "organizations_url" : "https://api.github.com/users/vasild/orgs",
+         "received_events_url" : "https://api.github.com/users/vasild/received_events",
+         "repos_url" : "https://api.github.com/users/vasild/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vasild/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vasild"
       }
    }
 ]

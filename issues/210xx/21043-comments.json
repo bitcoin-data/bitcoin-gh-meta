@@ -8,6 +8,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21043",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc3MDYyNjQ1MQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/770626451/reactions"
+      },
       "updated_at" : "2021-02-01T07:09:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/770626451",
       "user" : {
@@ -32,7 +44,7 @@
       }
    },
    {
-      "author_association" : "MEMBER",
+      "author_association" : "CONTRIBUTOR",
       "body" : "> This assumes that time is negatable, which holds for system time, but not for mocktime?\r\n> \r\n> I think we should disallow negative mocktime (either here or in a follow up).\r\n\r\nGood point! I've now added your patch as a second commit. Thanks!",
       "created_at" : "2021-02-01T15:00:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21043#issuecomment-770919844",
@@ -40,6 +52,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21043",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc3MDkxOTg0NA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/770919844/reactions"
+      },
       "updated_at" : "2021-02-01T15:00:41Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/770919844",
       "user" : {
@@ -72,6 +96,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21043",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc3MTYwODMxNg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/771608316/reactions"
+      },
       "updated_at" : "2021-02-02T12:41:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/771608316",
       "user" : {
@@ -96,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK 3ddbf22ed179a2db733af4b521bec5d2b13ebf4b -- code review only",
       "created_at" : "2021-02-04T05:59:22Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21043#issuecomment-773052992",
@@ -104,6 +140,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21043",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc3MzA1Mjk5Mg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 2,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 2,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/773052992/reactions"
+      },
       "updated_at" : "2021-02-04T05:59:22Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/773052992",
       "user" : {
@@ -139,7 +187,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/570990693"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This will fix the overflow warning indeed.\r\n\r\nHowever `0` is arbitrary choice here because `-10000`, `5` and `200` would also fix it. A negative `nTime` from the peer means he pretends that his time is pre-1970 and we just skew that to Jan 1 1970, replacing one garbage with another garbage. Then we [feed](https://github.com/bitcoin/bitcoin/blob/b829894f84839dfd581ec52383f93baa32ee2710/src/net_processing.cpp#L2651-L2653) that garbage to `AddTimeData()` which only consumes the first [200](https://github.com/bitcoin/bitcoin/blob/b829894f84839dfd581ec52383f93baa32ee2710/src/timedata.cpp#L39) samples and ignores all calls afterwards :raised_eyebrow:.\r\n\r\nSo, it makes sense to avoid calling `AddTimeData()` with input we know for sure is garbage. What about something like the following?\r\n\r\n```cpp\r\n        if (nTime > 1609459200 /* Fri Jan  1 00:00:00 UTC 2021 */) {\r\n            int64_t nTimeOffset = nTime - GetTime();\r\n            pfrom.nTimeOffset = nTimeOffset;\r\n            AddTimeData(pfrom.addr, nTimeOffset);\r\n        } else {\r\n            // Ignore garbage time.\r\n            pfrom.nTimeOffset = 0;\r\n        }\r\n```",
       "commit_id" : "3ddbf22ed179a2db733af4b521bec5d2b13ebf4b",
       "created_at" : "2021-02-05T14:07:24Z",
@@ -156,9 +204,22 @@
       "position" : 6,
       "pull_request_review_id" : 584367808,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21043",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/570990693/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : 2492,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2021-02-05T14:10:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/570990693",
       "user" : {
@@ -212,9 +273,22 @@
       "position" : 6,
       "pull_request_review_id" : 584455329,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21043",
+      "reactions" : {
+         "+1" : 2,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 2,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/571057462/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : 2492,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2021-02-05T15:39:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/571057462",
       "user" : {
@@ -250,7 +324,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/571075353"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`1609459200` draws a line between \"for sure garbage\" and \"may be garbage or may be not\", but yes, it is arbitrary in a sense that `1609459205` would do the same job.\r\n\r\n> AddTimeData already deals with garbage values correctly\r\n\r\nHow? The garbage will consume one of its 200 slots.",
       "commit_id" : "3ddbf22ed179a2db733af4b521bec5d2b13ebf4b",
       "created_at" : "2021-02-05T16:05:12Z",
@@ -268,9 +342,22 @@
       "position" : 6,
       "pull_request_review_id" : 584479637,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21043",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/571075353/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : 2492,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2021-02-05T16:05:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/571075353",
       "user" : {
@@ -324,9 +411,22 @@
       "position" : 6,
       "pull_request_review_id" : 584483532,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21043",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/571078373/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : 2492,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2021-02-05T16:09:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/571078373",
       "user" : {
@@ -362,7 +462,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/571091332"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Yes, inside `AddTimeData()` would be better.\r\n\r\n`AddTimeData()` would accept absolute time as received by the peer (not offset), would check for possible garbage and return the offset (or 0 if garbage) and also would avoid occupying one of the 200 slots if garbage.\r\n\r\n```diff\r\n-        int64_t nTimeOffset = nTime - GetTime();\r\n-        pfrom.nTimeOffset = nTimeOffset;\r\n-        AddTimeData(pfrom.addr, nTimeOffset);\r\n+        pfrom.nTimeOffset = AddTimeData(pfrom.addr, nTime);\r\n```\r\n\r\nThis would make the change in this PR which checks for negative `nTime` unnecessary, so maybe makes sense to do it in this PR, rather than in a followup one, which reverts this one?",
       "commit_id" : "3ddbf22ed179a2db733af4b521bec5d2b13ebf4b",
       "created_at" : "2021-02-05T16:28:37Z",
@@ -380,9 +480,22 @@
       "position" : 6,
       "pull_request_review_id" : 584501155,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21043",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/571091332/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : 2492,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2021-02-05T16:28:37Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/571091332",
       "user" : {
@@ -436,9 +549,22 @@
       "position" : 6,
       "pull_request_review_id" : 584554480,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21043",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/571132586/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : 2492,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2021-02-05T17:30:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/571132586",
       "user" : {
@@ -474,7 +600,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/571478421"
          }
       },
-      "author_association" : "MEMBER",
+      "author_association" : "CONTRIBUTOR",
       "body" : "@vasild You're correct that `0` is one of many possible choices. `0` was picked since it seemed like the least surprising and/or confusing choice. It also seemed like a reasonable number from a nothing-up-my-sleeve perspective.",
       "commit_id" : "3ddbf22ed179a2db733af4b521bec5d2b13ebf4b",
       "created_at" : "2021-02-06T19:47:24Z",
@@ -492,9 +618,22 @@
       "position" : 6,
       "pull_request_review_id" : 584911558,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21043",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/571478421/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : 2492,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2021-02-06T19:47:24Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/571478421",
       "user" : {
@@ -530,7 +669,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/572147719"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Yes, this will protect against an accidental error. Malicious peers can still send garbage by pretending it is year 2050.\r\n\r\nFeel free to ignore this, if you see no merit (on top of this PR):\r\n\r\n<details>\r\n<summary>[patch] avoid integer underflow and protect time data samples from definite garbage</summary>\r\n\r\n```diff\r\ndiff --git i/src/timedata.h w/src/timedata.h\r\nindex b165ecde2..c39c0a90d 100644\r\n--- i/src/timedata.h\r\n+++ w/src/timedata.h\r\n@@ -70,9 +70,16 @@ public:\r\n     }\r\n };\r\n \r\n /** Functions to keep track of adjusted P2P time */\r\n int64_t GetTimeOffset();\r\n int64_t GetAdjustedTime();\r\n-void AddTimeData(const CNetAddr& ip, int64_t nTime);\r\n+\r\n+/**\r\n+ * Consume a time sample from a peer.\r\n+ * @param[in] ip The address of the peer, repeated samples from the same peer are ignored.\r\n+ * @param[in] nTime The time of the peer (number of seconds size 1970).\r\n+ * @return the difference between the peer's time and our time in seconds or 0 if nTime is nonsensical.\r\n+ */\r\n+int64_t AddTimeData(const CNetAddr& ip, int64_t nTime);\r\n \r\n #endif // BITCOIN_TIMEDATA_H\r\ndiff --git i/src/net_processing.cpp w/src/net_processing.cpp\r\nindex 8936b8109..fda3b5abd 100644\r\n--- i/src/net_processing.cpp\r\n+++ w/src/net_processing.cpp\r\n@@ -2486,15 +2486,12 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type,\r\n         int nVersion;\r\n         std::string cleanSubVer;\r\n         int starting_height = -1;\r\n         bool fRelay = true;\r\n \r\n         vRecv >> nVersion >> nServiceInt >> nTime >> addrMe;\r\n-        if (nTime < 0) {\r\n-            nTime = 0;\r\n-        }\r\n         nServices = ServiceFlags(nServiceInt);\r\n         if (!pfrom.IsInboundConn())\r\n         {\r\n             m_connman.SetServices(pfrom.addr, nServices);\r\n         }\r\n         if (pfrom.ExpectServicesFromConn() && !HasAllDesirableServiceFlags(nServices))\r\n@@ -2648,15 +2645,13 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type,\r\n \r\n         LogPrint(BCLog::NET, \"receive version message: %s: version %d, blocks=%d, us=%s, txrelay=%d, peer=%d%s\\n\",\r\n                   cleanSubVer, pfrom.nVersion,\r\n                   peer->m_starting_height, addrMe.ToString(), fRelay, pfrom.GetId(),\r\n                   remoteAddr);\r\n \r\n-        int64_t nTimeOffset = nTime - GetTime();\r\n-        pfrom.nTimeOffset = nTimeOffset;\r\n-        AddTimeData(pfrom.addr, nTimeOffset);\r\n+        pfrom.nTimeOffset = AddTimeData(pfrom.addr, nTime);\r\n \r\n         // If the peer is old enough to have the old alert system, send it the final alert.\r\n         if (greatest_common_version <= 70012) {\r\n             CDataStream finalAlert(ParseHex(\"60010000000000000000000000ffffff7f00000000ffffff7ffeffff7f01ffffff7f00000000ffffff7f00ffffff7f002f555247454e543a20416c657274206b657920636f6d70726f6d697365642c2075706772616465207265717569726564004630440220653febd6410f470f6bae11cad19c48413becb1ac2c17f908fd0fd53bdc3abd5202206d0e9c96fe88d4a0f01ed9dedae2b6f9e00da94cad0fecaae66ecf689bf71b50\"), SER_NETWORK, PROTOCOL_VERSION);\r\n             m_connman.PushMessage(&pfrom, CNetMsgMaker(greatest_common_version).Make(\"alert\", finalAlert));\r\n         }\r\ndiff --git i/src/timedata.cpp w/src/timedata.cpp\r\nindex 354092752..3195baafc 100644\r\n--- i/src/timedata.cpp\r\n+++ w/src/timedata.cpp\r\n@@ -35,21 +35,28 @@ int64_t GetAdjustedTime()\r\n {\r\n     return GetTime() + GetTimeOffset();\r\n }\r\n \r\n #define BITCOIN_TIMEDATA_MAX_SAMPLES 200\r\n \r\n-void AddTimeData(const CNetAddr& ip, int64_t nOffsetSample)\r\n+int64_t AddTimeData(const CNetAddr& ip, int64_t nTime)\r\n {\r\n+    if (nTime < 1609459200 /* Fri Jan  1 00:00:00 UTC 2021 */) {\r\n+        // Do not consume nonsensical times as we have a limited number of slots.\r\n+        return 0;\r\n+    }\r\n+\r\n+    const int64_t nOffsetSample = nTime - GetTime();\r\n+\r\n     LOCK(g_timeoffset_mutex);\r\n     // Ignore duplicates\r\n     static std::set<CNetAddr> setKnown;\r\n     if (setKnown.size() == BITCOIN_TIMEDATA_MAX_SAMPLES)\r\n-        return;\r\n+        return nOffsetSample;\r\n     if (!setKnown.insert(ip).second)\r\n-        return;\r\n+        return nOffsetSample;\r\n \r\n     // Add data\r\n     static CMedianFilter<int64_t> vTimeOffsets(BITCOIN_TIMEDATA_MAX_SAMPLES, 0);\r\n     vTimeOffsets.input(nOffsetSample);\r\n     LogPrint(BCLog::NET, \"added time data, samples %d, offset %+d (%+d minutes)\\n\", vTimeOffsets.size(), nOffsetSample, nOffsetSample / 60);\r\n \r\n@@ -102,7 +109,9 @@ void AddTimeData(const CNetAddr& ip, int64_t nOffsetSample)\r\n                 LogPrint(BCLog::NET, \"%+d  \", n); /* Continued */\r\n             }\r\n             LogPrint(BCLog::NET, \"|  \"); /* Continued */\r\n             LogPrint(BCLog::NET, \"nTimeOffset = %+d  (%+d minutes)\\n\", nTimeOffset, nTimeOffset / 60);\r\n         }\r\n     }\r\n+\r\n+    return nOffsetSample;\r\n }\r\ndiff --git i/src/test/timedata_tests.cpp w/src/test/timedata_tests.cpp\r\nindex 1dcee23bb..552d4fc63 100644\r\n--- i/src/test/timedata_tests.cpp\r\n+++ w/src/test/timedata_tests.cpp\r\n@@ -6,12 +6,13 @@\r\n #include <netaddress.h>\r\n #include <noui.h>\r\n #include <test/util/logging.h>\r\n #include <test/util/setup_common.h>\r\n #include <timedata.h>\r\n #include <util/string.h>\r\n+#include <util/time.h>\r\n #include <util/translation.h>\r\n #include <warnings.h>\r\n \r\n #include <string>\r\n \r\n #include <boost/test/unit_test.hpp>\r\n@@ -46,13 +47,13 @@ BOOST_AUTO_TEST_CASE(util_MedianFilter)\r\n static void MultiAddTimeData(int n, int64_t offset)\r\n {\r\n     static int cnt = 0;\r\n     for (int i = 0; i < n; ++i) {\r\n         CNetAddr addr;\r\n         addr.SetInternal(ToString(++cnt));\r\n-        AddTimeData(addr, offset);\r\n+        AddTimeData(addr, GetTime() + offset);\r\n     }\r\n }\r\n \r\n \r\n BOOST_AUTO_TEST_CASE(addtimedata)\r\n {\r\n```\r\n</details>\r\n",
       "commit_id" : "3ddbf22ed179a2db733af4b521bec5d2b13ebf4b",
       "created_at" : "2021-02-08T15:41:38Z",
@@ -548,9 +687,22 @@
       "position" : 6,
       "pull_request_review_id" : 585633692,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21043",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/572147719/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : 2492,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2021-02-08T15:41:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/572147719",
       "user" : {
@@ -586,7 +738,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/572161836"
          }
       },
-      "author_association" : "MEMBER",
+      "author_association" : "CONTRIBUTOR",
       "body" : "@vasild Thanks for providing a patch, but I'll leave this PR unchanged to avoid expanding the scope beyond fixing the UBSan warning. I want to keep this PR minimal and laser focused in order to make review trivial :)",
       "commit_id" : "3ddbf22ed179a2db733af4b521bec5d2b13ebf4b",
       "created_at" : "2021-02-08T15:58:54Z",
@@ -604,9 +756,22 @@
       "position" : 6,
       "pull_request_review_id" : 585652167,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21043",
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/572161836/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : 2492,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2021-02-08T16:00:29Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/572161836",
       "user" : {
@@ -639,6 +804,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21043",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc3NzM5MDg1MA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/777390850/reactions"
+      },
       "updated_at" : "2021-02-11T11:43:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/777390850",
       "user" : {

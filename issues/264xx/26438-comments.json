@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK. Admittedly, I haven't been following this issue very closely, but wow, that mailing list post was very persuasive. The analogy between the `-mempoolfullrbf` flag and a hypothetical `-disable_v3_transaction_enforcement` flag to me was the most compelling part, as well as the framing:\r\n\r\n> Relay has only ever been a best-efforts concept, where we carve out a small subset of the entire transaction universe for which we try to optimize propagation.\r\n\r\nAdding options for different nodes to see different subsets of the transaction universe seems something we would really want to avoid unless the options provide very compelling benefits. And given limitations of `-mempoolfullrbf` described in footnote 3, the benefits it provides seem scant compared to the cost and complexity having to design for multiple mempool policies on the same network going forward.\r\n\r\n---\r\n\r\nEDIT 2022-11-07: After discussion below I still support main idea behind the PR: that adding mempool options which cause different nodes to have different views of transactions could be bad in the long term for transaction propagation and network reliability and complexity of the mempool implementation. So it would be bad to add options that don't have practical individual use cases and let them accumulate over time.\r\n\r\nBut I'd also support postponing this PR, and letting people experiment with the option until we can see whether it gains usage or has any practical effect at all. I just think in the long term, we should streamline options that make the network behave less homogeneously and don't have useful local behavior.",
       "created_at" : "2022-11-01T14:43:26Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1298611730",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "NACK\r\n\r\n> Does fullrbf offer any benefits other than breaking zeroconf business practices? If so, what are they?\r\n\r\nZeroconf businesses and projects are vulnerable by design. This can be fixed without changing anything in Bitcoin Core.\r\n\r\nFull RBF offers 2 benefits:\r\n\r\n- Better security for coinjoin and multi party contracts which is hard to fix without users trying full RBF using this option\r\n- Provide another policy option for users to replace transactions \r\n\r\n> Is it reasonable to enforce BIP 125's rbf rules on all transactions, if those rules themselves are not always incentive compatible?\r\n\r\nIts reasonable to try and collect some insights based on usage. This could be used to improve things in future.\r\n\r\n> If someone were to propose a command line option that breaks v3 transaction relay in the future, is there a logical basis for opposing that which is consistent with moving towards fullrbf now?\r\n\r\nI do not understand this question, v3 tx relay is still being discussed afaik and not sure how it's related to an option to use full RBF as Gloria mentioned in [this](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-September/020937.html) email:\r\n\r\n\"_If you don't want your transactions to be subject to\r\nthese rules, just continue whatever you're doing and don't use nVersion=3._\"\r\n\r\nAnd some projects would continue to use nVersion=1 and nVersion=2.\r\n\r\n---\r\nFull RBF is already available as an option in Knots and custom bitcoind if someone running core with patches. This option could only make it easier for average users to try it and better insights.",
       "created_at" : "2022-11-01T15:32:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1298711392",
@@ -53,7 +53,7 @@
       "node_id" : "IC_kwDOABII585NaMNg",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -61,30 +61,30 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1298711392/reactions"
       },
       "updated_at" : "2022-11-01T15:49:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1298711392",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
@@ -97,7 +97,7 @@
       "node_id" : "IC_kwDOABII585NaVRJ",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -105,7 +105,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1298748489/reactions"
       },
       "updated_at" : "2022-11-01T15:54:14Z",
@@ -141,7 +141,7 @@
       "node_id" : "IC_kwDOABII585NaZAy",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -149,7 +149,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1298763826/reactions"
       },
       "updated_at" : "2022-11-01T16:07:17Z",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> NACK with longer form here: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-October/021136.html\r\n\r\nOne question I have from that post is about:\r\n\r\n> Removing a quite-likely-incentive-compatible option from the software just encourages miners to adopt an additional patch if they ever deem it necessary to increase their revenue\r\n\r\nTo me this is sounds like an argument *for* removing the option, not an argument *against* removing the option, because if we see miners actually taking the effort to patch their software in this way it gives us a real *empirical* confirmation that our mempool policy is not incentive-compatible, and that it needs to change.\r\n\r\nIn general, if bitcoin core software is designed around following a single mempool policy, and if we can observe whether or not miners are following that policy, it puts us in a solid position to be able to improve the policy over time, and have a network that is reliable and performant without painful edge cases and usability problems. If different mempools have different policies, it seems like it would be a lot harder to evaluate any one policy or for the network to be reliable and improve over time.",
       "created_at" : "2022-11-01T16:36:03Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1298807067",
@@ -185,7 +185,7 @@
       "node_id" : "IC_kwDOABII585Najkb",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -193,7 +193,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1298807067/reactions"
       },
       "updated_at" : "2022-11-01T16:36:03Z",
@@ -229,7 +229,7 @@
       "node_id" : "IC_kwDOABII585NalSd",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 4,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -237,7 +237,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 4,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1298814109/reactions"
       },
       "updated_at" : "2022-11-01T16:47:21Z",
@@ -273,7 +273,7 @@
       "node_id" : "IC_kwDOABII585NbrZd",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 4,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -281,7 +281,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 4,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1299101277/reactions"
       },
       "updated_at" : "2022-11-01T20:30:07Z",
@@ -317,7 +317,7 @@
       "node_id" : "IC_kwDOABII585Nb2el",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 4,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -325,7 +325,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 4,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1299146661/reactions"
       },
       "updated_at" : "2022-11-01T20:58:45Z",
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#26403](https://github.com/bitcoin/bitcoin/pull/26403) ([POLICY] Ephemeral anchors by instagibbs)\n* [#25038](https://github.com/bitcoin/bitcoin/pull/25038) (policy: nVersion=3 and Package RBF by glozow)\n* [#21422](https://github.com/bitcoin/bitcoin/pull/21422) (Add feerate histogram to getmempoolinfo by kiminuo)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2022-11-01T22:50:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1299324521",
@@ -405,7 +405,7 @@
       "node_id" : "IC_kwDOABII585NdSLC",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -413,7 +413,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1299522242/reactions"
       },
       "updated_at" : "2022-11-02T03:47:25Z",
@@ -449,7 +449,7 @@
       "node_id" : "IC_kwDOABII585Neu91",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 21,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -457,7 +457,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 21,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1299902325/reactions"
       },
       "updated_at" : "2022-11-02T09:07:16Z",
@@ -493,7 +493,7 @@
       "node_id" : "IC_kwDOABII585NghhM",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -501,7 +501,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1300371532/reactions"
       },
       "updated_at" : "2022-11-02T13:06:51Z",
@@ -537,7 +537,7 @@
       "node_id" : "IC_kwDOABII585NhAcw",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 4,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -545,7 +545,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 4,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1300498224/reactions"
       },
       "updated_at" : "2022-11-02T14:15:11Z",
@@ -572,7 +572,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I have a question that is making me reconsider my concept ACK for this PR: Do people who support keeping the `-mempoolfullrbf` option believe keeping it will have a practical effect on network transaction propagation, and that removing it would be a real change? Or would removing the option basically be symbolic, and not likely to have a significant and observable effect on the behavior of network?\r\n\r\nI might have gotten the misconception from not reading deeply enough that having this option or not having it would basically make no practical difference for the network, because few people would be interested enough to set the option, and unless a large fraction of nodes did set the option, it wouldn't practically affect what transactions ultimately get propagated and confirmed. But maybe this is not the case, and only a few nodes and miners need to set the option for it to have a real, noticeable effect. If this is the case, I'd rescind my ACK, because I do think miners should have freedom to decide what transactions they want to confirm (whatever their reasoning), or even if they shouldn't have that freedom, trying to remove it by deleting a few lines of mempool code would just be a dumb/heavy-handed/ineffective tactic.\r\n\r\nFollowing this logic, I'd also support having `-disable_v3_transaction_enforcement` option if we believed enough people might enable that option for it to have a practical effect on the network (good or bad). I don't think bitcoin core should support options that are just symbolic ineffective signaling mechanisms without good use cases. I think if policy options like `-mempoolfullrbf` or `-disable_v3_transaction_enforcement` are added that are mostly intended to affect global network behavior rather than local node behavior, they should only be added on a temporary basis, as ways of providing backwards compatibility, or as ways of experimenting and gathering information so default P2P behavior can be more performant and reliable in the future. I think it would be bad thing to let mempool policy options accumulate over time, because it would make network behavior harder to reason about and create corner cases that make it less reliable.\r\n\r\n(I am only thinking here about what policy options it is good for bitcoin core software to support, and don't have an informed opinion about whether full RBF is good policy or not. Suhas's arguments that full RBF behavior is actually complicated and hard to reason about, and that RBF signalling can make usage simpler and mempool optimizations possible make sense to me. But ariard's concerns that RBF signalling could create attack vectors and be unsustainable also ring true. Peter Todd's concerns about zero conf may also be reasonable.)\r\n\r\nI just think regardless of whether full RBF policy is good or bad, that the `-mempoolfullrbf` option should have a shelf-life. It does not seem like a good thing in the long term for individual nodes to consciously choose different views of the transaction universe.",
       "created_at" : "2022-11-02T16:02:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1300767663",
@@ -581,7 +581,7 @@
       "node_id" : "IC_kwDOABII585NiCOv",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -589,7 +589,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1300767663/reactions"
       },
       "updated_at" : "2022-11-02T16:02:14Z",
@@ -625,7 +625,7 @@
       "node_id" : "IC_kwDOABII585NjAtL",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -633,7 +633,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1301023563/reactions"
       },
       "updated_at" : "2022-11-02T18:01:28Z",
@@ -669,7 +669,7 @@
       "node_id" : "IC_kwDOABII585Nlzbt",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -677,7 +677,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1301755629/reactions"
       },
       "updated_at" : "2022-11-03T08:03:26Z",
@@ -713,7 +713,7 @@
       "node_id" : "IC_kwDOABII585NmKiT",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 3,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -721,7 +721,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1301850259/reactions"
       },
       "updated_at" : "2022-11-03T09:42:36Z",
@@ -757,7 +757,7 @@
       "node_id" : "IC_kwDOABII585NnN3p",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -765,7 +765,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1302126057/reactions"
       },
       "updated_at" : "2022-11-03T14:23:52Z",
@@ -836,50 +836,6 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "> I've laid out my reasoning for removing this option on the mailing list (https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-October/021135.html).\r\n\r\n> \"enabling fullrbf\" is really just taking away user choice to\r\nopt a transaction into a non-replacement policy regime.\r\n\r\n> I think we should ask, then, whether it is reasonable on its face that\r\nusers might want to opt-in to a non-replacement policy?  Or in other words,\r\nis it reasonable for a user to mark a transaction as non-replaceable and\r\nhave that indication be enforced by the network? Note that these are two\r\ndifferent questions: you could imagine a world where fullrbf is a dominant\r\npolicy, but users still use the BIP 125 signaling method to indicate, in an\r\nunenforced way, their intention to not replace a transaction.  This might\r\ngive useful information to the network or the recipient for how to interact\r\nwith such a transaction.\r\n\r\nThe ability to \"opt into a non-replacement policy\" sounds interesting in theory but I'm not sure if it's actually that useful.\r\n\r\n* From the POV of the sender: it's not useful for the sender beyond perhaps record-keeping purposes.\r\n* From the POV of other Core nodes: they might enforce non-RBF policy in their mempools and make it harder for a \"violating\" RBF transaction to propagate, but it's not impossible (especially given the role of miners below).\r\n* From the POV of miners: they don't care about non-RBF signaling - if you initiate a non-RBF transaction, then turn around and RBF it by routing around Core mempools or by submitting directly to miners, miners will happily take the RBF transaction to earn extra fees.\r\n* From the POV of the recipient: in theory the recipient should be benefiting the most from such a policy, but given the above, they also can't trust the non-RBF signaling from the sender.\r\n\r\nAt the end of the day, any signaling not backed by PoW holds no weight. And the reality is that any unconfirmed Bitcoin transaction can be RBF-ed, regardless of node policies.",
-      "created_at" : "2022-11-03T15:13:16Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1302262134",
-      "id" : 1302262134,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26438",
-      "node_id" : "IC_kwDOABII585NnvF2",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1302262134/reactions"
-      },
-      "updated_at" : "2022-11-03T15:28:39Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1302262134",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/4769925?v=4",
-         "events_url" : "https://api.github.com/users/hugohn/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/hugohn/followers",
-         "following_url" : "https://api.github.com/users/hugohn/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/hugohn/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/hugohn",
-         "id" : 4769925,
-         "login" : "hugohn",
-         "node_id" : "MDQ6VXNlcjQ3Njk5MjU=",
-         "organizations_url" : "https://api.github.com/users/hugohn/orgs",
-         "received_events_url" : "https://api.github.com/users/hugohn/received_events",
-         "repos_url" : "https://api.github.com/users/hugohn/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/hugohn/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/hugohn/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/hugohn"
-      }
-   },
-   {
       "author_association" : "MEMBER",
       "body" : "ACK 4a4086603e6b548a21c85eb4cad9e4d4e02573fd\r\n\r\n(update 2022-11-07: merging this still has my preference, but I don't consider this PR release blocking)\r\n\r\nv24.0 release notes will have to be edited (when this is backported)\r\n\r\nThe term Full RBF is confusing. As @sdaftuar points out in his mailinglist post, `-mempoolfullrbf` really just means \"BIP 125 without the signal\". Without also getting rid of other BIP 125 constraints, we leave at least some pinning attacks unaddressed. So it's not a huge improvement for Lightning and other multi-party protocols, not an improvement for those who already signal BIP 125 by default. So imo the change is not useful enough to harm even \"a tiny handful of people\".\r\n\r\nIt would be even more confusing to have \"full rbf\" available now and \"maximal rbf\" later. Maybe it turns out we can't come up with a \"maximal RBF\" that is meaningfully more incentive compatible than \"full rbf\", but I think this should be explored a bit more.\r\n\r\nI also agree with @ajtowns that the general issue of divergent mempool policies is worth thinking through more. Since `-mempoolfullrbf` doesn't seem to solve any urgent problem, it seems reasonable to take more time to discuss things. ",
       "created_at" : "2022-11-03T15:35:14Z",
@@ -889,7 +845,7 @@
       "node_id" : "IC_kwDOABII585Nn28l",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -897,7 +853,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1302294309/reactions"
       },
       "updated_at" : "2022-11-07T16:49:20Z",
@@ -924,7 +880,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "> We have had 7 years to gain insights based on usage. Something like 20-30% of all transactions opt-in already, I think? I don't think we're going to learn anything more that we can't already learn from looking at current usage patterns.\r\n\r\n@sdaftuar we have **NO** insights about usage of full rbf. I remember you suggesting full-rbf a few week backs in IRC. I think @petertodd is right and its just egos and politics else technically its very clear this option will help bitcoin.",
       "created_at" : "2022-11-03T17:32:43Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1302449135",
@@ -933,7 +889,7 @@
       "node_id" : "IC_kwDOABII585Nocvv",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -941,30 +897,30 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1302449135/reactions"
       },
       "updated_at" : "2022-11-03T18:09:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1302449135",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
@@ -1009,50 +965,6 @@
          "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/sdaftuar"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "I am surprised you wrote so much about full-rbf. \r\n\r\nAnyway:\r\n\r\n> This is either poor phrasing or you have misunderstood my motivation: I have no intent with this PR to keep zeroconf going, and I am not arguing that zeroconf is a good or safe practice for the network. It appears from Antoineâs recent mailing list post that he may also misunderstand me as somehow trying to protect zeroconf merchants or their business practices, so I will try to clarify my views here because that is not my interest at all.\r\n\r\nNeither zeroconf businesses nor Antoine is going to decide how bitcoin mempool works for replacing txs.\r\n\r\n > Let me start by saying that I think I mostly share your views that zeroconf â ie selling a product in an irrevocable way prior to a transaction having any confirmations â should not be relied upon for anything of material value. It seems to me that engaging in a practice like that is asking for trouble, and as I have thought about this issue in recent weeks it is unfortunate that zeroconf merchants exist, as their existence appears to be a lightning rod that attracts interest to pushing for fullrbf (which I now view as a protocol development mistake, at least at this time).\r\n \r\n zero confirmations are vulnerable w or w//o full rbf\r\n \r\n  > Because I share your view, Iâm surprised that zeroconf services appear to still be in operation, and it further makes me wonder if thereâs anything that we can do at the protocol level that would affect the existence of those operations. Perhaps the services that exist today only engage in these practices in situations where theft could be detected and deterred via off-chain mechanisms (and hence, it may not be âzeroconfâ in the sense I defined it above, if there is recourse in the event the transaction doesnât confirm). If so, then even if such practices are bad for Bitcoin (which I think is hard to say without looking at concrete examples of merchant behavior), they may not go away in a fullrbf world either.\r\n  \r\n  zero-conf businesses and projects are vulnerable irrespective of this PR \r\n  \r\n  <sub>john varvalho can try everything on twitter but his project is vulnerable</sub>\r\n  \r\n  Who will exploit this? IDK\r\n  \r\n  > If non-replacement were something that I believed only existed to support zeroconf merchants, I would have stayed out of this debate. However, I realized that what we are actually doing here is taking our opt-in non-replacement policy regime and deciding to get rid of it. And it occurred to me that this is a policy that is independent of zeroconf practices â which are an outside-of-the-protocol merchant behavior, which we may be able to influence but not definitively eliminate â and moreover that non-replacement is actually a useful idea on its face. In fact itâs such a useful idea that I think Iâd propose it or something like it in the future, if we were in a fullrbf world with the rbf policies we have today â but not for anything that has to do with zeroconf merchant practices, which seem insecure regardless of whether we have a non-replacement policy.\r\n  \r\nYou killed the idea for insights but whats we are looking for initially. Full RBF stats will only be visible when its used and available.\r\n\r\n> Since I perhaps didnât explain this thoroughly in my mailing list post, I will expand on it here. The RBF rules we have today are clumsy, and I have personally had countless discussions over the years with other developers about how to improve on them, primarily due to the pinning issues that exist and the incentive compatibility considerations that come with it. On top of that, transaction chains themselves are hard to reason about in the context of coming up with optimal transaction selection for a miner and preventing mempool DoS in various ways (these are also topics I have substantial experience working on for this project). In thinking about all this, one conclusion Iâve reached is that Bitcoinâs transaction relay protocol and user behavior would likely have been far better from the start if the expectation was that the network wouldnât generally relay transactions with unconfirmed parents â a position that I think is easy to justify if you look at the various anti-DoS rules weâve put in place over the last 10 years which have generally served to limit the transactions which get relayed on the network, in comparison to what early versions of the software supported.\r\n\r\n> From a blank slate/initial policy of never allowing transactions with unconfirmed parents, relaxing that policy in specific situations to support narrow use cases which can be easily reasoned about would have been much better than the free-for-all we have now (where arbitrary transaction chains topologies are permitted, with the only limits being on certain kinds of package size and count).\r\n\r\n> In such a world, there would be a meaningful difference between transactions that can be replaced via feerate considerations, and transactions that the sender does not intend to replace. In the latter case, CPFP is a far more reasonable strategy than in the former, because the recipient who chains a transaction has greater reason to believe that they are doing something helpful rather than harmful by creating the chained transaction which feebumps the parent (and not just pinning the transaction and irritating the sender, or creating a transaction that will disappear when the parent is replaced and need to be reissued, or creating a DoS vector for the network by relaying something that will need to be evicted later â which is the central issue that creates the pinning consideration in the first place).\r\n\r\n> Now I get that we arenât starting from a blank slate; I wanted to take everyone through that thought experiment to try to understand that non-replacement is not intrinsically evil. Note that the CPFP use case I describe is completely benign, provided that the wallet engaging in it can reasonably handle the (likely rare, but certainly possible) situations where the first transaction doesnât confirm for some reason (eg by being able to reissue a payment if needed).\r\n\r\n> Maybe you think improved CPFP policy is not compelling; that is fine and we can debate and perhaps disagree. Or, perhaps the CPFP signal can still be in place on a network where the non-replacement is not enforced; that is hard for me to say without a lot more thought.\r\n\r\nYou have improved in politics over RBF however, none of the the things I read above can change bitcoin core.\r\n\r\n\r\n> If you think about the policy regimes we have now or are currently discussing: (1) we have a way to opt-out of RBF (but still have lots of child transactions), (2) we have a way to opt-in to RBF (and still have lots of child transactions), and after the v3 proposal is deployed we will also have (3) a way to be able to opt-in to RBF and have just 1 child transaction (which itself will be limited). In some ways option (2) is the least well-designed option, in that the transaction graph complexities interact with the replacement rules in ways that result in outcomes that are both suboptimal for wallets and also sometimes incentive incompatible for miners, and it would make more sense to have option (2) restrict the child transaction graph further than it does today (but perhaps not so limited as option (3) will be, which is really tailored to a single use-case). If that were a road we go down, then that would make (1) a more compelling option to have available as a policy on the network to facilitate use cases that involve lots of child transactions, and if we eliminate (1) now I fear that any attempt to bring it back in the future will fail due to concerns about zeroconf merchants â something outside our control as protocol developers.\r\n\r\n\r\nThis is more complex and I do not understand.\r\n\r\n\r\n> And as I said on the mailing list, I also fear that eliminating (1) for the reasons given could also apply to eliminating (3) in the future. If you look at the reasons you gave above for not having (1) as a policy, I think at least two of them easily apply to the v3 transaction proposal â the consequences of users making mistakes and inadvertently using version 3 transactions when they intended to chain multiple children, and the privacy implications of another distinguished transaction type. Now I think we have good answers to those objections â namely that no one should be using v3 transactions unless they mean to â but if your arguments are found to be compelling in this case, I fear that the v3 policy design may be subverted in the future and the efforts weâre putting in now are a waste of time.\r\n\r\nI do not care about v3. This discussion is about full rbf.\r\n",
-      "created_at" : "2022-11-03T18:43:56Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1302527561",
-      "id" : 1302527561,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26438",
-      "node_id" : "IC_kwDOABII585Nov5J",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1302527561/reactions"
-      },
-      "updated_at" : "2022-11-03T18:49:20Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1302527561",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
       }
    },
    {
@@ -1109,7 +1021,7 @@
       "node_id" : "IC_kwDOABII585NpBMj",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1117,7 +1029,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1302598435/reactions"
       },
       "updated_at" : "2022-11-03T19:56:46Z",
@@ -1144,7 +1056,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK 4a4086603e6b548a21c85eb4cad9e4d4e02573fd - code review, basic testing\r\n\r\nWhen #25353 was proposed and merged, the rationale provided was that this would aid in \"the security of multi-party funded transactions against pinning attacks\", and in addition, objections were relatively minimal and non-specific [[ref]](https://github.com/bitcoin/bitcoin/pull/25373#issuecomment-1163422654). But, it turns out that this approach to full RBF [isn't sufficient](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-October/021125.html) to make multi-party funded transactions secure against the types of pinning attacks. Furthermore specific objections have since been raised [[ref]](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-October/021007.html) [[ref]](https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-October/021056.html). If we'd known that this approach didn't work for its intended use case earlier, I don't think #25353 would (or should) have been merged; so until we can fix the code/policy to achieve what it was originally intended to achieve, I think we should revert the change.",
       "created_at" : "2022-11-04T07:23:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1303063389",
@@ -1153,7 +1065,7 @@
       "node_id" : "IC_kwDOABII585Nqytd",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 3,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1161,7 +1073,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303063389/reactions"
       },
       "updated_at" : "2022-11-04T07:23:34Z",
@@ -1197,7 +1109,7 @@
       "node_id" : "IC_kwDOABII585NrLed",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1205,7 +1117,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303164829/reactions"
       },
       "updated_at" : "2022-11-04T09:26:04Z",
@@ -1241,7 +1153,7 @@
       "node_id" : "IC_kwDOABII585NrYXQ",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1249,7 +1161,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303217616/reactions"
       },
       "updated_at" : "2022-11-04T10:17:08Z",
@@ -1285,7 +1197,7 @@
       "node_id" : "IC_kwDOABII585Nrd5q",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1293,7 +1205,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303240298/reactions"
       },
       "updated_at" : "2022-11-04T10:38:28Z",
@@ -1373,7 +1285,7 @@
       "node_id" : "IC_kwDOABII585Nrt3p",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 3,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1381,7 +1293,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303305705/reactions"
       },
       "updated_at" : "2022-11-04T11:42:24Z",
@@ -1465,11 +1377,11 @@
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303334375/reactions"
       },
       "updated_at" : "2022-11-04T11:58:30Z",
@@ -1505,7 +1417,7 @@
       "node_id" : "IC_kwDOABII585NsBbJ",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1513,7 +1425,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303385801/reactions"
       },
       "updated_at" : "2022-11-04T12:17:13Z",
@@ -1593,7 +1505,7 @@
       "node_id" : "IC_kwDOABII585NsF4S",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1601,7 +1513,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303404050/reactions"
       },
       "updated_at" : "2022-11-04T12:21:25Z",
@@ -1681,7 +1593,7 @@
       "node_id" : "IC_kwDOABII585NsG-u",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 7,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1689,7 +1601,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 7,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303408558/reactions"
       },
       "updated_at" : "2022-11-04T12:23:11Z",
@@ -1769,7 +1681,7 @@
       "node_id" : "IC_kwDOABII585Nsk3j",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 2,
+         "+1" : 3,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1777,7 +1689,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 2,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303530979/reactions"
       },
       "updated_at" : "2022-11-04T13:19:36Z",
@@ -1848,7 +1760,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "NACK\r\n\r\nTransactions in the mempool will be replaced for any number of reasons.  Removing this option, and suggesting to users that some transactions won't be replaced by fee creates a false sense of security.\r\n\r\nI see that this effort will further the bifurcation between the \"people's mempool\"* where it's \"hard\" to RBF, and a \"miner's mempool\" where RBF is routine.  Thus reducing the value of \"regular users\" having the mempool at all.\r\n\r\nRemoving this would be strictly a reduction in value for the software I'm running, since it is guaranteed to diverge from what's coming in the next blocks.\r\n\r\n* I understand that there's no \"one mempool\", etc, and some unsophisticated miners may run \"vanilla core\" with the more sophisticated ones running out of band transaction collection mechanisms",
       "created_at" : "2022-11-04T13:59:36Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1303595591",
@@ -1892,7 +1804,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@greenaddress \r\n\r\n> I planned to use this feature both personally as well as on production for example on esplora/blockstream.info and Green wallet\r\n\r\nFor what purpose? I haven't seen an answer to \"Does fullrbf offer any benefits other than breaking zeroconf business practices? If so, what are they?\" yet; does the above imply you have one?",
       "created_at" : "2022-11-04T14:18:15Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1303624108",
@@ -2077,7 +1989,7 @@
       "node_id" : "IC_kwDOABII585NtD4M",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -2085,7 +1997,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303657996/reactions"
       },
       "updated_at" : "2022-11-04T14:36:43Z",
@@ -2165,7 +2077,7 @@
       "node_id" : "IC_kwDOABII585NtHLM",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 2,
+         "+1" : 5,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -2173,7 +2085,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 2,
+         "total_count" : 5,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303671500/reactions"
       },
       "updated_at" : "2022-11-04T14:48:51Z",
@@ -2209,7 +2121,7 @@
       "node_id" : "IC_kwDOABII585NtJOb",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -2217,7 +2129,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303679899/reactions"
       },
       "updated_at" : "2022-11-04T14:52:37Z",
@@ -2429,7 +2341,7 @@
       "node_id" : "IC_kwDOABII585NtUch",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 2,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -2437,7 +2349,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 2,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303725857/reactions"
       },
       "updated_at" : "2022-11-04T15:12:23Z",
@@ -2473,7 +2385,7 @@
       "node_id" : "IC_kwDOABII585Nte0v",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -2481,7 +2393,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303768367/reactions"
       },
       "updated_at" : "2022-11-04T15:31:53Z",
@@ -2517,7 +2429,7 @@
       "node_id" : "IC_kwDOABII585Ntiep",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -2525,7 +2437,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303783337/reactions"
       },
       "updated_at" : "2022-11-04T15:44:08Z",
@@ -2693,7 +2605,7 @@
       "node_id" : "IC_kwDOABII585Nts70",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 3,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -2701,7 +2613,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 3,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303826164/reactions"
       },
       "updated_at" : "2022-11-04T16:16:58Z",
@@ -2737,7 +2649,7 @@
       "node_id" : "IC_kwDOABII585Ntwf5",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -2745,7 +2657,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303840761/reactions"
       },
       "updated_at" : "2022-11-04T16:29:11Z",
@@ -2781,7 +2693,7 @@
       "node_id" : "IC_kwDOABII585Nt1Rt",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 4,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -2789,7 +2701,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 4,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1303860333/reactions"
       },
       "updated_at" : "2022-11-04T16:43:48Z",
@@ -2825,15 +2737,15 @@
       "node_id" : "IC_kwDOABII585Nvoca",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304332058/reactions"
       },
       "updated_at" : "2022-11-04T23:21:47Z",
@@ -2869,7 +2781,7 @@
       "node_id" : "IC_kwDOABII585Nvq_L",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -2877,7 +2789,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304342475/reactions"
       },
       "updated_at" : "2022-11-04T23:45:21Z",
@@ -2913,7 +2825,7 @@
       "node_id" : "IC_kwDOABII585NvwcP",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -2921,7 +2833,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304364815/reactions"
       },
       "updated_at" : "2022-11-05T01:06:19Z",
@@ -2948,7 +2860,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "I have been running patched bitcoinds with a one-line change to enable full-RBF for multiple years.\r\nI operate several electrum servers, one of which is very popular and has hundreds of txs broadcast/day for years (actually 8000 tx/day for the past few months, some large service probably started using it to broadcast their txs). All servers are backed by patched bitcoinds (with the rbf opt-out commented out in validation.cpp).\r\n\r\n> If any reviewers are unconvinced by my rationale, I'd appreciate answers to the questions I laid out at the end of that email:\r\n> - Does fullrbf offer any benefits other than breaking zeroconf business practices? If so, what are they?\r\n\r\nThe reason I started to patch out the opt-out, is essentially what @greenaddress describes:\r\n> Multiple purposes I would say. As a wallet sender I want to be able to replace a transaction made in error as well as bump the fee in a congested situation regardless of if the user had the hindsight to set the rbf flag (especially since nodes and miners can ignore said flag, pretty useless)\r\n\r\nEvery time there is a mempool congestion for a significant amount of time (several weeks or more), users start flooding the forums/reddit/github/irc asking about stuck transactions. They are told they can use CPFP or RBF, or \"transaction accelerators\" in the past, or just to wait it out. If there is no change output, they might not be able to CPFP, and they can only RBF bump the fee if opt-in RBF was signalled. We had lots and lots of these \"support requests\" in the `#electrum` IRC channel, and on github (also on other platforms but these are where I spend my time). End of 2017, and more recently spring of 2021 there were remarkably long periods of mempool congestions.\r\n\r\nWe've had many users who created a tx using some other wallet which did not signal RBF, paying a low fee, freaking out about their tx being \"stuck\", finding guides how to CPFP/RBF in electrum, who then downloaded electrum only to find CPFP needs an is-mine output and RBF requires having opted-in to signalling originally. The only option seemingly left to these users were to wait it out. After experiencing these mempool congestions a few times, I figured I could just patch my node and give users a chance. \r\n\r\nIn particular, during the spring 2021 mempool congestion I was ready. To the self-selecting few who went to the trouble of coming to IRC and asking why the Electrum GUI does not let them \"increase the fee\" of their tx, I would explain how to configure Electrum to create a conflicting tx and to connect to my electrum server and broadcast there.\r\nAt the time that server was using the default `maxconnections=125`, always saturating it. These days I set higher limits and have more incoming connections. I think I helped four users to attempt an RBF, to either increase the fee or double-spend - merchant invoices have timeouts often not designed with a full mempool and the user lowballing the fee in mind. In two of the four cases, the replacement transaction got mined.\r\n\r\nAlso during spring 2021, I opened multiple lightning channels and was trying not to overpay in fees. One of my funding txs, which lacked a change output, got \"stuck\" in the mempool, and it did not signal RBF. I had to double-spend it or risk losing the coins: if too much time passes the remote node deletes the channel and if it gets mined after that, the money can only be recovered using manual cooperation between the channel counterparties. [0] This was around the time https://github.com/lightning/bolts/pull/839 got merged into the BOLTs - not yet implemented on most nodes so I could not even be certain how much time I have. I created a replacement tx to double-spend the funding and broadcast it on the patched electrum server. It worked: one of the replacement txs got mined (I kept bumping the fee).\r\n\r\nOverall IIRC my score is 3 out of 5 successful replacements of non-signalling txs. The ones that got mined on average took ~100 blocks - they were paying high next block fees and were at the top of the mempool (at least in the mempools they were accepted into!).\r\n\r\nSo that's my use case. Helping unlucky users to get their tx confirmed before an invoice expires, or double-spend after the invoice had already expired, or to fix my own mistakes.\r\n\r\nWhether the `-mempoolfullrbf` config parameter is kept or removed, it has little effect on me, the difference is whether or not I have to keep rebasing my trivial one-liner patch on every release. I already updated one of my nodes to run 24.0rc2 and to use `-mempoolfullrbf`, but I can always just go back to applying a patch.\r\n\r\n-----\r\n\r\n[0]: (EDIT) to clarify, the first commitment transaction can be used to unilaterally close the channel after the funding tx gets mined, however without anchor outputs that still assumes the feerate had been set to high enough to get mined",
       "created_at" : "2022-11-05T01:38:06Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1304370679",
@@ -2957,7 +2869,7 @@
       "node_id" : "IC_kwDOABII585Nvx33",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 2,
+         "+1" : 10,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -2965,7 +2877,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 2,
+         "total_count" : 10,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304370679/reactions"
       },
       "updated_at" : "2022-11-05T03:21:36Z",
@@ -3001,7 +2913,7 @@
       "node_id" : "IC_kwDOABII585NvybT",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -3009,7 +2921,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304372947/reactions"
       },
       "updated_at" : "2022-11-05T01:52:15Z",
@@ -3045,7 +2957,7 @@
       "node_id" : "IC_kwDOABII585NvzUe",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 2,
+         "+1" : 16,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -3053,7 +2965,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 2,
+         "total_count" : 16,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304376606/reactions"
       },
       "updated_at" : "2022-11-05T02:10:00Z",
@@ -3133,7 +3045,7 @@
       "node_id" : "IC_kwDOABII585Nvz1B",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -3141,7 +3053,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304378689/reactions"
       },
       "updated_at" : "2022-11-05T22:53:15Z",
@@ -3168,7 +3080,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@greenaddress \r\n\r\n> > For what purpose?\r\n> \r\n> Multiple purposes I would say. As a wallet sender I want to be able to replace a transaction made in error as well as bump the fee in a congested situation\r\n\r\nThose things are much more reliable if you set the rbf flag.\r\n\r\n> regardless of if the user had the hindsight to set the rbf flag (especially since nodes and miners can ignore said flag, pretty useless)\r\n\r\nAnd that is not reliable unless many nodes and miners support fullrbf, which is not something that a default false option achieves. It's also not relevant currently, as the mempool clears regularly.\r\n\r\nThis goal can also alternatively be achieved by lowering the mempool expiry time: just as a connected subgraph of fullrbf peers would allow you to broadcast a replacement tx; a connected subgraph of peers with a low expiry time, would also allow you to broadcast a replacement, and would allow you to do so without the other BIP 125 restrictions, such as having to increase the absolute fee, or not being able to conflict more than 100 descendants or not being able to introduce new unconfirmed parents.\r\n\r\n> As a receiver in a wallet I don't want the false sense of security, unconfirmed transactions can't be relied upon until they have a number of confirmations\r\n\r\nIt's always been your choice whether you give yourself a false sense of security in that case.\r\n\r\n> and if there is a transaction replacement with more incentives for miners to mine I want to be able to see it.\r\n\r\nAnd without or without full rbf it's quite easy to provide different nodes with different views of the mempool: simply announce conflicting txs at the same fee rate to different peers. That can be done in advance and used as an input to a transaction that you want to have finer propagation control over. It's also something that appears to be routinely occurring on the network currently.",
       "created_at" : "2022-11-05T03:33:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1304391440",
@@ -3177,7 +3089,7 @@
       "node_id" : "IC_kwDOABII585Nv28Q",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -3185,7 +3097,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304391440/reactions"
       },
       "updated_at" : "2022-11-05T03:33:07Z",
@@ -3221,7 +3133,7 @@
       "node_id" : "IC_kwDOABII585Nv_vL",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -3229,7 +3141,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304427467/reactions"
       },
       "updated_at" : "2022-11-05T07:05:07Z",
@@ -3309,7 +3221,7 @@
       "node_id" : "IC_kwDOABII585NwQkH",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 3,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -3317,7 +3229,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304496391/reactions"
       },
       "updated_at" : "2022-11-05T10:52:58Z",
@@ -3432,7 +3344,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "My NACK on this comes mainly from a privacy perspective, whereby I do not like having to flag transactions as \"special\" in any way wherever possible, as its a key tool in wallet/transaction fingerprinting.\r\n\r\nHowever I also strongly believe that nobody should be (or should have been) treating entry to the mempool as a confirmation of a transaction. We have other tools available for these use cases now.\r\n\r\nAdmittedly I don't run a business which accepts unconfirmed transactions, but I certainly don't accept them as valid for payments received to myself. ",
       "created_at" : "2022-11-05T11:15:42Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1304500358",
@@ -3441,7 +3353,7 @@
       "node_id" : "IC_kwDOABII585NwRiG",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 2,
+         "+1" : 8,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -3449,7 +3361,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 2,
+         "total_count" : 8,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304500358/reactions"
       },
       "updated_at" : "2022-11-05T11:15:42Z",
@@ -3705,15 +3617,15 @@
       "node_id" : "IC_kwDOABII585Nwg60",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
+         "+1" : 1,
+         "-1" : 1,
          "confused" : 0,
          "eyes" : 0,
          "heart" : 0,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304563380/reactions"
       },
       "updated_at" : "2022-11-05T15:04:33Z",
@@ -3837,7 +3749,7 @@
       "node_id" : "IC_kwDOABII585NwiIT",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 3,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -3845,7 +3757,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304568339/reactions"
       },
       "updated_at" : "2022-11-05T15:31:13Z",
@@ -4004,7 +3916,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : " > Leave it to the maintainers now please, I'll support whatever they do for this release.\r\n \r\n This is not Bitcoin",
       "created_at" : "2022-11-05T16:31:16Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1304582005",
@@ -4013,7 +3925,7 @@
       "node_id" : "IC_kwDOABII585Nwld1",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -4021,34 +3933,34 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304582005/reactions"
       },
       "updated_at" : "2022-11-05T16:31:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304582005",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "Posting this on behalf of Tony:\r\n\r\n\"NACK.\r\n\r\nI appreciate all the considerations laid out in the mailing list post but I don't see it as a reason to revert the move toward progress that has already been in motion with the RC.\r\n\r\n    However, it seems to me that similar problems exist for such a protocol\r\n    even in a fullrbf world...\r\n\r\nJust because other problems and DoS vectors exist with Lightning and transaction pining, doesn't mean that we can't try to remove them one step at a time. I think you make a great argument about why it helps but doesn't stop it. Are you proposing that we delay until we fix those problems, which you later make the argument that we'll never really fix because user policies can always disable things like transaction v3? It gets to the point where you're arguing that policies don't really matter in the end and that any effort toward progress is pointless. To be fair, I don't know if transaction v3 is good enough to solve our problems or not and I think your thought experiments around -disable_v3_transaction_enforcement is interesting and should be a consideration as devs make progress towards it but I feel like it's a different issue that full RBF shouldn't be pinned to as a reason for not going forward with it.\r\n\r\n    Does fullrbf offer any benefits other than breaking zeroconf business\r\n    practices?  If so, what are they?\r\n\r\nYou can't break what is already broken. These were terrible assumptions to begin with. If you want instant transactions with delayed settlement, there's a thing called Lightning.\r\n\r\nTo start with, let's chat about why this doesn't change anything for them. If their arguments for why it's necessary revolve around the fact that they can do proper risk assessment and manage it appropriately, that doesn't change. Let them continue to do their risk assessment. There's still going to be a % of users that may decide to double spend given X amount of sats.\r\n\r\nSecondly, I find the original motivation for this change coming from Muun to be overstated and a use case that should not be advocated for. There's a difference between a merchant delivering a product on 0 conf and Muun providing 0 conf submarine swaps with the illusion that they are atomic. They are not and they are lying to their users, there's nothing atomic about them when it's 0 conf. Furthermore, there are many ways that their model is both unsustainable and insecure. There are plenty of ways to steal money from them regardless of 0 conf. I bring it up as an example of why users and use cases may be wrong in general, so why not rip the bandaid off now? You agree it should happen eventually, why not happen when it's at the top of everyone's minds and also to prevent other businesses in the future from falling trap to the illusions given by non-RBF and non-RBF companies?\"\r\n\r\nhttps://stacker.news/items/89456",
       "created_at" : "2022-11-05T16:40:45Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1304583507",
@@ -4057,7 +3969,7 @@
       "node_id" : "IC_kwDOABII585Nwl1T",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 3,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -4065,30 +3977,30 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304583507/reactions"
       },
       "updated_at" : "2022-11-05T16:49:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304583507",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
@@ -4101,7 +4013,7 @@
       "node_id" : "IC_kwDOABII585Nwv14",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -4109,7 +4021,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304624504/reactions"
       },
       "updated_at" : "2022-11-05T19:58:16Z",
@@ -4145,7 +4057,7 @@
       "node_id" : "IC_kwDOABII585Nw1QR",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 4,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -4153,7 +4065,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 4,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304646673/reactions"
       },
       "updated_at" : "2022-11-05T21:39:28Z",
@@ -4181,50 +4093,6 @@
    },
    {
       "author_association" : "NONE",
-      "body" : "> Zeroconf is antithetical to the trustless, economic incentive driven, design of Bitcoin\r\n \r\n\r\n> > Does fullrbf offer any benefits other than breaking zeroconf business practices? If so, what are they?\r\n> \r\n> Exposing reality for what it is, at least. Unconfirmed transactions are no safer than RBF-enabled transactions, and the false idea that they are is apparently leading to businesses to harm not only themselves, but also users. For example, it was related to me that users paying for a product with a RBF-signalling transaction, are defrauded of their product, and have to jump through hoops to even get their bitcoins returned to them.\r\n> \r\n> (I'm assuming others have already offered more obvious use cases)\r\n\r\nexposing reality and breaking zeroconf? anything else? hope there is more. or this is just politics.   \r\n",
-      "created_at" : "2022-11-05T22:49:39Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1304655892",
-      "id" : 1304655892,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26438",
-      "node_id" : "IC_kwDOABII585Nw3gU",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304655892/reactions"
-      },
-      "updated_at" : "2022-11-05T22:49:55Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304655892",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/777326?v=4",
-         "events_url" : "https://api.github.com/users/jaybny/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/jaybny/followers",
-         "following_url" : "https://api.github.com/users/jaybny/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/jaybny/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/jaybny",
-         "id" : 777326,
-         "login" : "jaybny",
-         "node_id" : "MDQ6VXNlcjc3NzMyNg==",
-         "organizations_url" : "https://api.github.com/users/jaybny/orgs",
-         "received_events_url" : "https://api.github.com/users/jaybny/received_events",
-         "repos_url" : "https://api.github.com/users/jaybny/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/jaybny/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/jaybny/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/jaybny"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
       "body" : "> or this is just politics\r\n\r\nThat is the whole point . \r\n\r\nNothing should be easier to include in Bitcoin Core nor remove important things that are being being included and reviewed.\r\n\r\nEverything else is politics",
       "created_at" : "2022-11-05T23:04:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1304659430",
@@ -4247,24 +4115,24 @@
       "updated_at" : "2022-11-05T23:24:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304659430",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
@@ -4312,7 +4180,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : ">if removing this option is symbolic\r\n\r\nnothing in this software is symbolic, almost everything works and has a function \r\n\r\nthis has become political now \r\n\r\n> going farther, those power-users that would set this flag, already have this code merged into bitcoin core and can copy/fork maintain their own special full rbf implementation. pretty straight forward for power users.\r\n\r\nnobody is saving power users and devs as this option is already available in knots\r\n\r\nthere is no flag as well",
       "created_at" : "2022-11-05T23:46:30Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1304667619",
@@ -4335,24 +4203,24 @@
       "updated_at" : "2022-11-05T23:47:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304667619",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
@@ -4409,7 +4277,7 @@
       "node_id" : "IC_kwDOABII585Nw9nI",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 3,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -4417,7 +4285,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304680904/reactions"
       },
       "updated_at" : "2022-11-06T00:49:18Z",
@@ -4488,7 +4356,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "@sdaftuar\r\n> Same question for you, I'm not familiar with what wallets the users you're referring to might be using; is there an issue with having opt-in be the default for these wallets?\r\n\r\nWell, ideally all wallets should be defaulting to RBF having opted in, sure, but they don't. I expect there would always be wallets that not only not default to RBF but don't even expose an option to set it.\r\n\r\nI don't know what weird wallets people are using these days, but I distinctly remember e.g. users of the blockchain.info webwallet complaining about not signalling (and then finding Electrum, restoring from seed and trying to RBF) - but I don't even know if blockchain.info still has a wallet these days. The Electrum wallet has defaulted to creating RBF transactions for many years, and had options to replace txs for even longer, so there are lots of guides that come up in search engines that people find in times of mempool congestion.\r\n\r\nAlso, BitPay in particular, but IIRC maybe other merchants too, have been actively telling users to disable RBF in their wallets (to facilitate zeroconf). Just now I've tried donating to a service that uses BitPay using Electrum and got the following \"warning\" on the website:\r\n![bitpay](https://user-images.githubusercontent.com/29142493/200149363-8e45aad0-f210-4788-be11-d020c4e65193.PNG)\r\n(\"Show me how\" [links to this](https://support.bitpay.com/hc/en-us/articles/360032796211))\r\nIf a user disables RBF, then it stays disabled, unless they remember to re-enable it after -- although I guess Electrum could be more aggressive and make the setting per-transaction. I guess same might apply to other wallets (?).\r\n\r\n> is there a reason that transactions your software generates (or that you generate as a user) don't always opt-in to RBF? If there's an issue with why that can't be a default to avoid these kinds of problems, I'd be interested to hear it.\r\n\r\nI guess only somewhat related but still might be interesting to some: Electrum never opts-in to RBF for lightning funding txs (see https://github.com/spesmilo/electrum/issues/7072). This is specifically to make it very difficult for users to destructively RBF the funding tx. Double-spend-to-self would be fine but \"increase fee\" would burn the coins: the 2of2 multisig output would stay but the txid would change, so the funding outpoint (so the channel id) would change, leaving the other node not finding the channel and deleting it. The wallet opening the channel ofc knows it is a funding tx and use that knowledge, but if a user restored from seed and bumped the fee on a different wallet, well that would be problematic (note that channel v2 has the same issue). So we don't opt-in to RBF for funding txs, and the GUI only offers bumping the fee if RBF is signalled.\r\n(and as I explained in my previous comment, I personally was sort of burned by this once, when I was trying to RBF-cancel a funding tx)\r\n\r\n",
       "created_at" : "2022-11-06T01:34:20Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1304692143",
@@ -4621,7 +4489,7 @@
    },
    {
       "author_association" : "NONE",
-      "body" : "Our wallet app has RBF off by default because we believe mobile users are more likely to be spending than fee-minimizing or unsticking txns. \n\nWe even have a plan for turning on RBF by default if we can succeed with extending BIP21 in a way that merchants can include their required feerate, rbfoff, and invoice timeout in the URI. This would allow our app to turn off RBF only when merchants specify to... but none of this will work if mempools force optin rbf.\n\nThis really is something totally manageable at the app layer with a first-seen mempool policy! Bitcoin is just better and can do more if we leave the current mempool culture intact. If you want to join our effort to update BIP21, everyone is welcome.\n\nLightning also benefits from 0conf and first-seen as it allows wallets/LSPs to offer 0conf spending in new channels, and seamless UX once splicing is in place.\n\nWe should not promote features that impose new txn qualities onto users that did not opt in to those qualities. Some people here even admit wanting to kill first-seen because it makes people \"face reality\" and prevents them from accepting 0conf. Hurting a useful mutual use case is an insane goal.\n\nIf all txns were always easy to doublespend, and merchants are delusional, then RBF would not exist in the first place! \n\nMerchant adoption is an important part of Bitcoin economy and growth, removing 0conf viability incentivizes more forms of KYC and more reliance on payment processors, increasing costs, censorship, centralization, and reducing privacy. \n\nIf your rbf experience is not ideal, choose a better wallet, lobby your wallet to change, or improve your wallet UX like we do. Do not impose it on the whole network (as only ~15% of fullrbf pools would effect into 100% rbf behavior) by modifying Core tools.",
+      "body" : "Our wallet app has RBF off by default because we believe mobile users are more likely to be spending than fee-minimizing or unsticking txns. \r\n\r\nWe even have a plan for turning on RBF by default if we can succeed with [extending BIP21](https://github.com/BitcoinAndLightningLayerSpecs/balls/issues) in a way that merchants can include their required feerate, rbfoff, and invoice timeout in the URI. This would allow our app to turn off RBF only when merchants specify to... but none of this will work if mempools force optin rbf.\r\n\r\nThis really is something totally manageable at the app layer with a first-seen mempool policy! Bitcoin is just better and can do more if we leave the current mempool culture intact. If you want to join our effort to update BIP21, everyone is welcome.\r\n\r\nLightning also benefits from 0conf and first-seen as it allows wallets/LSPs to offer 0conf spending in new channels, and seamless UX once splicing is in place.\r\n\r\nWe should not promote features that impose new txn qualities onto users that did not opt in to those qualities. Some people here even admit wanting to kill first-seen because it makes people \"face reality\" and prevents them from accepting 0conf. Hurting a useful mutual use case is an insane goal.\r\n\r\nIf all txns were always easy to doublespend, and merchants are delusional, then RBF would not exist in the first place! \r\n\r\nMerchant adoption is an important part of Bitcoin economy and growth, removing 0conf viability incentivizes more forms of KYC and more reliance on payment processors, increasing costs, censorship, centralization, and reducing privacy. \r\n\r\nIf your rbf experience is not ideal, choose a better wallet, lobby your wallet to change, or improve your wallet UX like we do. Do not impose it on the whole network (as only ~15% of fullrbf pools would effect into 100% rbf behavior) by modifying Core tools.",
       "created_at" : "2022-11-06T09:02:44Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1304742242",
       "id" : 1304742242,
@@ -4640,7 +4508,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304742242/reactions"
       },
-      "updated_at" : "2022-11-06T09:02:44Z",
+      "updated_at" : "2022-11-06T09:25:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304742242",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/18273620?v=4",
@@ -4673,7 +4541,7 @@
       "node_id" : "IC_kwDOABII585NxUMk",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -4681,7 +4549,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304773412/reactions"
       },
       "updated_at" : "2022-11-06T10:57:59Z",
@@ -4893,7 +4761,7 @@
       "node_id" : "IC_kwDOABII585Nxe7v",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -4901,7 +4769,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304817391/reactions"
       },
       "updated_at" : "2022-11-07T08:26:26Z",
@@ -4937,7 +4805,7 @@
       "node_id" : "IC_kwDOABII585NxhNC",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -4945,7 +4813,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304826690/reactions"
       },
       "updated_at" : "2022-11-06T15:29:48Z",
@@ -5025,7 +4893,7 @@
       "node_id" : "IC_kwDOABII585NxnNz",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 2,
+         "+1" : 5,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -5033,7 +4901,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 2,
+         "total_count" : 5,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304851315/reactions"
       },
       "updated_at" : "2022-11-06T17:26:12Z",
@@ -5113,15 +4981,15 @@
       "node_id" : "IC_kwDOABII585Nxqrl",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 5,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 3,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 8,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304865509/reactions"
       },
       "updated_at" : "2022-11-06T18:46:19Z",
@@ -5157,7 +5025,7 @@
       "node_id" : "IC_kwDOABII585Nxv2s",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 3,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -5165,7 +5033,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304886700/reactions"
       },
       "updated_at" : "2022-11-06T20:27:23Z",
@@ -5289,15 +5157,15 @@
       "node_id" : "IC_kwDOABII585Nxx-1",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 3,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 4,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304895413/reactions"
       },
       "updated_at" : "2022-11-06T21:14:52Z",
@@ -5333,7 +5201,7 @@
       "node_id" : "IC_kwDOABII585NxyCY",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -5341,7 +5209,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304895640/reactions"
       },
       "updated_at" : "2022-11-06T21:15:42Z",
@@ -5421,7 +5289,7 @@
       "node_id" : "IC_kwDOABII585NxyL_",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -5429,7 +5297,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304896255/reactions"
       },
       "updated_at" : "2022-11-06T21:20:08Z",
@@ -5509,7 +5377,7 @@
       "node_id" : "IC_kwDOABII585Nxydc",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -5517,7 +5385,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304897372/reactions"
       },
       "updated_at" : "2022-11-06T21:24:52Z",
@@ -5544,7 +5412,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "@sdaftuar\r\n> One question -- what does BitPay do if you send the transaction with rbf enabled anyway? Do they just wait for it to confirm and then everything works, or does something more terrible happen?\r\n\r\nThey also show you on the web interface what minimum feerate you should use. If you send a tx that does not signal bip125 *and* pays at least the given feerate, they accept it as zeroconf. Otherwise they wait for one confirmation.\r\n",
       "created_at" : "2022-11-06T21:57:56Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1304904115",
@@ -5632,7 +5500,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > This goal can also alternatively be achieved by lowering the mempool expiry time: just as a connected subgraph of fullrbf peers would allow you to broadcast a replacement tx; a connected subgraph of peers with a low expiry time, would also allow you to broadcast a replacement, and would allow you to do so without the other BIP 125 restrictions, such as having to increase the absolute fee, or not being able to conflict more than 100 descendants or not being able to introduce new unconfirmed parents.\r\n\r\n> Why are we discussing a convoluted alternative with clearly worse outcomes than just running full-rbf? That's not a like-for-like alternative to what these users want to do.\r\n\r\nIn a technical discussion, you discuss possible alternatives so that you better understand both the goal that people are trying to achieve, and the different tradeoffs different approaches offer.\r\n\r\nAn obvious tradeoff between bip125-rbf whether signalled or not and shorter expiry, is that shorter expiry allows a much broader range of replacement options (ie, anything that would violate rules 2-5 despite being more attractive to miners) at a cost of replacement still not being available for some days. When opt-in RBF was first supported, the mempool expiry time was 3 days; it was changed two releases later to 2 weeks.\r\n\r\n> Is it because you are concerned that providing the option at all would harm zeroconf? Let's be clear here.\r\n\r\nI don't think questioning contributors' motives is a constructive use of github, and nor is [brigading](https://twitter.com/peterktodd/status/1588466116749578240) of this PR with content free NACKs or ACKs. The thing we should be being clear about here is the technical consequences of proposed changes, and those approaches aren't conducive to improved technical understanding. If you don't want to have a technical conversation, there are plenty of other more suitable places. Of course, that's just my view; if the folks merging PRs do somehow consider this useful information, that's a different matter.",
       "created_at" : "2022-11-07T01:36:30Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1304974497",
@@ -5641,7 +5509,7 @@
       "node_id" : "IC_kwDOABII585NyFSh",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -5649,7 +5517,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304974497/reactions"
       },
       "updated_at" : "2022-11-07T01:36:30Z",
@@ -5773,7 +5641,7 @@
       "node_id" : "IC_kwDOABII585NyWAG",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -5781,7 +5649,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1305042950/reactions"
       },
       "updated_at" : "2022-11-07T03:50:44Z",
@@ -5817,7 +5685,7 @@
       "node_id" : "IC_kwDOABII585Nye1E",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 5,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -5825,7 +5693,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 5,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1305079108/reactions"
       },
       "updated_at" : "2022-11-07T04:56:21Z",
@@ -5852,50 +5720,6 @@
       }
    },
    {
-      "author_association" : "NONE",
-      "body" : "NACK. ",
-      "created_at" : "2022-11-07T05:39:42Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1305110484",
-      "id" : 1305110484,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26438",
-      "node_id" : "IC_kwDOABII585NymfU",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1305110484/reactions"
-      },
-      "updated_at" : "2022-11-07T05:39:42Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1305110484",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/351403?v=4",
-         "events_url" : "https://api.github.com/users/delta1/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/delta1/followers",
-         "following_url" : "https://api.github.com/users/delta1/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/delta1/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/delta1",
-         "id" : 351403,
-         "login" : "delta1",
-         "node_id" : "MDQ6VXNlcjM1MTQwMw==",
-         "organizations_url" : "https://api.github.com/users/delta1/orgs",
-         "received_events_url" : "https://api.github.com/users/delta1/received_events",
-         "repos_url" : "https://api.github.com/users/delta1/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/delta1/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/delta1/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/delta1"
-      }
-   },
-   {
       "author_association" : "MEMBER",
       "body" : "Thank you to Bitcoin community members for voicing your opinions, particularly when providing examples of your usage or application and how it would be affected by this change. For example, I found https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1304370679 a helpful data point about full RBF in the wild.\r\n\r\nAs a reminder or if you have not read Bitcoin Core's [contributing guidelines](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#peer-review) before commenting, regardless of who the reviewer is, an ACK/NACK with no explanation can be disregarded. Decisions are not based on 1-account-1-vote, which is trivially sybil-able. This is a place for technical discussion about the proposed code changes, and it is difficult to do so if the discussion page is flooded with unrelated comments.",
       "created_at" : "2022-11-07T08:19:06Z",
@@ -5905,7 +5729,7 @@
       "node_id" : "IC_kwDOABII585NzFzT",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 6,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -5913,7 +5737,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 6,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1305238739/reactions"
       },
       "updated_at" : "2022-11-07T08:19:06Z",
@@ -5949,7 +5773,7 @@
       "node_id" : "IC_kwDOABII585Nzy-l",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -5957,7 +5781,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1305423781/reactions"
       },
       "updated_at" : "2022-11-07T10:49:03Z",
@@ -5993,7 +5817,7 @@
       "node_id" : "IC_kwDOABII585Nz9qc",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -6001,7 +5825,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1305467548/reactions"
       },
       "updated_at" : "2022-11-07T11:26:06Z",
@@ -6037,7 +5861,7 @@
       "node_id" : "IC_kwDOABII585N0LPj",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -6045,7 +5869,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1305523171/reactions"
       },
       "updated_at" : "2022-11-07T12:17:18Z",
@@ -6087,9 +5911,9 @@
          "eyes" : 0,
          "heart" : 0,
          "hooray" : 0,
-         "laugh" : 0,
+         "laugh" : 1,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1305892251/reactions"
       },
       "updated_at" : "2022-11-07T16:53:13Z",
@@ -6125,7 +5949,7 @@
       "node_id" : "IC_kwDOABII585N1lcS",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 4,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -6133,7 +5957,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 4,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1305892626/reactions"
       },
       "updated_at" : "2022-11-07T16:47:30Z",
@@ -6169,7 +5993,7 @@
       "node_id" : "IC_kwDOABII585N1yo-",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 3,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -6177,7 +6001,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1305946686/reactions"
       },
       "updated_at" : "2022-11-07T17:25:42Z",
@@ -6468,7 +6292,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "![image](https://user-images.githubusercontent.com/94559964/200622295-1e087927-a128-4397-8ede-f737012b5c67.png)\r\n\r\nI am not sure at this point which users or use cases are important:\r\n\r\n1. 0 conf - insecure always\r\n\r\n2. More than 30 different developers and users NACKing this\r\n\r\n---\r\n\r\nFull RBF can never be stopped, 0 conf is non sense and we can improve full rbf later or make it default. If maintainers are unable to take the basic decision after 30+ NACKs with valid reasons, then maybe I am missing something.\r\n\r\nPath of least resistance after all the drama :\r\n\r\nClose this PR and release v24.0 for users that want full rbf (the users who run this software)",
       "created_at" : "2022-11-08T16:40:23Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1307507073",
@@ -6491,24 +6315,24 @@
       "updated_at" : "2022-11-08T17:01:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1307507073",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
@@ -6600,7 +6424,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "> > Full RBF can never be stopped, 0 conf is non sense and we can improve full rbf later or make it default. If maintainers are unable to take the basic decision after 30+ NACKs with valid reasons, then maybe I am missing something.\r\n> \r\n> This is not a voting system, such is sybilable anyway, and none of the affected users are actually in this forum or understanding the nuances.\r\n> \r\n> Core cannot and should not attempt to change Bitcoin or pretend they know what users want, not what they \"should\" want.\r\n> \r\n> The last thing we need is me or Bitrefill lobbying for 0conf users to come here and \"vote\" against devs.\r\n> \r\n> I prefer the basic argument of: please stop meddling with Bitcoin, we have no way to get proper user input.\r\n\r\nI have been contributing to bitcoin core for sometime, founder of joinstr (coinjoin implementation) that is affected by opt-in rbf, write a blog for privacy (rbf using by setting nSequence < maxint-1 on at least one input affects privacy) , work as dev for an exchange (non-kyc, we don't need opt-in rbf) and proud regular bitcoin core contributor.",
       "created_at" : "2022-11-08T17:11:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1307553587",
@@ -6623,24 +6447,24 @@
       "updated_at" : "2022-11-08T17:11:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1307553587",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
@@ -6653,7 +6477,7 @@
       "node_id" : "IC_kwDOABII585N79-V",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -6661,7 +6485,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1307565973/reactions"
       },
       "updated_at" : "2022-11-08T17:21:11Z",
@@ -6688,7 +6512,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> When someone proposes what appears to be clearly worse solution, without any technical reasons as to why, it helps the conversation along if we discuss what are the actual reasons for proposing that solution. Now, if you want to protect zeroconf, go ahead and say it.\r\n\r\nGiven I was the proposer of #26323, I think it's pretty absurd to cast me as a protector of zeroconf.\r\n\r\nMy goals are:\r\n * I think bitcoin core should be making changes that enable new, useful use cases. Disappointingly, full rbf as currently specced doesn't do that: the pinning attacks that this was aiming to solve remain possible, and ordinary replacement is already solved by opt-in rbf.\r\n * If a PR was merged without sufficient review -- that is, it turns out later that it doesn't do what it was described to do in the PR, and that wasn't caught in review -- then I think it should either be fixed (so that it does solve the problem it was designed to) or, if that's not possible, reverted. There shouldn't be a benefit to sneaking a PR in without proper review.\r\n * I think bitcoin core shouldn't be making changes that come as a surprise to users and risk causing them significant financial harm, absent some emergency, even if the way they're using bitcoin is stupid. There's no emergency here, so I think if we were to go ahead with this change, we should hold off for 6 months (or some other non-trivial timeframe).\r\n * I think bitcoin core should be aiming towards consistent mempool policies: if we think fullrbf is a good thing, it should be the default in the software we release; if we don't think it's a good thing, we shouldn't support it at all. There's other node software out there with a different philosophy, and that's fine -- people can use that if they want. I expect that to generally provide a worse experience, if the difference is noticeable at all.\r\n * If bitcoin core doesn't want to aim towards consistent mempool policies, and does want to have knobs so people can tune choose their own relay policy, then I think we should be forthright about that, as it's significantly different to past practice.\r\n\r\nAll of these things seem fairly straightforwardly desirable to me, even if you take \"zeroconf delenda est\" as your guiding principle.\r\n\r\nOf course, one reason to be against any or all of them is if you care more about some competitor to bitcoin: bitcoin handling new use cases is just more competition for you; review missing design problems and bugs is already a PR win and if devs don't even do anything about them that's even better; making surprising changes that stops businesses from using bitcoin is both new potential customers for you, and an opportunity to discourage unrelated people from considering bitcoin; inconsistent mempool policies is a great way to make tx relay even more unreliable; and not being forthright about policy changes is just an opportunity to stir up more drama later.\r\n\r\n> But if you don't, you have not brought to the table any reason why we should put up arbitrary roadblocks [...]\r\n\r\nI've written at length about all of the above both on the list and in various PRs on this topic.",
       "created_at" : "2022-11-08T17:48:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1307605897",
@@ -6776,7 +6600,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "> GitHub is not sybilable. The NACKs are associated with long-standing, real-world, identities. I personally know the people behind the following NACKs, all of which have given clear rationals for their NACK here and elsewhere, including but not limited to:\r\n\r\nAnyone trying this is ignoring the feedback and depends on a small number of maintainers who should not be able to decide everything including config of mempool or freedom of bitcoin users.\r\n\r\nThis is not sybil attack or brigading but similar to people going against governments in their country.\r\n\r\nExample: Truckers and Farmers in different countries. Even they were told about rules and regulations.\r\n\r\nThis option exists for users and let them decide.",
       "created_at" : "2022-11-08T17:57:56Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1307616201",
@@ -6799,24 +6623,24 @@
       "updated_at" : "2022-11-08T18:07:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1307616201",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
@@ -6864,7 +6688,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "> If you want this to be a voting system, it becomes sybilable, because we need to get actual users in here, not Core devs, etc.\r\n> \r\n> It is not a vote afaik, and I doubt you really want it to be either.\r\n> \r\n> This conversation is getting noisy, a chore.\r\n> \r\n> The author of the work ACK'd its removal. The topic is controversial. The user space could be violated. Etc etc etc.\r\n> \r\n> This thread probably should be closed, and the feature removed.\r\n> \r\n> Please stop meddling with Bitcoin.\r\n> \r\n> Love,\r\n> \r\n> All the users that are not Core devs.\r\n\r\nYou should secure applications. I won't blame you alone as most of the LN devs live in some fantasy and this is what I got answered for sharing something about turbo channels. I cannot search but there was a dev and it was a spec approved by lot of devs. I was answered \" it works on trust\" so not vulnerable.\r\n\r\nPlease continue that trust and this was done months back.\r\n ",
       "created_at" : "2022-11-08T18:34:53Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1307663504",
@@ -6887,24 +6711,24 @@
       "updated_at" : "2022-11-08T18:34:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1307663504",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
@@ -6917,7 +6741,7 @@
       "node_id" : "IC_kwDOABII585N8Wft",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 2,
+         "+1" : 3,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -6925,7 +6749,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 2,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1307666413/reactions"
       },
       "updated_at" : "2022-11-08T18:37:43Z",
@@ -7040,7 +6864,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "> I think a lot of this general higher level discussion can move elsewhere (e.g. mailing list, IRC). All the information seems to be available to the maintainers at this point. They are ultimately responsible for merging pull requests and signing off on Bitcoin Core releases (that's just the reality). If you feel strongly enough on decision(s) they make there are consensus compatible forks (e.g. Knots) and alternative implementations. By all means hold them accountable and request information on why certain decisions were made after the fact though.\r\n\r\nI think this PR should not have been created here before some users and devs agreeing on other platforms.",
       "created_at" : "2022-11-08T19:06:58Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1307699507",
@@ -7063,24 +6887,24 @@
       "updated_at" : "2022-11-08T19:06:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1307699507",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
@@ -7128,7 +6952,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "There is a line in https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#communication-channels:\r\n\r\nThe developer [mailing list](https://lists.linuxfoundation.org/mailman/listinfo/bitcoin-dev) should be used to discuss complicated or controversial consensus or P2P protocol changes before working on a patch set.\r\n\r\n---\r\n\r\nI think we can change to any controversial changes and until settled on other platforms",
       "created_at" : "2022-11-08T19:12:09Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26438#issuecomment-1307707894",
@@ -7151,24 +6975,24 @@
       "updated_at" : "2022-11-08T19:12:09Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1307707894",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
@@ -7226,14 +7050,14 @@
       "performed_via_github_app" : null,
       "reactions" : {
          "+1" : 9,
-         "-1" : 2,
+         "-1" : 1,
          "confused" : 0,
          "eyes" : 0,
          "heart" : 0,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 11,
+         "total_count" : 10,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1307715677/reactions"
       },
       "updated_at" : "2022-11-08T19:18:26Z",

@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#22552](https://github.com/bitcoin/bitcoin/pull/22552) (build: Improve depends build system robustness by hebasto)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-05-01T13:01:51Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25046#issuecomment-1114230074",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks for picking this up @hebasto. I spend a day looking into this issue https://github.com/bitcoin/bitcoin/issues/24387#issuecomment-1054776195 but got too confused by what I was seeing.\r\n\r\nTaking a quick look at this, first commit passing executable paths to libmultiprocess makes sense. Second commit dropping native_libmultiprocess at first thought does not seem to make sense. Third commit optimizing native builds seems ok, but perhaps not worth added complexity.\r\n\r\nFor the second commit, I wouldn't think you could drop the native_libmultiprocess package. The libmultiprocess & capnp packages are both fat packages producing multiple outputs which are sometimes unnecessary. A less wasteful capnp packaging would be divided in two parts, with one package to build command-line tools [`capnp`, etc](https://packages.debian.org/sid/amd64/capnproto/filelist) which only need to be natively compiled, and separate package to build  libraries [`libcapnp.a`, etc](https://packages.debian.org/sid/amd64/libcapnp-dev/filelist) which need to be cross and native. Similarly a less wasteful libmultiprocess packaging would define one package to build the [`mpgen`](https://github.com/chaincodelabs/libmultiprocess/blob/49dc279926fe852fc75b3da7582f146f0b805642/CMakeLists.txt#L76) codegen tool, which only needs to be built natively, and another package to build the [`libmultiprocess.a`](https://github.com/chaincodelabs/libmultiprocess/blob/49dc279926fe852fc75b3da7582f146f0b805642/CMakeLists.txt#L55) library. When I wrote these packages, I wrote them as fat packages building codegen executables and runtime libraries together, instead smaller packages building them separately, just for simplicity to avoid repeating the similar build definitions. I also didn't try to trim unnecessary outputs because they didn't seem very expensive to build.\r\n\r\nSo I don't understand how the second commit dropping `native_libmultiprocess` could work, given that bitcoin build needs it to provide a native `mpgen` codegen executable. The comment \"I don't understand why it currently has a dependency\" was just trying to say that `libmultiprocess` package should not depend on `native_libmultiprocess` package, not that `native_libmultiprocess` should not exist at all.\r\n\r\n**Questions / Recommendations** for this PR\r\n\r\n- I wonder if first commit is sufficient to fix problems, and maybe second and third commits are unnecessary? I think I would drop them and maybe make them into separate followups if they provide advantages.\r\n\r\n- This is more of a long term question, and maybe an ignorant one since I'm not familiar with the Guix build, but why do even need the depends system anymore? I'd expect the Guix build to define guix packages instead of using depends packages. I don't personally don't use depends since I use Nix and write a `shell.nix` to bring in developer dependencies.  I'd expect other developers to use their own preferred package managers. Do people actually use the depends system, or is there a thought of dropping it and just switching to guix packages for QA and releases and standard packages for developing?",
       "created_at" : "2022-05-01T14:54:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25046#issuecomment-1114257497",
@@ -187,8 +187,8 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/863911042"
          }
       },
-      "author_association" : "CONTRIBUTOR",
-      "body" : "In commit \"build: Fix `libmultiprocess` cross-compiling to Linux hosts\" (c0f5cc14ef9fae2b2de4222ee061729629ebb6b4)\r\n\r\nNote (just for understanding): This overrides the capnp tool paths used by the cross-compiled libmultiprocess build, so it will use native capnp tools, instead the cross compiled ones found by `find_package(CapnProto)` in the libmultiprocess build, which is needed to find the cross-compiled capnp libraries, but also finds the cross-compiled tools.\r\n\r\nThere's some documentation about overriding these variables: https://github.com/capnproto/capnproto/blob/55a368beb987abf9eeb9b3843e9c5423ad37ab29/c%2B%2B/cmake/CapnProtoConfig.cmake.in#L18-L22",
+      "author_association" : "MEMBER",
+      "body" : "In commit \"build: Fix `libmultiprocess` cross-compiling to Linux hosts\" (c0f5cc14ef9fae2b2de4222ee061729629ebb6b4)\r\n\r\nNote (just for understanding): This overrides the capnp tool paths used by the cross-compiled libmultiprocess build, so it will run native capnp tools, instead of trying to run cross compiled ones found by `find_package(CapnProto)`. The `find_package` line in the libmultiprocess build is only intended to find the cross-compiled capnp library paths, but it also finds the cross-compiled tool paths and will use them if they are not overridden.\r\n\r\nThere's some documentation about overriding these two variables: https://github.com/capnproto/capnproto/blob/55a368beb987abf9eeb9b3843e9c5423ad37ab29/c%2B%2B/cmake/CapnProtoConfig.cmake.in#L18-L22",
       "commit_id" : "c0f5cc14ef9fae2b2de4222ee061729629ebb6b4",
       "created_at" : "2022-05-03T15:35:55Z",
       "diff_hunk" : "@@ -4,6 +4,16 @@ $(package)_download_path=$(native_$(package)_download_path)\n $(package)_file_name=$(native_$(package)_file_name)\n $(package)_sha256_hash=$(native_$(package)_sha256_hash)\n $(package)_dependencies=native_$(package) capnp\n+ifneq ($(host),$(build))\n+$(package)_dependencies += native_capnp\n+endif\n+\n+define $(package)_set_vars :=\n+ifneq ($(host),$(build))\n+$(package)_cmake_opts := -DCAPNP_EXECUTABLE=\"$$(native_capnp_prefixbin)/capnp\"\n+$(package)_cmake_opts += -DCAPNPC_CXX_EXECUTABLE=\"$$(native_capnp_prefixbin)/capnpc-c++\"",
@@ -219,7 +219,8 @@
       "side" : "RIGHT",
       "start_line" : 13,
       "start_side" : "RIGHT",
-      "updated_at" : "2022-05-03T15:57:54Z",
+      "subject_type" : "line",
+      "updated_at" : "2022-05-03T16:01:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/863911042",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/7133040?v=4",
@@ -254,7 +255,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/863919020"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"build: Fix `libmultiprocess` cross-compiling to Linux hosts\" (c0f5cc14ef9fae2b2de4222ee061729629ebb6b4)\r\n\r\nIn a different PR, could probably drop `native_$(package)` as a dependency here. The cross compiled libmultiprocess packages doesn't actually depend on native libmultiprocess package for anything. (This is different from the cross compiled capnp which does depend on the native capnp for codegen tools used during cross-compilation).",
       "commit_id" : "c0f5cc14ef9fae2b2de4222ee061729629ebb6b4",
       "created_at" : "2022-05-03T15:43:53Z",
@@ -286,6 +287,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-03T15:57:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/863919020",
       "user" : {
@@ -319,7 +321,7 @@
       "node_id" : "IC_kwDOABII585CluYy",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -327,7 +329,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1117185586/reactions"
       },
       "updated_at" : "2022-05-04T11:07:56Z",
@@ -354,7 +356,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks @fanquake! I didn't realize is that GUIX isn't actually available on macos. I assumed guix was like nix could easily be installed everywhere. I also didn't realize our GUIX build doesn't really define packages. It just calls `make -C depends` from a shell script. So my comment was written with false assumption that there was no need for `depends/packages/boost.mk` and similar package definitions because there were GUIX versions of these packages.\r\n\r\n> If we delete depends tomorrow, and I'm using a Debian machine, and want to cross-compile a deployable Bitcoin Core for macOS (with all optional features + gui). What would be your recommended way of doing so?\r\n\r\nPresumably guix has an option to cross compile packages. In nix it is something like `--arg crossSystem '{ config = \"aarch64-unknown-linux-gnu\"; }'`\r\n\r\n> The depends system exists as a middle ground between requiring Guix to build Bitcoin core, and being completely reliant on system packages, neither of which are ideal / usable for everyone scenarios.\r\n\r\nThe depends system just seems like a bootleg version of nix or guix to me with nonstandard package definitions that are fragile painful to debug[*]. So I don't know why anybody would use depends if there were guix package definitions easily available somewhere. This seems like it is not the case, and guix itself is not very portable, and guix may be generally less useful as a package manager for development than nix (https://nix.dev/).\r\n\r\n[*] My main problem debugging depends packages is It seems to love immediately deleting stuff after building it. So if anything isn't built correctly I have to wait for a slow rebuild and figure out some incantation that will do a partial build keeping the output I want to look at. I was waiting for GUIX to solve this but I guess the scope of our GUIX build is just to provide a build environment, not be a development package manager.",
       "created_at" : "2022-05-04T12:17:57Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25046#issuecomment-1117244579",
@@ -398,7 +400,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Presumably guix has an option to cross compile packages. In nix it is something like `--arg crossSystem '{ config = \"aarch64-unknown-linux-gnu\"; }'`\r\n\r\nYes, that is possible. Although just like NixOS, it would produce libraries and executables that expects a loader and libs under /gnu/store just like /nix/store.\r\n\r\n> This seems like it is not the case, and guix itself is not very portable, and guix may be generally less useful as a package manager for development than nix (https://nix.dev/).\r\n\r\nAgreed! Although to be clear there's nothing about Guix that makes it inherently that makes it less portable, it's just that no one has done the work yet.\r\n\r\nOur usecase for Guix is specifically has a bootstrappable and reproducible release builder. And it works very well for that. NixOS doesn't have a good bootstrapping story so far (although nothing about NixOS makes it inherently unable to be bootstrapped), and we will see how that evolves.\r\n\r\n> [*] My main problem debugging depends packages is It seems to love immediately deleting stuff after building it. So if anything isn't built correctly I have to wait for a slow rebuild and figure out some incantation that will do a partial build keeping the output I want to look at. I was waiting for GUIX to solve this but I guess the scope of our GUIX build is just to provide a build environment, not be a development package manager.\r\n\r\nHave you tried: `make -C depends qt_{configured,built,staged}`?",
       "created_at" : "2022-05-04T14:55:22Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25046#issuecomment-1117425201",
@@ -442,7 +444,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > Presumably guix has an option to cross compile packages. In nix it is something like `--arg crossSystem '{ config = \"aarch64-unknown-linux-gnu\"; }'`\r\n> \r\n> Yes, that is possible. Although just like NixOS, it would produce libraries and executables that expects a loader and libs under /gnu/store just like /nix/store.\r\n\r\nThis is up to the package definitions, no? The autoconf/cmake wrappers nix and guix provide would build everything with /nix/store or /gnu/store prefixes by default, but we wouldn't call these. The guix packages should be able to perform the same build steps as depends packages, calling ./configure manually with all same arguments and outputs. The package outputs would physically be stored in /gnu/store, but that is no different than depends system physically storing outputs in `depends/x86_64-pc-linux-gnu`. The place where outputs are stored is not the place executables and libraries need to run from.\r\n\r\n> > This seems like it is not the case, and guix itself is not very portable, and guix may be generally less useful as a package manager for development than nix (https://nix.dev/).\r\n> \r\n> Agreed! Although to be clear there's nothing about Guix that makes it inherently that makes it less portable, it's just that no one has done the work yet.\r\n\r\nFair enough. Nix definitely has its warts as well. But I was surprised to see guix wasn't trying to compete as as a portable package manager and development tool the same way https://nix.dev/ wants to (not to mention other package managers like vcpkg, conan, spack, etc)\r\n\r\nBut in general it does seem not feasible to get rid of depends packages and replace them with guix packages if guix doesn't run on a major platform like macos.\r\n\r\n> > [*] My main problem debugging depends packages is It seems to love immediately deleting stuff after building it. So if anything isn't built correctly I have to wait for a slow rebuild and figure out some incantation that will do a partial build keeping the output I want to look at. I was waiting for GUIX to solve this but I guess the scope of our GUIX build is just to provide a build environment, not be a development package manager.\r\n> \r\n> Have you tried: `make -C depends qt_{configured,built,staged}`?\r\n\r\nYes, but I forgot to mention my other pain point with the depends system, which is that every time I made a change to `funcs.mk`, it would rebuild the everything from scratch. I'm sure depends system is ok if you work with it regularly, but my experience trying to write simple packages for it in #16367 was very painful between it deleting build outputs and constantly rebuilding boost for no reason, having a long list of phases I don't understand, and just generally being grouchy package manager. I also had problems with the way it downloaded tarballs. Like it would download a tarball, and the hash wouldn't match, and then it would delete the result, or it would fail to recover after you updated the hash or something like that. I can't remember the details. Plus `config.site` stuff passing dependencies between packages is fragile and sucks. I don't know. I do know I was perfectly happy developing with ubuntu packages before, and I am perfectly happy developing with nix packages now. But every time a depends issue like this one comes up, I dread having to debug it and wish I were dealing with a normal packaging system.",
       "created_at" : "2022-05-04T16:00:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25046#issuecomment-1117528724",
@@ -454,12 +456,12 @@
          "+1" : 0,
          "-1" : 0,
          "confused" : 0,
-         "eyes" : 0,
+         "eyes" : 1,
          "heart" : 0,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1117528724/reactions"
       },
       "updated_at" : "2022-05-04T16:00:33Z",
@@ -486,7 +488,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "While I am listing my grievances against the depends system, another thing I remain confused by is the overall way it handles cross compilation and distinguishes cross options tools and options from native tools and options, and why it makes you define different native and cross-compiled versions of the same package, when other package managers let you build any package with any set of tools.",
       "created_at" : "2022-05-04T16:19:06Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25046#issuecomment-1117549039",
@@ -530,7 +532,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I guess on the plus side, if we want to minimize dependencies, maybe having the depends system make it painful to add dependencies is a good thing!",
       "created_at" : "2022-05-04T16:22:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25046#issuecomment-1117552591",

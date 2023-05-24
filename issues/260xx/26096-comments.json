@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I've tried to reproduce the issue with a python test but it runs fine.\r\nIs this setup close to your situation?\r\n\r\n```diff\r\ndiff --git a/test/functional/wallet_listtransactions.py b/test/functional/wallet_listtransactions.py\r\nindex 7c16b6328..266a8c486 100755\r\n--- a/test/functional/wallet_listtransactions.py\r\n+++ b/test/functional/wallet_listtransactions.py\r\n@@ -31,6 +31,8 @@ class ListTransactionsTest(BitcoinTestFramework):\r\n         self.skip_if_no_wallet()\r\n \r\n     def run_test(self):\r\n+        self.run_watch_only_externally_imported_descriptors_test()\r\n+\r\n         self.log.info(\"Test simple send from node0 to node1\")\r\n         txid = self.nodes[0].sendtoaddress(self.nodes[1].getnewaddress(), 0.1)\r\n         self.sync_all()\r\n@@ -277,6 +279,46 @@ class ListTransactionsTest(BitcoinTestFramework):\r\n         assert_equal(['pizza2'], self.nodes[0].getaddressinfo(addr2)['labels'])\r\n         assert_equal(['pizza3'], self.nodes[0].getaddressinfo(addr3)['labels'])\r\n \r\n+    def run_watch_only_externally_imported_descriptors_test(self):\r\n+        # create watch-only wallet\r\n+        w1 = self.nodes[1].get_wallet_rpc(self.default_wallet_name)\r\n+        self.log.info(\"Import descriptors on node 2\")\r\n+        self.nodes[2].createwallet(wallet_name='watchonly', disable_private_keys=True, descriptors=True)\r\n+        watchonly_wallet = self.nodes[2].get_wallet_rpc('watchonly')\r\n+        addr = self.nodes[1].getnewaddress()\r\n+        desc = [{\r\n+            \"desc\": w1.getaddressinfo(addr)['desc'],\r\n+            \"timestamp\": \"now\",\r\n+            \"active\": False,\r\n+            \"internal\": False,\r\n+            \"watchonly\": True,\r\n+        }]\r\n+        ret = watchonly_wallet.importdescriptors(desc)\r\n+        assert ret[0]['success']\r\n+\r\n+        txid = self.nodes[1].sendtoaddress(addr, \"0.001\")\r\n+        self.generate(self.nodes[0], 1)\r\n+\r\n+        self.log.info(\"Verify both wallets see the same transaction\")\r\n+        transactions1 = self.nodes[1].listtransactions()\r\n+        transactions2 = watchonly_wallet.listtransactions()\r\n+\r\n+        found = False\r\n+        for tx in transactions1:\r\n+            if tx['txid'] == txid:\r\n+                found = True\r\n+\r\n+        assert found\r\n+\r\n+        found = False\r\n+        for tx in transactions2:\r\n+            if tx['txid'] == txid:\r\n+                found = True\r\n+\r\n+        assert found\r\n+\r\n+        exit(0) # temporary\r\n+\r\n     def run_invalid_parameters_test(self):\r\n         self.log.info(\"Test listtransactions RPC parameter validity\")\r\n         assert_raises_rpc_error(-8, 'Label argument must be a valid label name or \"*\".', self.nodes[0].listtransactions, label=\"\")\r\n```",
       "created_at" : "2022-09-15T13:05:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/26096#issuecomment-1248075886",
@@ -97,7 +97,7 @@
       "node_id" : "IC_kwDOABII585K0lVL",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -105,7 +105,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1255298379/reactions"
       },
       "updated_at" : "2022-09-22T16:55:02Z",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "For self-send detection to work we need to distinguish between receiving and change addresses. For descriptor wallets we do that by checking `internal` flag on the descriptor. But `internal` flag could only be set on an `active` descriptor. Both your imported descriptors are not `active`, therefore we can't determine which outputs are change and which are receiving.",
       "created_at" : "2022-10-12T07:56:59Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/26096#issuecomment-1275747628",
@@ -273,7 +273,7 @@
       "node_id" : "IC_kwDOABII585ZExmM",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -281,7 +281,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1494423948/reactions"
       },
       "updated_at" : "2023-04-03T14:23:23Z",

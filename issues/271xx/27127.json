@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "If a `submitpackage` RPC call errors due to any of the individual tx broadcasts failing, the returned error message is supposed to contain the number of successful broadcasts so far:\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/4395b7f0845d2dca60f3b4e007ef5770ce8e2aa9/src/rpc/mempool.cpp#L848-L849\r\n\r\n\r\nRight now this is wrongly always shown as zero. Fix this by adding the missing increment of the counter. While touching that area, the variable is also renamed to better reflect its purpose (s/num_submitted/num_broadcast/; the submission has already happened at that point) and named arguments for the `BroadcastTransaction` call are added.\r\n\r\n(Note that the error should be really rare, as all txs have already been submitted succesfully to the mempool. IIUC this code-path could only hit if somehow a tx is being removed from the mempool between `ProcessNewPackage` and the `BroadcastTransaction` calls, e.g. if a new block is received which confirms any of the package's txs.)",
    "closed_at" : "2023-02-20T16:54:25Z",
    "closed_by" : {

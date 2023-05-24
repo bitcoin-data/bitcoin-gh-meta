@@ -8,6 +8,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22052",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg0NzU5MzAzOQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/847593039/reactions"
+      },
       "updated_at" : "2021-05-25T06:49:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/847593039",
       "user" : {
@@ -32,8 +44,8 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24357](https://github.com/bitcoin/bitcoin/pull/24357) (refactor: make setsockopt() and SetSocketNoDelay() mockable/testable by vasild)\n* [#21878](https://github.com/bitcoin/bitcoin/pull/21878) (Make all networking code mockable by vasild)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2021-05-25T07:42:43Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22052#issuecomment-847631440",
       "id" : 847631440,
@@ -52,7 +64,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/847631440/reactions"
       },
-      "updated_at" : "2022-01-17T23:55:59Z",
+      "updated_at" : "2022-02-18T12:59:41Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/847631440",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -84,6 +96,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22052",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg0Nzg0NjQ4Mw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/847846483/reactions"
+      },
       "updated_at" : "2021-05-25T12:57:51Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/847846483",
       "user" : {
@@ -108,14 +132,34 @@
       }
    },
    {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/22052#discussion_r662970466"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22052"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/662970466"
+         }
+      },
       "author_association" : "MEMBER",
-      "body" : "Concept ACK. Made this same change myself before realising there was already a PR open.",
-      "created_at" : "2022-02-12T13:57:30Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22052#issuecomment-1037233120",
-      "id" : 1037233120,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22052",
-      "node_id" : "IC_kwDOABII58490uvg",
-      "performed_via_github_app" : null,
+      "body" : "_Out of the scope of this PR, feel free to ignore_\r\n\r\nHere we assume the first call to `fcntl()` always succeeds. If it returns `-1` a chaos will ensue (the man does not say that it will always succeed with `F_GETFL`, maybe it could fail if interrupted by a signal).",
+      "commit_id" : "c71117fcb04fc2e45b5e76fe96b077a07b0c0f82",
+      "created_at" : "2021-07-02T12:19:10Z",
+      "diff_hunk" : "@@ -716,28 +716,16 @@ bool LookupSubNet(const std::string& strSubnet, CSubNet& ret, DNSLookupFn dns_lo\n     return false;\n }\n \n-bool SetSocketNonBlocking(const SOCKET& hSocket, bool fNonBlocking)\n+bool SetSocketNonBlocking(const SOCKET& hSocket)\n {\n-    if (fNonBlocking) {\n #ifdef WIN32\n-        u_long nOne = 1;\n-        if (ioctlsocket(hSocket, FIONBIO, &nOne) == SOCKET_ERROR) {\n+    u_long nOne = 1;\n+    if (ioctlsocket(hSocket, FIONBIO, &nOne) == SOCKET_ERROR) {\n #else\n-        int fFlags = fcntl(hSocket, F_GETFL, 0);\n-        if (fcntl(hSocket, F_SETFL, fFlags | O_NONBLOCK) == SOCKET_ERROR) {\n+    int fFlags = fcntl(hSocket, F_GETFL, 0);\n+    if (fcntl(hSocket, F_SETFL, fFlags | O_NONBLOCK) == SOCKET_ERROR) {",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22052#discussion_r662970466",
+      "id" : 662970466,
+      "line" : 726,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY2Mjk3MDQ2Ng==",
+      "original_commit_id" : "c71117fcb04fc2e45b5e76fe96b077a07b0c0f82",
+      "original_line" : 726,
+      "original_position" : 35,
+      "original_start_line" : 725,
+      "path" : "src/netbase.cpp",
+      "position" : 35,
+      "pull_request_review_id" : 698128831,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22052",
       "reactions" : {
          "+1" : 0,
          "-1" : 0,
@@ -126,6 +170,54 @@
          "laugh" : 0,
          "rocket" : 0,
          "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/662970466/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : 725,
+      "start_side" : "RIGHT",
+      "subject_type" : "line",
+      "updated_at" : "2021-07-02T12:23:00Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/662970466",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/266751?v=4",
+         "events_url" : "https://api.github.com/users/vasild/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vasild/followers",
+         "following_url" : "https://api.github.com/users/vasild/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vasild/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vasild",
+         "id" : 266751,
+         "login" : "vasild",
+         "node_id" : "MDQ6VXNlcjI2Njc1MQ==",
+         "organizations_url" : "https://api.github.com/users/vasild/orgs",
+         "received_events_url" : "https://api.github.com/users/vasild/received_events",
+         "repos_url" : "https://api.github.com/users/vasild/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vasild/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vasild"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Concept ACK. Made this same change myself before realising there was already a PR open.",
+      "created_at" : "2022-02-12T13:57:30Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/22052#issuecomment-1037233120",
+      "id" : 1037233120,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22052",
+      "node_id" : "IC_kwDOABII58490uvg",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1037233120/reactions"
       },
       "updated_at" : "2022-02-12T13:57:30Z",
