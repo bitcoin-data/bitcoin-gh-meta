@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "@brunoerg @MarcoFalke @achow101 could you please review it, as it would be helpful for my summer of bitcoin proposal.",
       "created_at" : "2022-04-14T07:33:02Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24820#issuecomment-1098798713",
@@ -57,19 +57,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "In 5c15850ded2a3195fae0dd238e1aebaaa46b13ce \"3 new tests for SelectCoins function\"\r\n\r\nAll of this setup is the same in all three test cases. These can be deduplicated and just have a single scope for all these cases.",
-      "commit_id" : "5c15850ded2a3195fae0dd238e1aebaaa46b13ce",
+      "commit_id" : "3f8def51d53a078a5ee71ec675b5e06b784147de",
       "created_at" : "2022-04-14T20:50:47Z",
       "diff_hunk" : "@@ -344,6 +344,73 @@ BOOST_AUTO_TEST_CASE(bnb_search_test)\n         const auto result10 = SelectCoins(*wallet, coins, 10 * CENT, coin_control, coin_selection_params_bnb);\n         BOOST_CHECK(result10);\n     }\n+    {\n+        // single coin should be selected when effective fee > long term fee\n+        std::unique_ptr<CWallet> wallet = std::make_unique<CWallet>(m_node.chain.get(), \"\", m_args, CreateMockWalletDatabase());\n+        wallet->LoadWallet();\n+        LOCK(wallet->cs_wallet);\n+        wallet->SetWalletFlag(WALLET_FLAG_DESCRIPTORS);\n+        wallet->SetupDescriptorScriptPubKeyMans();\n+\n+        std::vector<COutput> coins;\n+\n+        expected_result.Clear();\n+        add_coin(coins, *wallet, 10 * CENT, 6 * 24, false, 0, true);\n+        add_coin(coins, *wallet, 9 * CENT, 6 * 24, false, 0, true);\n+        add_coin(coins, *wallet, 1 * CENT, 6 * 24, false, 0, true);\n+        add_coin(10 * CENT, 2, expected_result);\n+        CCoinControl coin_control;\n+        coin_selection_params_bnb.m_effective_feerate = CFeeRate(5000);\n+        coin_selection_params_bnb.m_long_term_feerate = CFeeRate(3000);\n+        const auto result11 = SelectCoins(*wallet, coins, 10 * CENT, coin_control, coin_selection_params_bnb);\n+        BOOST_CHECK(EquivalentResult(expected_result, *result11));\n+    }\n+    {\n+        // more coins should be selected when effective fee < long term fee\n+        std::unique_ptr<CWallet> wallet = std::make_unique<CWallet>(m_node.chain.get(), \"\", m_args, CreateMockWalletDatabase());\n+        wallet->LoadWallet();\n+        LOCK(wallet->cs_wallet);\n+        wallet->SetWalletFlag(WALLET_FLAG_DESCRIPTORS);\n+        wallet->SetupDescriptorScriptPubKeyMans();\n+\n+        std::vector<COutput> coins;\n+\n+        expected_result.Clear();\n+        add_coin(coins, *wallet, 10 * CENT, 6 * 24, false, 0, true);\n+        add_coin(coins, *wallet, 9 * CENT, 6 * 24, false, 0, true);\n+        add_coin(coins, *wallet, 1 * CENT, 6 * 24, false, 0, true);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24820#discussion_r850794938",
       "id" : 850794938,
-      "line" : 381,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584ythm6",
       "original_commit_id" : "5c15850ded2a3195fae0dd238e1aebaaa46b13ce",
       "original_line" : 381,
       "original_position" : 38,
       "original_start_line" : 370,
       "path" : "src/wallet/test/coinselector_tests.cpp",
-      "position" : 38,
+      "position" : null,
       "pull_request_review_id" : 942784668,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24820",
       "reactions" : {
@@ -85,8 +85,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/850794938/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 370,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-04-14T20:51:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/850794938",
       "user" : {
@@ -122,9 +123,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851606746"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "made these changes. ",
-      "commit_id" : "8ab98edb262a760b8a339ce80843f0c7901a31fc",
+      "commit_id" : "3f8def51d53a078a5ee71ec675b5e06b784147de",
       "created_at" : "2022-04-16T09:12:58Z",
       "diff_hunk" : "@@ -344,6 +344,73 @@ BOOST_AUTO_TEST_CASE(bnb_search_test)\n         const auto result10 = SelectCoins(*wallet, coins, 10 * CENT, coin_control, coin_selection_params_bnb);\n         BOOST_CHECK(result10);\n     }\n+    {\n+        // single coin should be selected when effective fee > long term fee\n+        std::unique_ptr<CWallet> wallet = std::make_unique<CWallet>(m_node.chain.get(), \"\", m_args, CreateMockWalletDatabase());\n+        wallet->LoadWallet();\n+        LOCK(wallet->cs_wallet);\n+        wallet->SetWalletFlag(WALLET_FLAG_DESCRIPTORS);\n+        wallet->SetupDescriptorScriptPubKeyMans();\n+\n+        std::vector<COutput> coins;\n+\n+        expected_result.Clear();\n+        add_coin(coins, *wallet, 10 * CENT, 6 * 24, false, 0, true);\n+        add_coin(coins, *wallet, 9 * CENT, 6 * 24, false, 0, true);\n+        add_coin(coins, *wallet, 1 * CENT, 6 * 24, false, 0, true);\n+        add_coin(10 * CENT, 2, expected_result);\n+        CCoinControl coin_control;\n+        coin_selection_params_bnb.m_effective_feerate = CFeeRate(5000);\n+        coin_selection_params_bnb.m_long_term_feerate = CFeeRate(3000);\n+        const auto result11 = SelectCoins(*wallet, coins, 10 * CENT, coin_control, coin_selection_params_bnb);\n+        BOOST_CHECK(EquivalentResult(expected_result, *result11));\n+    }\n+    {\n+        // more coins should be selected when effective fee < long term fee\n+        std::unique_ptr<CWallet> wallet = std::make_unique<CWallet>(m_node.chain.get(), \"\", m_args, CreateMockWalletDatabase());\n+        wallet->LoadWallet();\n+        LOCK(wallet->cs_wallet);\n+        wallet->SetWalletFlag(WALLET_FLAG_DESCRIPTORS);\n+        wallet->SetupDescriptorScriptPubKeyMans();\n+\n+        std::vector<COutput> coins;\n+\n+        expected_result.Clear();\n+        add_coin(coins, *wallet, 10 * CENT, 6 * 24, false, 0, true);\n+        add_coin(coins, *wallet, 9 * CENT, 6 * 24, false, 0, true);\n+        add_coin(coins, *wallet, 1 * CENT, 6 * 24, false, 0, true);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24820#discussion_r851606746",
@@ -155,6 +156,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-04-16T09:12:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851606746",
       "user" : {

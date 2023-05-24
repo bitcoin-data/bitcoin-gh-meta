@@ -1,12 +1,12 @@
 {
-   "active_lock_reason" : null,
+   "active_lock_reason" : "resolved",
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "MEMBER",
+   "author_association" : "CONTRIBUTOR",
    "body" : "Mitigate disk filling attacks by temporarily rate limiting `LogPrintf(â¦)`.\r\n\r\nA disk fill attack is an attack where an untrusted party (such as a peer) is able to cheaply make your node log to disk excessively. The excessive logging may fill your disk and thus make your node crash either cleanly (best case: if disk fill rate is relatively slow) or uncleanly (worst case: if disk fill rate is relatively fast).\r\n\r\nThe hourly logging quota is set *per source location*. Every single source location (say `net_processing.cpp:418`) gets a quota of 1 MB of logging per hour.\r\n\r\nNotes:\r\n* Only logging to disk is rate limited. Logging to console is not rate limited.\r\n* Only `LogPrintf(â¦)` is rate limited. `LogPrint(category, â¦)` (`-debug`) is not rate limited.\r\n* `UpdateTip: new best=[â¦]` is logged using `LogPrintfWithoutRateLimiting(â¦)` to avoid rate limiting. High log volume is expected for that source location during IBD.\r\n\r\nLive demo:\r\n\r\n```diff\r\n$ git diff\r\ndiff --git a/src/init.cpp b/src/init.cpp\r\nindex 023aa9aba..56a250876 100644\r\n--- a/src/init.cpp\r\n+++ b/src/init.cpp\r\n@@ -1232,6 +1232,13 @@ bool AppInitInterfaces(NodeContext& node)\r\n     return true;\r\n }\r\n \r\n+void SimulateDiskFillingAttack() {\r\n+    uint64_t n = 0;\r\n+    while (true) {\r\n+        LogPrintf(\"Chancellor on brink of %d:th bailout for banks. LogPrintf on brink of first disk fill for node.\\n\", ++n);\r\n+    }\r\n+}\r\n+\r\n bool AppInitMain(const util::Ref& context, NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)\r\n {\r\n     const ArgsManager& args = *Assert(node.args);\r\n@@ -1845,6 +1852,8 @@ bool AppInitMain(const util::Ref& context, NodeContext& node, interfaces::BlockA\r\n     }\r\n #endif\r\n \r\n+    std::thread{SimulateDiskFillingAttack}.detach();\r\n+\r\n     std::vector<fs::path> vImportFiles;\r\n     for (const std::string& strFile : args.GetArgs(\"-loadblock\")) {\r\n         vImportFiles.push_back(strFile);\r\n$ make -C src/ bitcoind\r\n$ src/bitcoind\r\n$ tail debug.log\r\n2020-09-22T16:11:36Z Chancellor on brink of 8813:th bailout for banks. LogPrintf on brink of first disk fill for node.\r\n2020-09-22T16:11:36Z Chancellor on brink of 8814:th bailout for banks. LogPrintf on brink of first disk fill for node.\r\n2020-09-22T16:11:36Z Chancellor on brink of 8815:th bailout for banks. LogPrintf on brink of first disk fill for node.\r\n2020-09-22T16:11:36Z Chancellor on brink of 8816:th bailout for banks. LogPrintf on brink of first disk fill for node.\r\n2020-09-22T16:11:36Z Chancellor on brink of 8817:th bailout for banks. LogPrintf on brink of first disk fill for node.\r\n2020-09-22T16:11:36Z Chancellor on brink of 8818:th bailout for banks. LogPrintf on brink of first disk fill for node.\r\n2020-09-22T16:11:36Z Chancellor on brink of 8819:th bailout for banks. LogPrintf on brink of first disk fill for node.\r\n2020-09-22T16:11:36Z Chancellor on brink of 8820:th bailout for banks. LogPrintf on brink of first disk fill for node.\r\n2020-09-22T16:11:36Z Excessive logging detected from init.cpp:1238 (SimulateDiskFillingAttack): >1 MiB logged during the last hour. Suppressing logging to disk from this source location for up to one hour. Console logging unaffected. Last log entry: 2020-09-22T16:11:36Z Chancellor on brink of 8821:th bailout for banks. LogPrintf on brink of first disk fill for node.\r\n2020-09-22T16:12:37Z Adding fixed seed nodes as DNS doesn't seem to be available.\r\n$ ls -hl debug.log\r\nârw------- 1     1.1M Sep 22 16:12 debug.log\r\n```",
    "closed_at" : "2020-12-28T05:33:14Z",
    "closed_by" : {
-      "avatar_url" : "https://avatars2.githubusercontent.com/u/863730?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/863730?v=4",
       "events_url" : "https://api.github.com/users/fanquake/events{/privacy}",
       "followers_url" : "https://api.github.com/users/fanquake/followers",
       "following_url" : "https://api.github.com/users/fanquake/following{/other_user}",
@@ -25,22 +25,14 @@
       "type" : "User",
       "url" : "https://api.github.com/users/fanquake"
    },
-   "comments" : 12,
+   "comments" : 13,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19995/comments",
    "created_at" : "2020-09-22T17:47:22Z",
+   "draft" : false,
    "events_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19995/events",
    "html_url" : "https://github.com/bitcoin/bitcoin/pull/19995",
    "id" : 706576358,
    "labels" : [
-      {
-         "color" : "99a810",
-         "default" : false,
-         "description" : null,
-         "id" : 749416508,
-         "name" : "Up for grabs",
-         "node_id" : "MDU6TGFiZWw3NDk0MTY1MDg=",
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/Up%20for%20grabs"
-      },
       {
          "color" : "5319e7",
          "default" : false,
@@ -52,7 +44,7 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19995/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "MDExOlB1bGxSZXF1ZXN0NDkxMDk4NjM3",
    "number" : 19995,
@@ -60,16 +52,31 @@
    "pull_request" : {
       "diff_url" : "https://github.com/bitcoin/bitcoin/pull/19995.diff",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/19995",
+      "merged_at" : null,
       "patch_url" : "https://github.com/bitcoin/bitcoin/pull/19995.patch",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/19995"
    },
+   "reactions" : {
+      "+1" : 0,
+      "-1" : 0,
+      "confused" : 0,
+      "eyes" : 1,
+      "heart" : 0,
+      "hooray" : 0,
+      "laugh" : 2,
+      "rocket" : 1,
+      "total_count" : 4,
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19995/reactions"
+   },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
+   "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19995/timeline",
    "title" : "log: Mitigate disk filling attacks by temporarily rate limiting LogPrintf(â¦)",
-   "updated_at" : "2020-12-28T05:33:14Z",
+   "updated_at" : "2022-08-18T19:51:15Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/19995",
    "user" : {
-      "avatar_url" : "https://avatars3.githubusercontent.com/u/7826565?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/7826565?v=4",
       "events_url" : "https://api.github.com/users/practicalswift/events{/privacy}",
       "followers_url" : "https://api.github.com/users/practicalswift/followers",
       "following_url" : "https://api.github.com/users/practicalswift/following{/other_user}",

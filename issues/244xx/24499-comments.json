@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I don't think we can run mutation tests in CI. If they are not deterministic or reproducible, they are of no use (in fact negative use). Moreover they require re-running the whole task, which is CPU intense and thus impossible to do in our current CI setup.\r\n> \r\n> Doing this in a separate repository would probably give more flexibility and allow to move faster.\r\n\r\nYeah, you're right! Just edited the PR description.",
       "created_at" : "2022-03-08T11:33:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24499#issuecomment-1061684060",
@@ -101,11 +101,11 @@
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 2,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1061699271/reactions"
       },
       "updated_at" : "2022-03-08T11:54:21Z",
@@ -484,7 +484,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I'll take a look at `universalmutator`. I've been testing [mutate_cpp](https://github.com/nlohmann/mutate_cpp) which is good but it is a complete app (with db, front-end, and so on.. not cool to use in here but as an external tool). This script I added here is simple and it's more like a `tool` for devs than a complete test suite at this moment.",
       "created_at" : "2022-03-10T18:29:56Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24499#issuecomment-1064367240",
@@ -572,7 +572,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> @brunoerg Universal Mutator is definitely meant to be scriptable; it's pretty much meant for running inside \"experiments\" / CI / or other automation.\r\n\r\nCool, I am taking a look at it. Thanks!",
       "created_at" : "2022-03-10T18:35:04Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24499#issuecomment-1064371314",
@@ -616,7 +616,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Hello, @agroce \r\n\r\nI've been testing `universalmutator` for a time and I thought it very cool, especially because it is scriptable. I created a [Python script](https://github.com/brunoerg/bitcoin/blob/2022-04-universal-mutation/test/mutation/mutation.py) similar to what I found on your `tests` folder and it worked very well with Bitcoin Core. I am using the functional tests to analyze the mutations. Compared to other libs I tested with the same proposal, `universalmutation` is one of my favorites (one of the reasons is the `analyze_mutation`). \r\n\r\nHowever, since it is a tool for many languages, not 100% focused on C++, it makes some mistakes when mutating c++ files I guess. \r\n\r\nExamples:\r\n\r\n1. It mutate comments:\r\n\r\nBefore\r\n```cpp\r\n* The search continues to search for better solutions after one solution has been found. The best\r\n * solution is chosen by minimizing the waste metric. The waste metric is defined as the cost to\r\n * spend the current inputs at the given fee rate minus the long term expected cost to spend the\r\n * inputs, plus the amount by which the selection exceeds the spending target:\r\n *\r\n * waste = selectionTotal - target + inputs Ã (currentFeeRate - longTermFeeRate)\r\n *\r\n```\r\n\r\nAfter\r\n```cpp\r\n* The search continues to search for better solutions after one solution has been found. The best\r\n * solution is chosen by minimizing the waste metric. The waste metric is defined as the cost to\r\n * spend the current inputs at the given fee rate minus the long term expected cost to spend the\r\n * inputs, plus the amount by which the selection exceeds the spending target:\r\n /\r\n * waste = selectionTotal - target + inputs Ã (currentFeeRate - longTermFeeRate)\r\n *\r\n```\r\nor\r\n```\r\n* The search continues to search for better solutions after one solution has been found. The best\r\n * solution is chosen by minimizing the waste metric. The waste metric is defined as the cost to\r\n continue; spend the current inputs at the given fee rate minus the long term expected cost to spend the\r\n * inputs, plus the amount by which the selection exceeds the spending target:\r\n continue;\r\n * waste = selectionTotal - target + inputs Ã (currentFeeRate - longTermFeeRate)\r\n *\r\n```\r\n\r\nI think it is considering the `*` as an operator even though it's inside a comment block.\r\n\r\n\r\n2. It mutates imports\r\n\r\nExample:\r\n\r\nBefore\r\n```cpp\r\n#include <consensus/amount.h>\r\n#include <policy/feerate.h>\r\n#include <util/check.h>\r\n#include <util/system.h>\r\n#include <util/moneystr.h>\r\n```\r\n\r\nAfter\r\n```cpp\r\n#include <consensus/amount.h/\r\n#include <policy/feerate.h>\r\n#include <util/check.h>\r\n#include <util/system.h>\r\n#include <util/moneystr.h>\r\n```\r\nor\r\n```\r\n#include <consensus/amount.h>\r\n#include <policy/feerate.h>\r\n#include <util/check.h<\r\n#include <util/system.h>\r\n#include <util/moneystr.h>\r\n```\r\n\r\nI think it's unnecessary to mutate the `includes`. It is probably considering the `<` and `>` as operators even being in an `include`. Anyway, `universalmutator` is very good but needs some improves related to c++. I will create an issue in your repository pointing out some improvements in addition to those mentioned here.\r\n\r\nThanks.",
       "created_at" : "2022-04-13T00:12:56Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24499#issuecomment-1097414340",
@@ -704,7 +704,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Unless you are turning that off for some reason?\r\n\r\nI don't think I did it, but how can I check if I did it btw? \r\n\r\n",
       "created_at" : "2022-04-16T19:27:45Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24499#issuecomment-1100738396",
@@ -792,7 +792,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Force-pushed changing the approach! \r\n\r\nI moved it from `devtools` to `test`, added more operators (now it mutates some Core stuff like `CAmount`) and now it creates one file per mutator and save it on `test/mutation/mutators` (so we can use `analyze_mutators` from @agroce`s project to test them).\r\n\r\nBtw, I changed the description to fit on this new approach! \r\n\r\nThanks!  \r\n\r\ncc: @laanwj @MarcoFalke ",
       "created_at" : "2022-05-09T14:21:38Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24499#issuecomment-1121168734",
@@ -845,7 +845,7 @@
       "node_id" : "IC_kwDOABII585C1RCz",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -853,7 +853,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1121259699/reactions"
       },
       "updated_at" : "2022-05-09T15:35:26Z",
@@ -880,7 +880,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I don't know if it's useful, but it's easy to put those operators in a single custom file and call the tool to just run with those rules, on the set of files you have -- don't know if you want/need that, but it's supported functionality, you don't have to use the default rules applied to a file\r\n\r\nYeah, I noticed it, but I think it doesn't cover 100% of the approach I am using here.",
       "created_at" : "2022-05-26T14:02:57Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24499#issuecomment-1138612665",
@@ -924,7 +924,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| Concept ACK | [laanwj](https://github.com/bitcoin/bitcoin/pull/24499#issuecomment-1061699271), [MarcoFalke](https://github.com/bitcoin/bitcoin/pull/24499#issuecomment-1064038898) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.\n",
       "created_at" : "2022-09-23T12:51:42Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24499#issuecomment-1256171331",
@@ -980,12 +980,12 @@
          "+1" : 0,
          "-1" : 0,
          "confused" : 0,
-         "eyes" : 0,
+         "eyes" : 1,
          "heart" : 0,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1333900702/reactions"
       },
       "updated_at" : "2022-12-01T15:03:24Z",
@@ -1056,7 +1056,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I think an external repository (as demonstrated above) is going to be a better place for scripting like this. Not only does that allow more frequent updates and new tests to be added, but the same repository can be used to store past/current interesting mutations found etc.\r\n\r\n> This is an approach already taken by other contributors with external tooling / fuzzers / etc.\r\n\r\nI agree! I'm working with @aureleoules on it in an external repo, going close this PR!\r\n",
       "created_at" : "2022-12-06T15:40:36Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24499#issuecomment-1339570344",

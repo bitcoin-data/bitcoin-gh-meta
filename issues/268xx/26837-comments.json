@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [jonatack](https://github.com/bitcoin/bitcoin/pull/26837#issuecomment-1379494280), [mzumsande](https://github.com/bitcoin/bitcoin/pull/26837#pullrequestreview-1308103467) |\n| Concept ACK | [1440000bytes](https://github.com/bitcoin/bitcoin/pull/26837#issuecomment-1374359846), [zzzi2p](https://github.com/bitcoin/bitcoin/pull/26837#issuecomment-1374557660), [sipa](https://github.com/bitcoin/bitcoin/pull/26837#issuecomment-1376379927) |\n| Approach ACK | [w0xlt](https://github.com/bitcoin/bitcoin/pull/26837#pullrequestreview-1240520345) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#27114](https://github.com/bitcoin/bitcoin/pull/27114) (p2p: Allow whitelisting outgoing connections by brunoerg)\n* [#26441](https://github.com/bitcoin/bitcoin/pull/26441) (rpc, p2p: add `addpermissionflags` RPC and allow whitelisting outbound by brunoerg)\n* [#25515](https://github.com/bitcoin/bitcoin/pull/25515) (net, test: Virtualise CConnman and add initial PeerManager unit tests by dergoegge)\n* [#24748](https://github.com/bitcoin/bitcoin/pull/24748) (test/BIP324: functional tests for v2 P2P encryption by stratospher)\n* [#24545](https://github.com/bitcoin/bitcoin/pull/24545) (BIP324: Enable v2 P2P encrypted transport by dhruv)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2023-01-06T17:43:51Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#issuecomment-1373948043",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "If it is desired to rate limit the creation of new sessions, we should (for `i2pacceptincoming=0` aka transient sessions):\r\n\r\n* keep track of the rate at which we create new sessions\r\n* when closing a connection, if the rate is too high, instead of discarding the session put it back to a pool of reused sessions\r\n* when creating new session, if the rate is too high and if the reused sessions pool is non-empty, then pick one from there\r\n\r\nReading https://github.com/bitcoin/bitcoin/issues/26754 I get the impression that this is not necessary. Further, it would be a compromise with \"one address per connection\" and would be somewhat more complicated (to implement and maintain).",
       "created_at" : "2023-01-06T17:53:25Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#issuecomment-1373956086",
@@ -99,21 +99,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1063681972"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This would benefit from https://github.com/bitcoin/bitcoin/pull/25390 by just adding `Synced<...> m_i2p_sessions` without a separate mutex.",
-      "commit_id" : "57fd27fd3621e782652c280d99263589fb3697a1",
+      "commit_id" : "3c1de032de01e551992975eb374465300a655f44",
       "created_at" : "2023-01-06T18:33:03Z",
       "diff_hunk" : "@@ -1126,6 +1127,20 @@ class CConnman\n      */\n     std::vector<CService> m_onion_binds;\n \n+    /**\n+     * Mutex protecting m_i2p_sam_sessions.\n+     */\n+    Mutex m_i2p_sessions_mutex;\n+\n+    /**\n+     * A pool of created I2P SAM transient sessions that should be used instead\n+     * of creating new ones in order to reduce the load on the I2P network.\n+     * Creating a session in I2P is not cheap, thus if this is not empty, then\n+     * pick an entry from it instead of creating a new session. If connecting to\n+     * a host fails, then the created session is put to this pool for reuse.\n+     */\n+    std::queue<std::unique_ptr<i2p::sam::Session>> m_i2p_sessions GUARDED_BY(m_i2p_sessions_mutex);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#discussion_r1063681972",
       "id" : 1063681972,
-      "line" : 1142,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584_Zn-0",
       "original_commit_id" : "57fd27fd3621e782652c280d99263589fb3697a1",
       "original_line" : 1142,
       "original_position" : 65,
       "original_start_line" : 1130,
       "path" : "src/net.h",
-      "position" : 65,
+      "position" : null,
       "pull_request_review_id" : 1239224890,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26837",
       "reactions" : {
@@ -129,8 +129,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1063681972/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 1130,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2023-01-06T18:33:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1063681972",
       "user" : {
@@ -199,7 +200,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "Concept ACK",
       "created_at" : "2023-01-07T02:58:28Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#issuecomment-1374359846",
@@ -222,28 +223,28 @@
       "updated_at" : "2023-01-07T02:58:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1374359846",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "With `i2pacceptincoming=0 onlynet=i2p` and this PR (57fd27fd3621e782652c280d99263589fb3697a1):\r\n\r\n* In the first 5 minutes 10 sessions were created (= one session creation per 30 seconds). During that time 19 connection failures occurred, whose sessions were reused for subsequent attempts due to this PR. Without it, it would be 29 (10+19) instead of 10.\r\n* In the next 18 hours 264 sessions were created (= one session creation per 4 minutes). During that time 234 connection failures occurred.\r\n\r\nWithout `onlynet=i2p` the numbers would be much lower since other networks would also be tried.\r\n\r\n@zzzi2p, does that look reasonable?",
       "created_at" : "2023-01-07T14:18:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#issuecomment-1374496243",
@@ -298,21 +299,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1064010311"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I am wondering if `m_i2p_sessions` can grow unchecked to the point of using too much memory and whether it should be capped.\r\n\r\nIf this is run by a single thread then the size of `m_i2p_sessions` can be either 0 or 1 because in order to create a new session, the list must be empty and then if the connection fails it will be added to the list. If run by N threads, then the size can be at most N, if all of the threads race into it.\r\n\r\nI think that is ok with the current pattern of add 1, take 1. Just a note to the future - if the code is changed to add more entries to the list and it takes.",
-      "commit_id" : "57fd27fd3621e782652c280d99263589fb3697a1",
+      "commit_id" : "3c1de032de01e551992975eb374465300a655f44",
       "created_at" : "2023-01-07T14:30:01Z",
       "diff_hunk" : "@@ -496,8 +496,21 @@ CNode* CConnman::ConnectNode(CAddress addrConnect, const char *pszDest, bool fCo\n             if (m_i2p_sam_session) {\n                 connected = m_i2p_sam_session->Connect(addrConnect, conn, proxyConnectionFailed);\n             } else {\n-                i2p_transient_session = std::make_unique<i2p::sam::Session>(proxy.proxy, &interruptNet);\n+                {\n+                    LOCK(m_i2p_sessions_mutex);\n+                    if (m_i2p_sessions.empty()) {\n+                        i2p_transient_session =\n+                            std::make_unique<i2p::sam::Session>(proxy.proxy, &interruptNet);\n+                    } else {\n+                        i2p_transient_session.swap(m_i2p_sessions.front());\n+                        m_i2p_sessions.pop();\n+                    }\n+                }\n                 connected = i2p_transient_session->Connect(addrConnect, conn, proxyConnectionFailed);\n+                if (!connected) {\n+                    LOCK(m_i2p_sessions_mutex);\n+                    m_i2p_sessions.emplace(i2p_transient_session.release());\n+                }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#discussion_r1064010311",
       "id" : 1064010311,
-      "line" : 513,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584_a4JH",
       "original_commit_id" : "57fd27fd3621e782652c280d99263589fb3697a1",
-      "original_line" : 513,
+      "original_line" : 516,
       "original_position" : 19,
       "original_start_line" : 499,
       "path" : "src/net.cpp",
-      "position" : 19,
+      "position" : null,
       "pull_request_review_id" : 1239675900,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26837",
       "reactions" : {
@@ -328,8 +329,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1064010311/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 499,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2023-01-07T14:30:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1064010311",
       "user" : {
@@ -499,19 +501,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "In commit 74fa583, would adding this lock annotation only to the `ConnectNode` declaration suffice?\r\n\r\n(The corresponding lock assertion `AssertLockNotHeld(m_i2p_sessions_mutex);` should be added to the function definition.)",
-      "commit_id" : "57fd27fd3621e782652c280d99263589fb3697a1",
+      "commit_id" : "3c1de032de01e551992975eb374465300a655f44",
       "created_at" : "2023-01-09T17:14:30Z",
       "diff_hunk" : "@@ -955,7 +956,7 @@ class CConnman\n     bool AlreadyConnectedToAddress(const CAddress& addr);\n \n     bool AttemptToEvictConnection();\n-    CNode* ConnectNode(CAddress addrConnect, const char *pszDest, bool fCountFailure, ConnectionType conn_type);\n+    CNode* ConnectNode(CAddress addrConnect, const char *pszDest, bool fCountFailure, ConnectionType conn_type) EXCLUSIVE_LOCKS_REQUIRED(!m_i2p_sessions_mutex);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#discussion_r1064880693",
       "id" : 1064880693,
-      "line" : 959,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584_eMo1",
       "original_commit_id" : "57fd27fd3621e782652c280d99263589fb3697a1",
       "original_line" : 959,
       "original_position" : 45,
       "original_start_line" : null,
       "path" : "src/net.h",
-      "position" : 45,
+      "position" : null,
       "pull_request_review_id" : 1240859061,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26837",
       "reactions" : {
@@ -529,6 +531,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-09T17:14:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1064880693",
       "user" : {
@@ -566,7 +569,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "```suggestion\r\n     * Mutex protecting m_i2p_sessions.\r\n```\r\n-----\r\nThe role of this mutex and of the queue it guards might be more clearly named something like `m_unused_i2p_sessions` and `m_unused_i2p_sessions_mutex`.",
-      "commit_id" : "57fd27fd3621e782652c280d99263589fb3697a1",
+      "commit_id" : "3c1de032de01e551992975eb374465300a655f44",
       "created_at" : "2023-01-09T17:59:40Z",
       "diff_hunk" : "@@ -1126,6 +1127,20 @@ class CConnman\n      */\n     std::vector<CService> m_onion_binds;\n \n+    /**\n+     * Mutex protecting m_i2p_sam_sessions.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#discussion_r1064932794",
@@ -596,6 +599,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-09T17:59:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1064932794",
       "user" : {
@@ -633,20 +637,20 @@
       },
       "author_association" : "MEMBER",
       "body" : "Maybe only emplace if under a max size.\r\n\r\n```diff\r\n-                if (!connected) {\r\n+                if (!connected && m_i2p_sessions.size() < 10) {\r\n                     LOCK(m_i2p_sessions_mutex);\r\n                     m_i2p_sessions.emplace(i2p_transient_session.release());\r\n```\r\n",
-      "commit_id" : "57fd27fd3621e782652c280d99263589fb3697a1",
+      "commit_id" : "3c1de032de01e551992975eb374465300a655f44",
       "created_at" : "2023-01-09T18:08:04Z",
       "diff_hunk" : "@@ -496,8 +496,21 @@ CNode* CConnman::ConnectNode(CAddress addrConnect, const char *pszDest, bool fCo\n             if (m_i2p_sam_session) {\n                 connected = m_i2p_sam_session->Connect(addrConnect, conn, proxyConnectionFailed);\n             } else {\n-                i2p_transient_session = std::make_unique<i2p::sam::Session>(proxy.proxy, &interruptNet);\n+                {\n+                    LOCK(m_i2p_sessions_mutex);\n+                    if (m_i2p_sessions.empty()) {\n+                        i2p_transient_session =\n+                            std::make_unique<i2p::sam::Session>(proxy.proxy, &interruptNet);\n+                    } else {\n+                        i2p_transient_session.swap(m_i2p_sessions.front());\n+                        m_i2p_sessions.pop();\n+                    }\n+                }\n                 connected = i2p_transient_session->Connect(addrConnect, conn, proxyConnectionFailed);\n+                if (!connected) {\n+                    LOCK(m_i2p_sessions_mutex);\n+                    m_i2p_sessions.emplace(i2p_transient_session.release());\n+                }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#discussion_r1064943252",
       "id" : 1064943252,
       "in_reply_to_id" : 1064010311,
-      "line" : 513,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584_eb6U",
       "original_commit_id" : "57fd27fd3621e782652c280d99263589fb3697a1",
-      "original_line" : 513,
+      "original_line" : 516,
       "original_position" : 19,
       "original_start_line" : 499,
       "path" : "src/net.cpp",
-      "position" : 19,
+      "position" : null,
       "pull_request_review_id" : 1240955475,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26837",
       "reactions" : {
@@ -662,8 +666,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1064943252/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 499,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2023-01-09T18:08:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1064943252",
       "user" : {
@@ -864,7 +869,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> You should monitor/test the reliability of connections over transient tunnels with *.quantity=1\r\n\r\nI ran two nodes for about 20 hours each - one with `*.quantity=1` and one with `*.quantity=3`. I recorded the time when each I2P session was created and its duration (time between `Creating transient SAM session X` and `Destroying SAM session X`). Running with `i2pacceptincoming=0 onlynet=i2p`. Here are the results:\r\n\r\n![1tunnel_timeline](https://user-images.githubusercontent.com/266751/211789406-dca3b9e4-f87a-44fa-b588-b54bd6e02e6a.svg)\r\n![3tunnel_timeline](https://user-images.githubusercontent.com/266751/211789410-67a3c72a-7993-413c-8f23-a53e59ec2e6c.svg)\r\n\r\nIt looks ok - the points in the \"1 tunnel\" case are not visibly lower than in the \"3 tunnel\" case. I guess if connections are dropped frequently and unexpectedly due to low tunnel count, then the durations would be lower.",
       "created_at" : "2023-01-11T11:05:16Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#issuecomment-1378581439",
@@ -919,22 +924,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1066943150"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Fair enough, not too difficult to add a cap. Done.",
-      "commit_id" : "57fd27fd3621e782652c280d99263589fb3697a1",
+      "commit_id" : "3c1de032de01e551992975eb374465300a655f44",
       "created_at" : "2023-01-11T12:38:54Z",
       "diff_hunk" : "@@ -496,8 +496,21 @@ CNode* CConnman::ConnectNode(CAddress addrConnect, const char *pszDest, bool fCo\n             if (m_i2p_sam_session) {\n                 connected = m_i2p_sam_session->Connect(addrConnect, conn, proxyConnectionFailed);\n             } else {\n-                i2p_transient_session = std::make_unique<i2p::sam::Session>(proxy.proxy, &interruptNet);\n+                {\n+                    LOCK(m_i2p_sessions_mutex);\n+                    if (m_i2p_sessions.empty()) {\n+                        i2p_transient_session =\n+                            std::make_unique<i2p::sam::Session>(proxy.proxy, &interruptNet);\n+                    } else {\n+                        i2p_transient_session.swap(m_i2p_sessions.front());\n+                        m_i2p_sessions.pop();\n+                    }\n+                }\n                 connected = i2p_transient_session->Connect(addrConnect, conn, proxyConnectionFailed);\n+                if (!connected) {\n+                    LOCK(m_i2p_sessions_mutex);\n+                    m_i2p_sessions.emplace(i2p_transient_session.release());\n+                }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#discussion_r1066943150",
       "id" : 1066943150,
       "in_reply_to_id" : 1064010311,
-      "line" : 513,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584_mEKu",
       "original_commit_id" : "57fd27fd3621e782652c280d99263589fb3697a1",
-      "original_line" : 513,
+      "original_line" : 516,
       "original_position" : 19,
       "original_start_line" : 499,
       "path" : "src/net.cpp",
-      "position" : 19,
+      "position" : null,
       "pull_request_review_id" : 1243834333,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26837",
       "reactions" : {
@@ -950,8 +955,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1066943150/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 499,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2023-01-11T12:38:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1066943150",
       "user" : {
@@ -987,22 +993,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1066958395"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> would adding this lock annotation only to the `ConnectNode` declaration suffice?\r\n\r\nNo, all callers of `EXCLUSIVE_LOCKS_REQUIRED(!m)` must also be tagged with the same annotation. Otherwise:\r\n\r\n```\r\nnet.cpp:1995:20: error: calling function 'ConnectNode' requires negative capability '!m_unused_i2p_sessions_mutex' [-Werror,-Wthread-safety-analysis]\r\n    CNode* pnode = ConnectNode(addrConnect, pszDest, fCountFailure, conn_type);\r\n                   ^\r\n```\r\n\r\nAdded `AssertLockNotHeld()` calls to methods marked with `EXCLUSIVE_LOCKS_REQUIRED(!m_unused_i2p_sessions_mutex)`",
-      "commit_id" : "57fd27fd3621e782652c280d99263589fb3697a1",
+      "commit_id" : "3c1de032de01e551992975eb374465300a655f44",
       "created_at" : "2023-01-11T12:55:26Z",
       "diff_hunk" : "@@ -955,7 +956,7 @@ class CConnman\n     bool AlreadyConnectedToAddress(const CAddress& addr);\n \n     bool AttemptToEvictConnection();\n-    CNode* ConnectNode(CAddress addrConnect, const char *pszDest, bool fCountFailure, ConnectionType conn_type);\n+    CNode* ConnectNode(CAddress addrConnect, const char *pszDest, bool fCountFailure, ConnectionType conn_type) EXCLUSIVE_LOCKS_REQUIRED(!m_i2p_sessions_mutex);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#discussion_r1066958395",
       "id" : 1066958395,
       "in_reply_to_id" : 1064880693,
-      "line" : 959,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584_mH47",
       "original_commit_id" : "57fd27fd3621e782652c280d99263589fb3697a1",
       "original_line" : 959,
       "original_position" : 45,
       "original_start_line" : null,
       "path" : "src/net.h",
-      "position" : 45,
+      "position" : null,
       "pull_request_review_id" : 1243857392,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26837",
       "reactions" : {
@@ -1020,6 +1026,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-11T12:55:27Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1066958395",
       "user" : {
@@ -1055,9 +1062,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1066958740"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Renamed.",
-      "commit_id" : "57fd27fd3621e782652c280d99263589fb3697a1",
+      "commit_id" : "3c1de032de01e551992975eb374465300a655f44",
       "created_at" : "2023-01-11T12:55:47Z",
       "diff_hunk" : "@@ -1126,6 +1127,20 @@ class CConnman\n      */\n     std::vector<CService> m_onion_binds;\n \n+    /**\n+     * Mutex protecting m_i2p_sam_sessions.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#discussion_r1066958740",
@@ -1088,6 +1095,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-11T12:55:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1066958740",
       "user" : {
@@ -1112,7 +1120,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`57fd27fd36...3c1de032de`: address suggestions",
       "created_at" : "2023-01-11T13:02:58Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#issuecomment-1378716635",
@@ -1244,7 +1252,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Were these two nodes running at the same time\r\n\r\nYes, and also on the same (java) router.\r\n\r\n<details>\r\n<summary>scripts to reproduce session duration monitoring</summary>\r\n\r\n```bash\r\n#!/usr/local/bin/bash\r\n\r\n# Dump shell script to parse `debug.log` and produce an output like \"session_start_seconds_since_startup session_duration\" per line. Use like: ./parse.sh debug.log > durations3\r\n\r\nlog=${1}\r\n\r\nb=\"\"\r\n\r\nfor sess in $(sed -En 's/^.*Creating transient SAM session ([^ ]+) .*$/\\1/p' < $log) ; do\r\n\r\n    beg=$(sed -En \"s/^([^ ]+).*Creating transient SAM session ${sess}.*$/\\1/p\" < $log)\r\n    end=$(sed -En \"s/^([^ ]+).*Destroying SAM session ${sess}.*$/\\1/p\" < $log)\r\n    if [ -z \"$end\" ] ; then\r\n        continue\r\n    fi\r\n    # convert a timestamp like 2023-01-09T16:28:40Z to number of seconds since epoch, this only works on freebsd, linux's data(1) does not accept -f IIRC\r\n    beg_s=$(date -j -f \"%Y-%m-%dT%TZ\" $beg +%s)\r\n    if [ -z \"$b\" ] ; then\r\n        b=$beg_s\r\n    fi\r\n    end_s=$(date -j -f \"%Y-%m-%dT%TZ\" $end +%s)\r\n    echo \"$((beg_s - b)) $((end_s - beg_s))\"\r\ndone\r\n```\r\n\r\n```gnuplot\r\n# gnuplot script to visualize the result from the above parsing script. Use like: gnuplot this_file.gnuplot\r\nset terminal svg size 600,400 dynamic mouse standalone background \"#ffffff\"\r\nset output \"3tunnel_timeline.svg\"\r\nset title \"Session duration - 3 tunnels\"\r\nset xlabel \"Session creation time [minutes since startup]\"\r\nset ylabel \"Session duration [minutes]\"\r\nset logscale y\r\nset yrange [0:2000]\r\nplot \"durations3\" using ($1/60):($2/60) title \"\" with points pointtype 7 pointsize 1 linecolor rgb \"#ff0000\"\r\n```\r\n\r\n</details>",
       "created_at" : "2023-01-12T15:57:18Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#issuecomment-1380608202",
@@ -1376,7 +1384,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I'd be curious if anyone testing this branch sees this added logging return a value > 0\r\n\r\nThis comment https://github.com/bitcoin/bitcoin/pull/26837#discussion_r1064010311:\r\n> If run by N threads, then the size can be at most N, if all of the threads race into it.\r\n\r\nLet me elaborate. This is in `ConnectNode()` which is only called from `OpenNetworkConnection()` which can be called from more than one thread. If this code is run from just one thread then the size of the list can be either 0 or 1 and your logs will always print 0. If run by N threads it may happen that all of them execute this at the same time - check that the list is empty and create a new session, and then if all those N connections fail, then each thread will append its session to the list, making it with size N. It is ok, we run just a couple of threads (not 100s or 1000s, not even 10s).\r\n\r\nYou could get a printout >0 - maybe if you `addnode ... onetry` at the same time as a normal connection is attempted from the `b-opencon` thread. I guess it would be very rare and difficult to reproduce.",
       "created_at" : "2023-01-14T13:40:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#issuecomment-1382742136",
@@ -1508,7 +1516,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Like usual, after this is deemed to have had enough review and testing it can be merged. It is not tied to or dependent on I2P releases.",
       "created_at" : "2023-02-16T10:59:05Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#issuecomment-1432902206",
@@ -1552,7 +1560,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "FWIW, I2P adoption by Bitcoin nodes seems to have been increasing significantly over the past 3 months.  From 200-350 in November to over 1100 active peers now, possibly spurred in part by Umbrel and Raspiblitz adding I2P support in December.\r\n\r\n<img width=\"210\" alt=\"Screenshot 2023-02-15 at 08 03 47\" src=\"https://user-images.githubusercontent.com/2415484/219438014-2ee0fe24-2955-4b0b-9f60-b96cc9fbd73c.png\">\r\n\r\nAnyone else like to have a look at testing/reviewing this PR?",
       "created_at" : "2023-02-16T17:14:18Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#issuecomment-1433431073",
@@ -1640,7 +1648,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I'm still seeing the issue I reported with i2pd version 2.45.1 (0.9.57).\r\n\r\nNo longer seeing the previously daily issue since a few days with i2pd version 2.46.0 and 2.46.1.",
       "created_at" : "2023-02-22T18:19:03Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26837#issuecomment-1440556067",

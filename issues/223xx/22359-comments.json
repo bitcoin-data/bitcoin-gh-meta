@@ -1,14 +1,26 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* #21206 by ryanofsky\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.",
       "created_at" : "2021-06-28T09:55:37Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22359#issuecomment-869546300",
       "id" : 869546300,
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22359",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2OTU0NjMwMA==",
       "performed_via_github_app" : null,
-      "updated_at" : "2021-06-28T09:55:37Z",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/869546300/reactions"
+      },
+      "updated_at" : "2021-07-27T16:48:36Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/869546300",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -40,6 +52,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22359",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg3MDY0Njc4OQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/870646789/reactions"
+      },
       "updated_at" : "2021-06-29T14:23:05Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/870646789",
       "user" : {
@@ -64,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I could be missing something but it seems to me neither solution is clearly correct in all cases. The advantages of this solution over [#18440](https://github.com/bitcoin/bitcoin/pull/18840) are that:\r\n\r\n- It's more obvious what this solution is trying to do. This solution is plainly updating mempool status to reflect what's in the mempool, where [#18440](https://github.com/bitcoin/bitcoin/pull/18840) is broadening a sync that happens in a different part of the code without a specific explanation about why it's necessary.\r\n- [#18440](https://github.com/bitcoin/bitcoin/pull/18840) waits for extra notifications to be handled that may not be relevant, blocking longer than it needs to.\r\n- It's not clear whether [#18440](https://github.com/bitcoin/bitcoin/pull/18840) fixes the problem in all cases, since it's assuming that the mempool implementation will alway queue the removedFromMempool notification before the wallet RPC tries to sync with the queue. And even if this does work now, there is no unit test or other coverage for it to make sure the sync runs at the right point in the broken case, to make sure this stays fixed in the future.\r\n\r\nBut I do agree with the general point that a fully correct solution is probably a blocking solution. I just think the blocking should be targeted. Not more narrow or more wide than it needs to be. For example could add `std::condition_variable m_mempool_cv;` to `CWallet` and `m_mempool_cv.notify_all()` in `transactionRemovedFromMempool()` and `m_mempool_cv.wait(lock, []{return !replaced_tx.fInMempool})` in `bumpfee`\r\n\r\n\r\n\r\n",
       "created_at" : "2021-06-29T16:02:20Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22359#issuecomment-870725266",
@@ -72,6 +96,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22359",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg3MDcyNTI2Ng==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/870725266/reactions"
+      },
       "updated_at" : "2021-06-29T16:02:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/870725266",
       "user" : {
@@ -96,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> For example could add `std::condition_variable m_mempool_cv;` to `CWallet` and `m_mempool_cv.notify_all()` in `transactionRemovedFromMempool()` and `m_mempool_cv.wait(lock, []{return !replaced_tx.fInMempool})` in `bumpfee`\r\n\r\nThinking about this, in a really pathological case where a replaced transaction got added back to the mempool, this could hang. Dropping `CWalletTx::fInMempool` and giving transactions clear states like 730df28e00822f06c9fc11c86a74f764a2f5136c from #21206 would help here, because the replaced transaction could ambiguously transition from the _in-mempool_ state to an intermediate _in-mempool-but-replaced state_ to the _inactive_ state, and the `cv.wait()` could just wait for the transaction to be out of the intermediate state.\r\n\r\nAny case, will ACK this PR. IMO, this is the best fix for we have for now, and it is straightforward and simple, even if it is not 100% right in every case and doesn't have a fancy test.\r\n",
       "created_at" : "2021-06-29T16:28:31Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22359#issuecomment-870744344",
@@ -104,6 +140,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22359",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg3MDc0NDM0NA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/870744344/reactions"
+      },
       "updated_at" : "2021-06-29T16:28:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/870744344",
       "user" : {
@@ -136,6 +184,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22359",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg3MDgxMzY1Ng==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/870813656/reactions"
+      },
       "updated_at" : "2021-06-29T18:18:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/870813656",
       "user" : {
@@ -168,6 +228,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22359",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg3MDkyMzMwMQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/870923301/reactions"
+      },
       "updated_at" : "2021-06-29T21:14:43Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/870923301",
       "user" : {
@@ -200,6 +272,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22359",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg3MjA1NDUyOA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/872054528/reactions"
+      },
       "updated_at" : "2021-07-01T08:48:26Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/872054528",
       "user" : {
@@ -232,6 +316,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22359",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg3MjA1NTY2OA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/872055668/reactions"
+      },
       "updated_at" : "2021-07-01T08:50:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/872055668",
       "user" : {
@@ -256,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Maybe the mempool status should be removed and simply be queried when needed? \r\n\r\nI think there are two drawbacks to querying the mempool when needed:\r\n\r\n- Conceptually it seems less appealing because it means coin selection, balance checking, etc code is combining mempool and chain state from two different points in time instead of one point. Instead of using chain and mempool state from the time of last [notification](https://github.com/bitcoin/bitcoin/blob/3ef2d400fa42072a2cfe1cb51796c329e33ab8c5/src/interfaces/chain.h#L232-L243), it is combining data from the last notification time with data from the current time. I don't think the consequences of this are very bad but they could make coin selection and balance checking glitchy or weird if there is a backlog of notifications.\r\n\r\n- At least according to 17220d6325ef8d7789373055586e4332977077b0 which introduced the cached `fInMempool` field, there are some reasons to think this may be worse for performance.\r\n\r\n> Otherwise it just seems like applying random patches that happen to improve the situation, but don't actually fix the underlying issue.\r\n\r\nI think if we combine transaction states (730df28e00822f06c9fc11c86a74f764a2f5136c from #21206) with the notify suggestion mentioned earlier (in https://github.com/bitcoin/bitcoin/pull/22359#issuecomment-870725266 and https://github.com/bitcoin/bitcoin/pull/22359#issuecomment-870744344), that is a clean and robust solution that gets rid of all race conditions. But since that requires reviewing and writing more code, using `tx.fInMempool = chain.isInMempool(tx.GetHash());` is at least a straighforward workaround in the meantime.",
       "created_at" : "2021-07-01T09:35:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22359#issuecomment-872089855",
@@ -264,6 +360,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22359",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg3MjA4OTg1NQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/872089855/reactions"
+      },
       "updated_at" : "2021-07-01T09:36:56Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/872089855",
       "user" : {
@@ -288,15 +396,27 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "> I think if we combine transaction states ([730df28](https://github.com/bitcoin/bitcoin/commit/730df28e00822f06c9fc11c86a74f764a2f5136c) from #21206) with the notify suggestion mentioned earlier (in [#22359 (comment)](https://github.com/bitcoin/bitcoin/pull/22359#issuecomment-870725266) and [#22359 (comment)](https://github.com/bitcoin/bitcoin/pull/22359#issuecomment-870744344)), that is a clean and robust solution that gets rid of all race conditions.\r\n\r\nFWIW, I started implementing this in d622b28227efbb4e0709e768a089e655fceecc19 ([branch](https://github.com/ryanofsky/bitcoin/commits/pr/txwait)). It could be cleaned up more, and doesn't have a dedicated test, and might not be totally complete (might need one or two more `cv.wait()` calls), but this shows the general idea.",
+      "author_association" : "MEMBER",
+      "body" : "> I think if we combine transaction states ([730df28](https://github.com/bitcoin/bitcoin/commit/730df28e00822f06c9fc11c86a74f764a2f5136c) from #21206) with the notify suggestion mentioned earlier (in [#22359 (comment)](https://github.com/bitcoin/bitcoin/pull/22359#issuecomment-870725266) and [#22359 (comment)](https://github.com/bitcoin/bitcoin/pull/22359#issuecomment-870744344)), that is a clean and robust solution that gets rid of all race conditions.\r\n\r\nFWIW, I started implementing this in f54631dec3ccb4f2df1545eab86a3f9ad824c1e9 ([branch](https://github.com/ryanofsky/bitcoin/commits/pr/txwait)). It could be cleaned up more, and doesn't have a dedicated test, and might not be totally complete (might need one or two more `cv.wait()` calls), but this shows the general idea.\r\n\r\n---\r\n\r\nEDIT: Updated d622b28227efbb4e0709e768a089e655fceecc19 -> f54631dec3ccb4f2df1545eab86a3f9ad824c1e9 ([compare](https://github.com/ryanofsky/bitcoin/compare/pr/txwait.1..pr/txwait.2))\r\n",
       "created_at" : "2021-07-01T22:23:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22359#issuecomment-872586827",
       "id" : 872586827,
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22359",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg3MjU4NjgyNw==",
       "performed_via_github_app" : null,
-      "updated_at" : "2021-07-01T22:23:50Z",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/872586827/reactions"
+      },
+      "updated_at" : "2021-07-02T16:48:22Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/872586827",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/7133040?v=4",

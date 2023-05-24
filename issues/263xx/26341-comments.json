@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@sipa: Since you authored the SipHash implementation optimized for 256-bit ints in Python (9c8593d2b4e25ef628172ceadbedf0ef078d01ef) and also the other ones in our main codebase, you could might want to take a look at the first commit. I'm pretty confident that it works as intended, but maybe there are some subtleties or corner-cases that I overlooked.",
       "created_at" : "2022-10-19T17:52:05Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26341#issuecomment-1284373225",
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-10-19T18:14:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/999794603",
       "user" : {
@@ -166,7 +167,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1000018688"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I agree! Thanks, done.",
       "commit_id" : "fa54d3011ed0cbb7bcdc76548423ba41f0042832",
       "created_at" : "2022-10-19T23:37:46Z",
@@ -199,6 +200,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-10-19T23:37:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1000018688",
       "user" : {
@@ -267,7 +269,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> ISTM a simpler test would be to just have a fixed collision with the fixed addresses that we generate blocks to for each node. Then we would not need the siphash or bip158 specific things and could just do normal scanblocks and see that there are false positives for blocks mined by e.g. node 0 for some scriptPubKey that is clearly not used anywhere else.\r\n\r\nWhether two scriptPubKeys BIP158-collide or not is not only dependent on the scripts, but also on the block hash of the block they'd appear in (that's the _k_ used as key passed to SipHash). The only block hash that we know will basically _always_ be constant is the one from genesis block, hence this choice. Though I assume right now the pre-generated functional test chain generates the exact same blocks and thus block hashes between runs (at least per node), the precalculated false-positives wouldn't work anymore if for whatever reason any minor detail of created blocks (e.g. nVersion, timestamp, included tx) ever changes in the future, which could be very annoying. If I didn't miss something, I think there is no easier way than to use the genesis block. The ranged hash BIP158 calculation routines (involving SipHash) are just there for a verification of the false-positive, which IMHO makes sense.\r\n\r\n> A more meta-comment: should we even be scanning block 0 since it's coinbase UTXO is unspendable?\r\n\r\nGood question. I'd say yes, as I see `scanblocks` as a general tool for \"show me all blocks containing txs that involve scriptPubKey xyz\" rather than taking details like spendability into account (there are a lots of UTXOs that are unspendable, some even provably unspendable, like e.g. P2TR outputs with invalid x-only-pubkeys).",
       "created_at" : "2022-10-25T01:44:13Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26341#issuecomment-1289866222",

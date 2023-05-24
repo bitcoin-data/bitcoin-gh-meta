@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [glozow](https://github.com/bitcoin/bitcoin/pull/26631#pullrequestreview-1247686689), [kouloumos](https://github.com/bitcoin/bitcoin/pull/26631#pullrequestreview-1245154873), [LarryRuane](https://github.com/bitcoin/bitcoin/pull/26631#issuecomment-1382205604) |\n| Concept ACK | [pablomartin4btc](https://github.com/bitcoin/bitcoin/pull/26631#pullrequestreview-1216608530), [rserranon](https://github.com/bitcoin/bitcoin/pull/26631#issuecomment-1351729027), [instagibbs](https://github.com/bitcoin/bitcoin/pull/26631#pullrequestreview-1247801283) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--2502f1a698b3751726fa55edcda76cd3-->\n\n### Coverage\n\n| Coverage  | Change ([pull 26631](https://drahtbot.space/host_reports/DrahtBot/reports/coverage/bitcoin/bitcoin/26631/total.coverage/index.html), 8147f7f7ec5dcfe5295ed2697942b410554b4117) | Reference ([master](https://drahtbot.space/host_reports/DrahtBot/reports/coverage/bitcoin/bitcoin/5055d07edf4625d2/total.coverage/index.html), 5055d07edf4625d2)   |\n|-----------|-------------------------|--------------------|\n| Lines     | +0.0036 %            | 83.9288 %        |\n| Functions | +0.0000 %            | 80.9329 %        |\n| Branches  | +0.0040 %            | 51.4098 %        |\n\n<sup>Updated at: 2022-12-16T12:29:44.053355.</sup>\n",
       "created_at" : "2022-12-04T02:46:04Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26631#issuecomment-1336306841",
@@ -57,7 +57,7 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "maybe add a comment before this definition:\r\n```python\r\n# Equivalent to: CScript::IsWitnessProgram()\r\n```",
-      "commit_id" : "2c697ddcb1fa4d04f55b024c06116530d7e74598",
+      "commit_id" : "d6fc1d6a3393c571a1691a6bda60433216643616",
       "created_at" : "2022-12-11T22:49:44Z",
       "diff_hunk" : "@@ -597,6 +597,13 @@ def GetSigOpCount(self, fAccurate):\n             lastOpcode = opcode\n         return n\n \n+    def IsWitnessProgram(self):",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26631#discussion_r1045310388",
@@ -73,7 +73,7 @@
       "pull_request_review_id" : 1212767725,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26631",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -81,12 +81,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1045310388/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-12T18:06:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1045310388",
       "user" : {
@@ -124,19 +125,19 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "nit\r\n```suggestion\r\n        for dustfee_sat_kvb in (DUST_RELAY_TX_FEE, 0, 1, 66, 500, 1337, 12345, 21212):\r\n```",
-      "commit_id" : "2c697ddcb1fa4d04f55b024c06116530d7e74598",
+      "commit_id" : "d6fc1d6a3393c571a1691a6bda60433216643616",
       "created_at" : "2022-12-12T06:31:39Z",
       "diff_hunk" : "@@ -0,0 +1,112 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test dust limit mempool policy (`-dustrelayfee` parameter)\"\"\"\n+from decimal import Decimal\n+\n+from test_framework.key import ECKey\n+from test_framework.messages import (\n+    COIN,\n+    CTxOut,\n+)\n+from test_framework.script import (\n+    CScript,\n+    OP_RETURN,\n+    OP_TRUE,\n+)\n+from test_framework.script_util import (\n+    key_to_p2pk_script,\n+    key_to_p2pkh_script,\n+    key_to_p2wpkh_script,\n+    keys_to_multisig_script,\n+    output_key_to_p2tr_script,\n+    program_to_witness_script,\n+    script_to_p2sh_script,\n+    script_to_p2wsh_script,\n+)\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.test_node import TestNode\n+from test_framework.util import (\n+    assert_equal,\n+    get_fee,\n+)\n+from test_framework.wallet import MiniWallet\n+\n+\n+DUST_RELAY_TX_FEE = 3000  # default setting [sat/kvB]\n+\n+\n+class DustRelayFeeTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+\n+    def test_dust_output(self, node: TestNode, dust_relay_fee: Decimal,\n+                         output_script: CScript, type_desc: str) -> None:\n+        # determine dust threshold (see `GetDustThreshold`)\n+        if output_script[0] == OP_RETURN:\n+            dust_threshold = 0\n+        else:\n+            tx_size = len(CTxOut(nValue=0, scriptPubKey=output_script).serialize())\n+            tx_size += 67 if output_script.IsWitnessProgram() else 148\n+            dust_threshold = int(get_fee(tx_size, dust_relay_fee) * COIN)\n+        self.log.info(f\"-> Test {type_desc} output (size {len(output_script)}, limit {dust_threshold})\")\n+\n+        # amount right on the dust threshold should pass\n+        tx = self.wallet.create_self_transfer()[\"tx\"]\n+        tx.vout.append(CTxOut(nValue=dust_threshold, scriptPubKey=output_script))\n+        tx_good_hex = tx.serialize().hex()\n+        res = node.testmempoolaccept([tx_good_hex])[0]\n+        assert_equal(res['allowed'], True)\n+\n+        # amount just below the dust threshold should fail\n+        if dust_threshold > 0:\n+            tx.vout[1].nValue -= 1\n+            res = node.testmempoolaccept([tx.serialize().hex()])[0]\n+            assert_equal(res['allowed'], False)\n+            assert_equal(res['reject-reason'], 'dust')\n+\n+        # finally send the transaction to avoid running out of MiniWallet UTXOs\n+        self.wallet.sendrawtransaction(from_node=node, tx_hex=tx_good_hex)\n+\n+    def run_test(self):\n+        self.wallet = MiniWallet(self.nodes[0])\n+        self.wallet.rescan_utxos()\n+\n+        # prepare output scripts of each standard type\n+        key = ECKey()\n+        key.generate(compressed=False)\n+        uncompressed_pubkey = key.get_pubkey().get_bytes()\n+        key.generate(compressed=True)\n+        pubkey = key.get_pubkey().get_bytes()\n+\n+        output_scripts = [\n+            (key_to_p2pk_script(uncompressed_pubkey),     \"P2PK (uncompressed)\"),\n+            (key_to_p2pk_script(pubkey),                  \"P2PK (compressed)\"),\n+            (key_to_p2pkh_script(pubkey),                 \"P2PKH\"),\n+            (script_to_p2sh_script(CScript([OP_TRUE])),   \"P2SH\"),\n+            (key_to_p2wpkh_script(pubkey),                \"P2WPKH\"),\n+            (script_to_p2wsh_script(CScript([OP_TRUE])),  \"P2WSH\"),\n+            (output_key_to_p2tr_script(pubkey[1:]),       \"P2TR\"),\n+            (program_to_witness_script(2,  b'\\x66' * 21), \"P2?? (future witness version 2)\"),\n+            (program_to_witness_script(16, b'\\x77' * 40), \"P2?? (future witness version 16)\"),\n+            (keys_to_multisig_script([pubkey]*3),         \"bare multisig (3-of-3)\"),\n+            (CScript([OP_RETURN, b'superimportanthash']), \"null data (OP_RETURN)\"),\n+        ]\n+\n+        for dustfee_sat_kvb in [DUST_RELAY_TX_FEE, 0, 1, 66, 500, 1337, 12345, 21212]:",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26631#discussion_r1045445426",
       "id" : 1045445426,
-      "line" : 97,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584-UDsy",
       "original_commit_id" : "2c697ddcb1fa4d04f55b024c06116530d7e74598",
       "original_line" : 97,
       "original_position" : 97,
       "original_start_line" : null,
       "path" : "test/functional/mempool_dust.py",
-      "position" : 97,
+      "position" : null,
       "pull_request_review_id" : 1212767725,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26631",
       "reactions" : {
@@ -154,6 +155,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-12T18:06:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1045445426",
       "user" : {
@@ -191,7 +193,7 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "Not actually needed, but just to make sure ...\r\n```suggestion\r\n        tx = self.wallet.create_self_transfer()[\"tx\"]\r\n        # make sure there's enough value available for the new output we're creating\r\n        tx.vout[0].nValue -= dust_threshold\r\n```\r\nNote that since this tx is spending coinbase, there's almost 50BTC available in the first output, and also spending coinbase doesn't require a signature here in the functional tests, so we can make this adjustment without having to re-signing the transaction.",
-      "commit_id" : "2c697ddcb1fa4d04f55b024c06116530d7e74598",
+      "commit_id" : "d6fc1d6a3393c571a1691a6bda60433216643616",
       "created_at" : "2022-12-12T18:04:01Z",
       "diff_hunk" : "@@ -0,0 +1,112 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test dust limit mempool policy (`-dustrelayfee` parameter)\"\"\"\n+from decimal import Decimal\n+\n+from test_framework.key import ECKey\n+from test_framework.messages import (\n+    COIN,\n+    CTxOut,\n+)\n+from test_framework.script import (\n+    CScript,\n+    OP_RETURN,\n+    OP_TRUE,\n+)\n+from test_framework.script_util import (\n+    key_to_p2pk_script,\n+    key_to_p2pkh_script,\n+    key_to_p2wpkh_script,\n+    keys_to_multisig_script,\n+    output_key_to_p2tr_script,\n+    program_to_witness_script,\n+    script_to_p2sh_script,\n+    script_to_p2wsh_script,\n+)\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.test_node import TestNode\n+from test_framework.util import (\n+    assert_equal,\n+    get_fee,\n+)\n+from test_framework.wallet import MiniWallet\n+\n+\n+DUST_RELAY_TX_FEE = 3000  # default setting [sat/kvB]\n+\n+\n+class DustRelayFeeTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+\n+    def test_dust_output(self, node: TestNode, dust_relay_fee: Decimal,\n+                         output_script: CScript, type_desc: str) -> None:\n+        # determine dust threshold (see `GetDustThreshold`)\n+        if output_script[0] == OP_RETURN:\n+            dust_threshold = 0\n+        else:\n+            tx_size = len(CTxOut(nValue=0, scriptPubKey=output_script).serialize())\n+            tx_size += 67 if output_script.IsWitnessProgram() else 148\n+            dust_threshold = int(get_fee(tx_size, dust_relay_fee) * COIN)\n+        self.log.info(f\"-> Test {type_desc} output (size {len(output_script)}, limit {dust_threshold})\")\n+\n+        # amount right on the dust threshold should pass\n+        tx = self.wallet.create_self_transfer()[\"tx\"]",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26631#discussion_r1046197993",
@@ -221,6 +223,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-12T18:06:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1046197993",
       "user" : {
@@ -258,23 +261,23 @@
       },
       "author_association" : "NONE",
       "body" : "Should a comment be added with a note that `-dustrelayfee` list elements are somewhat arbitrary?, or is there a rationale that should be mentioned?",
-      "commit_id" : "2c697ddcb1fa4d04f55b024c06116530d7e74598",
+      "commit_id" : "d6fc1d6a3393c571a1691a6bda60433216643616",
       "created_at" : "2022-12-14T05:11:23Z",
       "diff_hunk" : "@@ -0,0 +1,112 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test dust limit mempool policy (`-dustrelayfee` parameter)\"\"\"\n+from decimal import Decimal\n+\n+from test_framework.key import ECKey\n+from test_framework.messages import (\n+    COIN,\n+    CTxOut,\n+)\n+from test_framework.script import (\n+    CScript,\n+    OP_RETURN,\n+    OP_TRUE,\n+)\n+from test_framework.script_util import (\n+    key_to_p2pk_script,\n+    key_to_p2pkh_script,\n+    key_to_p2wpkh_script,\n+    keys_to_multisig_script,\n+    output_key_to_p2tr_script,\n+    program_to_witness_script,\n+    script_to_p2sh_script,\n+    script_to_p2wsh_script,\n+)\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.test_node import TestNode\n+from test_framework.util import (\n+    assert_equal,\n+    get_fee,\n+)\n+from test_framework.wallet import MiniWallet\n+\n+\n+DUST_RELAY_TX_FEE = 3000  # default setting [sat/kvB]\n+\n+\n+class DustRelayFeeTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+\n+    def test_dust_output(self, node: TestNode, dust_relay_fee: Decimal,\n+                         output_script: CScript, type_desc: str) -> None:\n+        # determine dust threshold (see `GetDustThreshold`)\n+        if output_script[0] == OP_RETURN:\n+            dust_threshold = 0\n+        else:\n+            tx_size = len(CTxOut(nValue=0, scriptPubKey=output_script).serialize())\n+            tx_size += 67 if output_script.IsWitnessProgram() else 148\n+            dust_threshold = int(get_fee(tx_size, dust_relay_fee) * COIN)\n+        self.log.info(f\"-> Test {type_desc} output (size {len(output_script)}, limit {dust_threshold})\")\n+\n+        # amount right on the dust threshold should pass\n+        tx = self.wallet.create_self_transfer()[\"tx\"]\n+        tx.vout.append(CTxOut(nValue=dust_threshold, scriptPubKey=output_script))\n+        tx_good_hex = tx.serialize().hex()\n+        res = node.testmempoolaccept([tx_good_hex])[0]\n+        assert_equal(res['allowed'], True)\n+\n+        # amount just below the dust threshold should fail\n+        if dust_threshold > 0:\n+            tx.vout[1].nValue -= 1\n+            res = node.testmempoolaccept([tx.serialize().hex()])[0]\n+            assert_equal(res['allowed'], False)\n+            assert_equal(res['reject-reason'], 'dust')\n+\n+        # finally send the transaction to avoid running out of MiniWallet UTXOs\n+        self.wallet.sendrawtransaction(from_node=node, tx_hex=tx_good_hex)\n+\n+    def run_test(self):\n+        self.wallet = MiniWallet(self.nodes[0])\n+        self.wallet.rescan_utxos()\n+\n+        # prepare output scripts of each standard type\n+        key = ECKey()\n+        key.generate(compressed=False)\n+        uncompressed_pubkey = key.get_pubkey().get_bytes()\n+        key.generate(compressed=True)\n+        pubkey = key.get_pubkey().get_bytes()\n+\n+        output_scripts = [\n+            (key_to_p2pk_script(uncompressed_pubkey),     \"P2PK (uncompressed)\"),\n+            (key_to_p2pk_script(pubkey),                  \"P2PK (compressed)\"),\n+            (key_to_p2pkh_script(pubkey),                 \"P2PKH\"),\n+            (script_to_p2sh_script(CScript([OP_TRUE])),   \"P2SH\"),\n+            (key_to_p2wpkh_script(pubkey),                \"P2WPKH\"),\n+            (script_to_p2wsh_script(CScript([OP_TRUE])),  \"P2WSH\"),\n+            (output_key_to_p2tr_script(pubkey[1:]),       \"P2TR\"),\n+            (program_to_witness_script(2,  b'\\x66' * 21), \"P2?? (future witness version 2)\"),\n+            (program_to_witness_script(16, b'\\x77' * 40), \"P2?? (future witness version 16)\"),\n+            (keys_to_multisig_script([pubkey]*3),         \"bare multisig (3-of-3)\"),\n+            (CScript([OP_RETURN, b'superimportanthash']), \"null data (OP_RETURN)\"),\n+        ]\n+\n+        for dustfee_sat_kvb in [DUST_RELAY_TX_FEE, 0, 1, 66, 500, 1337, 12345, 21212]:",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26631#discussion_r1048023149",
       "id" : 1048023149,
-      "line" : 97,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584-d5Bt",
       "original_commit_id" : "2c697ddcb1fa4d04f55b024c06116530d7e74598",
       "original_line" : 97,
       "original_position" : 97,
       "original_start_line" : null,
       "path" : "test/functional/mempool_dust.py",
-      "position" : 97,
+      "position" : null,
       "pull_request_review_id" : 1216798111,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26631",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -282,12 +285,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1048023149/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-14T05:11:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1048023149",
       "user" : {
@@ -369,19 +373,19 @@
       },
       "author_association" : "NONE",
       "body" : "Can you explain the rationale for using 21 bytes and 40 bytes for future witness versions 2 and 16 respectively? Maybe a comment with the standard size for each Script type could be useful for testers and people learning.\r\n",
-      "commit_id" : "2c697ddcb1fa4d04f55b024c06116530d7e74598",
+      "commit_id" : "d6fc1d6a3393c571a1691a6bda60433216643616",
       "created_at" : "2022-12-14T16:53:19Z",
       "diff_hunk" : "@@ -0,0 +1,112 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test dust limit mempool policy (`-dustrelayfee` parameter)\"\"\"\n+from decimal import Decimal\n+\n+from test_framework.key import ECKey\n+from test_framework.messages import (\n+    COIN,\n+    CTxOut,\n+)\n+from test_framework.script import (\n+    CScript,\n+    OP_RETURN,\n+    OP_TRUE,\n+)\n+from test_framework.script_util import (\n+    key_to_p2pk_script,\n+    key_to_p2pkh_script,\n+    key_to_p2wpkh_script,\n+    keys_to_multisig_script,\n+    output_key_to_p2tr_script,\n+    program_to_witness_script,\n+    script_to_p2sh_script,\n+    script_to_p2wsh_script,\n+)\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.test_node import TestNode\n+from test_framework.util import (\n+    assert_equal,\n+    get_fee,\n+)\n+from test_framework.wallet import MiniWallet\n+\n+\n+DUST_RELAY_TX_FEE = 3000  # default setting [sat/kvB]\n+\n+\n+class DustRelayFeeTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+\n+    def test_dust_output(self, node: TestNode, dust_relay_fee: Decimal,\n+                         output_script: CScript, type_desc: str) -> None:\n+        # determine dust threshold (see `GetDustThreshold`)\n+        if output_script[0] == OP_RETURN:\n+            dust_threshold = 0\n+        else:\n+            tx_size = len(CTxOut(nValue=0, scriptPubKey=output_script).serialize())\n+            tx_size += 67 if output_script.IsWitnessProgram() else 148\n+            dust_threshold = int(get_fee(tx_size, dust_relay_fee) * COIN)\n+        self.log.info(f\"-> Test {type_desc} output (size {len(output_script)}, limit {dust_threshold})\")\n+\n+        # amount right on the dust threshold should pass\n+        tx = self.wallet.create_self_transfer()[\"tx\"]\n+        tx.vout.append(CTxOut(nValue=dust_threshold, scriptPubKey=output_script))\n+        tx_good_hex = tx.serialize().hex()\n+        res = node.testmempoolaccept([tx_good_hex])[0]\n+        assert_equal(res['allowed'], True)\n+\n+        # amount just below the dust threshold should fail\n+        if dust_threshold > 0:\n+            tx.vout[1].nValue -= 1\n+            res = node.testmempoolaccept([tx.serialize().hex()])[0]\n+            assert_equal(res['allowed'], False)\n+            assert_equal(res['reject-reason'], 'dust')\n+\n+        # finally send the transaction to avoid running out of MiniWallet UTXOs\n+        self.wallet.sendrawtransaction(from_node=node, tx_hex=tx_good_hex)\n+\n+    def run_test(self):\n+        self.wallet = MiniWallet(self.nodes[0])\n+        self.wallet.rescan_utxos()\n+\n+        # prepare output scripts of each standard type\n+        key = ECKey()\n+        key.generate(compressed=False)\n+        uncompressed_pubkey = key.get_pubkey().get_bytes()\n+        key.generate(compressed=True)\n+        pubkey = key.get_pubkey().get_bytes()\n+\n+        output_scripts = [\n+            (key_to_p2pk_script(uncompressed_pubkey),     \"P2PK (uncompressed)\"),\n+            (key_to_p2pk_script(pubkey),                  \"P2PK (compressed)\"),\n+            (key_to_p2pkh_script(pubkey),                 \"P2PKH\"),\n+            (script_to_p2sh_script(CScript([OP_TRUE])),   \"P2SH\"),\n+            (key_to_p2wpkh_script(pubkey),                \"P2WPKH\"),\n+            (script_to_p2wsh_script(CScript([OP_TRUE])),  \"P2WSH\"),\n+            (output_key_to_p2tr_script(pubkey[1:]),       \"P2TR\"),\n+            (program_to_witness_script(2,  b'\\x66' * 21), \"P2?? (future witness version 2)\"),\n+            (program_to_witness_script(16, b'\\x77' * 40), \"P2?? (future witness version 16)\"),",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26631#discussion_r1048723133",
       "id" : 1048723133,
-      "line" : 92,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584-gj69",
       "original_commit_id" : "2c697ddcb1fa4d04f55b024c06116530d7e74598",
       "original_line" : 92,
       "original_position" : 92,
       "original_start_line" : 91,
       "path" : "test/functional/mempool_dust.py",
-      "position" : 92,
+      "position" : null,
       "pull_request_review_id" : 1217866759,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26631",
       "reactions" : {
@@ -397,8 +401,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1048723133/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 91,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-12-14T16:53:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1048723133",
       "user" : {
@@ -434,7 +439,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1050793539"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Good idea, added a comment above that for-loop in the latest force-push (\"# test default (no parameter), disabled (=0) and a bunch of arbitrary dust fee rates [sat/kvB]\").",
       "commit_id" : "d6fc1d6a3393c571a1691a6bda60433216643616",
       "created_at" : "2022-12-16T14:06:29Z",
@@ -467,6 +472,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-16T14:06:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1050793539",
       "user" : {
@@ -502,7 +508,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1050795795"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Done, also for the output scripts.",
       "commit_id" : "d6fc1d6a3393c571a1691a6bda60433216643616",
       "created_at" : "2022-12-16T14:09:14Z",
@@ -535,6 +541,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-16T14:09:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1050795795",
       "user" : {
@@ -570,7 +577,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1050799849"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "It could be any size between 2 and 40 bytes. Added a corresponding comment in latest force-push (\"# witness programs for segwitv2+ can be between 2 and 40 bytes\") and adapted the values accordingly. I prefer now having one with 2 bytes instead of 21 bytes (which was indeed completely arbitrary) as it is the smallest possible output script that is considered standard.",
       "commit_id" : "d6fc1d6a3393c571a1691a6bda60433216643616",
       "created_at" : "2022-12-16T14:13:39Z",
@@ -603,6 +610,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-12-16T14:13:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1050799849",
       "user" : {
@@ -638,7 +646,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1050810659"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks, done. In fact after extending the dust fee-rate test list with a larger value (333333), the test would fail without this change, so it was very helpful. Note that not requiring a signature is not only true for the coinbase outputs we spend here, but also to outputs created by MiniWallet going to the exact same address.",
       "commit_id" : "d6fc1d6a3393c571a1691a6bda60433216643616",
       "created_at" : "2022-12-16T14:23:46Z",
@@ -671,6 +679,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-16T14:23:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1050810659",
       "user" : {
@@ -695,7 +704,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Force-pushed with most suggestions taken, and another few changes:\r\n* add both smallest and largest possible (non-nulldata) output scripts that are considered standard to the list  (i.e. segwitv2+ with 2-byte witness program, m-of-3 bare multisig with uncompressed pubkeys)\r\n* extended the dust fee-rate list to test with 333333, to also have one case covering the \"~hundreds of sats/vbyte\" range\r\n* add comments about program witness sizes and chosen dust fee-rates to reduce confusion about magic numbers\r\n* for tx creation: adjust first output with the dust threshold amount, to keep the total output value constant and not risk underpaying fees (or even worse, exceeding the input amount)\r\n\r\n> I think this statement is very useful as a context for the review:\r\n> \r\n> The concept of dust was first introduced in [PR #2577](https://github.com/bitcoin/bitcoin/pull/2577). This [commit](https://github.com/bitcoin/bitcoin/pull/9380/commits/eb30d1a5b215c6dd3763d7f7948f2dd8cb61f6bf) from [PR #9380](https://github.com/bitcoin/bitcoin/pull/9380) introduced the `-dustrelayfee` option. Previous to that PR, the dust feerate was whatever `-minrelaytxfee` was set to.\r\n\r\nThanks for researching! ð  I added this paragraph to the PR description, as it is very helpful for reviewers getting deeper into the topic of dust with some historical context.\r\n\r\n> \r\n> Taken from the notes of the [review club](https://bitcoincore.reviews/26631). Is it possible to add the label \"Review club\" to this PR please?\r\n\r\n+1",
       "created_at" : "2022-12-16T14:29:35Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26631#issuecomment-1354940477",
@@ -736,6 +745,210 @@
          "subscriptions_url" : "https://api.github.com/users/theStack/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/theStack"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/26631#discussion_r1067831033"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26631"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1067831033"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "the `node` argument may be residue from when the PR used multiple nodes to test different configurations?",
+      "commit_id" : "d6fc1d6a3393c571a1691a6bda60433216643616",
+      "created_at" : "2023-01-12T08:29:44Z",
+      "diff_hunk" : "@@ -0,0 +1,116 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test dust limit mempool policy (`-dustrelayfee` parameter)\"\"\"\n+from decimal import Decimal\n+\n+from test_framework.key import ECKey\n+from test_framework.messages import (\n+    COIN,\n+    CTxOut,\n+)\n+from test_framework.script import (\n+    CScript,\n+    OP_RETURN,\n+    OP_TRUE,\n+)\n+from test_framework.script_util import (\n+    key_to_p2pk_script,\n+    key_to_p2pkh_script,\n+    key_to_p2wpkh_script,\n+    keys_to_multisig_script,\n+    output_key_to_p2tr_script,\n+    program_to_witness_script,\n+    script_to_p2sh_script,\n+    script_to_p2wsh_script,\n+)\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.test_node import TestNode\n+from test_framework.util import (\n+    assert_equal,\n+    get_fee,\n+)\n+from test_framework.wallet import MiniWallet\n+\n+\n+DUST_RELAY_TX_FEE = 3000  # default setting [sat/kvB]\n+\n+\n+class DustRelayFeeTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+\n+    def test_dust_output(self, node: TestNode, dust_relay_fee: Decimal,",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26631#discussion_r1067831033",
+      "id" : 1067831033,
+      "line" : 44,
+      "node_id" : "PRRC_kwDOABII584_pc75",
+      "original_commit_id" : "d6fc1d6a3393c571a1691a6bda60433216643616",
+      "original_line" : 44,
+      "original_position" : 44,
+      "original_start_line" : null,
+      "path" : "test/functional/mempool_dust.py",
+      "position" : 44,
+      "pull_request_review_id" : 1245154873,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26631",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1067831033/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2023-01-13T16:11:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1067831033",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/18506343?v=4",
+         "events_url" : "https://api.github.com/users/kouloumos/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kouloumos/followers",
+         "following_url" : "https://api.github.com/users/kouloumos/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kouloumos/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kouloumos",
+         "id" : 18506343,
+         "login" : "kouloumos",
+         "node_id" : "MDQ6VXNlcjE4NTA2MzQz",
+         "organizations_url" : "https://api.github.com/users/kouloumos/orgs",
+         "received_events_url" : "https://api.github.com/users/kouloumos/received_events",
+         "repos_url" : "https://api.github.com/users/kouloumos/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kouloumos/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kouloumos/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kouloumos"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/26631#discussion_r1069542020"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26631"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1069542020"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit: I've been thinking about ways to formalize the way logging is done in the testing framework and indentation of subcases is in there. The ideal scenario would be for those things to happen automatically, but working with what we have... \r\nI would like to make a minor suggestion that I believe makes the logging more readable:\r\n```suggestion\r\n        self.log.info(f\" - Test {type_desc} output (size {len(output_script)}, limit {dust_threshold})\")\r\n```\r\nside by side comparison\r\n![imgonline-com-ua-twotoone-KxmOPSAP8O](https://user-images.githubusercontent.com/18506343/212340600-75319cc3-7545-41d7-a560-1dc5b7da4ec8.jpg)\r\n\r\nand to remove even more noise:\r\n```suggestion\r\n        self.log.info(f\"- output (size {len(output_script)}, limit {dust_threshold})\")\r\n```\r\n![icon3](https://user-images.githubusercontent.com/18506343/212341569-17abd259-feb2-4285-86ca-b1b13347c61c.png)\r\n\r\nI've noticed that this is a format that you have previously used in `wallet_fast_rescan.py`, but \"- ...\" is currently used in more place, such as `rpc_decodescript.py` and `rpc_psbt.py` and I believe that following the same format across the testing framework is for the better.\r\n",
+      "commit_id" : "d6fc1d6a3393c571a1691a6bda60433216643616",
+      "created_at" : "2023-01-13T14:43:33Z",
+      "diff_hunk" : "@@ -0,0 +1,116 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test dust limit mempool policy (`-dustrelayfee` parameter)\"\"\"\n+from decimal import Decimal\n+\n+from test_framework.key import ECKey\n+from test_framework.messages import (\n+    COIN,\n+    CTxOut,\n+)\n+from test_framework.script import (\n+    CScript,\n+    OP_RETURN,\n+    OP_TRUE,\n+)\n+from test_framework.script_util import (\n+    key_to_p2pk_script,\n+    key_to_p2pkh_script,\n+    key_to_p2wpkh_script,\n+    keys_to_multisig_script,\n+    output_key_to_p2tr_script,\n+    program_to_witness_script,\n+    script_to_p2sh_script,\n+    script_to_p2wsh_script,\n+)\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.test_node import TestNode\n+from test_framework.util import (\n+    assert_equal,\n+    get_fee,\n+)\n+from test_framework.wallet import MiniWallet\n+\n+\n+DUST_RELAY_TX_FEE = 3000  # default setting [sat/kvB]\n+\n+\n+class DustRelayFeeTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+\n+    def test_dust_output(self, node: TestNode, dust_relay_fee: Decimal,\n+                         output_script: CScript, type_desc: str) -> None:\n+        # determine dust threshold (see `GetDustThreshold`)\n+        if output_script[0] == OP_RETURN:\n+            dust_threshold = 0\n+        else:\n+            tx_size = len(CTxOut(nValue=0, scriptPubKey=output_script).serialize())\n+            tx_size += 67 if output_script.IsWitnessProgram() else 148\n+            dust_threshold = int(get_fee(tx_size, dust_relay_fee) * COIN)\n+        self.log.info(f\"-> Test {type_desc} output (size {len(output_script)}, limit {dust_threshold})\")",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26631#discussion_r1069542020",
+      "id" : 1069542020,
+      "line" : 53,
+      "node_id" : "PRRC_kwDOABII584_v-qE",
+      "original_commit_id" : "d6fc1d6a3393c571a1691a6bda60433216643616",
+      "original_line" : 53,
+      "original_position" : 53,
+      "original_start_line" : null,
+      "path" : "test/functional/mempool_dust.py",
+      "position" : 53,
+      "pull_request_review_id" : 1245154873,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26631",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1069542020/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2023-01-13T16:11:03Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1069542020",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/18506343?v=4",
+         "events_url" : "https://api.github.com/users/kouloumos/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/kouloumos/followers",
+         "following_url" : "https://api.github.com/users/kouloumos/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/kouloumos/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/kouloumos",
+         "id" : 18506343,
+         "login" : "kouloumos",
+         "node_id" : "MDQ6VXNlcjE4NTA2MzQz",
+         "organizations_url" : "https://api.github.com/users/kouloumos/orgs",
+         "received_events_url" : "https://api.github.com/users/kouloumos/received_events",
+         "repos_url" : "https://api.github.com/users/kouloumos/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/kouloumos/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/kouloumos/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/kouloumos"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/26631#discussion_r1069576798"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26631"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1069576798"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "As I do in https://github.com/bitcoin/bitcoin/pull/26875 could check v1 at non-32-byte-push lengths as well to make sure they're treated as UNKNOWN ",
+      "commit_id" : "d6fc1d6a3393c571a1691a6bda60433216643616",
+      "created_at" : "2023-01-13T15:15:00Z",
+      "diff_hunk" : "@@ -0,0 +1,116 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test dust limit mempool policy (`-dustrelayfee` parameter)\"\"\"\n+from decimal import Decimal\n+\n+from test_framework.key import ECKey\n+from test_framework.messages import (\n+    COIN,\n+    CTxOut,\n+)\n+from test_framework.script import (\n+    CScript,\n+    OP_RETURN,\n+    OP_TRUE,\n+)\n+from test_framework.script_util import (\n+    key_to_p2pk_script,\n+    key_to_p2pkh_script,\n+    key_to_p2wpkh_script,\n+    keys_to_multisig_script,\n+    output_key_to_p2tr_script,\n+    program_to_witness_script,\n+    script_to_p2sh_script,\n+    script_to_p2wsh_script,\n+)\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.test_node import TestNode\n+from test_framework.util import (\n+    assert_equal,\n+    get_fee,\n+)\n+from test_framework.wallet import MiniWallet\n+\n+\n+DUST_RELAY_TX_FEE = 3000  # default setting [sat/kvB]\n+\n+\n+class DustRelayFeeTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+\n+    def test_dust_output(self, node: TestNode, dust_relay_fee: Decimal,\n+                         output_script: CScript, type_desc: str) -> None:\n+        # determine dust threshold (see `GetDustThreshold`)\n+        if output_script[0] == OP_RETURN:\n+            dust_threshold = 0\n+        else:\n+            tx_size = len(CTxOut(nValue=0, scriptPubKey=output_script).serialize())\n+            tx_size += 67 if output_script.IsWitnessProgram() else 148\n+            dust_threshold = int(get_fee(tx_size, dust_relay_fee) * COIN)\n+        self.log.info(f\"-> Test {type_desc} output (size {len(output_script)}, limit {dust_threshold})\")\n+\n+        # amount right on the dust threshold should pass\n+        tx = self.wallet.create_self_transfer()[\"tx\"]\n+        tx.vout.append(CTxOut(nValue=dust_threshold, scriptPubKey=output_script))\n+        tx.vout[0].nValue -= dust_threshold  # keep total output value constant\n+        tx_good_hex = tx.serialize().hex()\n+        res = node.testmempoolaccept([tx_good_hex])[0]\n+        assert_equal(res['allowed'], True)\n+\n+        # amount just below the dust threshold should fail\n+        if dust_threshold > 0:\n+            tx.vout[1].nValue -= 1\n+            res = node.testmempoolaccept([tx.serialize().hex()])[0]\n+            assert_equal(res['allowed'], False)\n+            assert_equal(res['reject-reason'], 'dust')\n+\n+        # finally send the transaction to avoid running out of MiniWallet UTXOs\n+        self.wallet.sendrawtransaction(from_node=node, tx_hex=tx_good_hex)\n+\n+    def run_test(self):\n+        self.wallet = MiniWallet(self.nodes[0])\n+        self.wallet.rescan_utxos()\n+\n+        # prepare output scripts of each standard type\n+        key = ECKey()\n+        key.generate(compressed=False)\n+        uncompressed_pubkey = key.get_pubkey().get_bytes()\n+        key.generate(compressed=True)\n+        pubkey = key.get_pubkey().get_bytes()\n+\n+        output_scripts = (\n+            (key_to_p2pk_script(uncompressed_pubkey),          \"P2PK (uncompressed)\"),\n+            (key_to_p2pk_script(pubkey),                       \"P2PK (compressed)\"),\n+            (key_to_p2pkh_script(pubkey),                      \"P2PKH\"),\n+            (script_to_p2sh_script(CScript([OP_TRUE])),        \"P2SH\"),\n+            (key_to_p2wpkh_script(pubkey),                     \"P2WPKH\"),\n+            (script_to_p2wsh_script(CScript([OP_TRUE])),       \"P2WSH\"),\n+            (output_key_to_p2tr_script(pubkey[1:]),            \"P2TR\"),\n+            # witness programs for segwitv2+ can be between 2 and 40 bytes\n+            (program_to_witness_script(2,  b'\\x66' * 2),       \"P2?? (future witness version 2)\"),",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26631#discussion_r1069576798",
+      "id" : 1069576798,
+      "line" : 93,
+      "node_id" : "PRRC_kwDOABII584_wHJe",
+      "original_commit_id" : "d6fc1d6a3393c571a1691a6bda60433216643616",
+      "original_line" : 93,
+      "original_position" : 93,
+      "original_start_line" : null,
+      "path" : "test/functional/mempool_dust.py",
+      "position" : 93,
+      "pull_request_review_id" : 1247801283,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26631",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1069576798/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2023-01-13T15:16:11Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1069576798",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "node_id" : "MDQ6VXNlcjU3Njc4OTE=",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
       }
    },
    {

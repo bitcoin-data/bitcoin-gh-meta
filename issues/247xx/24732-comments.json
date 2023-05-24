@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2022-04-01T11:06:21Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24732#issuecomment-1085766385",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2022-04-01T12:15:32Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24732#issuecomment-1085825382",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24629](https://github.com/bitcoin/bitcoin/pull/24629) (Bugfix: RPC/blockchain: pruneblockchain: Return the height of the actual last pruned block by luke-jr)\n* [#24202](https://github.com/bitcoin/bitcoin/pull/24202) (rpc: allow dumptxoutset to dump human-readable data by w0xlt)\n* [#21726](https://github.com/bitcoin/bitcoin/pull/21726) (Improve Indices on pruned nodes via prune blockers by fjahr)\n* [#18933](https://github.com/bitcoin/bitcoin/pull/18933) (rpc: Add submit option to generateblock by MarcoFalke)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-04-01T13:32:28Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24732#issuecomment-1085904557",
@@ -231,7 +231,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/842279604"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Is there any reason to keep `nHeight` and `nHeightEnd` here?\r\n\r\n```diff\r\n@@ -145,16 +145,8 @@ static bool GenerateBlock(ChainstateManager& chainman, CBlock& block, uint64_t&\r\n \r\n static UniValue generateBlocks(ChainstateManager& chainman, const CTxMemPool& mempool, const CScript& coinbase_script, int nGenerate, uint64_t nMaxTries)\r\n {\r\n-    int nHeightEnd = 0;\r\n-    int nHeight = 0;\r\n-\r\n-    {   // Don't keep cs_main locked\r\n-        LOCK(cs_main);\r\n-        nHeight = chainman.ActiveChain().Height();\r\n-        nHeightEnd = nHeight+nGenerate;\r\n-    }\r\n     UniValue blockHashes(UniValue::VARR);\r\n-    while (nHeight < nHeightEnd && !ShutdownRequested())\r\n+    while (nGenerate > 0 && !ShutdownRequested())\r\n     {\r\n         std::unique_ptr<CBlockTemplate> pblocktemplate(BlockAssembler(chainman.ActiveChainstate(), mempool, Params()).CreateNewBlock(coinbase_script));\r\n         if (!pblocktemplate.get())\r\n@@ -167,7 +159,7 @@ static UniValue generateBlocks(ChainstateManager& chainman, const CTxMemPool& me\r\n         }\r\n \r\n         if (!block_hash.IsNull()) {\r\n-            ++nHeight;\r\n+            --nGenerate;\r\n             blockHashes.push_back(block_hash.GetHex());\r\n         }\r\n     }\r\n```",
       "commit_id" : "cccc4e879a8cb9d858a88ea46b28ea27ab79ca55",
       "created_at" : "2022-04-05T02:21:08Z",
@@ -263,6 +263,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-05T04:05:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/842279604",
       "user" : {
@@ -331,6 +332,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-05T11:05:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/842658918",
       "user" : {
@@ -399,7 +401,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK cccc4e879a8cb9d858a88ea46b28ea27ab79ca55",
       "created_at" : "2022-04-06T09:08:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24732#issuecomment-1090036014",

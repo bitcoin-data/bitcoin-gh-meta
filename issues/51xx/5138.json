@@ -1,6 +1,7 @@
 {
+   "active_lock_reason" : "resolved",
    "assignee" : {
-      "avatar_url" : "https://avatars1.githubusercontent.com/u/548488?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=4",
       "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
       "followers_url" : "https://api.github.com/users/sipa/followers",
       "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
@@ -21,7 +22,7 @@
    },
    "assignees" : [
       {
-         "avatar_url" : "https://avatars1.githubusercontent.com/u/548488?v=4",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/548488?v=4",
          "events_url" : "https://api.github.com/users/sipa/events{/privacy}",
          "followers_url" : "https://api.github.com/users/sipa/followers",
          "following_url" : "https://api.github.com/users/sipa/following{/other_user}",
@@ -45,7 +46,7 @@
    "body" : "I ran into this writing a regression test; it is a weird edge case with the headers-first logic.\n\nThe setup:\n\nCreate a 200-block blockchain with blocks that have 'old' timestamps\n  (see https://github.com/gavinandresen/bitcoin-git/tree/chainalerts for code to do that)\n\nStart up two nodes, both of which read in that 200-block chain.\nConnect node_b to node_a.\nHave node_b generate a new block.\n  RESULT: node_a ignores it.\n\nHere's -debug=net output from node_b:\n\n```\nUpdateTip: new best=00004900679d6cfbac61afa36cd6fda7f27af0e69e909373b947567d6dcc1d74  height=201\nsending: inv (37 bytes) peer=1\nreceived: getheaders (645 bytes) peer=1\ngetheaders 201 to 00004900679d6cfbac61afa36cd6fda7f27af0e69e909373b947567d6dcc1d74 from peer=1\nsending: headers (82 bytes) peer=1\n```\n\nand from node_a:\n\n```\ngetheaders 200 to 0000000000000000000000000000000000000000000000000000000000000000 from peer=1\ngot inv: block 00004900679d6cfbac61afa36cd6fda7f27af0e69e909373b947567d6dcc1d74  new peer=1\nreceived: headers (82 bytes) peer=1\n```\n\nI think the bug is because since both nodes just started up and read blocks from disk, pindexLastCommonBlock is NULL -- it should be block 200. I think.\n\n```\n(lldb) p state\n(<anonymous>::CNodeState) $60 = {\n  nMisbehavior = 0\n  fShouldBan = false\n  name = \"127.0.0.1:59518\"\n  rejects = size=0 {}\n  pindexBestKnownBlock = 0x0000000105122e10\n  hashLastUnknownBlock = {\n    base_uint<256> = {\n      pn = ([0] = 0, [1] = 0, [2] = 0, [3] = 0, [4] = 0, [5] = 0, [6] = 0, [7] = 0)\n    }\n  }\n  pindexLastCommonBlock = 0x0000000000000000\n  fSyncStarted = false\n  nStallingSince = 0\n  vBlocksInFlight = size=0 {}\n  nBlocksInFlight = 0\n}\n```\n\nAnyway, fFetch is never set to true on line 4422:\n`-> 4422          bool fFetch = !pto->fInbound || (pindexBestHeader && (state.pindexLastCommonBlock ? state.pindexLastCommonBlock->nHeight : 0) + 144 > pindexBestHeader->nHeight);`\n\n... because state.pindexLastCommonBlock is NULL, and 0+144 < 201\n\nWriting this all down... would it make sense to fix this by always fetching when state.pindexLastCommonBlock is NULL ?\n",
    "closed_at" : "2015-06-01T08:53:27Z",
    "closed_by" : {
-      "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=4",
       "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
       "followers_url" : "https://api.github.com/users/laanwj/followers",
       "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
@@ -74,6 +75,7 @@
       {
          "color" : "FBBAAB",
          "default" : false,
+         "description" : null,
          "id" : 64585,
          "name" : "Bug",
          "node_id" : "MDU6TGFiZWw2NDU4NQ==",
@@ -81,17 +83,32 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5138/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "MDU6SXNzdWU0Njc3MjgwNg==",
    "number" : 5138,
+   "performed_via_github_app" : null,
+   "reactions" : {
+      "+1" : 0,
+      "-1" : 0,
+      "confused" : 0,
+      "eyes" : 0,
+      "heart" : 0,
+      "hooray" : 0,
+      "laugh" : 0,
+      "rocket" : 0,
+      "total_count" : 0,
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5138/reactions"
+   },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : "completed",
+   "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5138/timeline",
    "title" : "Headers-first sync never gets going",
-   "updated_at" : "2015-06-01T08:53:27Z",
+   "updated_at" : "2021-09-08T12:33:51Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/5138",
    "user" : {
-      "avatar_url" : "https://avatars0.githubusercontent.com/u/331997?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/331997?v=4",
       "events_url" : "https://api.github.com/users/gavinandresen/events{/privacy}",
       "followers_url" : "https://api.github.com/users/gavinandresen/followers",
       "following_url" : "https://api.github.com/users/gavinandresen/following{/other_user}",

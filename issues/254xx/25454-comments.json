@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25515](https://github.com/bitcoin/bitcoin/pull/25515) ([draft] PeerManager unit tests by dergoegge)\n* [#25514](https://github.com/bitcoin/bitcoin/pull/25514) (net processing: Move CNode::nServices and CNode::nLocalServices to Peer by dergoegge)\n* [#25268](https://github.com/bitcoin/bitcoin/pull/25268) (refactor: Introduce EvictionManager by dergoegge)\n* [#25203](https://github.com/bitcoin/bitcoin/pull/25203) (logging: update to severity-based logging by jonatack)\n* [#24571](https://github.com/bitcoin/bitcoin/pull/24571) (p2p: Prevent block index fingerprinting by sending additional getheaders messages by dergoegge)\n* [#24008](https://github.com/bitcoin/bitcoin/pull/24008) (assumeutxo: net_processing changes by jamesob)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-06-23T03:37:48Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#issuecomment-1163888510",
@@ -145,19 +145,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Maybe change this log message? because now we send something in response instead of ignoring",
-      "commit_id" : "f757d2a471f806a384a60f8783ccdebdb25cd403",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-23T19:13:10Z",
       "diff_hunk" : "@@ -3403,6 +3412,9 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type,\n         if (m_chainman.ActiveTip() == nullptr ||\n                 (m_chainman.ActiveTip()->nChainWork < nMinimumChainWork && !pfrom.HasPermission(NetPermissionFlags::Download))) {\n             LogPrint(BCLog::NET, \"Ignoring getheaders from peer=%d because active chain has too little work\\n\", pfrom.GetId());",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r905373582",
       "id" : 905373582,
-      "line" : 3414,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII58419ueO",
       "original_commit_id" : "f757d2a471f806a384a60f8783ccdebdb25cd403",
       "original_line" : 3414,
       "original_position" : 169,
       "original_start_line" : null,
       "path" : "src/net_processing.cpp",
-      "position" : 169,
+      "position" : null,
       "pull_request_review_id" : 1017522335,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25454",
       "reactions" : {
@@ -175,6 +175,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-23T19:37:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/905373582",
       "user" : {
@@ -212,19 +213,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "nit: this looks like an accidental change, or do you have a reasoning for this?",
-      "commit_id" : "f757d2a471f806a384a60f8783ccdebdb25cd403",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-23T19:17:46Z",
       "diff_hunk" : "@@ -355,8 +357,11 @@ struct Peer {\n     /** Work queue of items requested by this peer **/\n     std::deque<CInv> m_getdata_requests GUARDED_BY(m_getdata_requests_mutex);\n \n+    /** Time of the last getheaders message to this peer */\n+    std::atomic<std::chrono::seconds> m_last_getheaders_timestamp{0s};\n+\n     Peer(NodeId id)\n-        : m_id{id}\n+        : m_id(id)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r905376797",
       "id" : 905376797,
-      "line" : 364,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII58419vQd",
       "original_commit_id" : "f757d2a471f806a384a60f8783ccdebdb25cd403",
       "original_line" : 364,
       "original_position" : 18,
       "original_start_line" : null,
       "path" : "src/net_processing.cpp",
-      "position" : 18,
+      "position" : null,
       "pull_request_review_id" : 1017522335,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25454",
       "reactions" : {
@@ -242,6 +243,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-23T19:37:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/905376797",
       "user" : {
@@ -279,19 +281,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Why did you change it to receive a `CBlockLocator`? I don't think we ever create locators that are not part of the main chain. Also (maybe a bit nitpicky) we dont need to compute the locator if we don't send the `getheaders` message, so doing that inside of `MaybeSendGetHeaders` makes more sense to me.",
-      "commit_id" : "f757d2a471f806a384a60f8783ccdebdb25cd403",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-23T19:31:45Z",
       "diff_hunk" : "@@ -2258,23 +2265,19 @@ bool PeerManagerImpl::CheckHeadersAreContinuous(const std::vector<CBlockHeader>&\n     return true;\n }\n \n-/*\n- * Continue fetching headers from a given point.\n- * pindexLast should be the last header we learned from a peer in their prior\n- * headers message.\n- *\n- * This is used for headers sync with a peer; even if pindexLast is an ancestor\n- * of a known chain (such as our tip) we don't yet know where the peer's chain\n- * might fork from what we know, so we continue exactly from where the peer\n- * left off.\n- */\n-void PeerManagerImpl::FetchMoreHeaders(CNode& pfrom, const CBlockIndex *pindexLast, const Peer& peer)\n+bool PeerManagerImpl::MaybeSendGetHeaders(CNode& pfrom, const CBlockLocator& locator, Peer& peer)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r905386665",
       "id" : 905386665,
-      "line" : 2268,
+      "line" : 2271,
       "node_id" : "PRRC_kwDOABII58419xqp",
       "original_commit_id" : "f757d2a471f806a384a60f8783ccdebdb25cd403",
-      "original_line" : 2268,
+      "original_line" : 2271,
       "original_position" : 103,
       "original_start_line" : null,
       "path" : "src/net_processing.cpp",
-      "position" : 103,
+      "position" : 108,
       "pull_request_review_id" : 1017522335,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25454",
       "reactions" : {
@@ -309,6 +311,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-23T19:37:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/905386665",
       "user" : {
@@ -344,9 +347,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/905542853"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: could just use `bool received_new_header  = ...` , remove the initialization a few lines above and move this down a few lines to where it is used.",
-      "commit_id" : "af850df4093cb4472d0597858bcf9561ff88973f",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-23T22:13:29Z",
       "diff_hunk" : "@@ -2443,15 +2443,9 @@ void PeerManagerImpl::ProcessHeadersMessage(CNode& pfrom, const Peer& peer,\n         return;\n     }\n \n-    {\n-        LOCK(cs_main);\n-\n-        // If we don't have the last header, then they'll have given us\n-        // something new (if these headers are valid).\n-        if (!m_chainman.m_blockman.LookupBlockIndex(headers.back().GetHash())) {\n-            received_new_header = true;\n-        }\n-    }\n+    // If we don't have the last header, then this peer will have given us\n+    // something new (if these headers are valid).\n+    received_new_header = WITH_LOCK(::cs_main, return m_chainman.m_blockman.LookupBlockIndex(headers.back().GetHash()) == nullptr);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r905542853",
@@ -376,6 +379,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-24T16:20:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/905542853",
       "user" : {
@@ -413,24 +417,24 @@
       },
       "author_association" : "MEMBER",
       "body" : "The reason I introduced this interface change here is that this branch is a precursor to another change I will be proposing to the headers sync logic, in which we might send getheaders messages based on locators that are not calculated from a single CBlockIndex entry. ",
-      "commit_id" : "f2e3f6d732c13faff9de165044ae11e374f0ba0f",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-24T12:10:45Z",
       "diff_hunk" : "@@ -2258,23 +2265,19 @@ bool PeerManagerImpl::CheckHeadersAreContinuous(const std::vector<CBlockHeader>&\n     return true;\n }\n \n-/*\n- * Continue fetching headers from a given point.\n- * pindexLast should be the last header we learned from a peer in their prior\n- * headers message.\n- *\n- * This is used for headers sync with a peer; even if pindexLast is an ancestor\n- * of a known chain (such as our tip) we don't yet know where the peer's chain\n- * might fork from what we know, so we continue exactly from where the peer\n- * left off.\n- */\n-void PeerManagerImpl::FetchMoreHeaders(CNode& pfrom, const CBlockIndex *pindexLast, const Peer& peer)\n+bool PeerManagerImpl::MaybeSendGetHeaders(CNode& pfrom, const CBlockLocator& locator, Peer& peer)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r906001551",
       "id" : 906001551,
       "in_reply_to_id" : 905386665,
-      "line" : 2268,
+      "line" : 2271,
       "node_id" : "PRRC_kwDOABII5842AHyP",
       "original_commit_id" : "f757d2a471f806a384a60f8783ccdebdb25cd403",
-      "original_line" : 2268,
+      "original_line" : 2271,
       "original_position" : 103,
       "original_start_line" : null,
       "path" : "src/net_processing.cpp",
-      "position" : 115,
+      "position" : 108,
       "pull_request_review_id" : 1018387319,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25454",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -438,12 +442,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906001551/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-24T12:10:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906001551",
       "user" : {
@@ -481,7 +486,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Yep this was a rebase error, fixed!",
-      "commit_id" : "f2e3f6d732c13faff9de165044ae11e374f0ba0f",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-24T12:22:49Z",
       "diff_hunk" : "@@ -355,8 +357,11 @@ struct Peer {\n     /** Work queue of items requested by this peer **/\n     std::deque<CInv> m_getdata_requests GUARDED_BY(m_getdata_requests_mutex);\n \n+    /** Time of the last getheaders message to this peer */\n+    std::atomic<std::chrono::seconds> m_last_getheaders_timestamp{0s};\n+\n     Peer(NodeId id)\n-        : m_id{id}\n+        : m_id(id)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r906010773",
@@ -512,6 +517,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-24T12:22:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906010773",
       "user" : {
@@ -549,7 +555,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Fixed.",
-      "commit_id" : "f2e3f6d732c13faff9de165044ae11e374f0ba0f",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-24T12:23:00Z",
       "diff_hunk" : "@@ -3403,6 +3412,9 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type,\n         if (m_chainman.ActiveTip() == nullptr ||\n                 (m_chainman.ActiveTip()->nChainWork < nMinimumChainWork && !pfrom.HasPermission(NetPermissionFlags::Download))) {\n             LogPrint(BCLog::NET, \"Ignoring getheaders from peer=%d because active chain has too little work\\n\", pfrom.GetId());",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r906010899",
@@ -580,6 +586,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-24T12:23:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906010899",
       "user" : {
@@ -615,9 +622,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906192500"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Could this be abused by a peer to evade eviction by making us send `GetHeaders()` from other places (e.g. sending unconnecting CMPCTBLOCK messages) and sometimes sending stale headers? That might restart the `m_last_getheaders_timestamp` timer so that we never get to set `state.m_chain_sync.m_sent_getheaders` and `state.m_chain_sync.m_timeout` here and therefore won't disconnect.",
-      "commit_id" : "af850df4093cb4472d0597858bcf9561ff88973f",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-24T15:51:18Z",
       "diff_hunk" : "@@ -4423,16 +4443,17 @@ void PeerManagerImpl::ConsiderEviction(CNode& pto, std::chrono::seconds time_in_\n                 pto.fDisconnect = true;\n             } else {\n                 assert(state.m_chain_sync.m_work_header);\n-                LogPrint(BCLog::NET, \"sending getheaders to outbound peer=%d to verify chain work (current best known block:%s, benchmark blockhash: %s)\\n\", pto.GetId(), state.pindexBestKnownBlock != nullptr ? state.pindexBestKnownBlock->GetBlockHash().ToString() : \"<none>\", state.m_chain_sync.m_work_header->GetBlockHash().ToString());\n-                m_connman.PushMessage(&pto, msgMaker.Make(NetMsgType::GETHEADERS, m_chainman.ActiveChain().GetLocator(state.m_chain_sync.m_work_header->pprev), uint256()));\n-                state.m_chain_sync.m_sent_getheaders = true;\n-                constexpr auto HEADERS_RESPONSE_TIME{2min};\n-                // Bump the timeout to allow a response, which could clear the timeout\n-                // (if the response shows the peer has synced), reset the timeout (if\n-                // the peer syncs to the required work but not to our tip), or result\n-                // in disconnect (if we advance to the timeout and pindexBestKnownBlock\n-                // has not sufficiently progressed)\n-                state.m_chain_sync.m_timeout = time_in_seconds + HEADERS_RESPONSE_TIME;\n+                if (MaybeSendGetHeaders(pto,\n+                            m_chainman.ActiveChain().GetLocator(state.m_chain_sync.m_work_header->pprev), *peer)) {\n+                    LogPrint(BCLog::NET, \"sending getheaders to outbound peer=%d to verify chain work (current best known block:%s, benchmark blockhash: %s)\\n\", pto.GetId(), state.pindexBestKnownBlock != nullptr ? state.pindexBestKnownBlock->GetBlockHash().ToString() : \"<none>\", state.m_chain_sync.m_work_header->GetBlockHash().ToString());\n+                    state.m_chain_sync.m_sent_getheaders = true;\n+                    // Bump the timeout to allow a response, which could clear the timeout\n+                    // (if the response shows the peer has synced), reset the timeout (if\n+                    // the peer syncs to the required work but not to our tip), or result\n+                    // in disconnect (if we advance to the timeout and pindexBestKnownBlock\n+                    // has not sufficiently progressed)\n+                    state.m_chain_sync.m_timeout = time_in_seconds + HEADERS_RESPONSE_TIME;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r906192500",
@@ -647,6 +654,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-24T16:20:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906192500",
       "user" : {
@@ -684,7 +692,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "We need to do the calculation here before invoking `ProcessNewBlockHeaders()` because that will cause headers to be added to the block index, but I'll get rid of the declaration at line 2423, as we can just declare and initialize here instead.",
-      "commit_id" : "af850df4093cb4472d0597858bcf9561ff88973f",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-24T16:29:52Z",
       "diff_hunk" : "@@ -2443,15 +2443,9 @@ void PeerManagerImpl::ProcessHeadersMessage(CNode& pfrom, const Peer& peer,\n         return;\n     }\n \n-    {\n-        LOCK(cs_main);\n-\n-        // If we don't have the last header, then they'll have given us\n-        // something new (if these headers are valid).\n-        if (!m_chainman.m_blockman.LookupBlockIndex(headers.back().GetHash())) {\n-            received_new_header = true;\n-        }\n-    }\n+    // If we don't have the last header, then this peer will have given us\n+    // something new (if these headers are valid).\n+    received_new_header = WITH_LOCK(::cs_main, return m_chainman.m_blockman.LookupBlockIndex(headers.back().GetHash()) == nullptr);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r906221757",
@@ -715,6 +723,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-24T16:29:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906221757",
       "user" : {
@@ -752,7 +761,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Thanks for thinking about this.  I think you're right to raise this concern, and after re-reviewing this logic, I think the best course of action is to just have this call-site assume the `getheaders` message goes out (rather than branch on the return value) -- because if it doesn't, it means we've already sent a `getheaders`, and so the peer should have provided us with a sufficiently high work chain anyway. \r\n\r\nDoes that reasoning sound right to you as well?\r\n\r\n(Edit: I guess a downside to this is that if a peer is in the middle of big reorg, that this logic might cause them to be evicted, because our timeouts aren't long enough to necessarily deliver a huge reorg -- however that is a pre-existing issue with this strategy, and we have other mitigations in place like protecting some of our outbound peers from eviction under this logic.)",
-      "commit_id" : "af850df4093cb4472d0597858bcf9561ff88973f",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-24T16:38:25Z",
       "diff_hunk" : "@@ -4423,16 +4443,17 @@ void PeerManagerImpl::ConsiderEviction(CNode& pto, std::chrono::seconds time_in_\n                 pto.fDisconnect = true;\n             } else {\n                 assert(state.m_chain_sync.m_work_header);\n-                LogPrint(BCLog::NET, \"sending getheaders to outbound peer=%d to verify chain work (current best known block:%s, benchmark blockhash: %s)\\n\", pto.GetId(), state.pindexBestKnownBlock != nullptr ? state.pindexBestKnownBlock->GetBlockHash().ToString() : \"<none>\", state.m_chain_sync.m_work_header->GetBlockHash().ToString());\n-                m_connman.PushMessage(&pto, msgMaker.Make(NetMsgType::GETHEADERS, m_chainman.ActiveChain().GetLocator(state.m_chain_sync.m_work_header->pprev), uint256()));\n-                state.m_chain_sync.m_sent_getheaders = true;\n-                constexpr auto HEADERS_RESPONSE_TIME{2min};\n-                // Bump the timeout to allow a response, which could clear the timeout\n-                // (if the response shows the peer has synced), reset the timeout (if\n-                // the peer syncs to the required work but not to our tip), or result\n-                // in disconnect (if we advance to the timeout and pindexBestKnownBlock\n-                // has not sufficiently progressed)\n-                state.m_chain_sync.m_timeout = time_in_seconds + HEADERS_RESPONSE_TIME;\n+                if (MaybeSendGetHeaders(pto,\n+                            m_chainman.ActiveChain().GetLocator(state.m_chain_sync.m_work_header->pprev), *peer)) {\n+                    LogPrint(BCLog::NET, \"sending getheaders to outbound peer=%d to verify chain work (current best known block:%s, benchmark blockhash: %s)\\n\", pto.GetId(), state.pindexBestKnownBlock != nullptr ? state.pindexBestKnownBlock->GetBlockHash().ToString() : \"<none>\", state.m_chain_sync.m_work_header->GetBlockHash().ToString());\n+                    state.m_chain_sync.m_sent_getheaders = true;\n+                    // Bump the timeout to allow a response, which could clear the timeout\n+                    // (if the response shows the peer has synced), reset the timeout (if\n+                    // the peer syncs to the required work but not to our tip), or result\n+                    // in disconnect (if we advance to the timeout and pindexBestKnownBlock\n+                    // has not sufficiently progressed)\n+                    state.m_chain_sync.m_timeout = time_in_seconds + HEADERS_RESPONSE_TIME;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r906228594",
@@ -783,6 +792,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-24T16:44:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906228594",
       "user" : {
@@ -818,9 +828,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906264070"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Does that reasoning sound right to you as well?\r\n\r\nYes, that's also the solution I had thought of. ",
-      "commit_id" : "af850df4093cb4472d0597858bcf9561ff88973f",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-24T17:29:31Z",
       "diff_hunk" : "@@ -4423,16 +4443,17 @@ void PeerManagerImpl::ConsiderEviction(CNode& pto, std::chrono::seconds time_in_\n                 pto.fDisconnect = true;\n             } else {\n                 assert(state.m_chain_sync.m_work_header);\n-                LogPrint(BCLog::NET, \"sending getheaders to outbound peer=%d to verify chain work (current best known block:%s, benchmark blockhash: %s)\\n\", pto.GetId(), state.pindexBestKnownBlock != nullptr ? state.pindexBestKnownBlock->GetBlockHash().ToString() : \"<none>\", state.m_chain_sync.m_work_header->GetBlockHash().ToString());\n-                m_connman.PushMessage(&pto, msgMaker.Make(NetMsgType::GETHEADERS, m_chainman.ActiveChain().GetLocator(state.m_chain_sync.m_work_header->pprev), uint256()));\n-                state.m_chain_sync.m_sent_getheaders = true;\n-                constexpr auto HEADERS_RESPONSE_TIME{2min};\n-                // Bump the timeout to allow a response, which could clear the timeout\n-                // (if the response shows the peer has synced), reset the timeout (if\n-                // the peer syncs to the required work but not to our tip), or result\n-                // in disconnect (if we advance to the timeout and pindexBestKnownBlock\n-                // has not sufficiently progressed)\n-                state.m_chain_sync.m_timeout = time_in_seconds + HEADERS_RESPONSE_TIME;\n+                if (MaybeSendGetHeaders(pto,\n+                            m_chainman.ActiveChain().GetLocator(state.m_chain_sync.m_work_header->pprev), *peer)) {\n+                    LogPrint(BCLog::NET, \"sending getheaders to outbound peer=%d to verify chain work (current best known block:%s, benchmark blockhash: %s)\\n\", pto.GetId(), state.pindexBestKnownBlock != nullptr ? state.pindexBestKnownBlock->GetBlockHash().ToString() : \"<none>\", state.m_chain_sync.m_work_header->GetBlockHash().ToString());\n+                    state.m_chain_sync.m_sent_getheaders = true;\n+                    // Bump the timeout to allow a response, which could clear the timeout\n+                    // (if the response shows the peer has synced), reset the timeout (if\n+                    // the peer syncs to the required work but not to our tip), or result\n+                    // in disconnect (if we advance to the timeout and pindexBestKnownBlock\n+                    // has not sufficiently progressed)\n+                    state.m_chain_sync.m_timeout = time_in_seconds + HEADERS_RESPONSE_TIME;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r906264070",
@@ -851,6 +861,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-24T17:29:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906264070",
       "user" : {
@@ -875,94 +886,6 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-06-27T11:00:24Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#issuecomment-1167207169",
-      "id" : 1167207169,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25454",
-      "node_id" : "IC_kwDOABII585FkisB",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1167207169/reactions"
-      },
-      "updated_at" : "2022-06-27T11:00:24Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1167207169",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-06-27T15:15:11Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#issuecomment-1167482733",
-      "id" : 1167482733,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25454",
-      "node_id" : "IC_kwDOABII585Fll9t",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1167482733/reactions"
-      },
-      "updated_at" : "2022-06-27T15:15:11Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1167482733",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
       "_links" : {
          "html" : {
             "href" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908380211"
@@ -976,7 +899,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Looking at the documentation for `GetTime` it appears that `NodeClock::now()` would be preferred here.",
-      "commit_id" : "fa24d37213cede7136ed34d481091b84642c62a6",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-28T11:45:06Z",
       "diff_hunk" : "@@ -2194,6 +2215,203 @@ void PeerManagerImpl::SendBlockTransactions(CNode& pfrom, Peer& peer, const CBlo\n     m_connman.PushMessage(&pfrom, msgMaker.Make(NetMsgType::BLOCKTXN, resp));\n }\n \n+/**\n+ * Special handling for unconnecting headers that might be part of a block\n+ * announcement.\n+ *\n+ * We'll send a getheaders message in response to try to connect the chain.\n+ *\n+ * The peer can send up to MAX_UNCONNECTING_HEADERS in a row that\n+ * don't connect before given DoS points.\n+ *\n+ * Once a headers message is received that is valid and does connect,\n+ * nUnconnectingHeaders gets reset back to 0.\n+ */\n+void PeerManagerImpl::HandleFewUnconnectingHeaders(CNode& pfrom, Peer& peer,\n+        const std::vector<CBlockHeader>& headers)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    LOCK(cs_main);\n+    CNodeState *nodestate = State(pfrom.GetId());\n+\n+    nodestate->nUnconnectingHeaders++;\n+    // Try to fill in the missing headers.\n+    if (MaybeSendGetHeaders(pfrom, m_chainman.ActiveChain().GetLocator(m_chainman.m_best_header), peer)) {\n+        LogPrint(BCLog::NET, \"received header %s: missing prev block %s, sending getheaders (%d) to end (peer=%d, nUnconnectingHeaders=%d)\\n\",\n+            headers[0].GetHash().ToString(),\n+            headers[0].hashPrevBlock.ToString(),\n+            m_chainman.m_best_header->nHeight,\n+            pfrom.GetId(), nodestate->nUnconnectingHeaders);\n+    }\n+    // Set hashLastUnknownBlock for this peer, so that if we\n+    // eventually get the headers - even from a different peer -\n+    // we can use this peer to download.\n+    UpdateBlockAvailability(pfrom.GetId(), headers.back().GetHash());\n+\n+    // The peer may just be broken, so periodically assign DoS points if this\n+    // condition persists.\n+    if (nodestate->nUnconnectingHeaders % MAX_UNCONNECTING_HEADERS == 0) {\n+        Misbehaving(peer, 20, strprintf(\"%d non-connecting headers\", nodestate->nUnconnectingHeaders));\n+    }\n+    return;\n+}\n+\n+bool PeerManagerImpl::CheckHeadersAreContinuous(const std::vector<CBlockHeader>& headers) const\n+{\n+    uint256 hashLastBlock;\n+    for (const CBlockHeader& header : headers) {\n+        if (!hashLastBlock.IsNull() && header.hashPrevBlock != hashLastBlock) {\n+            return false;\n+        }\n+        hashLastBlock = header.GetHash();\n+    }\n+    return true;\n+}\n+\n+bool PeerManagerImpl::MaybeSendGetHeaders(CNode& pfrom, const CBlockLocator& locator, Peer& peer)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    const auto current_time = GetTime<std::chrono::seconds>();",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908380211",
@@ -1006,6 +929,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T12:46:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908380211",
       "user" : {
@@ -1043,19 +967,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "It's not clear to me what 2hr rule you are referring to",
-      "commit_id" : "fa24d37213cede7136ed34d481091b84642c62a6",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-28T11:53:50Z",
       "diff_hunk" : "@@ -560,6 +565,22 @@ class PeerManagerImpl final : public PeerManager\n                                const std::vector<CBlockHeader>& headers,\n                                bool via_compact_block)\n         EXCLUSIVE_LOCKS_REQUIRED(!m_peer_mutex);\n+    /** Various helpers for headers processing, invoked by ProcessHeadersMessage() */\n+    /** Deal with state tracking and headers sync for peers that send the\n+     * occasional non-connecting header (this can happen due to BIP 130 headers\n+     * announcements for blocks interacting with the 2hr rule). */",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908387486",
       "id" : 908387486,
-      "line" : 571,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5842JOSe",
       "original_commit_id" : "e3b2185e70b183a465a2a395ee7d7a0f1383d049",
-      "original_line" : 571,
+      "original_line" : 574,
       "original_position" : 35,
       "original_start_line" : null,
       "path" : "src/net_processing.cpp",
-      "position" : 35,
+      "position" : null,
       "pull_request_review_id" : 1021591496,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25454",
       "reactions" : {
@@ -1073,6 +997,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T12:46:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908387486",
       "user" : {
@@ -1110,7 +1035,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "I think a direct call to `Misbehaving()` is better here, see: https://github.com/bitcoin/bitcoin/pull/24571#discussion_r863638047",
-      "commit_id" : "fa24d37213cede7136ed34d481091b84642c62a6",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-28T11:59:15Z",
       "diff_hunk" : "@@ -2206,55 +2424,35 @@ void PeerManagerImpl::ProcessHeadersMessage(CNode& pfrom, Peer& peer,\n         return;\n     }\n \n-    bool received_new_header = false;\n     const CBlockIndex *pindexLast = nullptr;\n-    {\n-        LOCK(cs_main);\n-        CNodeState *nodestate = State(pfrom.GetId());\n \n-        // If this looks like it could be a block announcement (nCount <=\n-        // MAX_BLOCKS_TO_ANNOUNCE), use special logic for handling headers that\n-        // don't connect:\n-        // - Send a getheaders message in response to try to connect the chain.\n-        // - The peer can send up to MAX_UNCONNECTING_HEADERS in a row that\n-        //   don't connect before giving DoS points\n-        // - Once a headers message is received that is valid and does connect,\n-        //   nUnconnectingHeaders gets reset back to 0.\n-        if (!m_chainman.m_blockman.LookupBlockIndex(headers[0].hashPrevBlock) && nCount <= MAX_BLOCKS_TO_ANNOUNCE) {\n-            nodestate->nUnconnectingHeaders++;\n-            m_connman.PushMessage(&pfrom, msgMaker.Make(NetMsgType::GETHEADERS, m_chainman.ActiveChain().GetLocator(m_chainman.m_best_header), uint256()));\n-            LogPrint(BCLog::NET, \"received header %s: missing prev block %s, sending getheaders (%d) to end (peer=%d, nUnconnectingHeaders=%d)\\n\",\n-                     headers[0].GetHash().ToString(),\n-                     headers[0].hashPrevBlock.ToString(),\n-                     m_chainman.m_best_header->nHeight,\n-                     pfrom.GetId(), nodestate->nUnconnectingHeaders);\n-            // Set hashLastUnknownBlock for this peer, so that if we\n-            // eventually get the headers - even from a different peer -\n-            // we can use this peer to download.\n-            UpdateBlockAvailability(pfrom.GetId(), headers.back().GetHash());\n-\n-            if (nodestate->nUnconnectingHeaders % MAX_UNCONNECTING_HEADERS == 0) {\n-                Misbehaving(peer, 20, strprintf(\"%d non-connecting headers\", nodestate->nUnconnectingHeaders));\n-            }\n-            return;\n-        }\n+    // Do these headers connect to something in our block index?\n+    bool headers_connect_blockindex = WITH_LOCK(::cs_main, return m_chainman.m_blockman.LookupBlockIndex(headers[0].hashPrevBlock) != nullptr);\n \n-        uint256 hashLastBlock;\n-        for (const CBlockHeader& header : headers) {\n-            if (!hashLastBlock.IsNull() && header.hashPrevBlock != hashLastBlock) {\n-                Misbehaving(peer, 20, \"non-continuous headers sequence\");\n-                return;\n-            }\n-            hashLastBlock = header.GetHash();\n+    if (!headers_connect_blockindex) {\n+        if (nCount <= MAX_BLOCKS_TO_ANNOUNCE) {\n+            // If this looks like it could be a BIP 130 block announcement, use\n+            // special logic for handling headers that don't connect, as this\n+            // could be benign.\n+            HandleFewUnconnectingHeaders(pfrom, peer, headers);\n+        } else {\n+            BlockValidationState state;\n+            state.Invalid(BlockValidationResult::BLOCK_MISSING_PREV, \"prev-blk-not-found\");\n+            MaybePunishNodeForBlock(pfrom.GetId(), state, via_compact_block, \"invalid header received\");",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908392415",
@@ -1140,6 +1065,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T12:46:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908392415",
       "user" : {
@@ -1177,7 +1103,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "```suggestion\r\n```",
-      "commit_id" : "fa24d37213cede7136ed34d481091b84642c62a6",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-28T12:04:37Z",
       "diff_hunk" : "@@ -2194,6 +2215,203 @@ void PeerManagerImpl::SendBlockTransactions(CNode& pfrom, Peer& peer, const CBlo\n     m_connman.PushMessage(&pfrom, msgMaker.Make(NetMsgType::BLOCKTXN, resp));\n }\n \n+/**\n+ * Special handling for unconnecting headers that might be part of a block\n+ * announcement.\n+ *\n+ * We'll send a getheaders message in response to try to connect the chain.\n+ *\n+ * The peer can send up to MAX_UNCONNECTING_HEADERS in a row that\n+ * don't connect before given DoS points.\n+ *\n+ * Once a headers message is received that is valid and does connect,\n+ * nUnconnectingHeaders gets reset back to 0.\n+ */\n+void PeerManagerImpl::HandleFewUnconnectingHeaders(CNode& pfrom, Peer& peer,\n+        const std::vector<CBlockHeader>& headers)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    LOCK(cs_main);\n+    CNodeState *nodestate = State(pfrom.GetId());\n+\n+    nodestate->nUnconnectingHeaders++;\n+    // Try to fill in the missing headers.\n+    if (MaybeSendGetHeaders(pfrom, m_chainman.ActiveChain().GetLocator(m_chainman.m_best_header), peer)) {\n+        LogPrint(BCLog::NET, \"received header %s: missing prev block %s, sending getheaders (%d) to end (peer=%d, nUnconnectingHeaders=%d)\\n\",\n+            headers[0].GetHash().ToString(),\n+            headers[0].hashPrevBlock.ToString(),\n+            m_chainman.m_best_header->nHeight,\n+            pfrom.GetId(), nodestate->nUnconnectingHeaders);\n+    }\n+    // Set hashLastUnknownBlock for this peer, so that if we\n+    // eventually get the headers - even from a different peer -\n+    // we can use this peer to download.\n+    UpdateBlockAvailability(pfrom.GetId(), headers.back().GetHash());\n+\n+    // The peer may just be broken, so periodically assign DoS points if this\n+    // condition persists.\n+    if (nodestate->nUnconnectingHeaders % MAX_UNCONNECTING_HEADERS == 0) {\n+        Misbehaving(peer, 20, strprintf(\"%d non-connecting headers\", nodestate->nUnconnectingHeaders));\n+    }\n+    return;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908396948",
@@ -1207,6 +1133,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T12:46:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908396948",
       "user" : {
@@ -1244,7 +1171,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "```suggestion\r\n    bool received_new_header{WITH_LOCK(::cs_main, return m_chainman.m_blockman.LookupBlockIndex(headers.back().GetHash()) == nullptr)};\r\n```",
-      "commit_id" : "fa24d37213cede7136ed34d481091b84642c62a6",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-28T12:14:38Z",
       "diff_hunk" : "@@ -2206,55 +2424,35 @@ void PeerManagerImpl::ProcessHeadersMessage(CNode& pfrom, Peer& peer,\n         return;\n     }\n \n-    bool received_new_header = false;\n     const CBlockIndex *pindexLast = nullptr;\n-    {\n-        LOCK(cs_main);\n-        CNodeState *nodestate = State(pfrom.GetId());\n \n-        // If this looks like it could be a block announcement (nCount <=\n-        // MAX_BLOCKS_TO_ANNOUNCE), use special logic for handling headers that\n-        // don't connect:\n-        // - Send a getheaders message in response to try to connect the chain.\n-        // - The peer can send up to MAX_UNCONNECTING_HEADERS in a row that\n-        //   don't connect before giving DoS points\n-        // - Once a headers message is received that is valid and does connect,\n-        //   nUnconnectingHeaders gets reset back to 0.\n-        if (!m_chainman.m_blockman.LookupBlockIndex(headers[0].hashPrevBlock) && nCount <= MAX_BLOCKS_TO_ANNOUNCE) {\n-            nodestate->nUnconnectingHeaders++;\n-            m_connman.PushMessage(&pfrom, msgMaker.Make(NetMsgType::GETHEADERS, m_chainman.ActiveChain().GetLocator(m_chainman.m_best_header), uint256()));\n-            LogPrint(BCLog::NET, \"received header %s: missing prev block %s, sending getheaders (%d) to end (peer=%d, nUnconnectingHeaders=%d)\\n\",\n-                     headers[0].GetHash().ToString(),\n-                     headers[0].hashPrevBlock.ToString(),\n-                     m_chainman.m_best_header->nHeight,\n-                     pfrom.GetId(), nodestate->nUnconnectingHeaders);\n-            // Set hashLastUnknownBlock for this peer, so that if we\n-            // eventually get the headers - even from a different peer -\n-            // we can use this peer to download.\n-            UpdateBlockAvailability(pfrom.GetId(), headers.back().GetHash());\n-\n-            if (nodestate->nUnconnectingHeaders % MAX_UNCONNECTING_HEADERS == 0) {\n-                Misbehaving(peer, 20, strprintf(\"%d non-connecting headers\", nodestate->nUnconnectingHeaders));\n-            }\n-            return;\n-        }\n+    // Do these headers connect to something in our block index?\n+    bool headers_connect_blockindex = WITH_LOCK(::cs_main, return m_chainman.m_blockman.LookupBlockIndex(headers[0].hashPrevBlock) != nullptr);\n \n-        uint256 hashLastBlock;\n-        for (const CBlockHeader& header : headers) {\n-            if (!hashLastBlock.IsNull() && header.hashPrevBlock != hashLastBlock) {\n-                Misbehaving(peer, 20, \"non-continuous headers sequence\");\n-                return;\n-            }\n-            hashLastBlock = header.GetHash();\n+    if (!headers_connect_blockindex) {\n+        if (nCount <= MAX_BLOCKS_TO_ANNOUNCE) {\n+            // If this looks like it could be a BIP 130 block announcement, use\n+            // special logic for handling headers that don't connect, as this\n+            // could be benign.\n+            HandleFewUnconnectingHeaders(pfrom, peer, headers);\n+        } else {\n+            BlockValidationState state;\n+            state.Invalid(BlockValidationResult::BLOCK_MISSING_PREV, \"prev-blk-not-found\");\n+            MaybePunishNodeForBlock(pfrom.GetId(), state, via_compact_block, \"invalid header received\");\n         }\n+        return;\n+    }\n \n-        // If we don't have the last header, then they'll have given us\n-        // something new (if these headers are valid).\n-        if (!m_chainman.m_blockman.LookupBlockIndex(hashLastBlock)) {\n-            received_new_header = true;\n-        }\n+    // At this point, the headers connect to something in our block index.\n+    if (!CheckHeadersAreContinuous(headers)) {\n+        Misbehaving(peer, 20, \"non-continuous headers sequence\");\n+        return;\n     }\n \n+    // If we don't have the last header, then this peer will have given us\n+    // something new (if these headers are valid).\n+    bool received_new_header = WITH_LOCK(::cs_main, return m_chainman.m_blockman.LookupBlockIndex(headers.back().GetHash()) == nullptr);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908405682",
@@ -1274,6 +1201,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T12:46:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908405682",
       "user" : {
@@ -1311,7 +1239,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Thanks, I tried to make this switch in the last commit but it took me several tries to get it to compile, so please review and let me know if I'm using `NodeClock` correctly!",
-      "commit_id" : "fa24d37213cede7136ed34d481091b84642c62a6",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-28T14:55:04Z",
       "diff_hunk" : "@@ -2194,6 +2215,203 @@ void PeerManagerImpl::SendBlockTransactions(CNode& pfrom, Peer& peer, const CBlo\n     m_connman.PushMessage(&pfrom, msgMaker.Make(NetMsgType::BLOCKTXN, resp));\n }\n \n+/**\n+ * Special handling for unconnecting headers that might be part of a block\n+ * announcement.\n+ *\n+ * We'll send a getheaders message in response to try to connect the chain.\n+ *\n+ * The peer can send up to MAX_UNCONNECTING_HEADERS in a row that\n+ * don't connect before given DoS points.\n+ *\n+ * Once a headers message is received that is valid and does connect,\n+ * nUnconnectingHeaders gets reset back to 0.\n+ */\n+void PeerManagerImpl::HandleFewUnconnectingHeaders(CNode& pfrom, Peer& peer,\n+        const std::vector<CBlockHeader>& headers)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    LOCK(cs_main);\n+    CNodeState *nodestate = State(pfrom.GetId());\n+\n+    nodestate->nUnconnectingHeaders++;\n+    // Try to fill in the missing headers.\n+    if (MaybeSendGetHeaders(pfrom, m_chainman.ActiveChain().GetLocator(m_chainman.m_best_header), peer)) {\n+        LogPrint(BCLog::NET, \"received header %s: missing prev block %s, sending getheaders (%d) to end (peer=%d, nUnconnectingHeaders=%d)\\n\",\n+            headers[0].GetHash().ToString(),\n+            headers[0].hashPrevBlock.ToString(),\n+            m_chainman.m_best_header->nHeight,\n+            pfrom.GetId(), nodestate->nUnconnectingHeaders);\n+    }\n+    // Set hashLastUnknownBlock for this peer, so that if we\n+    // eventually get the headers - even from a different peer -\n+    // we can use this peer to download.\n+    UpdateBlockAvailability(pfrom.GetId(), headers.back().GetHash());\n+\n+    // The peer may just be broken, so periodically assign DoS points if this\n+    // condition persists.\n+    if (nodestate->nUnconnectingHeaders % MAX_UNCONNECTING_HEADERS == 0) {\n+        Misbehaving(peer, 20, strprintf(\"%d non-connecting headers\", nodestate->nUnconnectingHeaders));\n+    }\n+    return;\n+}\n+\n+bool PeerManagerImpl::CheckHeadersAreContinuous(const std::vector<CBlockHeader>& headers) const\n+{\n+    uint256 hashLastBlock;\n+    for (const CBlockHeader& header : headers) {\n+        if (!hashLastBlock.IsNull() && header.hashPrevBlock != hashLastBlock) {\n+            return false;\n+        }\n+        hashLastBlock = header.GetHash();\n+    }\n+    return true;\n+}\n+\n+bool PeerManagerImpl::MaybeSendGetHeaders(CNode& pfrom, const CBlockLocator& locator, Peer& peer)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    const auto current_time = GetTime<std::chrono::seconds>();",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908587356",
@@ -1342,6 +1270,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T14:55:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908587356",
       "user" : {
@@ -1379,7 +1308,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "One of the most unusual validation rules is that we don't accept a block that is more than 2 hours in the future, see:\r\n https://github.com/bitcoin/bitcoin/blob/5bf65ec66e5986c9188e3f6234f1c5c0f8dc7f90/src/validation.cpp#L3469",
-      "commit_id" : "b6f63bd991569d45b19c4f2d83b223e6e7cdcff3",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-28T18:30:48Z",
       "diff_hunk" : "@@ -560,6 +565,22 @@ class PeerManagerImpl final : public PeerManager\n                                const std::vector<CBlockHeader>& headers,\n                                bool via_compact_block)\n         EXCLUSIVE_LOCKS_REQUIRED(!m_peer_mutex);\n+    /** Various helpers for headers processing, invoked by ProcessHeadersMessage() */\n+    /** Deal with state tracking and headers sync for peers that send the\n+     * occasional non-connecting header (this can happen due to BIP 130 headers\n+     * announcements for blocks interacting with the 2hr rule). */",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908814819",
@@ -1410,6 +1339,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T18:30:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908814819",
       "user" : {
@@ -1447,7 +1377,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Done.",
-      "commit_id" : "b6f63bd991569d45b19c4f2d83b223e6e7cdcff3",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-28T18:32:12Z",
       "diff_hunk" : "@@ -2206,55 +2424,35 @@ void PeerManagerImpl::ProcessHeadersMessage(CNode& pfrom, Peer& peer,\n         return;\n     }\n \n-    bool received_new_header = false;\n     const CBlockIndex *pindexLast = nullptr;\n-    {\n-        LOCK(cs_main);\n-        CNodeState *nodestate = State(pfrom.GetId());\n \n-        // If this looks like it could be a block announcement (nCount <=\n-        // MAX_BLOCKS_TO_ANNOUNCE), use special logic for handling headers that\n-        // don't connect:\n-        // - Send a getheaders message in response to try to connect the chain.\n-        // - The peer can send up to MAX_UNCONNECTING_HEADERS in a row that\n-        //   don't connect before giving DoS points\n-        // - Once a headers message is received that is valid and does connect,\n-        //   nUnconnectingHeaders gets reset back to 0.\n-        if (!m_chainman.m_blockman.LookupBlockIndex(headers[0].hashPrevBlock) && nCount <= MAX_BLOCKS_TO_ANNOUNCE) {\n-            nodestate->nUnconnectingHeaders++;\n-            m_connman.PushMessage(&pfrom, msgMaker.Make(NetMsgType::GETHEADERS, m_chainman.ActiveChain().GetLocator(m_chainman.m_best_header), uint256()));\n-            LogPrint(BCLog::NET, \"received header %s: missing prev block %s, sending getheaders (%d) to end (peer=%d, nUnconnectingHeaders=%d)\\n\",\n-                     headers[0].GetHash().ToString(),\n-                     headers[0].hashPrevBlock.ToString(),\n-                     m_chainman.m_best_header->nHeight,\n-                     pfrom.GetId(), nodestate->nUnconnectingHeaders);\n-            // Set hashLastUnknownBlock for this peer, so that if we\n-            // eventually get the headers - even from a different peer -\n-            // we can use this peer to download.\n-            UpdateBlockAvailability(pfrom.GetId(), headers.back().GetHash());\n-\n-            if (nodestate->nUnconnectingHeaders % MAX_UNCONNECTING_HEADERS == 0) {\n-                Misbehaving(peer, 20, strprintf(\"%d non-connecting headers\", nodestate->nUnconnectingHeaders));\n-            }\n-            return;\n-        }\n+    // Do these headers connect to something in our block index?\n+    bool headers_connect_blockindex = WITH_LOCK(::cs_main, return m_chainman.m_blockman.LookupBlockIndex(headers[0].hashPrevBlock) != nullptr);\n \n-        uint256 hashLastBlock;\n-        for (const CBlockHeader& header : headers) {\n-            if (!hashLastBlock.IsNull() && header.hashPrevBlock != hashLastBlock) {\n-                Misbehaving(peer, 20, \"non-continuous headers sequence\");\n-                return;\n-            }\n-            hashLastBlock = header.GetHash();\n+    if (!headers_connect_blockindex) {\n+        if (nCount <= MAX_BLOCKS_TO_ANNOUNCE) {\n+            // If this looks like it could be a BIP 130 block announcement, use\n+            // special logic for handling headers that don't connect, as this\n+            // could be benign.\n+            HandleFewUnconnectingHeaders(pfrom, peer, headers);\n+        } else {\n+            BlockValidationState state;\n+            state.Invalid(BlockValidationResult::BLOCK_MISSING_PREV, \"prev-blk-not-found\");\n+            MaybePunishNodeForBlock(pfrom.GetId(), state, via_compact_block, \"invalid header received\");",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908816037",
@@ -1478,6 +1408,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T18:32:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908816037",
       "user" : {
@@ -1515,7 +1446,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Done.",
-      "commit_id" : "b6f63bd991569d45b19c4f2d83b223e6e7cdcff3",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-28T18:32:50Z",
       "diff_hunk" : "@@ -2194,6 +2215,203 @@ void PeerManagerImpl::SendBlockTransactions(CNode& pfrom, Peer& peer, const CBlo\n     m_connman.PushMessage(&pfrom, msgMaker.Make(NetMsgType::BLOCKTXN, resp));\n }\n \n+/**\n+ * Special handling for unconnecting headers that might be part of a block\n+ * announcement.\n+ *\n+ * We'll send a getheaders message in response to try to connect the chain.\n+ *\n+ * The peer can send up to MAX_UNCONNECTING_HEADERS in a row that\n+ * don't connect before given DoS points.\n+ *\n+ * Once a headers message is received that is valid and does connect,\n+ * nUnconnectingHeaders gets reset back to 0.\n+ */\n+void PeerManagerImpl::HandleFewUnconnectingHeaders(CNode& pfrom, Peer& peer,\n+        const std::vector<CBlockHeader>& headers)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    LOCK(cs_main);\n+    CNodeState *nodestate = State(pfrom.GetId());\n+\n+    nodestate->nUnconnectingHeaders++;\n+    // Try to fill in the missing headers.\n+    if (MaybeSendGetHeaders(pfrom, m_chainman.ActiveChain().GetLocator(m_chainman.m_best_header), peer)) {\n+        LogPrint(BCLog::NET, \"received header %s: missing prev block %s, sending getheaders (%d) to end (peer=%d, nUnconnectingHeaders=%d)\\n\",\n+            headers[0].GetHash().ToString(),\n+            headers[0].hashPrevBlock.ToString(),\n+            m_chainman.m_best_header->nHeight,\n+            pfrom.GetId(), nodestate->nUnconnectingHeaders);\n+    }\n+    // Set hashLastUnknownBlock for this peer, so that if we\n+    // eventually get the headers - even from a different peer -\n+    // we can use this peer to download.\n+    UpdateBlockAvailability(pfrom.GetId(), headers.back().GetHash());\n+\n+    // The peer may just be broken, so periodically assign DoS points if this\n+    // condition persists.\n+    if (nodestate->nUnconnectingHeaders % MAX_UNCONNECTING_HEADERS == 0) {\n+        Misbehaving(peer, 20, strprintf(\"%d non-connecting headers\", nodestate->nUnconnectingHeaders));\n+    }\n+    return;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908816540",
@@ -1546,6 +1477,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T18:32:50Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908816540",
       "user" : {
@@ -1583,7 +1515,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Took this change and also switched to this type of initialization for  `headers_connect_blockindex` as well.",
-      "commit_id" : "b6f63bd991569d45b19c4f2d83b223e6e7cdcff3",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-28T18:33:42Z",
       "diff_hunk" : "@@ -2206,55 +2424,35 @@ void PeerManagerImpl::ProcessHeadersMessage(CNode& pfrom, Peer& peer,\n         return;\n     }\n \n-    bool received_new_header = false;\n     const CBlockIndex *pindexLast = nullptr;\n-    {\n-        LOCK(cs_main);\n-        CNodeState *nodestate = State(pfrom.GetId());\n \n-        // If this looks like it could be a block announcement (nCount <=\n-        // MAX_BLOCKS_TO_ANNOUNCE), use special logic for handling headers that\n-        // don't connect:\n-        // - Send a getheaders message in response to try to connect the chain.\n-        // - The peer can send up to MAX_UNCONNECTING_HEADERS in a row that\n-        //   don't connect before giving DoS points\n-        // - Once a headers message is received that is valid and does connect,\n-        //   nUnconnectingHeaders gets reset back to 0.\n-        if (!m_chainman.m_blockman.LookupBlockIndex(headers[0].hashPrevBlock) && nCount <= MAX_BLOCKS_TO_ANNOUNCE) {\n-            nodestate->nUnconnectingHeaders++;\n-            m_connman.PushMessage(&pfrom, msgMaker.Make(NetMsgType::GETHEADERS, m_chainman.ActiveChain().GetLocator(m_chainman.m_best_header), uint256()));\n-            LogPrint(BCLog::NET, \"received header %s: missing prev block %s, sending getheaders (%d) to end (peer=%d, nUnconnectingHeaders=%d)\\n\",\n-                     headers[0].GetHash().ToString(),\n-                     headers[0].hashPrevBlock.ToString(),\n-                     m_chainman.m_best_header->nHeight,\n-                     pfrom.GetId(), nodestate->nUnconnectingHeaders);\n-            // Set hashLastUnknownBlock for this peer, so that if we\n-            // eventually get the headers - even from a different peer -\n-            // we can use this peer to download.\n-            UpdateBlockAvailability(pfrom.GetId(), headers.back().GetHash());\n-\n-            if (nodestate->nUnconnectingHeaders % MAX_UNCONNECTING_HEADERS == 0) {\n-                Misbehaving(peer, 20, strprintf(\"%d non-connecting headers\", nodestate->nUnconnectingHeaders));\n-            }\n-            return;\n-        }\n+    // Do these headers connect to something in our block index?\n+    bool headers_connect_blockindex = WITH_LOCK(::cs_main, return m_chainman.m_blockman.LookupBlockIndex(headers[0].hashPrevBlock) != nullptr);\n \n-        uint256 hashLastBlock;\n-        for (const CBlockHeader& header : headers) {\n-            if (!hashLastBlock.IsNull() && header.hashPrevBlock != hashLastBlock) {\n-                Misbehaving(peer, 20, \"non-continuous headers sequence\");\n-                return;\n-            }\n-            hashLastBlock = header.GetHash();\n+    if (!headers_connect_blockindex) {\n+        if (nCount <= MAX_BLOCKS_TO_ANNOUNCE) {\n+            // If this looks like it could be a BIP 130 block announcement, use\n+            // special logic for handling headers that don't connect, as this\n+            // could be benign.\n+            HandleFewUnconnectingHeaders(pfrom, peer, headers);\n+        } else {\n+            BlockValidationState state;\n+            state.Invalid(BlockValidationResult::BLOCK_MISSING_PREV, \"prev-blk-not-found\");\n+            MaybePunishNodeForBlock(pfrom.GetId(), state, via_compact_block, \"invalid header received\");\n         }\n+        return;\n+    }\n \n-        // If we don't have the last header, then they'll have given us\n-        // something new (if these headers are valid).\n-        if (!m_chainman.m_blockman.LookupBlockIndex(hashLastBlock)) {\n-            received_new_header = true;\n-        }\n+    // At this point, the headers connect to something in our block index.\n+    if (!CheckHeadersAreContinuous(headers)) {\n+        Misbehaving(peer, 20, \"non-continuous headers sequence\");\n+        return;\n     }\n \n+    // If we don't have the last header, then this peer will have given us\n+    // something new (if these headers are valid).\n+    bool received_new_header = WITH_LOCK(::cs_main, return m_chainman.m_blockman.LookupBlockIndex(headers.back().GetHash()) == nullptr);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908817213",
@@ -1614,6 +1546,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T18:33:43Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908817213",
       "user" : {
@@ -1651,7 +1584,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Dropping the std::atomic seems to have made things work with both clang and g++, so I think this is probably right now (thanks to @dongcarl and @sipa for helping me sort through this!).",
-      "commit_id" : "b6f63bd991569d45b19c4f2d83b223e6e7cdcff3",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-28T19:15:48Z",
       "diff_hunk" : "@@ -2194,6 +2215,203 @@ void PeerManagerImpl::SendBlockTransactions(CNode& pfrom, Peer& peer, const CBlo\n     m_connman.PushMessage(&pfrom, msgMaker.Make(NetMsgType::BLOCKTXN, resp));\n }\n \n+/**\n+ * Special handling for unconnecting headers that might be part of a block\n+ * announcement.\n+ *\n+ * We'll send a getheaders message in response to try to connect the chain.\n+ *\n+ * The peer can send up to MAX_UNCONNECTING_HEADERS in a row that\n+ * don't connect before given DoS points.\n+ *\n+ * Once a headers message is received that is valid and does connect,\n+ * nUnconnectingHeaders gets reset back to 0.\n+ */\n+void PeerManagerImpl::HandleFewUnconnectingHeaders(CNode& pfrom, Peer& peer,\n+        const std::vector<CBlockHeader>& headers)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    LOCK(cs_main);\n+    CNodeState *nodestate = State(pfrom.GetId());\n+\n+    nodestate->nUnconnectingHeaders++;\n+    // Try to fill in the missing headers.\n+    if (MaybeSendGetHeaders(pfrom, m_chainman.ActiveChain().GetLocator(m_chainman.m_best_header), peer)) {\n+        LogPrint(BCLog::NET, \"received header %s: missing prev block %s, sending getheaders (%d) to end (peer=%d, nUnconnectingHeaders=%d)\\n\",\n+            headers[0].GetHash().ToString(),\n+            headers[0].hashPrevBlock.ToString(),\n+            m_chainman.m_best_header->nHeight,\n+            pfrom.GetId(), nodestate->nUnconnectingHeaders);\n+    }\n+    // Set hashLastUnknownBlock for this peer, so that if we\n+    // eventually get the headers - even from a different peer -\n+    // we can use this peer to download.\n+    UpdateBlockAvailability(pfrom.GetId(), headers.back().GetHash());\n+\n+    // The peer may just be broken, so periodically assign DoS points if this\n+    // condition persists.\n+    if (nodestate->nUnconnectingHeaders % MAX_UNCONNECTING_HEADERS == 0) {\n+        Misbehaving(peer, 20, strprintf(\"%d non-connecting headers\", nodestate->nUnconnectingHeaders));\n+    }\n+    return;\n+}\n+\n+bool PeerManagerImpl::CheckHeadersAreContinuous(const std::vector<CBlockHeader>& headers) const\n+{\n+    uint256 hashLastBlock;\n+    for (const CBlockHeader& header : headers) {\n+        if (!hashLastBlock.IsNull() && header.hashPrevBlock != hashLastBlock) {\n+            return false;\n+        }\n+        hashLastBlock = header.GetHash();\n+    }\n+    return true;\n+}\n+\n+bool PeerManagerImpl::MaybeSendGetHeaders(CNode& pfrom, const CBlockLocator& locator, Peer& peer)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    const auto current_time = GetTime<std::chrono::seconds>();",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908849115",
@@ -1682,6 +1615,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T19:15:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908849115",
       "user" : {
@@ -1719,7 +1653,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Ah ok, thanks for clarifying! Maybe mention the `MAX_FUTURE_BLOCK_TIME` constant here to make it obvious?",
-      "commit_id" : "b6f63bd991569d45b19c4f2d83b223e6e7cdcff3",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-28T19:23:32Z",
       "diff_hunk" : "@@ -560,6 +565,22 @@ class PeerManagerImpl final : public PeerManager\n                                const std::vector<CBlockHeader>& headers,\n                                bool via_compact_block)\n         EXCLUSIVE_LOCKS_REQUIRED(!m_peer_mutex);\n+    /** Various helpers for headers processing, invoked by ProcessHeadersMessage() */\n+    /** Deal with state tracking and headers sync for peers that send the\n+     * occasional non-connecting header (this can happen due to BIP 130 headers\n+     * announcements for blocks interacting with the 2hr rule). */",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908862830",
@@ -1750,6 +1684,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T19:23:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908862830",
       "user" : {
@@ -1787,7 +1722,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Interesting, the `std::atomic` version did work for me locally (compiled with clang). What you have now looks good to me!",
-      "commit_id" : "b6f63bd991569d45b19c4f2d83b223e6e7cdcff3",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-28T19:28:57Z",
       "diff_hunk" : "@@ -2194,6 +2215,203 @@ void PeerManagerImpl::SendBlockTransactions(CNode& pfrom, Peer& peer, const CBlo\n     m_connman.PushMessage(&pfrom, msgMaker.Make(NetMsgType::BLOCKTXN, resp));\n }\n \n+/**\n+ * Special handling for unconnecting headers that might be part of a block\n+ * announcement.\n+ *\n+ * We'll send a getheaders message in response to try to connect the chain.\n+ *\n+ * The peer can send up to MAX_UNCONNECTING_HEADERS in a row that\n+ * don't connect before given DoS points.\n+ *\n+ * Once a headers message is received that is valid and does connect,\n+ * nUnconnectingHeaders gets reset back to 0.\n+ */\n+void PeerManagerImpl::HandleFewUnconnectingHeaders(CNode& pfrom, Peer& peer,\n+        const std::vector<CBlockHeader>& headers)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    LOCK(cs_main);\n+    CNodeState *nodestate = State(pfrom.GetId());\n+\n+    nodestate->nUnconnectingHeaders++;\n+    // Try to fill in the missing headers.\n+    if (MaybeSendGetHeaders(pfrom, m_chainman.ActiveChain().GetLocator(m_chainman.m_best_header), peer)) {\n+        LogPrint(BCLog::NET, \"received header %s: missing prev block %s, sending getheaders (%d) to end (peer=%d, nUnconnectingHeaders=%d)\\n\",\n+            headers[0].GetHash().ToString(),\n+            headers[0].hashPrevBlock.ToString(),\n+            m_chainman.m_best_header->nHeight,\n+            pfrom.GetId(), nodestate->nUnconnectingHeaders);\n+    }\n+    // Set hashLastUnknownBlock for this peer, so that if we\n+    // eventually get the headers - even from a different peer -\n+    // we can use this peer to download.\n+    UpdateBlockAvailability(pfrom.GetId(), headers.back().GetHash());\n+\n+    // The peer may just be broken, so periodically assign DoS points if this\n+    // condition persists.\n+    if (nodestate->nUnconnectingHeaders % MAX_UNCONNECTING_HEADERS == 0) {\n+        Misbehaving(peer, 20, strprintf(\"%d non-connecting headers\", nodestate->nUnconnectingHeaders));\n+    }\n+    return;\n+}\n+\n+bool PeerManagerImpl::CheckHeadersAreContinuous(const std::vector<CBlockHeader>& headers) const\n+{\n+    uint256 hashLastBlock;\n+    for (const CBlockHeader& header : headers) {\n+        if (!hashLastBlock.IsNull() && header.hashPrevBlock != hashLastBlock) {\n+            return false;\n+        }\n+        hashLastBlock = header.GetHash();\n+    }\n+    return true;\n+}\n+\n+bool PeerManagerImpl::MaybeSendGetHeaders(CNode& pfrom, const CBlockLocator& locator, Peer& peer)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    const auto current_time = GetTime<std::chrono::seconds>();",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908866897",
@@ -1818,6 +1753,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T19:28:57Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908866897",
       "user" : {
@@ -1855,7 +1791,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "It should be possible to use std::atomic on this (if you want to). Though, you may have to invoke the time_point constructor before assigning a value to the atomic. This can be done, for example, by calling `NodeSeconds{}` from https://github.com/bitcoin/bitcoin/blob/480d8069d7da954301fbb5c96b766e91b139fe5b/src/util/time.h#L25",
-      "commit_id" : "b6f63bd991569d45b19c4f2d83b223e6e7cdcff3",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-28T19:29:15Z",
       "diff_hunk" : "@@ -2194,6 +2215,203 @@ void PeerManagerImpl::SendBlockTransactions(CNode& pfrom, Peer& peer, const CBlo\n     m_connman.PushMessage(&pfrom, msgMaker.Make(NetMsgType::BLOCKTXN, resp));\n }\n \n+/**\n+ * Special handling for unconnecting headers that might be part of a block\n+ * announcement.\n+ *\n+ * We'll send a getheaders message in response to try to connect the chain.\n+ *\n+ * The peer can send up to MAX_UNCONNECTING_HEADERS in a row that\n+ * don't connect before given DoS points.\n+ *\n+ * Once a headers message is received that is valid and does connect,\n+ * nUnconnectingHeaders gets reset back to 0.\n+ */\n+void PeerManagerImpl::HandleFewUnconnectingHeaders(CNode& pfrom, Peer& peer,\n+        const std::vector<CBlockHeader>& headers)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    LOCK(cs_main);\n+    CNodeState *nodestate = State(pfrom.GetId());\n+\n+    nodestate->nUnconnectingHeaders++;\n+    // Try to fill in the missing headers.\n+    if (MaybeSendGetHeaders(pfrom, m_chainman.ActiveChain().GetLocator(m_chainman.m_best_header), peer)) {\n+        LogPrint(BCLog::NET, \"received header %s: missing prev block %s, sending getheaders (%d) to end (peer=%d, nUnconnectingHeaders=%d)\\n\",\n+            headers[0].GetHash().ToString(),\n+            headers[0].hashPrevBlock.ToString(),\n+            m_chainman.m_best_header->nHeight,\n+            pfrom.GetId(), nodestate->nUnconnectingHeaders);\n+    }\n+    // Set hashLastUnknownBlock for this peer, so that if we\n+    // eventually get the headers - even from a different peer -\n+    // we can use this peer to download.\n+    UpdateBlockAvailability(pfrom.GetId(), headers.back().GetHash());\n+\n+    // The peer may just be broken, so periodically assign DoS points if this\n+    // condition persists.\n+    if (nodestate->nUnconnectingHeaders % MAX_UNCONNECTING_HEADERS == 0) {\n+        Misbehaving(peer, 20, strprintf(\"%d non-connecting headers\", nodestate->nUnconnectingHeaders));\n+    }\n+    return;\n+}\n+\n+bool PeerManagerImpl::CheckHeadersAreContinuous(const std::vector<CBlockHeader>& headers) const\n+{\n+    uint256 hashLastBlock;\n+    for (const CBlockHeader& header : headers) {\n+        if (!hashLastBlock.IsNull() && header.hashPrevBlock != hashLastBlock) {\n+            return false;\n+        }\n+        hashLastBlock = header.GetHash();\n+    }\n+    return true;\n+}\n+\n+bool PeerManagerImpl::MaybeSendGetHeaders(CNode& pfrom, const CBlockLocator& locator, Peer& peer)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    const auto current_time = GetTime<std::chrono::seconds>();",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908867081",
@@ -1886,6 +1822,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T19:29:15Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908867081",
       "user" : {
@@ -1923,7 +1860,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "@MarcoFalke I think I'll probably give up on trying to use `std::atomic` because all my efforts seem to fail, but if you feel like writing the code and can share a diff that compiles I'd be happy to include it.",
-      "commit_id" : "b6f63bd991569d45b19c4f2d83b223e6e7cdcff3",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-28T19:49:32Z",
       "diff_hunk" : "@@ -2194,6 +2215,203 @@ void PeerManagerImpl::SendBlockTransactions(CNode& pfrom, Peer& peer, const CBlo\n     m_connman.PushMessage(&pfrom, msgMaker.Make(NetMsgType::BLOCKTXN, resp));\n }\n \n+/**\n+ * Special handling for unconnecting headers that might be part of a block\n+ * announcement.\n+ *\n+ * We'll send a getheaders message in response to try to connect the chain.\n+ *\n+ * The peer can send up to MAX_UNCONNECTING_HEADERS in a row that\n+ * don't connect before given DoS points.\n+ *\n+ * Once a headers message is received that is valid and does connect,\n+ * nUnconnectingHeaders gets reset back to 0.\n+ */\n+void PeerManagerImpl::HandleFewUnconnectingHeaders(CNode& pfrom, Peer& peer,\n+        const std::vector<CBlockHeader>& headers)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    LOCK(cs_main);\n+    CNodeState *nodestate = State(pfrom.GetId());\n+\n+    nodestate->nUnconnectingHeaders++;\n+    // Try to fill in the missing headers.\n+    if (MaybeSendGetHeaders(pfrom, m_chainman.ActiveChain().GetLocator(m_chainman.m_best_header), peer)) {\n+        LogPrint(BCLog::NET, \"received header %s: missing prev block %s, sending getheaders (%d) to end (peer=%d, nUnconnectingHeaders=%d)\\n\",\n+            headers[0].GetHash().ToString(),\n+            headers[0].hashPrevBlock.ToString(),\n+            m_chainman.m_best_header->nHeight,\n+            pfrom.GetId(), nodestate->nUnconnectingHeaders);\n+    }\n+    // Set hashLastUnknownBlock for this peer, so that if we\n+    // eventually get the headers - even from a different peer -\n+    // we can use this peer to download.\n+    UpdateBlockAvailability(pfrom.GetId(), headers.back().GetHash());\n+\n+    // The peer may just be broken, so periodically assign DoS points if this\n+    // condition persists.\n+    if (nodestate->nUnconnectingHeaders % MAX_UNCONNECTING_HEADERS == 0) {\n+        Misbehaving(peer, 20, strprintf(\"%d non-connecting headers\", nodestate->nUnconnectingHeaders));\n+    }\n+    return;\n+}\n+\n+bool PeerManagerImpl::CheckHeadersAreContinuous(const std::vector<CBlockHeader>& headers) const\n+{\n+    uint256 hashLastBlock;\n+    for (const CBlockHeader& header : headers) {\n+        if (!hashLastBlock.IsNull() && header.hashPrevBlock != hashLastBlock) {\n+            return false;\n+        }\n+        hashLastBlock = header.GetHash();\n+    }\n+    return true;\n+}\n+\n+bool PeerManagerImpl::MaybeSendGetHeaders(CNode& pfrom, const CBlockLocator& locator, Peer& peer)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    const auto current_time = GetTime<std::chrono::seconds>();",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908882206",
@@ -1954,6 +1891,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T19:49:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908882206",
       "user" : {
@@ -1991,7 +1929,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Done!",
-      "commit_id" : "b6f63bd991569d45b19c4f2d83b223e6e7cdcff3",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-28T19:54:12Z",
       "diff_hunk" : "@@ -560,6 +565,22 @@ class PeerManagerImpl final : public PeerManager\n                                const std::vector<CBlockHeader>& headers,\n                                bool via_compact_block)\n         EXCLUSIVE_LOCKS_REQUIRED(!m_peer_mutex);\n+    /** Various helpers for headers processing, invoked by ProcessHeadersMessage() */\n+    /** Deal with state tracking and headers sync for peers that send the\n+     * occasional non-connecting header (this can happen due to BIP 130 headers\n+     * announcements for blocks interacting with the 2hr rule). */",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r908885764",
@@ -2022,6 +1960,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-28T19:54:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/908885764",
       "user" : {
@@ -2059,7 +1998,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "I presume the issue was g++-8 in https://cirrus-ci.com/task/5966736871653376?logs=ci#L2017\r\n\r\nI tried my proposal (calling `NodeSeconds{}`) and it worked on top of your commit.\r\n\r\n```diff\r\n# git log -1 && git diff \r\ncommit fa24d37213cede7136ed34d481091b84642c62a6 (HEAD)\r\nAuthor: Suhas Daftuar <sdaftuar@gmail.com>\r\nDate:   Tue Jun 28 10:53:02 2022 -0400\r\n\r\n    Replace GetTime() with NodeClock in MaybeSendGetHeaders()\r\ndiff --git a/src/net_processing.cpp b/src/net_processing.cpp\r\nindex a75e3bd7f..6fc3009cb 100644\r\n--- a/src/net_processing.cpp\r\n+++ b/src/net_processing.cpp\r\n@@ -358,7 +358,7 @@ struct Peer {\r\n     std::deque<CInv> m_getdata_requests GUARDED_BY(m_getdata_requests_mutex);\r\n \r\n     /** Time of the last getheaders message to this peer */\r\n-    std::atomic<NodeClock::time_point> m_last_getheaders_timestamp{};\r\n+    std::atomic<NodeClock::time_point> m_last_getheaders_timestamp{NodeSeconds{}};\r\n \r\n     Peer(NodeId id)\r\n         : m_id{id}\r\n```\r\n\r\nAn equivalent would be to call `NodeClock::time_point{}` instead.",
-      "commit_id" : "3163b214686dfda36680f1a2f67aeba255ac85ac",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-06-30T15:40:30Z",
       "diff_hunk" : "@@ -2194,6 +2215,203 @@ void PeerManagerImpl::SendBlockTransactions(CNode& pfrom, Peer& peer, const CBlo\n     m_connman.PushMessage(&pfrom, msgMaker.Make(NetMsgType::BLOCKTXN, resp));\n }\n \n+/**\n+ * Special handling for unconnecting headers that might be part of a block\n+ * announcement.\n+ *\n+ * We'll send a getheaders message in response to try to connect the chain.\n+ *\n+ * The peer can send up to MAX_UNCONNECTING_HEADERS in a row that\n+ * don't connect before given DoS points.\n+ *\n+ * Once a headers message is received that is valid and does connect,\n+ * nUnconnectingHeaders gets reset back to 0.\n+ */\n+void PeerManagerImpl::HandleFewUnconnectingHeaders(CNode& pfrom, Peer& peer,\n+        const std::vector<CBlockHeader>& headers)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    LOCK(cs_main);\n+    CNodeState *nodestate = State(pfrom.GetId());\n+\n+    nodestate->nUnconnectingHeaders++;\n+    // Try to fill in the missing headers.\n+    if (MaybeSendGetHeaders(pfrom, m_chainman.ActiveChain().GetLocator(m_chainman.m_best_header), peer)) {\n+        LogPrint(BCLog::NET, \"received header %s: missing prev block %s, sending getheaders (%d) to end (peer=%d, nUnconnectingHeaders=%d)\\n\",\n+            headers[0].GetHash().ToString(),\n+            headers[0].hashPrevBlock.ToString(),\n+            m_chainman.m_best_header->nHeight,\n+            pfrom.GetId(), nodestate->nUnconnectingHeaders);\n+    }\n+    // Set hashLastUnknownBlock for this peer, so that if we\n+    // eventually get the headers - even from a different peer -\n+    // we can use this peer to download.\n+    UpdateBlockAvailability(pfrom.GetId(), headers.back().GetHash());\n+\n+    // The peer may just be broken, so periodically assign DoS points if this\n+    // condition persists.\n+    if (nodestate->nUnconnectingHeaders % MAX_UNCONNECTING_HEADERS == 0) {\n+        Misbehaving(peer, 20, strprintf(\"%d non-connecting headers\", nodestate->nUnconnectingHeaders));\n+    }\n+    return;\n+}\n+\n+bool PeerManagerImpl::CheckHeadersAreContinuous(const std::vector<CBlockHeader>& headers) const\n+{\n+    uint256 hashLastBlock;\n+    for (const CBlockHeader& header : headers) {\n+        if (!hashLastBlock.IsNull() && header.hashPrevBlock != hashLastBlock) {\n+            return false;\n+        }\n+        hashLastBlock = header.GetHash();\n+    }\n+    return true;\n+}\n+\n+bool PeerManagerImpl::MaybeSendGetHeaders(CNode& pfrom, const CBlockLocator& locator, Peer& peer)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    const auto current_time = GetTime<std::chrono::seconds>();",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r911178979",
@@ -2076,7 +2015,7 @@
       "pull_request_review_id" : 1025098765,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25454",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -2084,12 +2023,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/911178979/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-30T15:40:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/911178979",
       "user" : {
@@ -2169,9 +2109,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/911834780"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I think the problem here is `std::atomic<T>` requires `T` to be trivially copyable, but unlike `duration`, `time_point` isn't implemented as trivially copyable (and none of `time_point`, `duration`, or the underlying `rep` are specified as being trivially copyable either). Since we already assume `duration` is trivially copyable, last time I messed with this I wrote a wrapper, something like:\r\n\r\n```c++\r\ntemplate<typename TP>\r\nclass atomic_time_point {\r\nprivate:\r\n    using dur = typename TP::duration;\r\n    std::atomic<dur> d;\r\npublic:\r\n    atomic_time_point() noexcept : d{dur{0}} { }\r\n    atomic_time_point(const atomic_time_point&) = delete;\r\n    atomic_time_point(const TP& t) noexcept : d{t.time_since_epoch()} { }\r\n    TP load() { return TP{d.load()}; }\r\n    TP operator=(const TP& t) { d = t.time_since_epoch(); return t; }\r\n};\r\nusing AtomicNodeTime = atomic_time_point<NodeClock::time_point>;\r\nusing AtomicNodeSeconds = atomic_time_point<NodeSeconds>;\r\n```\r\n\r\nwhich would let you write `AtomicNodeTime m_last_getheaders_timestamp{};` without relying on `time_point` implementation details.",
-      "commit_id" : "3163b214686dfda36680f1a2f67aeba255ac85ac",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-07-01T10:23:28Z",
       "diff_hunk" : "@@ -2194,6 +2215,203 @@ void PeerManagerImpl::SendBlockTransactions(CNode& pfrom, Peer& peer, const CBlo\n     m_connman.PushMessage(&pfrom, msgMaker.Make(NetMsgType::BLOCKTXN, resp));\n }\n \n+/**\n+ * Special handling for unconnecting headers that might be part of a block\n+ * announcement.\n+ *\n+ * We'll send a getheaders message in response to try to connect the chain.\n+ *\n+ * The peer can send up to MAX_UNCONNECTING_HEADERS in a row that\n+ * don't connect before given DoS points.\n+ *\n+ * Once a headers message is received that is valid and does connect,\n+ * nUnconnectingHeaders gets reset back to 0.\n+ */\n+void PeerManagerImpl::HandleFewUnconnectingHeaders(CNode& pfrom, Peer& peer,\n+        const std::vector<CBlockHeader>& headers)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    LOCK(cs_main);\n+    CNodeState *nodestate = State(pfrom.GetId());\n+\n+    nodestate->nUnconnectingHeaders++;\n+    // Try to fill in the missing headers.\n+    if (MaybeSendGetHeaders(pfrom, m_chainman.ActiveChain().GetLocator(m_chainman.m_best_header), peer)) {\n+        LogPrint(BCLog::NET, \"received header %s: missing prev block %s, sending getheaders (%d) to end (peer=%d, nUnconnectingHeaders=%d)\\n\",\n+            headers[0].GetHash().ToString(),\n+            headers[0].hashPrevBlock.ToString(),\n+            m_chainman.m_best_header->nHeight,\n+            pfrom.GetId(), nodestate->nUnconnectingHeaders);\n+    }\n+    // Set hashLastUnknownBlock for this peer, so that if we\n+    // eventually get the headers - even from a different peer -\n+    // we can use this peer to download.\n+    UpdateBlockAvailability(pfrom.GetId(), headers.back().GetHash());\n+\n+    // The peer may just be broken, so periodically assign DoS points if this\n+    // condition persists.\n+    if (nodestate->nUnconnectingHeaders % MAX_UNCONNECTING_HEADERS == 0) {\n+        Misbehaving(peer, 20, strprintf(\"%d non-connecting headers\", nodestate->nUnconnectingHeaders));\n+    }\n+    return;\n+}\n+\n+bool PeerManagerImpl::CheckHeadersAreContinuous(const std::vector<CBlockHeader>& headers) const\n+{\n+    uint256 hashLastBlock;\n+    for (const CBlockHeader& header : headers) {\n+        if (!hashLastBlock.IsNull() && header.hashPrevBlock != hashLastBlock) {\n+            return false;\n+        }\n+        hashLastBlock = header.GetHash();\n+    }\n+    return true;\n+}\n+\n+bool PeerManagerImpl::MaybeSendGetHeaders(CNode& pfrom, const CBlockLocator& locator, Peer& peer)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    const auto current_time = GetTime<std::chrono::seconds>();",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r911834780",
@@ -2202,6 +2142,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-01T10:23:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/911834780",
       "user" : {
@@ -2239,7 +2180,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "> time_point isn't implemented as trivially copyable\r\n\r\nCan you add references to your claim that they are not trivially copyable?\r\n\r\nSee also the cpp program which passes on gcc7/clang5:\r\n\r\n```cpp\r\n#include <chrono>\r\n\r\ntemplate <class T>\r\nvoid CanUseInAtomic() {\r\n    static_assert(std::is_trivially_copyable_v<T>);\r\n    static_assert(std::is_copy_constructible_v<T>);\r\n    static_assert(std::is_move_constructible_v<T>);\r\n    static_assert(std::is_copy_assignable_v<T>);\r\n    static_assert(std::is_move_assignable_v<T>);\r\n}\r\n\r\nint main() {\r\n    CanUseInAtomic<bool>();\r\n    CanUseInAtomic<std::chrono::seconds>();      // duration\r\n    CanUseInAtomic<std::chrono::system_clock::time_point>();  // time_point\r\n}\r\n```\r\n\r\n\r\n\r\nhttps://godbolt.org/z/3nKc43cPv",
-      "commit_id" : "3163b214686dfda36680f1a2f67aeba255ac85ac",
+      "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-07-01T10:55:11Z",
       "diff_hunk" : "@@ -2194,6 +2215,203 @@ void PeerManagerImpl::SendBlockTransactions(CNode& pfrom, Peer& peer, const CBlo\n     m_connman.PushMessage(&pfrom, msgMaker.Make(NetMsgType::BLOCKTXN, resp));\n }\n \n+/**\n+ * Special handling for unconnecting headers that might be part of a block\n+ * announcement.\n+ *\n+ * We'll send a getheaders message in response to try to connect the chain.\n+ *\n+ * The peer can send up to MAX_UNCONNECTING_HEADERS in a row that\n+ * don't connect before given DoS points.\n+ *\n+ * Once a headers message is received that is valid and does connect,\n+ * nUnconnectingHeaders gets reset back to 0.\n+ */\n+void PeerManagerImpl::HandleFewUnconnectingHeaders(CNode& pfrom, Peer& peer,\n+        const std::vector<CBlockHeader>& headers)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    LOCK(cs_main);\n+    CNodeState *nodestate = State(pfrom.GetId());\n+\n+    nodestate->nUnconnectingHeaders++;\n+    // Try to fill in the missing headers.\n+    if (MaybeSendGetHeaders(pfrom, m_chainman.ActiveChain().GetLocator(m_chainman.m_best_header), peer)) {\n+        LogPrint(BCLog::NET, \"received header %s: missing prev block %s, sending getheaders (%d) to end (peer=%d, nUnconnectingHeaders=%d)\\n\",\n+            headers[0].GetHash().ToString(),\n+            headers[0].hashPrevBlock.ToString(),\n+            m_chainman.m_best_header->nHeight,\n+            pfrom.GetId(), nodestate->nUnconnectingHeaders);\n+    }\n+    // Set hashLastUnknownBlock for this peer, so that if we\n+    // eventually get the headers - even from a different peer -\n+    // we can use this peer to download.\n+    UpdateBlockAvailability(pfrom.GetId(), headers.back().GetHash());\n+\n+    // The peer may just be broken, so periodically assign DoS points if this\n+    // condition persists.\n+    if (nodestate->nUnconnectingHeaders % MAX_UNCONNECTING_HEADERS == 0) {\n+        Misbehaving(peer, 20, strprintf(\"%d non-connecting headers\", nodestate->nUnconnectingHeaders));\n+    }\n+    return;\n+}\n+\n+bool PeerManagerImpl::CheckHeadersAreContinuous(const std::vector<CBlockHeader>& headers) const\n+{\n+    uint256 hashLastBlock;\n+    for (const CBlockHeader& header : headers) {\n+        if (!hashLastBlock.IsNull() && header.hashPrevBlock != hashLastBlock) {\n+            return false;\n+        }\n+        hashLastBlock = header.GetHash();\n+    }\n+    return true;\n+}\n+\n+bool PeerManagerImpl::MaybeSendGetHeaders(CNode& pfrom, const CBlockLocator& locator, Peer& peer)\n+{\n+    const CNetMsgMaker msgMaker(pfrom.GetCommonVersion());\n+\n+    const auto current_time = GetTime<std::chrono::seconds>();",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#discussion_r911858045",
@@ -2270,6 +2211,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-01T10:55:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/911858045",
       "user" : {
@@ -2305,7 +2247,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/911914840"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Hmm, fair point. `static_assert(std::is_nothrow_default_constructible_v<T>);` catches it for clang 5, but not for gcc 7.1 for what that's worth.\r\n\r\nBut I don't think the pre-C++20 behaviour of default `std::atomic` initialization is ever what we want anyway? Per https://en.cppreference.com/w/cpp/atomic/atomic/atomic\r\n\r\n> 1) The default constructor is trivial: no initialization takes place other than [zero initialization](https://en.cppreference.com/w/cpp/language/zero_initialization) of static and thread-local objects. [std::atomic_init](https://en.cppreference.com/w/cpp/atomic/atomic_init) may be used to complete initialization.\r\n\r\nthat will just leave things undefined, like `int x;` ?\r\n\r\n(Anyway, no need for further changes in this PR, as far as I can see)",
       "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-07-01T12:23:35Z",
@@ -2338,6 +2280,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-01T12:23:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/911914840",
       "user" : {
@@ -2406,6 +2349,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-01T12:28:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/911918154",
       "user" : {
@@ -2430,7 +2374,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> @ajtowns This should fix the issue you've seen in functional tests, where generating a bunch of blocks at once can result in O(n^2) headers downloads.\r\n\r\nCan confirm that it seems to fix the problem, and that the debug logs for p2p_blockheaders show much fewer \"getheaders\" requests.",
       "created_at" : "2022-07-04T03:28:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#issuecomment-1173298333",
@@ -2474,7 +2418,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK 99f4785cad94657dcf349d00fdd6f1d44cac9bb0 ; code review, check over new logic of when to send getheaders messages",
       "created_at" : "2022-07-04T11:46:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#issuecomment-1173723141",
@@ -2561,6 +2505,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-04T13:25:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/912929185",
       "user" : {
@@ -2628,6 +2573,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-04T13:25:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/913000465",
       "user" : {
@@ -2696,7 +2642,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Code Review ACK 99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-07-04T19:07:40Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#issuecomment-1174109776",
@@ -2783,6 +2729,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-05T12:53:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/913493528",
       "user" : {
@@ -2850,6 +2797,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T12:48:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/913495541",
       "user" : {
@@ -2917,6 +2865,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-05T12:53:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/913611807",
       "user" : {
@@ -2952,7 +2901,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914721953"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "It still gets a score of 20 via `HandleFewUnconnectingHeaders()` when `nCount <= MAX_BLOCKS_TO_ANNOUNCE`; this adds an unavoidable score of 10 for unconnecting headers when `nCount > MAX_BLOCKS_TO_ANNOUNCE` which previously was more or less ignored...",
       "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-07-06T11:19:30Z",
@@ -2985,6 +2934,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T11:19:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914721953",
       "user" : {
@@ -3053,6 +3003,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T12:19:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914770077",
       "user" : {
@@ -3121,6 +3072,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T13:09:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914819517",
       "user" : {
@@ -3189,6 +3141,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T13:22:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914832494",
       "user" : {
@@ -3256,6 +3209,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T13:55:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914871029",
       "user" : {
@@ -3324,6 +3278,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T14:09:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914887154",
       "user" : {
@@ -3392,6 +3347,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T14:13:50Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914892574",
       "user" : {
@@ -3460,6 +3416,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T14:20:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914899946",
       "user" : {
@@ -3514,7 +3471,7 @@
       "pull_request_review_id" : 1030190027,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25454",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -3522,12 +3479,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914903742/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T14:23:27Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914903742",
       "user" : {
@@ -3596,6 +3554,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T14:59:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914946969",
       "user" : {
@@ -3664,6 +3623,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T15:07:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914956474",
       "user" : {
@@ -3732,6 +3692,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T15:07:41Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914956922",
       "user" : {
@@ -3800,6 +3761,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T15:08:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914957570",
       "user" : {
@@ -3835,7 +3797,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914988526"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Previously a non-connecting non-continuous header sequence of size MAX_BLOCKS_TO_ANNOUNCE+1 was assigned 20. Now it is assigned 10, no?\r\n> Previously it was deterministically and consistently assigned a `Misbehaving(peer, 20, \"non-continuous headers sequence\");`.\r\n\r\nAh, sorry, I was only thinking of the non-connecting continuous case, not the non-connecting, non-continuous case.",
       "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-07-06T15:36:48Z",
@@ -3868,6 +3830,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T15:36:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/914988526",
       "user" : {
@@ -3936,6 +3899,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T17:42:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/915103219",
       "user" : {
@@ -4004,6 +3968,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-06T18:49:29Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/915154998",
       "user" : {
@@ -4072,6 +4037,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-11T15:03:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918044113",
       "user" : {
@@ -4107,7 +4073,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918106763"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "What is \"in-thread\" and \"out-of-thread\"?",
       "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-07-11T16:00:20Z",
@@ -4140,6 +4106,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-11T16:00:21Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918106763",
       "user" : {
@@ -4208,6 +4175,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T05:54:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918573866",
       "user" : {
@@ -4243,7 +4211,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918679389"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Right, `m_last_getheaders_timestamp` is accessed from `PeerManagerImpl::MaybeSendGetHeaders()` and `PeerManagerImpl::ProcessMessage()` which are only called from a single thread `ThreadMessageHandler()`.\r\n\r\n> because this variable can be accessed in the scheduler thread or in the net processing thread\r\n\r\n@sdaftuar, I think it is not accessed from the scheduler thread?\r\n\r\nI am in favor of simplicity, in this case meaning to not protect data that is accessed by a single thread. If in the future it is accessed by another thread, then an appropriate protection should be added. That may be an atomic or a mutex just for that variable or a mutex for multiple variables depending on the need. Otherwise we may end up protecting it needlessly now and later to have to rework the protection anyway (or worse - use the available, inappropriate protection, like @MarcoFalke mentioned above \"...it may be assumed in the future that this is already perfectly thread safe...\").",
       "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-07-12T08:13:16Z",
@@ -4276,6 +4244,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T08:13:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918679389",
       "user" : {
@@ -4344,6 +4313,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T15:03:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/919084005",
       "user" : {
@@ -4379,7 +4349,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/919097013"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I am in favor of simplicity, in this case meaning to not protect data that is accessed by a single thread.\r\n\r\nPossible idea for the future. In theory could have `SingleThread<T>` class similar to the `Synced<T>` class from #25390 that wraps an object and asserts in debug mode that is always accessed from the same thread. I think a solution like that would be overkill here, and I'm struggling to think of cases where it wouldn't be overkill, but it wouldn't be hard to implement and could be useful to help code document assumptions it is making.",
       "commit_id" : "99f4785cad94657dcf349d00fdd6f1d44cac9bb0",
       "created_at" : "2022-07-12T15:14:34Z",
@@ -4402,16 +4372,17 @@
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/919097013/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T15:14:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/919097013",
       "user" : {
@@ -4480,6 +4451,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-14T07:58:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/920866842",
       "user" : {
@@ -4548,6 +4520,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-14T07:57:57Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/920867311",
       "user" : {
@@ -4616,6 +4589,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-14T07:59:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/920868519",
       "user" : {
@@ -4683,6 +4657,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-06T13:25:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/939528345",
       "user" : {
@@ -4704,6 +4679,50 @@
          "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/Sjors"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> `msgMaker` is now unused in ProcessHeadersMessage.\r\n\r\nSame for `PeerManagerImpl::HandleFewUnconnectingHeaders()` and `PeerManagerImpl::ConsiderEviction()`.\r\nSee https://github.com/bitcoin/bitcoin/pull/27368.",
+      "created_at" : "2023-03-30T11:04:54Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25454#issuecomment-1490109063",
+      "id" : 1490109063,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25454",
+      "node_id" : "IC_kwDOABII585Y0UKH",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1490109063/reactions"
+      },
+      "updated_at" : "2023-03-30T11:04:54Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1490109063",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/32963518?v=4",
+         "events_url" : "https://api.github.com/users/hebasto/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/hebasto/followers",
+         "following_url" : "https://api.github.com/users/hebasto/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/hebasto/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/hebasto",
+         "id" : 32963518,
+         "login" : "hebasto",
+         "node_id" : "MDQ6VXNlcjMyOTYzNTE4",
+         "organizations_url" : "https://api.github.com/users/hebasto/orgs",
+         "received_events_url" : "https://api.github.com/users/hebasto/received_events",
+         "repos_url" : "https://api.github.com/users/hebasto/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/hebasto/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/hebasto"
       }
    }
 ]

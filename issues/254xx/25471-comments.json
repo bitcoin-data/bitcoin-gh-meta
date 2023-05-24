@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#19949](https://github.com/bitcoin/bitcoin/pull/19949) (cli: Parse and allow hash value by fjahr)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-06-25T03:38:28Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25471#issuecomment-1166183135",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks for the review!\r\n\r\n> So I would suggest reordering the arguments of this RPC\r\n\r\nThat would be nice, but it would break compatibility with older versions, which I think should really be avoided unless absolutely necessary. For other RPCs, we sometimes even keep  dysfunctional dummy-arguments around to avoid this. (`prioritisetransaction`)\r\n\r\n> And I would also suggest mentioning in the description of hash_or_height, that not using this command would print info for the best block.\r\n\r\nI'll do this with my next push!",
       "created_at" : "2022-06-25T15:11:41Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25471#issuecomment-1166307686",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "I tried to produce the same error and have difficulty with it.\r\nWhere the `use_index` and `hash_or_height` are given to the program? Are they api args? or should be set while running `bitcoind`? I checked the api [docs](https://developer.bitcoin.org/reference/rpc/gettxoutsetinfo.html) but not found something useful. ",
       "created_at" : "2022-06-26T17:59:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25471#issuecomment-1166602113",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Where the `use_index` and `hash_or_height` are given to the program? Are they api args? or should be set while running `bitcoind`? I checked the api [docs](https://developer.bitcoin.org/reference/rpc/gettxoutsetinfo.html) but not found something useful.\r\n\r\nYou need to start bitcoind with the coinstatsindex to  reproduce this, e.g. `./bitcoind -signet -coinstatsindex`, and wait until the index is synced. After that, you can query `./bitcoin-cli -signet gettxoutsetinfo \"muhash\" \"1\" \"false\"`, which should give you this internal error on master.\r\n\r\nDoing the same locally with -regtest instead of -signet works too, but then you need to mine a couple of blocks yourself (`./bitcoin-cli -regtest -generate 10` before querying `gettxoutsetinfo` ).",
       "created_at" : "2022-06-26T18:26:59Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25471#issuecomment-1166609191",
@@ -141,7 +141,7 @@
       "node_id" : "IC_kwDOABII585FiQsn",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -149,7 +149,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1166609191/reactions"
       },
       "updated_at" : "2022-06-26T18:26:59Z",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "[2e9c043 ](https://github.com/bitcoin/bitcoin/commit/2e9c043cac4a309ff0a1bb3248b0b4f2a7843dd8)to [27c8056](https://github.com/bitcoin/bitcoin/commit/27c8056885b05bd25f540dbf6ede89230d43c7b9):\r\nadded explanation for the default of `hash_or_height` parameter (thanks @shaavan)",
       "created_at" : "2022-06-28T22:36:13Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25471#issuecomment-1169357306",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "utACK 27c8056885b05bd25f540dbf6ede89230d43c7b9\r\n",
       "created_at" : "2022-06-29T23:31:57Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25471#issuecomment-1170593331",
@@ -261,6 +261,50 @@
          "subscriptions_url" : "https://api.github.com/users/fjahr/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/fjahr"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Concept ACK for fixing the internal error that's exposed to RPC\r\n\r\n-----\r\n\r\nIn the longer term, I'd like to see `CreateUTXOSnapshot` use `kernel::ComputeUTXOStats` directly, and `GetUTXOStats` inlined into its only user `gettxoutsetinfo` and a lot of the if else checking can be removed.",
+      "created_at" : "2022-06-30T19:12:43Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25471#issuecomment-1171580173",
+      "id" : 1171580173,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25471",
+      "node_id" : "IC_kwDOABII585F1OUN",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1171580173/reactions"
+      },
+      "updated_at" : "2022-06-30T19:12:43Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1171580173",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/3445290?v=4",
+         "events_url" : "https://api.github.com/users/dongcarl/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/dongcarl/followers",
+         "following_url" : "https://api.github.com/users/dongcarl/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/dongcarl/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/dongcarl",
+         "id" : 3445290,
+         "login" : "dongcarl",
+         "node_id" : "MDQ6VXNlcjM0NDUyOTA=",
+         "organizations_url" : "https://api.github.com/users/dongcarl/orgs",
+         "received_events_url" : "https://api.github.com/users/dongcarl/received_events",
+         "repos_url" : "https://api.github.com/users/dongcarl/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/dongcarl/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/dongcarl/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/dongcarl"
       }
    }
 ]

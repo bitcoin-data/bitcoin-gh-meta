@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "`p2p_sendtxrcncl.py` currently fails intermittently in the CI, see e.g. https://cirrus-ci.com/task/5511952184115200?logs=ci#L4024\r\n\r\nI believe that this is related to the reuse of the parameter `p2p_idx=2` of `add_outbound_p2p_connection` in this test: When we call `peer_disconnect`, we don't wait until the node has completed the disconnection. So there is a race between setting up the next connection (next  `addconnection` RPC), and if the old one hasn't been removed and has an identical port like the new one (because we didn't increment `p2p_idx`), `CConnman::OpenNetworkConnection` just [returns](https://github.com/bitcoin/bitcoin/blob/5274f324375fd31cf8507531fbc612765d03092f/src/net.cpp#L1976) without establishing a connection, and the test fails.\r\n\r\nFix this by using distinct `disconnect_p2ps` instead of `peer_disconnect`, which waits for the disconnect to complete. We can then use the same value for `p2p_idx` everywhere.",
    "closed_at" : "2022-11-04T15:52:06Z",
    "closed_by" : {
@@ -25,7 +25,7 @@
       "type" : "User",
       "url" : "https://api.github.com/users/MarcoFalke"
    },
-   "comments" : 2,
+   "comments" : 3,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26448/comments",
    "created_at" : "2022-11-03T17:06:07Z",
    "draft" : false,
@@ -73,7 +73,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26448/timeline",
    "title" : "test: fix intermittent failure in p2p_sendtxrcncl.py",
-   "updated_at" : "2022-11-04T15:52:06Z",
+   "updated_at" : "2022-11-04T20:55:54Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26448",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/48763452?v=4",

@@ -6,7 +6,7 @@
    "body" : "https://bitcoincore.org/bin/bitcoin-core-24.0.1/bitcoin-24.0.1-x86_64-linux-gnu.tar.gz\r\n\r\nProblem: listreceivedbyaddress always returns an empty array for a watch-only wallet when it's of type descriptor (not legacy). This problem doesn't occur with a legacy watch-only wallet, only a descriptor watch-only wallet.\r\n\r\nApparent reason: bitcoind thinks the addresses are for change.\r\n\r\nWork-around: When importing descriptors, set active=true.\r\n\r\nThanks to achow101 on IRC Libera Chat #bitcoin-core-dev, 2023-01-04.\r\n\r\n```\r\n$ cat $HOME/data1/bitcoin.conf \r\nprinttoconsole=1\r\nregtest=1\r\ntxindex=1\r\n[regtest]\r\nport=18444\r\nrpcport=18443\r\n\r\n$ $HOME/bitcoin-24.0.1/bin/bitcoin-qt -datadir=$HOME/data1 -server -fallbackfee=0.00001 &\r\n\r\n$ cat bcli.sh \r\n#!/bin/bash\r\n$HOME/bitcoin-24.0.1/bin/bitcoin-cli -datadir=$HOME/data1 \"$@\"\r\n\r\n\r\n$ bcli.sh createwallet w1\r\n$ bcli.sh createwallet w2 true true\r\n$ bcli.sh -rpcwallet=w1 listdescriptors\r\n...\r\n    {\r\n      \"desc\": \"wpkh([577ce3ca/84'/1'/0']tpubDCNwCevBBSLGZm5d2urnpLDD2B4s5dWf7TRigFngte9M7sijNQg6QVjq1K7Nb7uLAP7xLn2h4X1MoiT3JmMP3sQYuKsY1qnPj1HR63hQDuT/0/*)#cw6xz6mx\",\r\n      \"timestamp\": 1672848018,\r\n      \"active\": true,\r\n      \"internal\": false,\r\n      \"range\": [\r\n        0,\r\n        999\r\n      ],\r\n      \"next\": 0\r\n    },\r\n...\r\n\r\n$ bcli.sh -rpcwallet=w2 importdescriptors \"[{\\\"desc\\\": \\\"wpkh([577ce3ca/84'/1'/0']tpubDCNwCevBBSLGZm5d2urnpLDD2B4s5dWf7TRigFngte9M7sijNQg6QVjq1K7Nb7uLAP7xLn2h4X1MoiT3JmMP3sQYuKsY1qnPj1HR63hQDuT/0/*)#cw6xz6mx\\\", \\\"timestamp\\\": 0, \\\"range\\\": 999}]\"\r\n\r\n$ bcli.sh -rpcwallet=w1 getnewaddress\r\nbcrt1qxu3fl6lyqydvtgxsdpeu69gyywy2dya5a4kray\r\n\r\n$ bcli.sh -rpcwallet=w1 generatetoaddress 101 bcrt1qxu3fl6lyqydvtgxsdpeu69gyywy2dya5a4kray\r\n\r\n$ bcli.sh -rpcwallet=w2 listreceivedbyaddress 1 true true \"\" true\r\n[\r\n]\r\n```",
    "closed_at" : null,
    "closed_by" : null,
-   "comments" : 0,
+   "comments" : 5,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26813/comments",
    "created_at" : "2023-01-04T17:13:42Z",
    "events_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26813/events",
@@ -46,7 +46,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26813/timeline",
    "title" : "listreceivedbyaddress is empty for descriptor (but not legacy) wallets",
-   "updated_at" : "2023-01-04T17:15:07Z",
+   "updated_at" : "2023-01-05T21:08:03Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26813",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/1073437?v=4",

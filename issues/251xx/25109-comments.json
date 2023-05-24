@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "cc @vasild @w0xlt @jonatack @hebasto \r\n\r\nThis is the first two commits from #24931 so we can hopefully make some progress..",
       "created_at" : "2022-05-11T17:17:20Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25109#issuecomment-1124036445",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24970](https://github.com/bitcoin/bitcoin/pull/24970) (net processing: Move cleanSubVer, fPreferredDownload and nLocalHostNonce to Peer by jnewbery)\n* [#24474](https://github.com/bitcoin/bitcoin/pull/24474) (Additional thread safety annotations for CNode/Peer by ajtowns)\n* [#24356](https://github.com/bitcoin/bitcoin/pull/24356) (refactor: replace CConnman::SocketEvents() with mockable Sock::WaitMany() by vasild)\n* [#24230](https://github.com/bitcoin/bitcoin/pull/24230) (indexes: Stop using node internal types and locking cs_main, improve sync logic by ryanofsky)\n* [#24170](https://github.com/bitcoin/bitcoin/pull/24170) (p2p, rpc: Manual block-relay-only connections with addnode by mzumsande)\n* [#24122](https://github.com/bitcoin/bitcoin/pull/24122) (refactor: replace RecursiveMutex `cs_vProcessMsg` with Mutex (and rename) by theStack)\n* [#21878](https://github.com/bitcoin/bitcoin/pull/21878) (Make all networking code mockable by vasild)\n* [#21527](https://github.com/bitcoin/bitcoin/pull/21527) (net_processing: lock clean up by ajtowns)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-05-12T07:24:10Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25109#issuecomment-1124625585",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> annotations are stripped\r\n\r\nHmm:\r\n\r\n```cpp\r\nvoid f()\r\n{\r\n    auto g = []() EXCLUSIVE_LOCKS_REQUIRED(!::cs_main) { AssertLockNotHeld(::cs_main); };\r\n    g(); // error: calling function 'operator()' requires negative capability '!cs_main' [-Werror,-Wthread-safety-analysis]\r\n}\r\n```\r\n\r\n (clang 15)",
       "created_at" : "2022-05-13T14:44:46Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25109#issuecomment-1126136958",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > diff ...\r\n\r\nI think that's large enough and independent enough that it warrants its own PR...\r\n\r\n> I don't think it is meaningful or useful to annotate lambdas, as annotations are stripped as soon as they are assigned to a `std::function<...>` type.\r\n\r\nThat means they're still useful when passed around via `auto` or templated types though. It gets pretty cumbersome anytime the lambda is passed to some generic function that wants a callback though.",
       "created_at" : "2022-05-13T15:08:51Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25109#issuecomment-1126159979",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Well, that diff above is required if we want to avoid the two `AssertLockNotHeldInline()` introduced in this PR and use just the first one:\r\n\r\n```cpp\r\ninline void AssertLockNotHeldInline(const char* name, const char* file, int line, Mutex* cs) EXCLUSIVE_LOCKS_REQUIRED(!cs) { AssertLockNotHeldInternal(name, file, line, cs); }\r\ninline void AssertLockNotHeldInline(const char* name, const char* file, int line, RecursiveMutex* cs) LOCKS_EXCLUDED(cs) { AssertLockNotHeldInternal(name, file, line, cs); }\r\n```\r\n\r\nOr, in other words, to avoid this (from this PR description):\r\n\r\n> Note that this can't reasonably be used for globals, because clang would require every function to be annotated with EXCLUSIVE_LOCKS_REQUIRED(!g_mutex) for each global mutex.\r\n\r\nAnyway - I am ok with this PR as it is. It's an improvement from the current situation IMO, even with the two `AssertLockNotHeldInline()`s.",
       "created_at" : "2022-05-13T15:58:28Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25109#issuecomment-1126205612",
@@ -308,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > That means they're still useful when passed around via `auto` or templated types though. It gets pretty cumbersome anytime the lambda is passed to some generic function that wants a callback though.\r\n>\r\n> Eh, isn't this what we want to avoid? For example, annotating an rpc method lambda with lock annotations will ...\r\n\r\nYeah, that's what I meant by cumbersome. Could be worthwhile in some cases maybe though (I know I've added annotations to some lambdas which didn't seem too bad).",
       "created_at" : "2022-05-13T17:05:25Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25109#issuecomment-1126265489",
@@ -395,6 +395,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T12:17:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873629811",
       "user" : {
@@ -462,6 +463,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T12:17:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873639165",
       "user" : {
@@ -529,6 +531,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T12:17:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873646983",
       "user" : {
@@ -596,6 +599,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T12:17:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873647178",
       "user" : {
@@ -663,6 +667,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T12:17:02Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873648811",
       "user" : {
@@ -730,6 +735,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T12:17:02Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873649270",
       "user" : {
@@ -765,7 +771,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873713512"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "It was an extra assertion needed for the subsequent commits in #24931.",
       "commit_id" : "436ce0233c276e263dcb441255dc0b881cb39cfb",
       "created_at" : "2022-05-16T13:16:14Z",
@@ -798,6 +804,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T13:16:15Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873713512",
       "user" : {
@@ -866,6 +873,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T14:12:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873778526",
       "user" : {
@@ -934,6 +942,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T14:12:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873778698",
       "user" : {
@@ -1002,6 +1011,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T14:13:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873779713",
       "user" : {
@@ -1070,6 +1080,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T14:24:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873792664",
       "user" : {
@@ -1138,6 +1149,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T14:25:02Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873792810",
       "user" : {
@@ -1206,6 +1218,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T14:40:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873811436",
       "user" : {

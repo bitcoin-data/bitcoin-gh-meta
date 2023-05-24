@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "In the `gettxoutsetinfo` RPC, if we set `use_index` to false but specify `hash_or_height`, we currently hit a nonfatal error, e.g. `gettxoutsetinfo \"muhash\" \"1\" \"false\"` results in:\r\n```\r\nInternal bug detected: \"!pindex || pindex->GetBlockHash() == view->GetBestBlock()\"\r\nrpc/blockchain.cpp:836 (GetUTXOStats) \r\n```\r\nThe failing check was added in [#24410](https://github.com/bitcoin/bitcoin/pull/24410/commits/664a14ba7ccb40aa82d35a59831acd35db1897a6), but the previous behavior, returning the specified height together with data corresponding to the tip's height, was very confusing too in my opinion.\r\nFix this by disallowing the interaction  of `use_index=false` and `hash_or_height` and add a RPC help example with `-named` because users might ask themselves how to use the `use_index` flag witout hitting an error.\r\n\r\nAn alternative way would be to allow the interaction if the specified `hash_or_height` happens to correspond to the tip (which should then also be applied to the `HASH_SERIALIZED` check before). If reviewers would prefer that, please say so.",
    "closed_at" : "2022-07-01T12:58:57Z",
    "closed_by" : {
@@ -73,7 +73,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25471/timeline",
    "title" : "rpc: Disallow gettxoutsetinfo queries for a specific block with `use_index=false`",
-   "updated_at" : "2022-07-01T12:58:57Z",
+   "updated_at" : "2022-11-03T01:11:16Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25471",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/48763452?v=4",

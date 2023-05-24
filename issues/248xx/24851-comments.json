@@ -11,9 +11,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/850047077"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "I'm still pretty new to Bitcoin terminology, so if there is a more precise way to describe the issue in this comment, I welcome the feedback.",
-      "commit_id" : "511eb7fdeac36da9d6576c878a1c8d390b38f1bd",
+      "commit_id" : "e899d4ca6f44785b6e5481e200a6a9a8d2448612",
       "created_at" : "2022-04-14T03:06:43Z",
       "diff_hunk" : "@@ -1837,6 +1837,15 @@ DisconnectResult CChainState::DisconnectBlock(const CBlock& block, const CBlockI\n         return DISCONNECT_FAILED;\n     }\n \n+    // Ignore blocks that contain transactions which are 'overwritten' by later transactions,\n+    // unless those are already completely spent.\n+    // See https://github.com/bitcoin/bitcoin/issues/22596 for additional information.\n+    // Note: the blocks specified here are different than the ones used in ConnectBlock because DisconnectBlock\n+    // unwinds the blocks in reverse. As a result, the inconsistency is not discovered until the earlier\n+    // blocks with the duplicate coinbase transactions are disconnected.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24851#discussion_r850047077",
@@ -43,6 +43,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-14T03:24:57Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/850047077",
       "user" : {
@@ -78,21 +79,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/850048710"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "At first I tried to mimic the behavior in [ConnectBlock](https://github.com/bitcoin/bitcoin/blob/b620b2d58a55a88ad21da70cb2000863ef17b651/src/validation.cpp#L1825-L1834) and the put the `fEnforceBIP30` guard around the entire loop that begins on line 1850, but that would still result in the verification failing later in the process. Moving the guard here allowed the verification process to complete successfully.\r\n\r\nI'm assuming that we need to call `SpendCoin` in both cases because we still need to update the view's state even if we ignore the `is_spent` result.",
-      "commit_id" : "511eb7fdeac36da9d6576c878a1c8d390b38f1bd",
+      "commit_id" : "e899d4ca6f44785b6e5481e200a6a9a8d2448612",
       "created_at" : "2022-04-14T03:11:07Z",
       "diff_hunk" : "@@ -1850,7 +1859,7 @@ DisconnectResult CChainState::DisconnectBlock(const CBlock& block, const CBlockI\n                 COutPoint out(hash, o);\n                 Coin coin;\n                 bool is_spent = view.SpendCoin(out, &coin);\n-                if (!is_spent || tx.vout[o] != coin.out || pindex->nHeight != coin.nHeight || is_coinbase != coin.fCoinBase) {\n+                if (fEnforceBIP30 && (!is_spent || tx.vout[o] != coin.out || pindex->nHeight != coin.nHeight || is_coinbase != coin.fCoinBase)) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24851#discussion_r850048710",
       "id" : 850048710,
-      "line" : 1862,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584yqrbG",
       "original_commit_id" : "511eb7fdeac36da9d6576c878a1c8d390b38f1bd",
       "original_line" : 1862,
       "original_position" : 21,
       "original_start_line" : null,
       "path" : "src/validation.cpp",
-      "position" : 21,
+      "position" : null,
       "pull_request_review_id" : 941746200,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24851",
       "reactions" : {
@@ -110,6 +111,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-14T03:11:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/850048710",
       "user" : {
@@ -134,7 +136,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "@jamesob Thanks for the review and good idea to ensure that we're only allowing exceptions for coinbase transactions. I've included your suggested patch in the latest commit and retested to ensure things are working as expected. ð \r\n\r\nThanks again!",
       "created_at" : "2022-04-14T15:52:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24851#issuecomment-1099326605",
@@ -222,7 +224,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "@jamesob Fixed the typo, and I included your co-author credits. Sorry for not doing that in the first place! ð ",
       "created_at" : "2022-04-14T16:05:37Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24851#issuecomment-1099344934",
@@ -309,6 +311,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-22T05:31:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/903294906",
       "user" : {
@@ -377,7 +380,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Successfully tested with `verifychain 4 0` on mainnet. Had to change source https://github.com/0xB10C/bitcoin/commit/eb0d5f078f03a5190d458ab4cc2d2e859e2492da to allow for a dbcache larger than 16GB. Ran it with 48GB and from what I can tell it used just under 32 GB of RAM. Took 14h.  ",
       "created_at" : "2022-08-13T08:54:38Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24851#issuecomment-1214040286",
@@ -421,7 +424,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.",
       "created_at" : "2022-09-23T12:37:26Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24851#issuecomment-1256156984",

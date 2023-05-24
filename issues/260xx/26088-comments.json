@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Fixed lint error.",
       "created_at" : "2022-09-14T09:43:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26088#issuecomment-1246508091",
@@ -99,9 +99,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/971081731"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit:\r\n```suggestion\r\n    if (cookie_perms) {\r\n```",
-      "commit_id" : "857d46e47a18265eb229a1ea20064d634786bc72",
+      "commit_id" : "cc0d0aeca684c73c8f8538ca67ccc6866b786b25",
       "created_at" : "2022-09-14T17:01:39Z",
       "diff_hunk" : "@@ -98,6 +98,15 @@ bool GenerateAuthCookie(std::string *cookie_out)\n     file << cookie;\n     file.close();\n \n+    if(cookie_perms) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26088#discussion_r971081731",
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-14T17:01:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/971081731",
       "user" : {
@@ -168,7 +169,7 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "nit\r\n```suggestion\r\n        if (cookie_perms_arg) {\r\n```",
-      "commit_id" : "857d46e47a18265eb229a1ea20064d634786bc72",
+      "commit_id" : "cc0d0aeca684c73c8f8538ca67ccc6866b786b25",
       "created_at" : "2022-09-14T17:08:02Z",
       "diff_hunk" : "@@ -238,12 +238,35 @@ static bool HTTPReq_JSONRPC(const std::any& context, HTTPRequest* req)\n     return true;\n }\n \n+static std::optional<unsigned> StringToOctal(const std::string& str)\n+{\n+    unsigned ret = 0;\n+    for (char c : str) {\n+        if (c < '0' || c > '7') return std::nullopt;\n+        ret = (ret << 3) | (c - '0');\n+    }\n+    return ret;\n+}\n+\n static bool InitRPCAuthentication()\n {\n     if (gArgs.GetArg(\"-rpcpassword\", \"\") == \"\")\n     {\n         LogPrintf(\"Using random cookie authentication.\\n\");\n-        if (!GenerateAuthCookie(&strRPCUserColonPass)) {\n+\n+        std::optional<fs::perms> cookie_perms;\n+        auto cookie_perms_arg{gArgs.GetArg(\"-rpccookieperms\")};\n+        if(cookie_perms_arg) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26088#discussion_r971087418",
@@ -198,6 +199,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-14T17:09:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/971087418",
       "user" : {
@@ -235,7 +237,7 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "nit\r\n```suggestion\r\n            if (!perms) {\r\n```",
-      "commit_id" : "857d46e47a18265eb229a1ea20064d634786bc72",
+      "commit_id" : "cc0d0aeca684c73c8f8538ca67ccc6866b786b25",
       "created_at" : "2022-09-14T17:08:18Z",
       "diff_hunk" : "@@ -238,12 +238,35 @@ static bool HTTPReq_JSONRPC(const std::any& context, HTTPRequest* req)\n     return true;\n }\n \n+static std::optional<unsigned> StringToOctal(const std::string& str)\n+{\n+    unsigned ret = 0;\n+    for (char c : str) {\n+        if (c < '0' || c > '7') return std::nullopt;\n+        ret = (ret << 3) | (c - '0');\n+    }\n+    return ret;\n+}\n+\n static bool InitRPCAuthentication()\n {\n     if (gArgs.GetArg(\"-rpcpassword\", \"\") == \"\")\n     {\n         LogPrintf(\"Using random cookie authentication.\\n\");\n-        if (!GenerateAuthCookie(&strRPCUserColonPass)) {\n+\n+        std::optional<fs::perms> cookie_perms;\n+        auto cookie_perms_arg{gArgs.GetArg(\"-rpccookieperms\")};\n+        if(cookie_perms_arg) {\n+            auto perms{StringToOctal(*cookie_perms_arg)};\n+            if(!perms) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26088#discussion_r971087653",
@@ -265,6 +267,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-14T17:09:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/971087653",
       "user" : {
@@ -302,7 +305,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "@aureleoules running clang-format on your changes before pushing avoids these little issues; see `/contrib/devtools/clang-format-diff.py` for more info",
-      "commit_id" : "857d46e47a18265eb229a1ea20064d634786bc72",
+      "commit_id" : "cc0d0aeca684c73c8f8538ca67ccc6866b786b25",
       "created_at" : "2022-09-14T17:47:41Z",
       "diff_hunk" : "@@ -238,12 +238,35 @@ static bool HTTPReq_JSONRPC(const std::any& context, HTTPRequest* req)\n     return true;\n }\n \n+static std::optional<unsigned> StringToOctal(const std::string& str)\n+{\n+    unsigned ret = 0;\n+    for (char c : str) {\n+        if (c < '0' || c > '7') return std::nullopt;\n+        ret = (ret << 3) | (c - '0');\n+    }\n+    return ret;\n+}\n+\n static bool InitRPCAuthentication()\n {\n     if (gArgs.GetArg(\"-rpcpassword\", \"\") == \"\")\n     {\n         LogPrintf(\"Using random cookie authentication.\\n\");\n-        if (!GenerateAuthCookie(&strRPCUserColonPass)) {\n+\n+        std::optional<fs::perms> cookie_perms;\n+        auto cookie_perms_arg{gArgs.GetArg(\"-rpccookieperms\")};\n+        if(cookie_perms_arg) {\n+            auto perms{StringToOctal(*cookie_perms_arg)};\n+            if(!perms) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26088#discussion_r971124443",
@@ -333,6 +336,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-14T17:47:41Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/971124443",
       "user" : {
@@ -368,9 +372,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/971164132"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Yes I forgot to run it... Fixed the issues by running it.",
-      "commit_id" : "857d46e47a18265eb229a1ea20064d634786bc72",
+      "commit_id" : "cc0d0aeca684c73c8f8538ca67ccc6866b786b25",
       "created_at" : "2022-09-14T18:28:23Z",
       "diff_hunk" : "@@ -238,12 +238,35 @@ static bool HTTPReq_JSONRPC(const std::any& context, HTTPRequest* req)\n     return true;\n }\n \n+static std::optional<unsigned> StringToOctal(const std::string& str)\n+{\n+    unsigned ret = 0;\n+    for (char c : str) {\n+        if (c < '0' || c > '7') return std::nullopt;\n+        ret = (ret << 3) | (c - '0');\n+    }\n+    return ret;\n+}\n+\n static bool InitRPCAuthentication()\n {\n     if (gArgs.GetArg(\"-rpcpassword\", \"\") == \"\")\n     {\n         LogPrintf(\"Using random cookie authentication.\\n\");\n-        if (!GenerateAuthCookie(&strRPCUserColonPass)) {\n+\n+        std::optional<fs::perms> cookie_perms;\n+        auto cookie_perms_arg{gArgs.GetArg(\"-rpccookieperms\")};\n+        if(cookie_perms_arg) {\n+            auto perms{StringToOctal(*cookie_perms_arg)};\n+            if(!perms) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26088#discussion_r971164132",
@@ -401,6 +405,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-14T18:28:24Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/971164132",
       "user" : {
@@ -425,7 +430,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "This will work only for Linux. Added a few lines in `src/rpc/request.cpp` from an example on https://en.cppreference.com/w/cpp/filesystem/permissions to test and print permissions in logs:\r\n\r\n<details>\r\n  <summary>diff</summary>\r\n  \r\n  ```diff\r\n+void perms(fs::perms p)\r\n+{\r\n+   std::cout << ((p & fs::perms::owner_read) != fs::perms::none ? \"r\" : \"-\")\r\n+             << ((p & fs::perms::owner_write) != fs::perms::none ? \"w\" : \"-\")\r\n+              << ((p & fs::perms::owner_exec) != fs::perms::none ? \"x\" : \"-\")\r\n+              << ((p & fs::perms::group_read) != fs::perms::none ? \"r\" : \"-\")\r\n+              << ((p & fs::perms::group_write) != fs::perms::none ? \"w\" : \"-\")\r\n+              << ((p & fs::perms::group_exec) != fs::perms::none ? \"x\" : \"-\")\r\n+              << ((p & fs::perms::others_read) != fs::perms::none ? \"r\" : \"-\")\r\n+              << ((p & fs::perms::others_write) != fs::perms::none ? \"w\" : \"-\")\r\n+              << ((p & fs::perms::others_exec) != fs::perms::none ? \"x\" : \"-\")\r\n+              << '\\n';\r\n+}\r\n\r\nbool GenerateAuthCookie(std::string* cookie_out, std::optional<fs::perms> cookie_perms)\r\n{\r\n    const size_t COOKIE_SIZE = 32;\r\n    unsigned char rand_pwd[COOKIE_SIZE];\r\n    GetRandBytes(rand_pwd);\r\n    std::string cookie = COOKIEAUTH_USER + \":\" + HexStr(rand_pwd);\r\n\r\n    /** the umask determines what permissions are used to create this file -\r\n     * these are set to 077 in init.cpp unless overridden with -sysperms.\r\n     */\r\n    std::ofstream file;\r\n    fs::path filepath_tmp = GetAuthCookieFile(true);\r\n    file.open(filepath_tmp);\r\n    if (!file.is_open()) {\r\n        LogPrintf(\"Unable to open cookie authentication file %s for writing\\n\", fs::PathToString(filepath_tmp));\r\n        return false;\r\n    }\r\n    file << cookie;\r\n    file.close();\r\n\r\n    if (cookie_perms) {\r\n        std::error_code code;\r\n        std::filesystem::permissions(filepath_tmp, *cookie_perms, std::filesystem::perm_options::replace, code);\r\n        if (code) {\r\n            LogPrintf(\"Unable to set permissions on cookie authentication file %s\\n\", fs::PathToString(filepath_tmp));\r\n            return false;\r\n        }\r\n    }\r\n\r\n    fs::path filepath = GetAuthCookieFile(false);\r\n    if (!RenameOver(filepath_tmp, filepath)) {\r\n        LogPrintf(\"Unable to rename cookie authentication file %s to %s\\n\", fs::PathToString(filepath_tmp), fs::PathToString(filepath));\r\n        return false;\r\n    }\r\n    LogPrintf(\"Generated RPC authentication cookie %s\\n\", fs::PathToString(filepath));\r\n+ LogPrintf(\"Permissions used for cookie: \");\r\n+ perms(fs::status(filepath).permissions());\r\n\r\n    if (cookie_out)\r\n        *cookie_out = cookie;\r\n    return true;\r\n}\r\n```\r\n  \r\n</details>\r\n\r\n\r\n\r\nWindows:\r\n\r\n```\r\n.\\bitcoind.exe\r\n\r\n2022-09-15T09:57:30Z Using random cookie authentication.\r\n2022-09-15T09:57:30Z Generated RPC authentication cookie C:\\Users\\test\\AppData\\Roaming\\Bitcoin\\signet\\.cookie\r\n2022-09-15T09:57:30Z Permissions used for cookie: rw-rw-rw-\r\n\r\n.\\bitcoind.exe -rpccookieperms=0660\r\n\r\n2022-09-15T09:51:36Z Using random cookie authentication.\r\n2022-09-15T09:51:36Z Generated RPC authentication cookie C:\\Users\\test\\AppData\\Roaming\\Bitcoin\\signet\\.cookie\r\n2022-09-15T09:51:36Z Permissions used for cookie: rw-rw-rw-\r\n```\r\n\r\nFedora:\r\n\r\n```\r\nbitcoind\r\n\r\n2022-09-15T11:34:59Z Using random cookie authentication.\r\n2022-09-15T11:34:59Z Generated RPC authentication cookie /home/test/.bitcoin/regtest/.cookie\r\n2022-09-15T11:34:59Z Permissions used for cookie: rw-------\r\n\r\nbitcoind -rpccookieperms=0660\r\n\r\n2022-09-15T11:39:37Z Using random cookie authentication.\r\n2022-09-15T11:39:37Z Generated RPC authentication cookie /home/test/.bitcoin/regtest/.cookie\r\n2022-09-15T11:39:37Z Permissions used for cookie: rw-rw----\r\n```",
       "created_at" : "2022-09-15T11:50:43Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26088#issuecomment-1247997441",
@@ -448,28 +453,28 @@
       "updated_at" : "2022-09-15T14:18:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1247997441",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Added the log message with a slightly modified version. Thanks @1440000bytes.",
       "created_at" : "2022-09-16T19:11:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26088#issuecomment-1249714546",
@@ -513,7 +518,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [1440000bytes](https://github.com/bitcoin/bitcoin/pull/26088#pullrequestreview-1111135034) |\n| Stale ACK | [kristapsk](https://github.com/bitcoin/bitcoin/pull/26088#pullrequestreview-1108055001) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.\n",
       "created_at" : "2022-09-23T03:42:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26088#issuecomment-1255769157",
@@ -557,7 +562,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I'm wondering: would it be perhaps simpler to just state in the documentation that you should run `bitcoind` with a `umask` of `0002` and specify `-sysperms` if you want group access to the cookie?\r\n\r\nA consideration here is that now all `bitcoind` created files will be group accessible including wallet files, but given that the group has access to the cookie, if they have the wallet password they can still `dumpwallet`, so the UNIX permissions don't matter as much (or is just a defense-in-depth thing). It seems that #17127 also solves this as well.\r\n\r\nIn any case, this is something that I run into time and again when deploying Bitcoin Core alongside other services, so I'd love to see some documentation on it.",
       "created_at" : "2022-11-10T16:11:51Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26088#issuecomment-1310534920",
@@ -730,6 +735,94 @@
          "subscriptions_url" : "https://api.github.com/users/fanquake/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/fanquake"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "@aureleoules @fanquake \r\n\r\nI think this could be re-opened to solve https://github.com/bitcoin/bitcoin/issues/25270 if @aureleoules is happy to pick it up again, otherwise I'd be happy to?\r\n\r\nWhilst #17127 has given us more sane and secure defaults, permitting group members to access the cookie without resorting to `-startupnotify` wortkarounds or similar seems reasonable to me.\r\n\r\nOne the one hand any processes with access to the cookie could just as well be running as the same user as `bitcoind` on the host, as the cookie essentially gives them full access to funds. And if users took that approach this change wouldn't be necessary. But I also understand people's desire for compartmentalisation and running different processes as different users, who share a group.\r\n\r\nIf we don't want to include this feature (but I think we should) then we should opt to close https://github.com/bitcoin/bitcoin/issues/25270 also.",
+      "created_at" : "2023-04-19T09:51:55Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26088#issuecomment-1514450115",
+      "id" : 1514450115,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26088",
+      "node_id" : "IC_kwDOABII585aRKzD",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1514450115/reactions"
+      },
+      "updated_at" : "2023-04-19T09:51:55Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1514450115",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6606587?v=4",
+         "events_url" : "https://api.github.com/users/willcl-ark/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/willcl-ark/followers",
+         "following_url" : "https://api.github.com/users/willcl-ark/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/willcl-ark/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/willcl-ark",
+         "id" : 6606587,
+         "login" : "willcl-ark",
+         "node_id" : "MDQ6VXNlcjY2MDY1ODc=",
+         "organizations_url" : "https://api.github.com/users/willcl-ark/orgs",
+         "received_events_url" : "https://api.github.com/users/willcl-ark/received_events",
+         "repos_url" : "https://api.github.com/users/willcl-ark/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/willcl-ark/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/willcl-ark/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/willcl-ark"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "I don't have much time to work on Core so feel free to pick this up @willcl-ark.",
+      "created_at" : "2023-04-19T15:04:51Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26088#issuecomment-1514901152",
+      "id" : 1514901152,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26088",
+      "node_id" : "IC_kwDOABII585aS46g",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1514901152/reactions"
+      },
+      "updated_at" : "2023-04-19T15:04:51Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1514901152",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/22493292?v=4",
+         "events_url" : "https://api.github.com/users/aureleoules/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/aureleoules/followers",
+         "following_url" : "https://api.github.com/users/aureleoules/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/aureleoules/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/aureleoules",
+         "id" : 22493292,
+         "login" : "aureleoules",
+         "node_id" : "MDQ6VXNlcjIyNDkzMjky",
+         "organizations_url" : "https://api.github.com/users/aureleoules/orgs",
+         "received_events_url" : "https://api.github.com/users/aureleoules/received_events",
+         "repos_url" : "https://api.github.com/users/aureleoules/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/aureleoules/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/aureleoules/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/aureleoules"
       }
    }
 ]

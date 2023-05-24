@@ -57,19 +57,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "```bash\r\n/tmp/cirrus-ci-build/test/functional/p2p_headers_sync_with_minchainwork.py:57: unused variable 'num_tips' (100% confidence)\r\ntest/functional/p2p_headers_sync_with_minchainwork.py:57:9: E306 expected 1 blank line before a nested definition, found 0\r\n```",
-      "commit_id" : "2ad515a9a10fbbf8158606019af2514d9eed5d00",
+      "commit_id" : "94af3e43e20aa00b18e7a3f6d0f5fe3ad9494d97",
       "created_at" : "2022-08-30T17:05:21Z",
       "diff_hunk" : "@@ -40,17 +40,32 @@ def setup_network(self):\n     def disconnect_all(self):\n         self.disconnect_nodes(0, 1)\n         self.disconnect_nodes(0, 2)\n+        self.disconnect_nodes(0, 3)\n \n     def reconnect_all(self):\n         self.connect_nodes(0, 1)\n         self.connect_nodes(0, 2)\n+        self.connect_nodes(0, 3)\n \n     def test_chains_sync_when_long_enough(self):\n         self.log.info(\"Generate blocks on the node with no required chainwork, and verify nodes 1 and 2 have no new headers in their headers tree\")\n         with self.nodes[1].assert_debug_log(expected_msgs=[\"[net] Ignoring low-work chain (height=14)\"]), self.nodes[2].assert_debug_log(expected_msgs=[\"[net] Ignoring low-work chain (height=14)\"]):\n             self.generate(self.nodes[0], NODE1_BLOCKS_REQUIRED-1, sync_fun=self.no_op)\n \n-        for node in self.nodes[1:]:\n+        # Node3 should always allow headers due to noban permissions\n+        self.log.info(\"Check that node3 will sync headers (due to noban permissions)\")\n+        def check_node3_chaintips(num_tips, tip_hash, height):",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25960#discussion_r958731326",
       "id" : 958731326,
-      "line" : 57,
+      "line" : 58,
       "node_id" : "PRRC_kwDOABII5845JRQ-",
       "original_commit_id" : "1206e2deb2f47419dd75300a78315d7964c0e8ee",
-      "original_line" : 57,
+      "original_line" : 58,
       "original_position" : 31,
       "original_start_line" : null,
       "path" : "test/functional/p2p_headers_sync_with_minchainwork.py",
-      "position" : 31,
+      "position" : 32,
       "pull_request_review_id" : 1090684091,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25960",
       "reactions" : {
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-30T17:05:22Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/958731326",
       "user" : {
@@ -199,6 +200,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-30T18:30:56Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/958805651",
       "user" : {
@@ -266,6 +268,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-31T07:42:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/959259994",
       "user" : {
@@ -334,7 +337,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> The `download` permission might be more suitable for this\r\n\r\nFor what it's worth, I interpret `download` as being more in the other direction -- \"this peer can download from me, even if I'm in IBD\" rather than \"I feel safe downloading from this peer\", so it seemed less suitable to me. But :shrug:",
       "created_at" : "2022-08-31T14:41:01Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25960#issuecomment-1233029884",
@@ -389,7 +392,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/959689558"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "You could make this a scripted diff:\r\n\r\n```\r\n-BEGIN VERIFY SCRIPT-\r\nsed -i '/headerssync/Id' src/logging.h src/logging.cpp\r\nsed -i 's/BCLog::HEADERSSYNC/BCLog::NET/g' $(git grep -l BCLog::HEADERSSYNC)\r\n-END VERIFY SCRIPT-\r\n```",
       "commit_id" : "94af3e43e20aa00b18e7a3f6d0f5fe3ad9494d97",
       "created_at" : "2022-08-31T14:53:53Z",
@@ -421,6 +424,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-31T14:53:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/959689558",
       "user" : {
@@ -489,7 +493,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> We should probably document what we mean by these permissions :-)\r\n\r\nThey're documented in `bitcoin-cli help getpeerinfo`:\r\n\r\n```\r\n    \"permissions\" : [                     (json array) Any special permissions that have been granted to this peer\r\n      \"str\",                              (string) bloomfilter (allow requesting BIP37 filtered blocks and transactions),\r\n                                          noban (do not ban for misbehavior; implies download),\r\n                                          forcerelay (relay transactions that are already in the mempool; implies relay),\r\n                                          relay (relay even in -blocksonly mode, and unlimited transaction announcements),\r\n                                          mempool (allow requesting BIP35 mempool contents),\r\n                                          download (allow getheaders during IBD, no disconnect after maxuploadtarget limit),\r\n                                          addr (responses to GETADDR avoid hitting the cache and contain random records with the most up-to-date info).\r\n                                          \r\n      ...\r\n    ],\r\n```\r\n\r\nand in `bitcoind -help` under `-whitebind`.",
       "created_at" : "2022-08-31T15:55:53Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25960#issuecomment-1233124338",
@@ -577,7 +581,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK 94af3e43e20aa00b18e7a3f6d0f5fe3ad9494d97",
       "created_at" : "2022-08-31T18:35:57Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25960#issuecomment-1233282226",
@@ -665,7 +669,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#23443](https://github.com/bitcoin/bitcoin/pull/23443) (p2p: Erlay support signaling by naumenkogs)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-08-31T19:24:58Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25960#issuecomment-1233333892",

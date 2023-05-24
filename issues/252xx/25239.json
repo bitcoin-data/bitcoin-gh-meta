@@ -42,7 +42,7 @@
          "url" : "https://api.github.com/users/achow101"
       }
    ],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "Two points for `CWallet::CommitTransaction`:\r\n\r\n1) The extra wtx lookup:\r\n    As we are calling to `AddToWallet` first, which returns the recently added/updated wtx pointer, there is no need to look up the wtx again few lines later. We can just use it.\r\n\r\n\r\n2) The db write error:\r\n    `AddToWallet` can only return a nullptr if the db write fails, which inside `CommitTransaction` translates to an exception throw cause. We expect everywhere that `CommitTransaction` always succeed.\r\n\r\n------------------------------------------------\r\n\r\nExtra note:\r\nThis finding generated another working path for me :)\r\n It starts with the following question: why are we returning a nullptr from `AddToWallet` if the db write failed without removing the recently added transaction from the wallet's map?..\r\n Can led to a wallet invalid state where the inputs of this new transaction are not marked dirty, while the transaction that spends them still exist on the in-memory wallet tx map.\r\n-- I'm writing it here to gather some feedback first and not forget it, will create a follow-up PR in the coming days ð --",
    "closed_at" : "2022-06-07T19:03:16Z",
    "closed_by" : {

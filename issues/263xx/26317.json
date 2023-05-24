@@ -6,7 +6,7 @@
    "body" : "I noticed that the sum of my unspent outputs is greater than my balance.\r\n\r\nUpon investigating it turns out that this is because one of my outputs is marked as \"used\", even though it hasn't been.\r\n\r\nTracing through the execution I see that `CWallet::IsSpentKey()` is returning here:\r\n\r\n    if (IsAddressUsed(dest)) {\r\n        return true;\r\n    }\r\n\r\nand `IsAddressUsed()` is looking for key `used` in the address book for that address, and presumably finding it.\r\n\r\nThe address of the UTXO in question only has a single transaction, creating my UTXO. The address isn't reused, and no other address with the same public key is used either.\r\n\r\nThe UTXO was created in Feb 2020 and I've used many different versions of Bitcoin Core since then, so I don't know when or why the UTXO's address was marked as \"used\".\r\n\r\nCould it be that I made a transaction that spent that UTXO but the transaction never confirmed and I later \"zapped\" it? Or RBF'ed it, causing different inputs to be used?",
    "closed_at" : null,
    "closed_by" : null,
-   "comments" : 0,
+   "comments" : 13,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26317/comments",
    "created_at" : "2022-10-15T04:02:21Z",
    "events_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26317/events",
@@ -55,7 +55,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26317/timeline",
    "title" : "avoid_reuse=true is incorrectly skipping one of my UXTOs",
-   "updated_at" : "2022-10-15T04:03:34Z",
+   "updated_at" : "2022-10-21T13:34:07Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26317",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/573356?v=4",

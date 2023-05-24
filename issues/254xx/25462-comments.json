@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24230](https://github.com/bitcoin/bitcoin/pull/24230) (indexes: Stop using node internal types and locking cs_main, improve sync logic by ryanofsky)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-06-24T02:51:40Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25462#issuecomment-1165139833",
@@ -143,7 +143,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906057118"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"index: ignore BlockConnected if pindex is in chain\" (270579f85fbe8cf97a9f506a258ad3ed865fcbeb)\r\n\r\nComment is a little off. Should say \"If pindex in an ancestor of best_block_index\" not \"If best_block_index is an ancestor of pindex\"",
       "commit_id" : "270579f85fbe8cf97a9f506a258ad3ed865fcbeb",
       "created_at" : "2022-06-24T13:21:26Z",
@@ -175,6 +175,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-24T13:58:56Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906057118",
       "user" : {
@@ -210,7 +211,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906061602"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"index: ignore BlockConnected if pindex is in chain\" (270579f85fbe8cf97a9f506a258ad3ed865fcbeb)\r\n\r\nSeems like code would be more straightforward without `skip_write` variable. Maybe just:\r\n\r\n```c++\r\nif (best_block_index->GetAncestor(pindex->nHeight) == pindex) {\r\n    LogPrintf(\"%s: WARNING: Block %s does is already-processed ancestor of \" /* Continued */\r\n              \"known best chain (tip=%s); not updating index\\n\",\r\n              __func__, pindex->GetBlockHash().ToString(),\r\n              best_block_index->GetBlockHash().ToString());\r\n    return;\r\n}\r\n```",
       "commit_id" : "270579f85fbe8cf97a9f506a258ad3ed865fcbeb",
       "created_at" : "2022-06-24T13:24:53Z",
@@ -242,6 +243,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-24T13:58:56Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906061602",
       "user" : {
@@ -310,7 +312,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I checked each of the indexes behavior in this situation and it seems fine, but is not something I considered when opening the PR. I also didn't consider the multiple re-org case which this PR doesn't fix.\r\n\r\nYes, I think the index would just stay at the previous tip in case of `invalidateblock`, and I think that the RPC `gettxoutsetinfo` would keep on working correctly. However, this probably wouldn't go so well with the current save/load logic assumptions: With the coinstatsindex, the running muhash would stay at the old (now invalidated) tip. If you now stop the node, a locator corresponding to that old tip is saved. On next startup, we'd read that locator together with the muhash, call `FindForkInGlobalIndex()` and set the index' best block to the last valid block (before the invalidated one). So the muhash and the best block would be out of sync, and we'd probably throw an InitError [here](https://github.com/bitcoin/bitcoin/blob/0dd34773334c7f4db7b05df30ee61b011795b46d/src/index/coinstatsindex.cpp#L373).",
       "created_at" : "2022-06-26T20:51:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25462#issuecomment-1166642148",
@@ -395,6 +397,50 @@
          "subscriptions_url" : "https://api.github.com/users/Crypt-iQ/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/Crypt-iQ"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> Oh I didn't think about that, that would be bad.\r\n\r\nThis problem would be fixed by #25193, I think, but it is another good complication to know about with this PR. Since I guess #24230 will be the alternative to this closed PR, I try to split that up and get more review for it",
+      "created_at" : "2022-06-27T14:12:18Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25462#issuecomment-1167406341",
+      "id" : 1167406341,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25462",
+      "node_id" : "IC_kwDOABII585FlTUF",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1167406341/reactions"
+      },
+      "updated_at" : "2022-06-27T14:12:18Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1167406341",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
       }
    }
 ]

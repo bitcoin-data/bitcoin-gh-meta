@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "Credit to @luke-jr for helping uncovering this bug https://github.com/bitcoin-core/gui/pull/379#discussion_r680408927\r\n\r\nThis bug has no user-visible effects currently, but combined with PR [bitcoin-core/gui#379](https://github.com/bitcoin-core/gui/pull/379) and a corrupt `settings.json` file that is corrupted specifically by specifying the same JSON keys multiple times, it can cause some dialog text added in that PR to be misleading. This is a basically an impossible-to-hit rube goldberg bug, but is only fixable at the util level not the GUI level, so I'm tracking this outside the GUI repository.\r\n\r\nSimplest fix would be to just change `ReadSettingsFile` to call `rw_settings.clear()` on error. It would also be nice to add a unit test for the regression.\r\n\r\nCode path that triggers this is:\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/d67330d11245b11fbdd5e2dd5343ee451186931e/src/util/system.cpp#L548\r\nhttps://github.com/bitcoin/bitcoin/blob/d67330d11245b11fbdd5e2dd5343ee451186931e/src/util/settings.cpp#L89\r\nhttps://github.com/bitcoin/bitcoin/blob/d67330d11245b11fbdd5e2dd5343ee451186931e/src/util/settings.cpp#L92",
    "closed_at" : "2023-03-11T10:10:06Z",
    "closed_by" : {

@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Good catch!\r\n\r\nI'm not sure about the original intention (maybe also the documentation is imprecise?), but if `aps_create_tx_internal` is called irrespective of the second `CreateTransactionInternal` result now, I don't see a point in having the `attempting_aps_create_tx` tracepoint anymore.",
       "created_at" : "2022-04-27T15:19:24Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25003#issuecomment-1111131858",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I'm not sure about the original intention (maybe also the documentation is imprecise?), but if `aps_create_tx_internal` is called irrespective of the second `CreateTransactionInternal` result now, I don't see a point in having the `attempting_aps_create_tx` tracepoint anymore.\r\n\r\nOh, I didn't see that we have this `attempting_aps_create_tx` tracepoint to be honest. So there is already an implicit way to see if the second `CreateTransactionInternal` call failed, and it could indeed be that the documentation is not clear enough. What made me sceptical about the conditional tracepoint call though is the fact that there is a \"succeeded\" parameter (where currently the result of the _first_ `CreateTransactionInternal` is passed, i.e. always \"true\").\r\n\r\nI'd conclude then that we can remove either\r\n- the `attempting_aps_create_tx` tracepoint (if this PR is preferred), or\r\n- the success parameter from the `aps_create_tx_internal ` tracepoint (with an according documentation update, e.g. \"is called when completed successfully\")",
       "created_at" : "2022-04-27T16:03:31Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25003#issuecomment-1111180680",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25218](https://github.com/bitcoin/bitcoin/pull/25218) (refactor: introduce generic 'Result' classes and connect it to CreateTransaction and GetNewDestination by furszy)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-04-28T02:03:41Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25003#issuecomment-1111659401",
@@ -231,21 +231,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/864932839"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "small off-topic question (that has nothing to do with this PR) is why this trace context is called \"coin_selection\" when `CreateTransactionInternal` could fail for other reasons (like missing solving data, signing, etc).",
-      "commit_id" : "5849fa0ed9049468d7a350e289069522b3a21dbf",
+      "commit_id" : "6b636730f4befee39d57fcfd51298f3015dbf563",
       "created_at" : "2022-05-04T14:49:46Z",
       "diff_hunk" : "@@ -994,17 +994,19 @@ bool CreateTransaction(\n         CTransactionRef tx2;\n         int nChangePosInOut2 = nChangePosIn;\n         bilingual_str error2; // fired and forgotten; if an error occurs, we discard the results\n-        if (CreateTransactionInternal(wallet, vecSend, tx2, nFeeRet2, nChangePosInOut2, error2, tmp_cc, fee_calc_out, sign)) {\n+        bool use_aps{false};\n+        bool res2 = CreateTransactionInternal(wallet, vecSend, tx2, nFeeRet2, nChangePosInOut2, error2, tmp_cc, fee_calc_out, sign);\n+        if (res2) {\n             // if fee of this alternative one is within the range of the max fee, we use this one\n-            const bool use_aps = nFeeRet2 <= nFeeRet + wallet.m_max_aps_fee;\n+            use_aps = nFeeRet2 <= nFeeRet + wallet.m_max_aps_fee;\n             wallet.WalletLogPrintf(\"Fee non-grouped = %lld, grouped = %lld, using %s\\n\", nFeeRet, nFeeRet2, use_aps ? \"grouped\" : \"non-grouped\");\n-            TRACE5(coin_selection, aps_create_tx_internal, wallet.GetName().c_str(), use_aps, res, nFeeRet2, nChangePosInOut2);\n             if (use_aps) {\n                 tx = tx2;\n                 nFeeRet = nFeeRet2;\n                 nChangePosInOut = nChangePosInOut2;\n             }\n         }\n+        TRACE5(coin_selection, aps_create_tx_internal, wallet.GetName().c_str(), use_aps, res2, nFeeRet2, nChangePosInOut2);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25003#discussion_r864932839",
       "id" : 864932839,
-      "line" : 1009,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584zjdPn",
       "original_commit_id" : "5849fa0ed9049468d7a350e289069522b3a21dbf",
       "original_line" : 1009,
       "original_position" : 19,
       "original_start_line" : null,
       "path" : "src/wallet/spend.cpp",
-      "position" : 19,
+      "position" : null,
       "pull_request_review_id" : 962009360,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25003",
       "reactions" : {
@@ -263,6 +263,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-04T14:50:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/864932839",
       "user" : {
@@ -298,7 +299,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/864932845"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "small off-topic question (that has nothing to do with this PR) is why this trace context is called \"coin_selection\" when `CreateTransactionInternal` could fail for other reasons (like missing solving data, signing, etc).",
       "commit_id" : "6b636730f4befee39d57fcfd51298f3015dbf563",
       "created_at" : "2022-05-04T14:49:46Z",
@@ -330,6 +331,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-19T14:11:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/864932845",
       "user" : {
@@ -354,7 +356,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > I'm not sure about the original intention (maybe also the documentation is imprecise?), but if `aps_create_tx_internal` is called irrespective of the second `CreateTransactionInternal` result now, I don't see a point in having the `attempting_aps_create_tx` tracepoint anymore.\r\n> \r\n> It helps us know whether the selected_coins tracepoint (that will happen within CreateTransactionInternal) is for the APS CreateTransactionInternal without having to look backwards when `aps_create_tx_internal` is seen.\r\n\r\nIf I understand this correctly, the way this tracepoint is activated, it would log a result as having been produced per APS, whenever the APS result is preferred. Among other things, this would include if there are two equivalent (or even matching) solutions, or if there wasn't any partial-spend concern with the original solution in the first place.\r\nThis results in three different concerns:\r\n1. This feels like a potential footgun for someone trying to understand coin selection outcomes. They might want to know a) how often partial-spends even occurred in the first place, and b) how often the opportunistic APS protected them from it. From what I understand, they cannot actually learn either of these numbers. Instead, a subscriber of the tracepoint would get an inflated sense of how often they were protected from partial spends.\r\n2. Since the APS solution is preferred even when it has a slightly worse fee, when the general coin selection result and the opportunistic APS result differ, the APS result may actually have a worse waste score and get preferred for the transaction building, disimproving the outcome for the user _even when there was no partial-spend in the original solution_.\r\n3. The coin selection is run twice while that might be completely unnecessary in many cases.\r\n\r\nAll together, I think both the design for this tracepoint and the design for the opportunistic APS may have the same solution: only run the opportunistic APS if the original selection result _includes a partial  spend_: this would speed up coin selection, remove the potential for disimproving the selection result, and give useful numbers to the subscribers of the tracepoint.\r\n\r\nWhile I think this PR improves over the original deployment, if I got the above right, it might be better to remove this tracepoint due to not providing a clear signal instead.",
       "created_at" : "2022-05-10T17:38:02Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25003#issuecomment-1122685021",
@@ -398,7 +400,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I guess some of those comments would have better fit on #24644, sorry. cc: @achow101 ^",
       "created_at" : "2022-05-10T20:36:44Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25003#issuecomment-1122836581",
@@ -451,7 +453,7 @@
       "node_id" : "IC_kwDOABII585DPNWo",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -459,7 +461,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1128060328/reactions"
       },
       "updated_at" : "2022-05-16T19:37:15Z",
@@ -486,7 +488,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Okay, will re-review.",
       "created_at" : "2022-05-16T20:30:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25003#issuecomment-1128106007",
@@ -530,7 +532,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK 5849fa0ed9049468d7a350e289069522b3a21dbf, but we really should fix both the APS and the tracepoints logging logic.",
       "created_at" : "2022-05-16T20:36:04Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25003#issuecomment-1128111095",
@@ -574,7 +576,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Test `interface_usdt_coinselection.py` passes for 5849fa0ed9049468d7a350e289069522b3a21dbf.",
       "created_at" : "2022-05-16T22:18:01Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25003#issuecomment-1128191924",
@@ -618,51 +620,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-05-17T12:05:57Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25003#issuecomment-1128785784",
-      "id" : 1128785784,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25003",
-      "node_id" : "IC_kwDOABII585DR-d4",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1128785784/reactions"
-      },
-      "updated_at" : "2022-05-17T12:05:57Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1128785784",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Rebased on master (necessary since #20640 has been merged).",
       "created_at" : "2022-05-17T14:05:51Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25003#issuecomment-1128915311",
@@ -706,7 +664,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re-ack: 6b636730f4befee39d57fcfd51298f3015dbf563",
       "created_at" : "2022-05-17T16:06:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25003#issuecomment-1129054863",
@@ -761,7 +719,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/877107218"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: could be written as:\r\n```\r\nconst bool use_aps = txr_grouped &&\r\n                     (txr_grouped->fee <= txr_ungrouped->fee + wallet.m_max_aps_fee);\r\n```\r\n\r\n(removing the optional `has_value()` call).",
       "commit_id" : "6b636730f4befee39d57fcfd51298f3015dbf563",
       "created_at" : "2022-05-19T14:07:44Z",
@@ -793,6 +751,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-19T14:12:29Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/877107218",
       "user" : {
@@ -828,7 +787,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/877111435"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "same code nit here, I don't see a reason to use `txr_grouped.has_value()` when there is a cleaner way of doing it with the bool() operator (by default std::optional is set to nullopt).",
       "commit_id" : "6b636730f4befee39d57fcfd51298f3015dbf563",
       "created_at" : "2022-05-19T14:10:13Z",
@@ -860,6 +819,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-19T14:11:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/877111435",
       "user" : {
@@ -928,6 +888,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-26T17:04:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/882889341",
       "user" : {

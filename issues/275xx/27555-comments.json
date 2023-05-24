@@ -42,5 +42,49 @@
          "type" : "User",
          "url" : "https://api.github.com/users/instagibbs"
       }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Here's my guess on how this happens and explaining the behavior I'm seeing after reproducing it. It seems to be 100% reproducible on nodes, and repeatable after a few minutes of warmup when things fix themselves.\r\n\r\n1) On node restart, there is no persistence of mempoolminfee\r\n2) While mempool is importing, node receives transactions well below the old mempoolminfee, enters into mempool\r\n3) mempool finishes loading(with some failures), resulting in no trimming on startup\r\n4) `mempoolminfee` seems to be feeding into `estimatesmartfee` as a floor, so if node restarts, it starts naively giving out min incremental feerate\r\n5) In `estimatesmartfee`, `fee_estimator.estimateSmartFee` is apparently returning a non-0 `CFeeRate` value, but which is lower than 1 sat/vbyte, which then allows mempoolminfee to take over the value.\r\n6) Over time, if the mempool is actually busy, enough transactions enter the mempool to start trimming, stepping from min incremental relay all the way to the \"actual\" value once enough has been trimmed.\r\n\r\nSo you have this gap on restart where longer term estimates are way out of whack, and we're being sent INVs we will promptly evict anyways. It self-resolves in a few minutes it seems in the happy path.\r\n\r\nI think https://github.com/bitcoin/bitcoin/pull/22722 has ended up hiding the particular `estimatefee` issue, since prior my guess is it would have simply not returned anything if was below min relay.\r\n\r\nTwo mitigations:\r\n1) persist mempoolminfee across restarts to at least tell user a plausible value to stay in the mempool for a bit\r\n2) investigate why `estimateSmartFee` is returning bogus values; require more certainty to return a result?\r\n...\r\nor get package relay deployed :P \r\n\r\n\r\nedit:\r\n\r\nhttps://github.com/bitcoin/bitcoin/issues/19699#issuecomment-683787296 3-year ago me asking the same question as (2). oops.\r\n\r\nedit2:\r\n\r\nLooks like the estimator is giving something \"real\" from a bucket: 1000.0000000000035, so basically during these situations we're relying on mempoolminfee to save us, and it's failing after restart",
+      "created_at" : "2023-05-08T15:00:40Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/issues/27555#issuecomment-1538504504",
+      "id" : 1538504504,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27555",
+      "node_id" : "IC_kwDOABII585bs7c4",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1538504504/reactions"
+      },
+      "updated_at" : "2023-05-08T15:42:52Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1538504504",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/5767891?v=4",
+         "events_url" : "https://api.github.com/users/instagibbs/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/instagibbs/followers",
+         "following_url" : "https://api.github.com/users/instagibbs/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/instagibbs/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/instagibbs",
+         "id" : 5767891,
+         "login" : "instagibbs",
+         "node_id" : "MDQ6VXNlcjU3Njc4OTE=",
+         "organizations_url" : "https://api.github.com/users/instagibbs/orgs",
+         "received_events_url" : "https://api.github.com/users/instagibbs/received_events",
+         "repos_url" : "https://api.github.com/users/instagibbs/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/instagibbs/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/instagibbs/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/instagibbs"
+      }
    }
 ]

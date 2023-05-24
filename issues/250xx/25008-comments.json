@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Previous discussion originally found [here](https://github.com/bitcoin/bitcoin/pull/24322#issuecomment-1109044026) by theuni reproduced: \r\n\r\n> > @theuni\r\n> > \r\n> > > does the switch to libtool libs mean that more objects end up being built (other than the second set for the lib)? Or does -all-static basically fix that?\r\n> > \r\n> > Unfortunately, libtool seems to always want to build twice... Not sure if we can fix that.\r\n> > \r\n> \r\n> I think I've come up with a reasonably clean solution to this here: https://github.com/theuni/bitcoin/commit/9ffbd707afc8188fe0b8cc5316f6c583f7ae21d0\r\n> \r\n> libtool tries to build twice by default: once for static, once for shared. With this change, there's _only_ static by default, so default configs continue to only build one set of objects.\r\n> \r\n> With this commit, if you want shared libs/dlls, you'd need to configure with `--enable-shared`, which will _then_ build everything twice. For a project that's mostly about executables, that seems reasonable to me. (Also, amazingly `--enable-shared --disable-static` does the right thing and also builds a single copy of everything for shared libs)\r\n> \r\n> This also means we don't have to special-case the Windows case in this pr. We'll just know that `--enable-shared` is busted on windows (and maybe warn as such for that config?)\r\n> \r\n> The only downside I can think of is that devs aren't going to be linking the lib every day as part of their typical workflows so link problems may show up around release time. IMO that's a reasonable trade-off.",
       "created_at" : "2022-04-27T15:59:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25008#issuecomment-1111176788",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Previous discussion originally found [here](https://github.com/bitcoin/bitcoin/pull/24322#issuecomment-1110016664) by theuni reproduced:\r\n\r\n> This commit fixes Windows dll linking for me: https://github.com/theuni/bitcoin/commit/9612f5f0f1e3295065dbd8a0e0f472f8f020bbd9 . Untested, but it now links. I'll be testing it out as a next step.\r\n> \r\n> Thanks to @dongcarl for pointing out the problem. \r\n> \r\n> Edit: I'm unable to find what's actually affected by this define in my local mingw tree and in depends. Maybe gcc does something internally with it or something?\r\n> \r\n> Edit2: Found it!: https://github.com/mingw-w64/mingw-w64/blob/f79f89f976dc5345090db557fb20d5deba913d9f/mingw-w64-libraries/winpthreads/include/pthread.h#L86\r\n> \r\n> That seems like heavy-handed behavior for mingw-w64, much more useful would be for them to define and use `PTHREADS_DLL_EXPORT` instead. I'll work to understand this better and upstream a patch if necessary.",
       "created_at" : "2022-04-27T16:00:25Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25008#issuecomment-1111177427",
@@ -361,7 +361,7 @@
       "node_id" : "IC_kwDOABII585CX16B",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -369,7 +369,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1113546369/reactions"
       },
       "updated_at" : "2022-04-29T17:19:18Z",
@@ -396,7 +396,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I actually think it's entirely possible that building a convenience library and then an actual library out of the convenience library could be the way to do it like in #24994. We shall see.\r\n\r\nAnother point of reference here is the libtool manual section about how to handle DLL_EXPORT: https://www.gnu.org/software/libtool/manual/libtool.html#Windows-DLLs",
       "created_at" : "2022-04-29T18:19:37Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25008#issuecomment-1113595043",
@@ -528,7 +528,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Ah! The upstream explanation is very clear indeed. Makes sense!",
       "created_at" : "2022-04-29T18:58:09Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25008#issuecomment-1113629997",
@@ -572,7 +572,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Another solution might be to add -UDLL_EXPORT to AM_CPPFLAGS, overriding libtool's define.\r\n\r\nAnother option might be linking against the pthread library dynamically instead of statically when building a dynamic library, in which case mingw's `__declspec(dllimport)` annotations would be correctly applied.\r\n\r\nI think linking dependencies of a dynamic library into it dynamically is more typical if you are using dynamic libraries to begin with. Linking dependencies of a dynamic library into it statically can also make sense, but can cause problems because this can leave you with multiple instances of the same static library having to coexist inside the same process, each with their own separate global variables, and possibly inconsistent function definitions. This is ok if libraries are high level, and you aren't trying to share pointers or handles between the different library instances. I don't think we know if this applies to pthreads, but Cory's upstream patch should let us find out.\r\n",
       "created_at" : "2022-04-29T19:25:24Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25008#issuecomment-1113649872",
@@ -713,7 +713,7 @@
       "node_id" : "IC_kwDOABII585Cd8YN",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -721,7 +721,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1115145741/reactions"
       },
       "updated_at" : "2022-05-02T17:22:27Z",
@@ -762,10 +762,10 @@
          "confused" : 0,
          "eyes" : 0,
          "heart" : 0,
-         "hooray" : 0,
+         "hooray" : 1,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1117945499/reactions"
       },
       "updated_at" : "2022-05-04T21:15:36Z",
@@ -792,7 +792,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I believe that https://github.com/theuni/bitcoin/commit/9612f5f0f1e3295065dbd8a0e0f472f8f020bbd9 is the clean/proper fix for us for the issue. We don't want pthreads symbols exported, and that fixes the specific issue.\r\n\r\nAlso tested this. Has this been PR'ed?",
       "created_at" : "2023-02-21T09:22:59Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25008#issuecomment-1438134641",
@@ -880,7 +880,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Mind testing https://github.com/theuni/bitcoin/commits/fix-dll-exports ? I'll PR if it works for you.\r\n\r\nMmh, I'm surprised that secp needs to be linked as well by the final binary and I'm not quite following why. What's different between the visibility of say linking leveldb and linking libsecp in libbitcoinkernel so these symbols end up undefined in the bitcoin-chainstate binary?\r\n",
       "created_at" : "2023-02-22T12:40:27Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25008#issuecomment-1439953266",

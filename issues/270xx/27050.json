@@ -3,17 +3,27 @@
    "assignee" : null,
    "assignees" : [],
    "author_association" : "MEMBER",
-   "body" : "I got a little nerd sniped by this idea, so I created this draft. I have done very little testing so far (syncing signet worked, currently syncing mainnet).\r\n\r\nThis PR does two things when running in prune mode: (a) assume witness merkle roots to be valid for assumed-valid blocks and (b) request assumed-valid blocks without `MSG_WITNESS_FLAG`.\r\n\r\nIn theory this is a good idea, because witnesses are not validated (i.e. they are assumed valid up to a certain block `-assumevalid`) and get pruned anyway when running in prune mode, so not downloading them (for assumed-valid blocks) reduces the bandwidth that is needed for IBD (don't have any numbers on this yet).\r\n\r\nOne downside is that nodes serving blocks without witnesses can't serve them directly from disk. They have to un-serialize and re-serialize without the witnesses before sending them.\r\n\r\nEven though this is a draft, conceptual and approach review is very welcome.\r\n\r\n---\r\n\r\nTODO:\r\n\r\n- [ ] a bunch of tests",
+   "body" : "I got a little nerd sniped by this idea, so I created this draft. I have done very little testing so far (syncing signet worked, currently syncing mainnet).\r\n\r\nThis PR does two things when running in prune mode: (a) assume witness merkle roots to be valid for assumed-valid blocks and (b) request assumed-valid blocks without `MSG_WITNESS_FLAG`.\r\n\r\nIn theory this is a good idea, because witnesses are not validated (i.e. they are assumed valid up to a certain block `-assumevalid`) and get pruned anyway when running in prune mode, so not downloading them (for assumed-valid blocks) reduces the bandwidth that is needed for IBD (don't have any numbers on this yet).\r\n\r\nOne downside is that nodes serving blocks without witnesses can't serve them directly from disk. They have to un-serialize and re-serialize without the witnesses before sending them.\r\n\r\nEven though this is a draft, conceptual and approach review is very welcome.\r\n\r\n---\r\n\r\nTODO:\r\n\r\n- [ ] a bunch of tests\r\n- [ ] edge cases around manually pruned nodes (https://github.com/bitcoin/bitcoin/pull/27050#issuecomment-1419751142)\r\n- [ ] make sure we are not advertising blocks with witnesses when we in fact do not have the witnesses (https://github.com/bitcoin/bitcoin/pull/27050#issuecomment-1419443888, https://github.com/bitcoin/bitcoin/pull/27050#issuecomment-1419751142)\r\n- [ ] edge case when restarting with different assume valid settings (https://github.com/bitcoin/bitcoin/pull/27050#issuecomment-1419751142)\r\n- [ ] document that it's a change in what constitutes assumevalid (https://github.com/bitcoin/bitcoin/pull/27050#issuecomment-1419611954)\r\n- [ ] always serve pre-segwit blocks straight from disk (https://github.com/bitcoin/bitcoin/pull/27050#discussion_r1097532417)",
    "closed_at" : null,
    "closed_by" : null,
-   "comments" : 2,
+   "comments" : 25,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27050/comments",
    "created_at" : "2023-02-06T15:11:29Z",
    "draft" : true,
    "events_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27050/events",
    "html_url" : "https://github.com/bitcoin/bitcoin/pull/27050",
    "id" : 1572752931,
-   "labels" : [],
+   "labels" : [
+      {
+         "color" : "cccccc",
+         "default" : false,
+         "description" : "",
+         "id" : 955867938,
+         "name" : "Needs rebase",
+         "node_id" : "MDU6TGFiZWw5NTU4Njc5Mzg=",
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/Needs%20rebase"
+      }
+   ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27050/labels{/name}",
    "locked" : false,
    "milestone" : null,
@@ -28,7 +38,7 @@
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/27050"
    },
    "reactions" : {
-      "+1" : 3,
+      "+1" : 15,
       "-1" : 0,
       "confused" : 0,
       "eyes" : 0,
@@ -36,7 +46,7 @@
       "hooray" : 0,
       "laugh" : 0,
       "rocket" : 0,
-      "total_count" : 3,
+      "total_count" : 15,
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27050/reactions"
    },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
@@ -44,7 +54,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27050/timeline",
    "title" : "p2p, validation: Don't download witnesses for assumed-valid blocks when running in prune mode",
-   "updated_at" : "2023-02-06T16:53:08Z",
+   "updated_at" : "2023-04-13T12:39:22Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27050",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/8077169?v=4",

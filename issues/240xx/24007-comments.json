@@ -13,19 +13,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "While I've seen protocol proposals leveraging same-txid-different-witness, I don't know any of them which is effectively deployed now (?). If they're and their usages is high enough to lead to a significant rate of witness conflicts, by that time I would expect this new replacement policy to be widely deployed in the miner ecosystem.\r\n\r\nOf course, the majority of miners might run a different policy than the default Core's one. Though, until the contrary is corroborated by periodic probing of miner's mempools, I think we can reasonably hold the assumption they're.\r\n\r\nSo to simplify, I lean to account witness replacement in fee estimation as early as this PR.\r\n\r\nWhat do you think ?",
-      "commit_id" : "b15079ac7bc539df9854069b834f9ca437e79b8e",
+      "commit_id" : "04fe371549dbee8e80023f39caa7f5c9f8e30b95",
       "created_at" : "2022-01-10T00:06:40Z",
       "diff_hunk" : "@@ -1013,18 +1038,33 @@ bool MemPoolAccept::Finalize(const ATMPArgs& args, Workspace& ws)\n                 (int)entry->GetTxSize() - (int)ws.m_conflicting_size);\n         ws.m_replaced_transactions.push_back(it->GetSharedTx());\n     }\n-    m_pool.RemoveStaged(ws.m_all_conflicting, false, MemPoolRemovalReason::REPLACED);\n+    if (ws.m_witness_replace) {\n+        // Only remove the direct conflict; preserve and update the descendants.\n+        m_pool.RemoveStaged(ws.m_iters_conflicting, /* updateDescendants */ true, MemPoolRemovalReason::REPLACED);\n+    } else {\n+        m_pool.RemoveStaged(ws.m_all_conflicting, /* updateDescendants */ false, MemPoolRemovalReason::REPLACED);\n+    }\n \n     // This transaction should only count for fee estimation if:\n     // - it's not being re-added during a reorg which bypasses typical mempool fee limits\n     // - the node is not behind\n     // - the transaction is not dependent on any other transactions in the mempool\n     // - it's not part of a package. Since package relay is not currently supported, this\n-    // transaction has not necessarily been accepted to miners' mempools.\n-    bool validForFeeEstimation = !bypass_limits && !args.m_package_submission && IsCurrentForFeeEstimation(m_active_chainstate) && m_pool.HasNoInputsOf(tx);\n+    //   transaction has not necessarily been accepted to miners' mempools\n+    // - this is not a witness replacement. Miners may not have witness replacement implemented\n+    //   (yet). TODO: re-include witness replacements in v25.0",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24007#discussion_r780849935",
       "id" : 780849935,
-      "line" : 1055,
+      "line" : 1106,
       "node_id" : "PRRC_kwDOABII584uitMP",
       "original_commit_id" : "b15079ac7bc539df9854069b834f9ca437e79b8e",
-      "original_line" : 1055,
+      "original_line" : 1106,
       "original_position" : 130,
       "original_start_line" : null,
       "path" : "src/validation.cpp",
-      "position" : 130,
+      "position" : 162,
       "pull_request_review_id" : 847323456,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24007",
       "reactions" : {
@@ -43,6 +43,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-10T00:24:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/780849935",
       "user" : {
@@ -80,20 +81,20 @@
       },
       "author_association" : "MEMBER",
       "body" : "The reasoning was based on #9519 - adding a witness replacement to the fee estimator isn't really accurate unless miners are also allowing witness replacements. I think it's reasonable to wait 1 or 2 releases for miners to update their policies? We just need to not forget to remove this bool. I imagine it'll take some time for it to be used, anyway.",
-      "commit_id" : "b15079ac7bc539df9854069b834f9ca437e79b8e",
+      "commit_id" : "04fe371549dbee8e80023f39caa7f5c9f8e30b95",
       "created_at" : "2022-01-10T10:06:42Z",
       "diff_hunk" : "@@ -1013,18 +1038,33 @@ bool MemPoolAccept::Finalize(const ATMPArgs& args, Workspace& ws)\n                 (int)entry->GetTxSize() - (int)ws.m_conflicting_size);\n         ws.m_replaced_transactions.push_back(it->GetSharedTx());\n     }\n-    m_pool.RemoveStaged(ws.m_all_conflicting, false, MemPoolRemovalReason::REPLACED);\n+    if (ws.m_witness_replace) {\n+        // Only remove the direct conflict; preserve and update the descendants.\n+        m_pool.RemoveStaged(ws.m_iters_conflicting, /* updateDescendants */ true, MemPoolRemovalReason::REPLACED);\n+    } else {\n+        m_pool.RemoveStaged(ws.m_all_conflicting, /* updateDescendants */ false, MemPoolRemovalReason::REPLACED);\n+    }\n \n     // This transaction should only count for fee estimation if:\n     // - it's not being re-added during a reorg which bypasses typical mempool fee limits\n     // - the node is not behind\n     // - the transaction is not dependent on any other transactions in the mempool\n     // - it's not part of a package. Since package relay is not currently supported, this\n-    // transaction has not necessarily been accepted to miners' mempools.\n-    bool validForFeeEstimation = !bypass_limits && !args.m_package_submission && IsCurrentForFeeEstimation(m_active_chainstate) && m_pool.HasNoInputsOf(tx);\n+    //   transaction has not necessarily been accepted to miners' mempools\n+    // - this is not a witness replacement. Miners may not have witness replacement implemented\n+    //   (yet). TODO: re-include witness replacements in v25.0",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24007#discussion_r781043034",
       "id" : 781043034,
       "in_reply_to_id" : 780849935,
-      "line" : 1055,
+      "line" : 1106,
       "node_id" : "PRRC_kwDOABII584ujcVa",
       "original_commit_id" : "b15079ac7bc539df9854069b834f9ca437e79b8e",
-      "original_line" : 1055,
+      "original_line" : 1106,
       "original_position" : 130,
       "original_start_line" : null,
       "path" : "src/validation.cpp",
-      "position" : 130,
+      "position" : 162,
       "pull_request_review_id" : 847595420,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24007",
       "reactions" : {
@@ -111,6 +112,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-10T10:06:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/781043034",
       "user" : {
@@ -223,7 +225,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2022-01-22T22:53:49Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24007#issuecomment-1019372291",
@@ -311,7 +313,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I understood the proposal by reading the functional test, however I couldn't imagine a real use case that could reduce the witness. Could you please give an example?",
       "created_at" : "2022-01-25T00:12:41Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24007#issuecomment-1020678073",
@@ -320,7 +322,7 @@
       "node_id" : "IC_kwDOABII58481k-5",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -328,7 +330,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1020678073/reactions"
       },
       "updated_at" : "2022-01-25T00:12:41Z",
@@ -364,7 +366,7 @@
       "node_id" : "IC_kwDOABII58484Yxm",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 5,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -372,7 +374,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 5,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1021414502/reactions"
       },
       "updated_at" : "2022-01-25T17:08:23Z",
@@ -399,7 +401,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@LarryRuane Great, thank you so much!",
       "created_at" : "2022-01-25T18:12:23Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24007#issuecomment-1021471248",
@@ -452,7 +454,7 @@
       "node_id" : "IC_kwDOABII58485bZ-",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -460,7 +462,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1021687422/reactions"
       },
       "updated_at" : "2022-01-25T22:59:27Z",
@@ -531,8 +533,8 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#26451](https://github.com/bitcoin/bitcoin/pull/26451) (Enforce incentive compatibility for all RBF replacements by sdaftuar)\n* [#26403](https://github.com/bitcoin/bitcoin/pull/26403) ([POLICY] Ephemeral anchors by instagibbs)\n* [#25038](https://github.com/bitcoin/bitcoin/pull/25038) (policy: nVersion=3 and Package RBF by glozow)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#27509](https://github.com/bitcoin/bitcoin/pull/27509) (Relay own transactions only via short-lived Tor or I2P connections by vasild)\n* [#27353](https://github.com/bitcoin/bitcoin/pull/27353) (refactor (tidy): Fixes after enable-debug configure by TheCharlatan)\n* [#26451](https://github.com/bitcoin/bitcoin/pull/26451) (Enforce incentive compatibility for all RBF replacements by sdaftuar)\n* [#26403](https://github.com/bitcoin/bitcoin/pull/26403) ([POLICY] Ephemeral anchors by instagibbs)\n* [#25038](https://github.com/bitcoin/bitcoin/pull/25038) (policy: nVersion=3 and Package RBF by glozow)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2022-01-26T04:11:49Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24007#issuecomment-1021844458",
       "id" : 1021844458,
@@ -551,7 +553,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1021844458/reactions"
       },
-      "updated_at" : "2022-11-07T22:08:18Z",
+      "updated_at" : "2023-04-22T02:55:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1021844458",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -584,7 +586,7 @@
       "node_id" : "IC_kwDOABII58486KDS",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -592,7 +594,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1021878482/reactions"
       },
       "updated_at" : "2022-01-26T05:21:33Z",
@@ -672,7 +674,7 @@
       "node_id" : "IC_kwDOABII58486zHT",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -680,7 +682,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1022046675/reactions"
       },
       "updated_at" : "2022-01-26T10:04:44Z",
@@ -760,7 +762,7 @@
       "node_id" : "IC_kwDOABII58486892",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -768,7 +770,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1022087030/reactions"
       },
       "updated_at" : "2022-01-26T10:56:07Z",
@@ -804,7 +806,7 @@
       "node_id" : "IC_kwDOABII58487xt-",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 5,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -812,7 +814,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 5,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1022303102/reactions"
       },
       "updated_at" : "2022-01-26T15:21:41Z",
@@ -936,7 +938,7 @@
       "node_id" : "IC_kwDOABII5848_c52",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 3,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -944,7 +946,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1023266422/reactions"
       },
       "updated_at" : "2022-01-27T14:27:41Z",
@@ -1015,50 +1017,6 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-04-07T09:17:45Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24007#issuecomment-1091403530",
-      "id" : 1091403530,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24007",
-      "node_id" : "IC_kwDOABII585BDX8K",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1091403530/reactions"
-      },
-      "updated_at" : "2022-04-07T09:17:45Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1091403530",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
       "_links" : {
          "html" : {
             "href" : "https://github.com/bitcoin/bitcoin/pull/24007#discussion_r844984488"
@@ -1072,23 +1030,23 @@
       },
       "author_association" : "MEMBER",
       "body" : "```suggestion\r\n                            /*m_allow_witness_replace=*/true,\r\n```\r\nAnywhere you are adding / touching named args, please use the [style from the developer docs](https://github.com/bitcoin/bitcoin/blob/master/doc/developer-notes.md#coding-style-c-named-arguments).",
-      "commit_id" : "61b2d79405d61f103bb27b9ecc9445af004501e9",
+      "commit_id" : "04fe371549dbee8e80023f39caa7f5c9f8e30b95",
       "created_at" : "2022-04-07T10:39:14Z",
       "diff_hunk" : "@@ -498,6 +500,7 @@ class MemPoolAccept\n                             /* m_test_accept */ test_accept,\n                             /* m_allow_bip125_replacement */ true,\n                             /* m_package_submission */ false,\n+                            /* m_allow_witness_replace */ true,",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24007#discussion_r844984488",
       "id" : 844984488,
-      "line" : 503,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584yXXCo",
       "original_commit_id" : "61b2d79405d61f103bb27b9ecc9445af004501e9",
-      "original_line" : 503,
+      "original_line" : 482,
       "original_position" : 13,
       "original_start_line" : null,
       "path" : "src/validation.cpp",
-      "position" : 13,
+      "position" : null,
       "pull_request_review_id" : 934852363,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24007",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1096,12 +1054,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/844984488/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-07T10:39:15Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/844984488",
       "user" : {
@@ -1223,7 +1182,7 @@
       "node_id" : "IC_kwDOABII585Hli6N",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1231,7 +1190,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1201024653/reactions"
       },
       "updated_at" : "2022-08-01T10:37:33Z",
@@ -1255,50 +1214,6 @@
          "subscriptions_url" : "https://api.github.com/users/glozow/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/glozow"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-08-03T09:24:57Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24007#issuecomment-1203704556",
-      "id" : 1203704556,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24007",
-      "node_id" : "IC_kwDOABII585HvxLs",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1203704556/reactions"
-      },
-      "updated_at" : "2022-08-03T09:24:57Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1203704556",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
       }
    },
    {
@@ -1475,6 +1390,50 @@
          "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Closing as there doesn't seem to be much support for this change - it's still unclear whether any use cases exist. If something changes, please feel free to comment and we can revisit this at a later time.",
+      "created_at" : "2023-04-25T15:32:29Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24007#issuecomment-1522007031",
+      "id" : 1522007031,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24007",
+      "node_id" : "IC_kwDOABII585at_v3",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1522007031/reactions"
+      },
+      "updated_at" : "2023-04-25T15:32:29Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1522007031",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/25183001?v=4",
+         "events_url" : "https://api.github.com/users/glozow/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/glozow/followers",
+         "following_url" : "https://api.github.com/users/glozow/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/glozow/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/glozow",
+         "id" : 25183001,
+         "login" : "glozow",
+         "node_id" : "MDQ6VXNlcjI1MTgzMDAx",
+         "organizations_url" : "https://api.github.com/users/glozow/orgs",
+         "received_events_url" : "https://api.github.com/users/glozow/received_events",
+         "repos_url" : "https://api.github.com/users/glozow/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/glozow/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/glozow/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/glozow"
       }
    }
 ]

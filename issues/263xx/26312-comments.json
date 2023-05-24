@@ -1,7 +1,7 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| Stale ACK | [jonatack](https://github.com/bitcoin/bitcoin/pull/26312#pullrequestreview-1292117929) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#26812](https://github.com/bitcoin/bitcoin/pull/26812) (test: add end-to-end tests for CConnman and PeerManager by vasild)\n* [#25619](https://github.com/bitcoin/bitcoin/pull/25619) (net: avoid overriding non-virtual ToString() in CService and use better naming by vasild)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [jonatack](https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1443941348) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#26812](https://github.com/bitcoin/bitcoin/pull/26812) (test: add end-to-end tests for CConnman and PeerManager by vasild)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2022-10-14T10:46:51Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1278839046",
       "id" : 1278839046,
@@ -20,7 +20,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1278839046/reactions"
       },
-      "updated_at" : "2023-02-24T14:01:13Z",
+      "updated_at" : "2023-05-12T17:33:15Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1278839046",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@yancyribbens, to ease review. Right now, https://github.com/bitcoin/bitcoin/pull/21878 consists of this PR + the tests (it is almost complete :balloon:). If somebody has spare review cycles they can review/ACK #21878 directly.",
       "created_at" : "2022-10-17T07:23:22Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1280404869",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> If the tests are not yet complete, then that may change this PR, right?\r\n\r\nThe tests are \"complete\" in a sense that they are \"production ready\" and can be merged. \"Not complete\" in a sense that more tests can be added. I do not think that tweaking the tests can change this PR. The point of #21878 is to have high level code not deal with `int` sockets (file descriptor), but to deal with `Sock` instead, which can be mocked together with all the relevant operations (connect, accept, read, write, etc).\r\n\r\n> Besides adding more safety, seeing the accompanying tests would make this easier (for me anyway) to review.\r\n\r\nThe tests are in #21878, feel free to look at them :heart:",
       "created_at" : "2022-10-17T10:31:01Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1280642899",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "The `int` sockets is the API provided by the OS. It is in C. We call it from the C++ code.\r\n\r\nBefore https://github.com/bitcoin/bitcoin/pull/21878 we would use that OS C API directly from all over the place. E.g.:\r\n\r\n```cpp\r\nint s = socket(...); // create the socket, see man 2 socket\r\n...\r\nconnect(s, to_addr); // see man 2 connect\r\n```\r\n\r\nThe problem with this is that in order to test it we have to create a real socket that really connects to the given address which is very inconvenient. It cannot be mocked.\r\n\r\nhttps://github.com/bitcoin/bitcoin/pull/21878 aims to replace all such calls to the operating system with constructs like\r\n\r\n```cpp\r\nSock sock = CreateSock(); // can return Sock, FuzzedSock, StaticContentsSock or another class that implements the interface\r\nsock->Connect(to_addr);\r\n```\r\n\r\nThis way a mock `Sock` class can be used and the high level code avoids calling the OS socket API at all in tests or dealing/touching `int` sockets at all. The last piece of that is the removal of `Sock::Get()` and changing the high level code which checks whether the `int` socket stored in `Sock` is `INVALID_SOCKET`.",
       "created_at" : "2022-10-25T09:22:11Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1290250078",
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> What I am asking is if you wouldn't mind adding the Mock tests to this PR,\r\n\r\nI assume that by \"the Mock tests\" you mean the tests that are in the last 4 commits of https://github.com/bitcoin/bitcoin/pull/21878, right? If I add them to this PR then this PR would be the same as https://github.com/bitcoin/bitcoin/pull/21878.\r\n\r\nI created this PR as a smaller piece of https://github.com/bitcoin/bitcoin/pull/21878 to ease review. If you want to peek or fully review the tests, then see the last 4 commits in https://github.com/bitcoin/bitcoin/pull/21878.\r\n\r\n> or create a new PR with the Mocks before merging this one?\r\n\r\nBecause those tests depend on removing the `Sock::Get()` call which is done in this PR. If the tests get merged first, this may happen: `CConnman::OpenNetworkConnection()` -> `CConnman::ConnectNode()` -> `i2p::sam::Session::Connect()` and later `i2p::sam::Session::~Session()` -> `i2p::sam::Session::Disconnect()` -> `Sock::Get()`. Calling `Get()` on `FuzzedSock` is a bit fishy, the high level code shouldn't peek at the internal `int` socket and make decisions based on its value.",
       "created_at" : "2022-10-25T10:18:00Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1290316536",
@@ -440,7 +440,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "There is one in `src/test/i2p_tests.cpp`.",
       "created_at" : "2022-10-25T13:49:00Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1290593046",
@@ -528,7 +528,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "It is already merged.",
       "created_at" : "2022-10-26T07:19:27Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1291605040",
@@ -616,7 +616,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`FuzzedSock` and `StaticContentsSock` are mock implementations of `Sock` that are already used in `master`.\r\n\r\nDepending on the code being tested various methods of `Sock` (or a mocked implementation) are going to be called. For example, if you write an unit or fuzz test for `CConnman::SocketSendData()` that is only going to invoke `Sock::Send()`.",
       "created_at" : "2022-10-26T10:36:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1291833374",
@@ -660,51 +660,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n",
-      "created_at" : "2022-11-25T18:25:34Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1327771285",
-      "id" : 1327771285,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26312",
-      "node_id" : "IC_kwDOABII585PJC6V",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1327771285/reactions"
-      },
-      "updated_at" : "2022-11-25T18:25:34Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1327771285",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`7b6fe6761a...666c7584cf`: rebase due to conflicts",
       "created_at" : "2022-12-12T10:47:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1346259946",
@@ -745,50 +701,6 @@
          "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/vasild"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n",
-      "created_at" : "2023-02-01T11:37:51Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1411917204",
-      "id" : 1411917204,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26312",
-      "node_id" : "IC_kwDOABII585UKCWU",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1411917204/reactions"
-      },
-      "updated_at" : "2023-02-01T11:37:51Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1411917204",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
       }
    },
    {
@@ -836,7 +748,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`666c7584cf...c40c25763c`: rebase due to conflicts\r\n\r\nInvalidates ACK from @jonatack \r\n",
       "created_at" : "2023-02-09T14:08:38Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1424247754",
@@ -880,7 +792,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`Sock::IsConnected()` is used in `src/i2p.cpp`. It is important to override all methods from the mocked sock implementations because when we exercise some real code from the tests with a mocked socket, then we do not want the real `IsConnected()` method to be called. For example, the tests from the [parent PR](https://github.com/bitcoin/bitcoin/pull/21878) mock the socket with `FuzzedSock` and call:\r\n\r\n```\r\nFUZZ_TARGET_INIT(connman, ...) which calls\r\n  Connman::OpenNetworkConnection() which calls\r\n    Connman::ConnectNode() which calls\r\n      i2p::sam::Session::Connect() which calls\r\n        i2p::sam::Session::CreateIfNotCreatedAlready() which calls\r\n          Sock::IsConnected()  // must end up calling FuzzedSock::IsConnected()\r\n```\r\n",
       "created_at" : "2023-02-10T08:15:16Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1425388513",
@@ -924,51 +836,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n",
-      "created_at" : "2023-02-17T19:15:25Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1435122231",
-      "id" : 1435122231,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26312",
-      "node_id" : "IC_kwDOABII585Vijo3",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1435122231/reactions"
-      },
-      "updated_at" : "2023-02-17T19:15:25Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1435122231",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`c40c25763c...e536b3a67b`: rebase due to conflicts\r\n\r\nInvalidates ACK from @jonatack",
       "created_at" : "2023-02-24T14:01:13Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1443723419",
@@ -1009,6 +877,94 @@
          "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/vasild"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "re-ACK e536b3a67b390c3c46dce99cb7466862d3fd4863 per `git range-diff be2e748 c40c257 e536b3a`",
+      "created_at" : "2023-02-24T16:19:17Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1443941348",
+      "id" : 1443941348,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26312",
+      "node_id" : "IC_kwDOABII585WEMvk",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1443941348/reactions"
+      },
+      "updated_at" : "2023-02-24T16:19:17Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1443941348",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "This is the last part of parent https://github.com/bitcoin/bitcoin/pull/21878 opened 2 years ago, anyone else like to have a look?",
+      "created_at" : "2023-04-18T14:33:55Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26312#issuecomment-1513266130",
+      "id" : 1513266130,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26312",
+      "node_id" : "IC_kwDOABII585aMpvS",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1513266130/reactions"
+      },
+      "updated_at" : "2023-04-18T14:33:55Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1513266130",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/2415484?v=4",
+         "events_url" : "https://api.github.com/users/jonatack/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jonatack/followers",
+         "following_url" : "https://api.github.com/users/jonatack/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jonatack/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jonatack",
+         "id" : 2415484,
+         "login" : "jonatack",
+         "node_id" : "MDQ6VXNlcjI0MTU0ODQ=",
+         "organizations_url" : "https://api.github.com/users/jonatack/orgs",
+         "received_events_url" : "https://api.github.com/users/jonatack/received_events",
+         "repos_url" : "https://api.github.com/users/jonatack/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jonatack/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jonatack"
       }
    }
 ]

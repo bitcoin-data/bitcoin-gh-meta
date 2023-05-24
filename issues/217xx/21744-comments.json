@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This is surprisingly difficult to fix (without doing huge amount of changes). I see two ways to address it:\r\n\r\n1. Hold the socket mutex while `poll()`ing, so that other threads that want to close the socket would have to wait for the `poll()` to finish. Not acceptable IMO.\r\n2. Lazy close with reference counting. Increment the reference count of the socket during `poll()`. Whenever a thread wants to close the socket (disconnect a peer) it should disable the socket for send/recv (e.g. `shutdown(2)`) but not `close(2)` it if reference count is >0 and somebody else should close all disabled sockets with reference count of 0.",
       "created_at" : "2021-05-12T09:30:20Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/21744#issuecomment-839619709",
@@ -8,6 +8,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21744",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgzOTYxOTcwOQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/839619709/reactions"
+      },
       "updated_at" : "2021-05-12T09:30:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/839619709",
       "user" : {
@@ -40,6 +52,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21744",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgzOTYzMjQ4Mw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/839632483/reactions"
+      },
       "updated_at" : "2021-05-12T09:43:26Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/839632483",
       "user" : {
@@ -64,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Was it found as part of the `Sock` encapsulation project...\r\n\r\nCorrect! :)\r\n\r\nIn https://github.com/bitcoin/bitcoin/pull/21878, while replacing `SOCKET` with `Sock` in `CConnman::SocketEvents()` one option was to keep pointers to the `Sock` objects and close the sockets by destroying those objects, but (because of this bug) this would have ended up with dangling pointers, pointing to possibly-deleted-by-other-threads objects.\r\n\r\nThis is the reason that PR keeps the `Sock` objects alive and calls `Sock::Reset()` from `CNode::CloseSocketDisconnect()` instead of something like `delete m_sock`.",
       "created_at" : "2021-05-12T10:14:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/21744#issuecomment-839653043",
@@ -72,6 +96,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21744",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgzOTY1MzA0Mw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 1,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 2,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/839653043/reactions"
+      },
       "updated_at" : "2021-05-12T10:14:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/839653043",
       "user" : {
@@ -96,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Hmm, maybe the following changes in https://github.com/bitcoin/bitcoin/pull/21878 would fix this bug elegantly (doing the [lazy close](https://github.com/bitcoin/bitcoin/issues/21744#issuecomment-839619709) I mentioned above):\r\n* Change `CNode::m_sock` from `std::unique_ptr<Sock>` to `std::shared_ptr<Sock>`.\r\n* In `CNode::CloseSocketDisconnect()` do `m_sock.reset()` (reducing the ref count stored in the shared_ptr and destroying the `Sock` object if ref count is 0).\r\n* Take a copy of `std::shared_ptr<Sock>` in `CConnman::SocketEvents()` or its replacement `Sock::WaitMany()`. The copy will automatically keep the ref count >0 during `poll()`.\r\n\r\nI will consider this more carefully.",
       "created_at" : "2021-05-12T10:27:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/21744#issuecomment-839661385",
@@ -104,6 +140,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21744",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgzOTY2MTM4NQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/839661385/reactions"
+      },
       "updated_at" : "2021-05-12T10:27:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/839661385",
       "user" : {
@@ -128,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> maybe the following changes in #21878 would fix this bug elegantly...\r\n\r\nDone. In addition to the above, `CConnman::ListenSocket::sock` also had to be changed from `unique_ptr` to `shared_ptr` because we feed those sockets to `Sock::WaitMany()` too.\r\n\r\nThis issue is now resolved by commit `net: use Sock::WaitMany() instead of CConnman::SocketEvents()` in https://github.com/bitcoin/bitcoin/pull/21878.",
       "created_at" : "2021-05-31T10:19:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/21744#issuecomment-851388148",
@@ -136,6 +184,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21744",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg1MTM4ODE0OA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/851388148/reactions"
+      },
       "updated_at" : "2021-05-31T10:19:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/851388148",
       "user" : {

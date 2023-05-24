@@ -3,10 +3,10 @@
    "assignee" : null,
    "assignees" : [],
    "author_association" : "MEMBER",
-   "body" : "Closes https://github.com/bitcoin/bitcoin/issues/8798\r\n\r\nUse case: I run a full node that accepts inbound connections and have a `whitebind` setting so my personal light client can always connect, even when `maxconnections` (and particularly all inbound slots) is already full.\r\n\r\nCurrently when connections are full, if we receive in inbound peer request, we look for a current connection to evict so the new peer can have a slot. To find an evict-able peer we go through all our peers and \"protect\" multiple categories of peers, then we evict the \"worst\" peer that is left unprotected. If there are no peers left to evict, the inbound connection is denied.\r\n\r\nWith this PR, if the inbound connection is on our whitelist we still loop through all our current connection, removing protected peers from the evict-able list. However, now we keep track of the last peer we protected (aka the last peer we removed from the evict-able list). If we end up with no peers left to evict, the last protected peer is evicted instead. This should preserve the peer eviction logic but just in the case of a whitebind inbound, we evict the \"worst best\" connection.\r\n\r\nAll outbound and `noban` connections remain protected from eviction.",
+   "body" : "Closes https://github.com/bitcoin/bitcoin/issues/8798\r\n\r\nUse case: I run a full node that accepts inbound connections and have a `whitebind` setting so my personal light client can always connect, even when `maxconnections` (and particularly all inbound slots) is already full.\r\n\r\nCurrently when connections are full, if we receive an inbound peer request, we look for a current connection to evict so the new peer can have a slot. To find an evict-able peer we go through all our peers and \"protect\" multiple categories of peers, then we evict the \"worst\" peer that is left unprotected. If there are no peers left to evict, the inbound connection is denied.\r\n\r\nWith this PR, if the inbound connection is on our whitelist we start the eviction process by selecting a random unprotected peer. Then we loop through all our current connections, removing protected peers from the evict-able list. If we end up protecting all our connections, the randomly chosen peer is evicted. This behavior is triggered by a new `force` flag.\r\n\r\nAll outbound and `noban` connections remain protected from eviction.",
    "closed_at" : null,
    "closed_by" : null,
-   "comments" : 1,
+   "comments" : 3,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27600/comments",
    "created_at" : "2023-05-08T19:59:30Z",
    "draft" : false,
@@ -22,6 +22,15 @@
          "name" : "P2P",
          "node_id" : "MDU6TGFiZWw5ODI5ODAwNw==",
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/P2P"
+      },
+      {
+         "color" : "cccccc",
+         "default" : false,
+         "description" : "",
+         "id" : 5334691551,
+         "name" : "CI failed",
+         "node_id" : "LA_kwDOABII588AAAABPfju3w",
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/CI%20failed"
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27600/labels{/name}",
@@ -54,7 +63,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27600/timeline",
    "title" : "net: Allow inbound whitebind connections to more aggressively evict peers when slots are full",
-   "updated_at" : "2023-05-16T09:40:07Z",
+   "updated_at" : "2023-05-22T18:19:47Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27600",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/2084648?v=4",

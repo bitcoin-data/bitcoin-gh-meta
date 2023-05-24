@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
       "created_at" : "2022-02-14T10:13:56Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24332#issuecomment-1038900263",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Rebased",
       "created_at" : "2022-02-14T20:12:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24332#issuecomment-1039508838",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK. I think the code changes here basically look good, but I do have some feedback.\r\n\r\n* I think new code in `src/kernel/` should try not rely on global variables. Or at least, any API exposed by libbitcoin_kernel should not be **forced** to rely on global variables, because it it is missing some pointer to the appropriate context. I made a small change in b6072da940b1af4eadf8c1bc6192ae86d634e714 which adds a little infrastructure fixing this problem for `timedata` in a way that should let us clean up globals later, while not substantially increasing the size of the diff now. Could squash it into this PR.\r\n\r\n* I think it would be good to put all code in `src/kernel/` in a `kernel::` namespace, similar to how `src/node/` code is in `node::`, `src/wallet/` is in `wallet::`, newer `src/util` code is in `util::`. (Suggested changes above in b6072da940b1af4eadf8c1bc6192ae86d634e714 do use `kernel::` namespace FWIW)\r\n\r\n* I don't love how there are duplicative `src/timedata.h`, `src/timedata.cpp`, `src/kernel/timedata.h`, and `src/kernel/timedata.cpp` files. Would be good to name the kernel files to something like `src/kernel/adjusted_time` or something more specific to make them more distinct.\r\n\r\n* `kernel/init/common` naming doesn't make much sense. The `src/init/common.cpp` file has that name because every other file in the `src/init/` directory contains init code for one of the bitcoin-core executables (`bitcoind.cpp`, `bitcoin-qt.cpp`, `bitcoin-wallet.cpp`) and `common.cpp` was supposed to hold whatever common boilerplate was used by them all. Probably the `src/kernel/init/` directory should not exist and the code should just be moved into the `kernel::Context` constructors / destructors.\r\n\r\n* I guess we are actively discussing this in #24303, but I still don't understand where the boundary between `libbitcoin_kernel` and `libbitcoin_consensus` is or why these are two different libraries. I guess depending on where that discussion goes, maybe some of this code may go in libbitcoin_consensus not libbitcoin_kernel.\r\n",
       "created_at" : "2022-02-14T21:10:32Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24332#issuecomment-1039562660",
@@ -132,7 +132,75 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24332#discussion_r807311621"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24332"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/807311621"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "In commit \"kernel: Decouple from full init/common.cpp\" (9211d91b226ff45c1eeaa4942a7b5c79f170a78d)\r\n\r\nAdding `src/kernel/` code to `libbitcoin_common` is a red flag here because it means wallet and gui code will now be depending on libbitcoinkernel source code. But I already wrote yesterday https://github.com/bitcoin/bitcoin/pull/24332#issuecomment-1039562660 that I don't think these SetGlobals/UnsetGlobals functions were moved to the right place anyway, so this is just additional confirmation.\r\n\r\nA simple fix should be to just move `kernel/init/common.cpp` to `src/util/globals.cpp` and `kernel/util/common.h` to `src/util/globals.h` and list them in `libbitcoin_util_a_SOURCES` not `libbitcoin_common_a_SOURCES`. I hope reasoning makes sense that:\r\n\r\n- It's ok for wallet code to depend on _util_ but not for it to depend on _kernel_\r\n- Generally when we create new source files and add them to a `libbitcoin_whatever_a_SOURCES` we should try to locate those files in `src/whatever/`\r\n- It would also be reasonable to add these SetGlobals/UnsetGlobals functions to _common_ instead of _util_. But I think functionally they make a little more sense in _util_ since they are lower level, and in general I think it is probably  nicer if libbitcoin_kernel doesn't depend on anything in _common_ at all. (_util_ seems like a better home for essential stuff, while _common_ seems like more of a home for miscellaneous stuff)",
+      "commit_id" : "02e143cfe700f8860bde9678333b51b8e623383b",
+      "created_at" : "2022-02-15T21:01:42Z",
+      "diff_hunk" : "@@ -593,6 +593,7 @@ libbitcoin_common_a_SOURCES = \\\n   deploymentinfo.cpp \\\n   external_signer.cpp \\\n   init/common.cpp \\\n+  kernel/init/common.cpp \\",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24332#discussion_r807311621",
+      "id" : 807311621,
+      "line" : 597,
+      "node_id" : "PRRC_kwDOABII584wHpkF",
+      "original_commit_id" : "9211d91b226ff45c1eeaa4942a7b5c79f170a78d",
+      "original_line" : 596,
+      "original_position" : 4,
+      "original_start_line" : null,
+      "path" : "src/Makefile.am",
+      "position" : 4,
+      "pull_request_review_id" : 883645097,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24332",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/807311621/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-02-15T21:13:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/807311621",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
       "body" : "> Concept ACK. I think the code changes here basically look good, but I do have some feedback.\r\n> \r\n> * I think new code in `src/kernel/` should try not rely on global variables. Or at least, any API exposed by libbitcoin_kernel should not be **forced** to rely on global variables, because it it is missing some pointer to the appropriate context. I made a small change in b6072da940b1af4eadf8c1bc6192ae86d634e714 which adds a little infrastructure fixing this problem for `timedata` in a way that should let us clean up globals later, while not substantially increasing the size of the diff now. Could squash it into this PR.\r\n> \r\n> * I think it would be good to put all code in `src/kernel/` in a `kernel::` namespace, similar to how `src/node/` code is in `node::`, `src/wallet/` is in `wallet::`, newer `src/util` code is in `util::`. (Suggested changes above in b6072da940b1af4eadf8c1bc6192ae86d634e714 do use `kernel::` namespace FWIW)\r\n> \r\n> * I don't love how there are duplicative `src/timedata.h`, `src/timedata.cpp`, `src/kernel/timedata.h`, and `src/kernel/timedata.cpp` files. Would be good to name the kernel files to something like `src/kernel/adjusted_time` or something more specific to make them more distinct.\r\n> \r\n> * `kernel/init/common` naming doesn't make much sense. The `src/init/common.cpp` file has that name because every other file in the `src/init/` directory contains init code for one of the bitcoin-core executables (`bitcoind.cpp`, `bitcoin-qt.cpp`, `bitcoin-wallet.cpp`) and `common.cpp` was supposed to hold whatever common boilerplate was used by them all. Probably the `src/kernel/init/` directory should not exist and the code should just be moved into the `kernel::Context` constructors / destructors.\r\n> \r\n> * I guess we are actively discussing this in #24303, but I still don't understand where the boundary between `libbitcoin_kernel` and `libbitcoin_consensus` is or why these are two different libraries. I guess depending on where that discussion goes, maybe some of this code may go in libbitcoin_consensus not libbitcoin_kernel.\r\n\r\nAs mentioned [here](https://github.com/bitcoin/bitcoin/issues/24303#issuecomment-1040334722) and [here](https://github.com/bitcoin/bitcoin/issues/24303#issuecomment-1042099654), I had a fruitful talk offline with Ryan and hashed out a few of these points. I will incorporate the changes to introduce a `kernel::Context` struct, and tweak the code organization such that it aligns with our existing code organization style more.\r\n\r\n**Closing temporarily, will re-open** (or open another PR)!",
       "created_at" : "2022-02-16T20:05:25Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24332#issuecomment-1042115430",

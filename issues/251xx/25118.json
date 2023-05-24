@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "Seeking to make the `CoinControl` options less confusing/redundant.\r\nIt should have no functional changes.\r\n\r\nThe too long to read technical description; remove `m_add_inputs`, we can use the already existent `fAllowOtherInputs` flag.\r\n\r\nIn #16377 the `CoinControl` flag âm_add_inputsâ was added to tell the coin filtering and selection process two things:\r\n- Coin Filtering: Only use the provided inputs. Skip the Rest.\r\n- Coin Selection: Search the wtxs-outputs and append all the `CoinControl` internal and external selected outpoints to the selection result (skipping all the available output checks). Nothing else.\r\n\r\nMeanwhile, in `CoinControl` we already have a flag âfAllowOtherInputsâ which is already saying:\r\n- Coin Filtering: Only use the provided inputs. Skip the Rest.\r\n- Coin Selection: If false, no selection process -> append all the `CoinControl` selected outpoints to the selection result (while they passed all the `AvailableCoins` checks and are available in the 'vCoins' vector).\r\n\r\n### Changes\r\n\r\nAs can notice, the first point in the coin filtering process is duplicated in the two option flags. And the second one, is slightly different merely because it takes into account whether the coin is on the `AvailableCoins` vector or not.\r\nSo it makes sense to merge âm_add_inputsâ and âfAllowOtherInputsâ into a single field for the coin filtering process while introduce other changes to add the missing/skipped internal and external coins into 'vCoins' vector if they were manually selected by the user.\r\n\r\nââââââââââââââââââââââââââââââââââ\r\n\r\nJust as an extra note:\r\nOn top of this, Iâm working on unifying/untangling further the coin filtering and selection processes so we have less duplicate functionality in both processes.",
    "closed_at" : "2022-06-20T19:38:19Z",
    "closed_by" : {
@@ -25,7 +25,7 @@
       "type" : "User",
       "url" : "https://api.github.com/users/laanwj"
    },
-   "comments" : 13,
+   "comments" : 19,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25118/comments",
    "created_at" : "2022-05-12T14:49:17Z",
    "draft" : false,
@@ -73,7 +73,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25118/timeline",
    "title" : "wallet: unify âallow/block other inputsâ concept",
-   "updated_at" : "2022-06-20T19:38:19Z",
+   "updated_at" : "2023-03-23T14:57:20Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25118",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/5377650?v=4",

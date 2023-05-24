@@ -1,7 +1,7 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\nA summary of reviews will appear here.\n",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [theStack](https://github.com/bitcoin/bitcoin/pull/27324#pullrequestreview-1360004613), [jnewbery](https://github.com/bitcoin/bitcoin/pull/27324#issuecomment-1486557249) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#27114](https://github.com/bitcoin/bitcoin/pull/27114) (p2p: Allow whitelisting outgoing connections by brunoerg)\n* [#26621](https://github.com/bitcoin/bitcoin/pull/26621) (refactor: Continue moving application data from CNode to Peer by dergoegge)\n* [#25572](https://github.com/bitcoin/bitcoin/pull/25572) (refactor: Introduce EvictionManager and use it for the inbound eviction logic by dergoegge)\n* [#25268](https://github.com/bitcoin/bitcoin/pull/25268) (refactor: Introduce EvictionManager by dergoegge)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2023-03-24T15:03:18Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27324#issuecomment-1482950887",
       "id" : 1482950887,
@@ -20,7 +20,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1482950887/reactions"
       },
-      "updated_at" : "2023-03-24T15:03:18Z",
+      "updated_at" : "2023-03-28T09:56:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1482950887",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -178,6 +178,119 @@
          "subscriptions_url" : "https://api.github.com/users/dergoegge/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/dergoegge"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/27324#discussion_r1150334044"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/27324"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1150334044"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This is absolutely fine. I would have gone for something like \"For performance reasons, once we've deserialized the bytes into a CNetMessage, we avoid re-allocating and copying the message as we pass it up the stack for processing. Delete the copy ctor/assignment to avoid accidentally introducing a copy operation.\", which is more-or-less the same as what you came up with.",
+      "commit_id" : "cd0c8eeb0940790b6ba83786d1c9e362d4dc4829",
+      "created_at" : "2023-03-28T09:55:26Z",
+      "diff_hunk" : "@@ -236,6 +236,10 @@ class CNetMessage {\n     std::string m_type;\n \n     CNetMessage(CDataStream&& recv_in) : m_recv(std::move(recv_in)) {}\n+    CNetMessage(CNetMessage&&) = default;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/27324#discussion_r1150334044",
+      "id" : 1150334044,
+      "in_reply_to_id" : 1147917681,
+      "line" : 243,
+      "node_id" : "PRRC_kwDOABII585EkLRc",
+      "original_commit_id" : "f824725be383e89346e2dc3269cc3d6aa533bcd3",
+      "original_line" : 243,
+      "original_position" : 4,
+      "original_start_line" : null,
+      "path" : "src/net.h",
+      "position" : 8,
+      "pull_request_review_id" : 1360662351,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/27324",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1150334044/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2023-03-28T09:55:27Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1150334044",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "utACK cd0c8eeb0940790b6ba83786d1c9e362d4dc4829",
+      "created_at" : "2023-03-28T09:56:15Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/27324#issuecomment-1486557249",
+      "id" : 1486557249,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27324",
+      "node_id" : "IC_kwDOABII585YmxBB",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1486557249/reactions"
+      },
+      "updated_at" : "2023-03-28T09:56:15Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1486557249",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/1063656?v=4",
+         "events_url" : "https://api.github.com/users/jnewbery/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jnewbery/followers",
+         "following_url" : "https://api.github.com/users/jnewbery/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jnewbery/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jnewbery",
+         "id" : 1063656,
+         "login" : "jnewbery",
+         "node_id" : "MDQ6VXNlcjEwNjM2NTY=",
+         "organizations_url" : "https://api.github.com/users/jnewbery/orgs",
+         "received_events_url" : "https://api.github.com/users/jnewbery/received_events",
+         "repos_url" : "https://api.github.com/users/jnewbery/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jnewbery/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jnewbery/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jnewbery"
       }
    }
 ]

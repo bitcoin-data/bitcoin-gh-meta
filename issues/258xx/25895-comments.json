@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "As you manually derived the address number `777,777` in the ranged descriptor path and then imported the descriptor with the default `next_index` param value (which is 0), you forced the wallet to derive the `777,776` previous addresses during a single block connection to mark them as used (default wallet behavior).\r\n\r\nSo, probably, your wallet isn't stalled, it's just deriving and marking all those addresses as used at once during block connection/rescan (storing a new addressbook entry on disk for each of them among other data)\r\n\r\nSo, some points:\r\n\r\n1) You could import the descriptor with the `next_index` field at `777,777` so the wallet can omit the derivation of all the previous addresses. Not marking them as used as they were never created (or just import the address as a standalone address and not a ranged descriptor)\r\n\r\n2) If you are actually using the previous addresses, and you don't care about address re-using, maybe could add a customizable option to mark / not mark addresses as used on ranged descriptors (open for discussion)\r\n\r\n3) There is a PR, that is still a WIP, that adds db txn batch writes to the block connection and tx sync processes, so the processes don't go to disk for each independent address that requires to be marked as used (and other stuff) #25297.\r\nYou might want to give that PR branch a try.",
       "created_at" : "2022-08-22T14:05:08Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25895#issuecomment-1222410377",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "FWIW, in a first quick test I couldn't reproduce this issue on signet with the latest version of the master branch. Sure, deriving hundreds of thousands of addresses and marking them as unused takes some time (about 5-10 minutes on my system, which is way slower compared to the HW specs given in the PR description), but there was no permanent hanging. Will test with v23 and testnet later.",
       "created_at" : "2022-08-22T14:33:38Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25895#issuecomment-1222448198",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> FWIW, in a first quick test I couldn't reproduce this issue on signet with the latest version of the master branch. Sure, deriving hundreds of thousands of addresses and marking them as unused takes some time (about 5-10 minutes on my system, which is way slower compared to the HW specs given in the PR description), but there was no permanent hanging. Will test with v23 and testnet later.\r\n\r\nsame here, tested it on master and on 25297. Had no problems there, took less than a minute on my machine.\r\ncrafted a quick test for it https://gist.github.com/furszy/2fab16877d787d4d9001b0be93090cf3",
       "created_at" : "2022-08-22T14:40:23Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25895#issuecomment-1222456886",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> In order to reproduce you need to create a transaction to that `777777` derived address and make sure it was confirmed on the blockchain and added to your newly created wallet.\r\n\r\nI tried that with two scenarios so far that both worked:\r\n(1) send tx, wait for the tx to confirm, import the descriptor\r\n(2) import the descriptor, send tx, wait for the tx to confirm\r\n\r\nReading your opening post more carefully, it seems you did yet another variant:\r\n(3) send tx, import the descriptor, wait for the tx to confirm\r\n\r\nWill also try (3) in a bit. Could you try also variants (1) and (2) and see if it leads to the same hanging behaviour?",
       "created_at" : "2022-08-22T15:46:35Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25895#issuecomment-1222542461",

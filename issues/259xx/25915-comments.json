@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "If possible, would be good to add a text explaining why the stop/start calls are fixing the issue.\r\nGuessing that has to do with nodes sync.",
       "created_at" : "2022-08-26T19:23:37Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25915#issuecomment-1228837580",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Hmm, under the hood, nodes are syncing data and the tx ends up in the mempool when we are expecting to not have it there (thus why removing the `sync_fun=self.no_op` makes it fail all the time, you force nodes to sync-up).\r\n\r\nProbably, the simplest path to fix the unexpected sync should be something like:\r\n```diff\r\ndiff --git a/test/functional/wallet_balance.py b/test/functional/wallet_balance.py\r\n--- a/test/functional/wallet_balance.py\t(revision a7c7f6d354304521d3a2de04eb57fc74be52b68a)\r\n+++ b/test/functional/wallet_balance.py\t(date 1661606543724)\r\n@@ -262,6 +262,7 @@\r\n         assert_equal(self.nodes[0].getbalance(minconf=0), total_amount)\r\n \r\n         self.log.info('Put txs back into mempool of node 1 (not node 0)')\r\n+        self.disconnect_nodes(0, 1)\r\n         self.nodes[0].invalidateblock(block_reorg)\r\n         self.nodes[1].invalidateblock(block_reorg)\r\n         assert_equal(self.nodes[0].getbalance(minconf=0), 0)  # wallet txs not in the mempool are untrusted\r\n```\r\n\r\n(nodes are, few lines below, re-connected anyway)\r\n\r\nnote: with this change, cannot remove the `sync_fun=self.no_op` from the `generatetoaddress` call as any sync attempt between nodes will fail (they are not longer connected).",
       "created_at" : "2022-08-27T13:34:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25915#issuecomment-1229193770",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > Probably, the simplest path to fix the unexpected sync should be something like:\r\n> \r\n> Yes, that should also work. Though, the second balance check is redundant and not needed, so I think removing it is better than accommodating it.\r\n\r\nYeah but with the removal, we are still doubtful over the intermittency cause.\r\n\r\nUp until now, what we know is that the intermittency is related to node1 syncing the mempool with node0. Which means that after generating the block, node0 accepts a tx that was previously rejected (due be \"the third descendant of the tx created above\" ).\r\n\r\nNote, I'm not blocking this, can move forward as is. Just saying that would be nice to describe the intermittency cause in-detail. I think that, sooner or later, the issue can pop-up again in another test case.",
       "created_at" : "2022-08-29T21:07:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25915#issuecomment-1230861889",
@@ -308,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> To describe the steps as I understand them:\r\n>\r\n> invalidateblock usually puts the txs in the block back into the mempool, however for node 0 it does not because it has a strict descendant limit of 3.\r\nAfter generatetoaddress the tx will be put into the mempool again. The reason the test passed most of the time is by pure chance, because apparently the getbalance call was faster than tx-trickle.\r\nThe fix in this pull removes the getbalance, because:\r\n>\r\n> It is wrong (only passed most of the time by pure chance)\r\n> It is redundant\r\n\r\nOk thanks Marko, now it make sense. I was missing the strict descendant limit.\r\nThen this started happening more often now due #25865 that whitelisted peers by default. All good.",
       "created_at" : "2022-09-01T20:57:13Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25915#issuecomment-1234773283",

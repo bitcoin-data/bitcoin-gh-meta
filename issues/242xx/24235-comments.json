@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I tested with clang 14.",
       "created_at" : "2022-02-02T11:20:42Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24235#issuecomment-1027839819",
@@ -101,19 +101,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Tend toward NACK using negative annotations with global mutexes, especially cs_main. I presume `LOCKS_EXCLUDED(::cs_main) EXCLUSIVE_LOCKS_REQUIRED(!m_chainstate_mutex)` doesn't work?",
-      "commit_id" : "5730f7327f9efe2a0b13caf6d159bdadf6412f85",
+      "commit_id" : "99de8068cd08ecc2ad5dfe603bf3c2cc5b8b33aa",
       "created_at" : "2022-02-02T11:27:24Z",
       "diff_hunk" : "@@ -639,7 +640,8 @@ class CChainState\n      */\n     bool ActivateBestChain(\n         BlockValidationState& state,\n-        std::shared_ptr<const CBlock> pblock = nullptr) LOCKS_EXCLUDED(m_chainstate_mutex, cs_main);\n+        std::shared_ptr<const CBlock> pblock = nullptr)\n+        EXCLUSIVE_LOCKS_REQUIRED(!::cs_main, !m_chainstate_mutex);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24235#discussion_r797510801",
       "id" : 797510801,
-      "line" : 644,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584viQyR",
       "original_commit_id" : "5730f7327f9efe2a0b13caf6d159bdadf6412f85",
       "original_line" : 644,
       "original_position" : 16,
       "original_start_line" : null,
       "path" : "src/validation.h",
-      "position" : 16,
+      "position" : null,
       "pull_request_review_id" : 870407856,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24235",
       "reactions" : {
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-02T11:27:24Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/797510801",
       "user" : {
@@ -331,7 +332,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`5730f7327f...99de8068cd`: lower the scope to just `m_chainstate_mutex` and don't change anything about `cs_main` which was a kind of scope creep.\r\n\r\nI think the previous version was better (5730f7327f) as it provided stronger guarantees, but there is some frowning against using `EXCLUSIVE_LOCKS_REQUIRED(!cs_main)` (see comments above). Since the purpose of this PR is to do `m_chainstate_mutex`, leave `cs_main` alone.",
       "created_at" : "2022-02-02T13:07:19Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24235#issuecomment-1027923165",
@@ -386,7 +387,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/797590214"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "What's wrong with using negative annotations with global mutexes? I don't see how the scope of the mutex is relevant, but maybe I miss something since @hebasto also wasn't excited about it. Can you elaborate?\r\n\r\n> I presume `LOCKS_EXCLUDED(::cs_main) EXCLUSIVE_LOCKS_REQUIRED(!m_chainstate_mutex)` doesn't work?\r\n\r\nIt works. Updated the PR.",
       "commit_id" : "99de8068cd08ecc2ad5dfe603bf3c2cc5b8b33aa",
       "created_at" : "2022-02-02T13:09:19Z",
@@ -419,6 +420,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-02T13:09:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/797590214",
       "user" : {
@@ -487,6 +489,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-02T13:21:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/797600392",
       "user" : {
@@ -511,7 +514,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : ">     2. Should we recommend to use negative capability forms of TS annotations for member mutexes in new code?\r\n\r\nIf a method does `LOCK(m)` I think it is a good practice to include `EXCLUSIVE_LOCKS_REQUIRED(!m)` in its declaration (assuming non-recursive mutex).",
       "created_at" : "2022-02-02T14:11:21Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24235#issuecomment-1027979149",
@@ -520,7 +523,7 @@
       "node_id" : "IC_kwDOABII5849RbeN",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -528,7 +531,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1027979149/reactions"
       },
       "updated_at" : "2022-02-02T14:11:21Z",
@@ -640,50 +643,6 @@
          "subscriptions_url" : "https://api.github.com/users/jonatack/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/jonatack"
-      }
-   },
-   {
-      "author_association" : "NONE",
-      "body" : "> #24103 added annotations to denote that the callers of `CChainState::ActivateBestChain()` and `CChainState::InvalidateBlock()` must not own `m_chainstate_mutex` at the time of the call.\r\n> \r\n> Replace the added `LOCKS_EXCLUDED()` with a stronger `EXCLUSIVE_LOCKS_REQUIRED()`, see https://clang.llvm.org/docs/ThreadSafetyAnalysis.html#negative for the difference between both.\r\n\r\n",
-      "created_at" : "2022-02-09T03:48:29Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24235#issuecomment-1033315007",
-      "id" : 1033315007,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24235",
-      "node_id" : "IC_kwDOABII5849lyK_",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1033315007/reactions"
-      },
-      "updated_at" : "2022-02-09T03:48:29Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1033315007",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/72060138?v=4",
-         "events_url" : "https://api.github.com/users/jr32182/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/jr32182/followers",
-         "following_url" : "https://api.github.com/users/jr32182/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/jr32182/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/jr32182",
-         "id" : 72060138,
-         "login" : "jr32182",
-         "node_id" : "MDQ6VXNlcjcyMDYwMTM4",
-         "organizations_url" : "https://api.github.com/users/jr32182/orgs",
-         "received_events_url" : "https://api.github.com/users/jr32182/received_events",
-         "repos_url" : "https://api.github.com/users/jr32182/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/jr32182/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/jr32182/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/jr32182"
       }
    }
 ]

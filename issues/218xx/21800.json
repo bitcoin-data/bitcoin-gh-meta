@@ -1,8 +1,8 @@
 {
-   "active_lock_reason" : null,
+   "active_lock_reason" : "resolved",
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "This PR implements a function to calculate mempool ancestors for a package and enforces ancestor/descendant limits on them as a whole. It reuses a portion of `CalculateMemPoolAncestors()`; there's also a small refactor to move the reused code into a generic helper function. Instead of calculating ancestors and descendants on every single transaction in the package and their ancestors, we use a \"worst case\" heuristic, treating every transaction in the package as each other's ancestor and descendant. This may overestimate everyone's counts, but is still pretty accurate in the our main package use cases, in which at least one of the transactions in the package is directly related to all the others (e.g. 1 parent + 1 child, multiple parents with 1 child, or chains).\r\n\r\nNote on Terminology: While \"package\" is often used to describe groups of related transactions _within_ the mempool, here, I only use package to mean the group of not-in-mempool transactions we are currently validating.\r\n\r\n#### Motivation\r\n\r\nIt would be a potential DoS vector to allow submission of packages to mempool without a proper guard for mempool ancestors/descendants. In general, the purpose of mempool ancestor/descendant limits is to limit the computational complexity of dealing with families during removals and additions. We want to be able to validate multiple transactions on top of the mempool, but also avoid these scenarios:\r\n\r\n- We underestimate the ancestors/descendants during package validation and end up with extremely complex families in our mempool (potentially a DoS vector).\r\n- We expend an unreasonable amount of resources calculating everyone's ancestors and descendants during package validation.",
    "closed_at" : "2021-08-09T04:24:35Z",
    "closed_by" : {
@@ -25,9 +25,10 @@
       "type" : "User",
       "url" : "https://api.github.com/users/fanquake"
    },
-   "comments" : 20,
+   "comments" : 24,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21800/comments",
    "created_at" : "2021-04-28T19:28:31Z",
+   "draft" : false,
    "events_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21800/events",
    "html_url" : "https://github.com/bitcoin/bitcoin/pull/21800",
    "id" : 870274745,
@@ -70,7 +71,7 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21800/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "MDExOlB1bGxSZXF1ZXN0NjI1NDk2NTI3",
    "number" : 21800,
@@ -78,13 +79,28 @@
    "pull_request" : {
       "diff_url" : "https://github.com/bitcoin/bitcoin/pull/21800.diff",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21800",
+      "merged_at" : "2021-08-09T04:24:35Z",
       "patch_url" : "https://github.com/bitcoin/bitcoin/pull/21800.patch",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21800"
    },
+   "reactions" : {
+      "+1" : 1,
+      "-1" : 0,
+      "confused" : 0,
+      "eyes" : 0,
+      "heart" : 0,
+      "hooray" : 0,
+      "laugh" : 0,
+      "rocket" : 0,
+      "total_count" : 1,
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21800/reactions"
+   },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
+   "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21800/timeline",
    "title" : "mempool/validation: mempool ancestor/descendant limits for packages",
-   "updated_at" : "2021-08-09T04:24:35Z",
+   "updated_at" : "2022-08-19T08:15:51Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21800",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/25183001?v=4",

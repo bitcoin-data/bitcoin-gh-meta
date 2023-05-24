@@ -13,19 +13,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Concept ACK. But if we're going to do this only once (which is a great idea), why not do it immediately after opening the database, instead of checking it for every batch? ",
-      "commit_id" : "9f85f98003d48fd9176997501a33ed6417572fae",
+      "commit_id" : "c318211ddd48d44dd81dded553afeee3bc41c89e",
       "created_at" : "2022-06-15T18:07:57Z",
       "diff_hunk" : "@@ -315,11 +315,17 @@ BerkeleyBatch::BerkeleyBatch(BerkeleyDatabase& database, const bool read_only, b\n     env = database.env.get();\n     pdb = database.m_db.get();\n     strFile = fs::PathToString(database.m_filename);\n-    if (!Exists(std::string(\"version\"))) {\n-        bool fTmp = fReadOnly;\n-        fReadOnly = false;\n-        Write(std::string(\"version\"), CLIENT_VERSION);\n-        fReadOnly = fTmp;\n+\n+    // At the first db open\n+    if (database.client_version == -1) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25383#discussion_r898274243",
       "id" : 898274243,
-      "line" : 320,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5841ipPD",
       "original_commit_id" : "9f85f98003d48fd9176997501a33ed6417572fae",
       "original_line" : 320,
       "original_position" : 11,
       "original_start_line" : null,
       "path" : "src/wallet/bdb.cpp",
-      "position" : 11,
+      "position" : null,
       "pull_request_review_id" : 1007925655,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25383",
       "reactions" : {
@@ -43,6 +43,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-15T18:08:56Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/898274243",
       "user" : {
@@ -78,9 +79,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/898403224"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Mainly because of how the flow is currently structured. We are actually checking if the db is open on every new batch, and opening it if not (that is done few lines above, at line 312).\r\n\r\nTo be a bit more specific: I was going to add it inside the `BerkeleyDatabase::Open()` method but.. as `BerkeleyBatch` contains the functions to access the db (Read/Write/Erase etc), was going to end up duplicating the code there (the `BerkeleyBatch::ReadKey` functionality).\r\n\r\nNot sure if I should include it here but I think that a good next step would be to decouple the db.open call from the `BerkeleyBatch` constructor, so it only receives an already opened database. And in that way, the client version read could be decoupled as well and not be part of the constructor.",
-      "commit_id" : "80400e9bbe9e7af72acab142a2327511e8b0d036",
+      "commit_id" : "c318211ddd48d44dd81dded553afeee3bc41c89e",
       "created_at" : "2022-06-15T20:47:10Z",
       "diff_hunk" : "@@ -315,11 +315,17 @@ BerkeleyBatch::BerkeleyBatch(BerkeleyDatabase& database, const bool read_only, b\n     env = database.env.get();\n     pdb = database.m_db.get();\n     strFile = fs::PathToString(database.m_filename);\n-    if (!Exists(std::string(\"version\"))) {\n-        bool fTmp = fReadOnly;\n-        fReadOnly = false;\n-        Write(std::string(\"version\"), CLIENT_VERSION);\n-        fReadOnly = fTmp;\n+\n+    // At the first db open\n+    if (database.client_version == -1) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25383#discussion_r898403224",
@@ -111,6 +112,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-16T13:03:02Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/898403224",
       "user" : {
@@ -148,20 +150,20 @@
       },
       "author_association" : "MEMBER",
       "body" : "Fair enough. If you have a good reason for it it's okay with me. I was just asking.\r\nIt's \"only\" the legacy wallet so doing any large refactors is probably not worth it.",
-      "commit_id" : "1f24a4f32216da6e81b0fdcf72c79399aac0e7d0",
+      "commit_id" : "c318211ddd48d44dd81dded553afeee3bc41c89e",
       "created_at" : "2022-06-15T21:17:23Z",
       "diff_hunk" : "@@ -315,11 +315,17 @@ BerkeleyBatch::BerkeleyBatch(BerkeleyDatabase& database, const bool read_only, b\n     env = database.env.get();\n     pdb = database.m_db.get();\n     strFile = fs::PathToString(database.m_filename);\n-    if (!Exists(std::string(\"version\"))) {\n-        bool fTmp = fReadOnly;\n-        fReadOnly = false;\n-        Write(std::string(\"version\"), CLIENT_VERSION);\n-        fReadOnly = fTmp;\n+\n+    // At the first db open\n+    if (database.client_version == -1) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25383#discussion_r898439645",
       "id" : 898439645,
       "in_reply_to_id" : 898274243,
-      "line" : 320,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5841jRnd",
       "original_commit_id" : "9f85f98003d48fd9176997501a33ed6417572fae",
       "original_line" : 320,
       "original_position" : 11,
       "original_start_line" : null,
       "path" : "src/wallet/bdb.cpp",
-      "position" : 11,
+      "position" : null,
       "pull_request_review_id" : 1008166294,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25383",
       "reactions" : {
@@ -179,6 +181,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-15T21:17:24Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/898439645",
       "user" : {
@@ -212,7 +215,7 @@
       "node_id" : "IC_kwDOABII585E9nfm",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -220,7 +223,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1157003238/reactions"
       },
       "updated_at" : "2022-06-15T22:12:09Z",
@@ -258,9 +261,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/899067722"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "yeah, no problem. The question was great to be sync about following-up improvements. The SQLite flow has some similarities.. (the db constructor is, mostly, a no-op as the db is always opened etc..).\r\n\r\nplus, I'm grateful for your quick feedback :).",
-      "commit_id" : "80400e9bbe9e7af72acab142a2327511e8b0d036",
+      "commit_id" : "c318211ddd48d44dd81dded553afeee3bc41c89e",
       "created_at" : "2022-06-16T13:12:08Z",
       "diff_hunk" : "@@ -315,11 +315,17 @@ BerkeleyBatch::BerkeleyBatch(BerkeleyDatabase& database, const bool read_only, b\n     env = database.env.get();\n     pdb = database.m_db.get();\n     strFile = fs::PathToString(database.m_filename);\n-    if (!Exists(std::string(\"version\"))) {\n-        bool fTmp = fReadOnly;\n-        fReadOnly = false;\n-        Write(std::string(\"version\"), CLIENT_VERSION);\n-        fReadOnly = fTmp;\n+\n+    // At the first db open\n+    if (database.client_version == -1) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25383#discussion_r899067722",
@@ -291,6 +294,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-16T13:12:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/899067722",
       "user" : {
@@ -315,7 +319,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Ha!, what an old gem hehe.\r\n\r\n> As the version record is updated in LoadWallet, I think it is safe to remove this code and just update LoadWallet to write the record if it doesn't already exist.\r\n\r\nYeah, that is cleaner ðð¼.",
       "created_at" : "2022-06-16T13:22:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25383#issuecomment-1157656946",
@@ -359,7 +363,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Pushed. Ready to go.",
       "created_at" : "2022-06-16T13:57:25Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25383#issuecomment-1157692888",
@@ -416,19 +420,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Any reason to keep this check? If yes, maybe rename `last_client` to `highest_client`?",
-      "commit_id" : "bda8ebe608e6572eaaf40cd28dab6954241c9b0d",
+      "commit_id" : "c318211ddd48d44dd81dded553afeee3bc41c89e",
       "created_at" : "2022-06-16T14:25:31Z",
       "diff_hunk" : "@@ -909,7 +909,7 @@ DBErrors WalletBatch::LoadWallet(CWallet* pwallet)\n     if (wss.fIsEncrypted && (last_client == 40000 || last_client == 50000))\n         return DBErrors::NEED_REWRITE;\n \n-    if (last_client < CLIENT_VERSION) // Update\n+    if (!has_last_client || last_client < CLIENT_VERSION) // Update",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25383#discussion_r899144938",
       "id" : 899144938,
-      "line" : 910,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5841l9zq",
       "original_commit_id" : "80400e9bbe9e7af72acab142a2327511e8b0d036",
       "original_line" : 910,
       "original_position" : 14,
       "original_start_line" : null,
       "path" : "src/wallet/walletdb.cpp",
-      "position" : 18,
+      "position" : null,
       "pull_request_review_id" : 1009133019,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25383",
       "reactions" : {
@@ -446,6 +450,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-16T14:25:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/899144938",
       "user" : {
@@ -483,7 +488,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "unrelated: Any reason for the `> 0` check? If the minimum version needed to read the wallet is `0`, it should probably be printed as-is?",
-      "commit_id" : "bda8ebe608e6572eaaf40cd28dab6954241c9b0d",
+      "commit_id" : "c318211ddd48d44dd81dded553afeee3bc41c89e",
       "created_at" : "2022-06-16T14:30:05Z",
       "diff_hunk" : "@@ -885,7 +885,7 @@ DBErrors WalletBatch::LoadWallet(CWallet* pwallet)\n \n     // Last client version to open this wallet, was previously the file version number\n     int last_client = CLIENT_VERSION;\n-    m_batch->Read(DBKeys::VERSION, last_client);\n+    bool has_last_client = m_batch->Read(DBKeys::VERSION, last_client);\n \n     int wallet_version = pwallet->GetVersion();\n     pwallet->WalletLogPrintf(\"Wallet File Version = %d\\n\", wallet_version > 0 ? wallet_version : last_client);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25383#discussion_r899149943",
@@ -513,6 +518,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-16T14:30:05Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/899149943",
       "user" : {
@@ -548,22 +554,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/899188122"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Any reason to keep this check? \r\n\r\nThe purpose of this process is store (first condition) or update (second condition) the version of the last client who opened the wallet db. Plus, we don't want to write to db if the value is already there.\r\n\r\n> maybe rename last_client to highest_client?\r\n\r\nhmm, I don't think that `highest_client` represents what this variable really is. I mean, the comment that is above the variable declaration is already saying \"// Last client version to open this wallet, was previously the file version number\".\r\nWhich doesn't necessarily need to be the \"highest\" version.\r\n\r\nSo, I think that the name is fine. Maybe could change it to `last_client_version` but.. not sure, with the existent comment we should be fine.",
-      "commit_id" : "bda8ebe608e6572eaaf40cd28dab6954241c9b0d",
+      "commit_id" : "c318211ddd48d44dd81dded553afeee3bc41c89e",
       "created_at" : "2022-06-16T15:06:10Z",
       "diff_hunk" : "@@ -909,7 +909,7 @@ DBErrors WalletBatch::LoadWallet(CWallet* pwallet)\n     if (wss.fIsEncrypted && (last_client == 40000 || last_client == 50000))\n         return DBErrors::NEED_REWRITE;\n \n-    if (last_client < CLIENT_VERSION) // Update\n+    if (!has_last_client || last_client < CLIENT_VERSION) // Update",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25383#discussion_r899188122",
       "id" : 899188122,
       "in_reply_to_id" : 899144938,
-      "line" : 910,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5841mIWa",
       "original_commit_id" : "80400e9bbe9e7af72acab142a2327511e8b0d036",
       "original_line" : 910,
       "original_position" : 14,
       "original_start_line" : null,
       "path" : "src/wallet/walletdb.cpp",
-      "position" : 18,
+      "position" : null,
       "pull_request_review_id" : 1009194768,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25383",
       "reactions" : {
@@ -581,6 +587,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-16T15:18:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/899188122",
       "user" : {
@@ -605,7 +612,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24914](https://github.com/bitcoin/bitcoin/pull/24914) (wallet: Load database records in a particular order by achow101)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-06-16T15:12:49Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25383#issuecomment-1157777657",
@@ -625,7 +632,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1157777657/reactions"
       },
-      "updated_at" : "2022-06-16T15:12:49Z",
+      "updated_at" : "2022-06-29T16:03:05Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1157777657",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -660,9 +667,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/899195552"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "yeah, that doesn't make sense. Even `0.4.0` wallet version was `40000`.",
-      "commit_id" : "bda8ebe608e6572eaaf40cd28dab6954241c9b0d",
+      "commit_id" : "c318211ddd48d44dd81dded553afeee3bc41c89e",
       "created_at" : "2022-06-16T15:12:53Z",
       "diff_hunk" : "@@ -885,7 +885,7 @@ DBErrors WalletBatch::LoadWallet(CWallet* pwallet)\n \n     // Last client version to open this wallet, was previously the file version number\n     int last_client = CLIENT_VERSION;\n-    m_batch->Read(DBKeys::VERSION, last_client);\n+    bool has_last_client = m_batch->Read(DBKeys::VERSION, last_client);\n \n     int wallet_version = pwallet->GetVersion();\n     pwallet->WalletLogPrintf(\"Wallet File Version = %d\\n\", wallet_version > 0 ? wallet_version : last_client);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25383#discussion_r899195552",
@@ -693,6 +700,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-16T15:12:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/899195552",
       "user" : {
@@ -717,7 +725,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks for the feedback!\r\n\r\nSquashed https://github.com/bitcoin/bitcoin/pull/25383#discussion_r899149943 inside bda8ebe.\r\n\r\nNow we will log both versions; the wallet version and the version of the last client who opened the db.",
       "created_at" : "2022-06-16T15:24:30Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25383#issuecomment-1157791927",
@@ -774,20 +782,20 @@
       },
       "author_association" : "MEMBER",
       "body" : "Yeah, the comment seems wrong as well. If you open with Bitcoin Core 23.0, it will write the 23.0 CLIENT_VERSION. If you then open with 22.0, it will not update because `last_client < CLIENT_VERSION` evaluates to false?",
-      "commit_id" : "bda8ebe608e6572eaaf40cd28dab6954241c9b0d",
+      "commit_id" : "c318211ddd48d44dd81dded553afeee3bc41c89e",
       "created_at" : "2022-06-16T15:26:34Z",
       "diff_hunk" : "@@ -909,7 +909,7 @@ DBErrors WalletBatch::LoadWallet(CWallet* pwallet)\n     if (wss.fIsEncrypted && (last_client == 40000 || last_client == 50000))\n         return DBErrors::NEED_REWRITE;\n \n-    if (last_client < CLIENT_VERSION) // Update\n+    if (!has_last_client || last_client < CLIENT_VERSION) // Update",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25383#discussion_r899209961",
       "id" : 899209961,
       "in_reply_to_id" : 899144938,
-      "line" : 910,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5841mNrp",
       "original_commit_id" : "80400e9bbe9e7af72acab142a2327511e8b0d036",
       "original_line" : 910,
       "original_position" : 14,
       "original_start_line" : null,
       "path" : "src/wallet/walletdb.cpp",
-      "position" : 18,
+      "position" : null,
       "pull_request_review_id" : 1009227555,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25383",
       "reactions" : {
@@ -805,6 +813,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-16T15:26:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/899209961",
       "user" : {
@@ -840,7 +849,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/899399988"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "oh yeah, that is also wrong. Updating.. :)",
       "commit_id" : "c318211ddd48d44dd81dded553afeee3bc41c89e",
       "created_at" : "2022-06-16T18:21:49Z",
@@ -873,6 +882,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-16T18:21:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/899399988",
       "user" : {
@@ -941,6 +951,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-16T18:23:09Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/899400970",
       "user" : {
@@ -1009,6 +1020,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-16T18:32:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/899408127",
       "user" : {
@@ -1044,7 +1056,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/899412447"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Hmm, I was going into the opposite direction actually: update the client version value if it's different than the new version. So we always know (and can log) which soft version opened the wallet db last (something like this https://github.com/bitcoin/bitcoin/pull/25383/commits/c318211ddd48d44dd81dded553afeee3bc41c89e).\r\n\r\nWhich \"should\" be helpful to debug issues.",
       "commit_id" : "c318211ddd48d44dd81dded553afeee3bc41c89e",
       "created_at" : "2022-06-16T18:38:26Z",
@@ -1077,6 +1089,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-16T18:39:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/899412447",
       "user" : {
@@ -1145,6 +1158,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-16T18:55:22Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/899425649",
       "user" : {
@@ -1256,6 +1270,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-18T22:12:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/901021309",
       "user" : {
@@ -1282,74 +1297,6 @@
    {
       "_links" : {
          "html" : {
-            "href" : "https://github.com/bitcoin/bitcoin/pull/25383#discussion_r901022411"
-         },
-         "pull_request" : {
-            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25383"
-         },
-         "self" : {
-            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/901022411"
-         }
-      },
-      "author_association" : "NONE",
-      "body" : "ÙÙÙ Ø§ÙÙÙ Ø¨Ø³Ø­Ø¨ Ø§ÙØ§ÙÙØ§Ù",
-      "commit_id" : "c318211ddd48d44dd81dded553afeee3bc41c89e",
-      "created_at" : "2022-06-18T22:31:37Z",
-      "diff_hunk" : "@@ -909,7 +907,7 @@ DBErrors WalletBatch::LoadWallet(CWallet* pwallet)\n     if (wss.fIsEncrypted && (last_client == 40000 || last_client == 50000))\n         return DBErrors::NEED_REWRITE;\n \n-    if (last_client < CLIENT_VERSION) // Update\n+    if (!has_last_client || last_client != CLIENT_VERSION) // Update",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25383#discussion_r901022411",
-      "id" : 901022411,
-      "in_reply_to_id" : 901021309,
-      "line" : 910,
-      "node_id" : "PRRC_kwDOABII5841tILL",
-      "original_commit_id" : "c318211ddd48d44dd81dded553afeee3bc41c89e",
-      "original_line" : 910,
-      "original_position" : 21,
-      "original_start_line" : null,
-      "path" : "src/wallet/walletdb.cpp",
-      "position" : 21,
-      "pull_request_review_id" : 1011455966,
-      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25383",
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/901022411/reactions"
-      },
-      "side" : "RIGHT",
-      "start_line" : null,
-      "start_side" : null,
-      "updated_at" : "2022-06-18T22:31:37Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/901022411",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/106447746?v=4",
-         "events_url" : "https://api.github.com/users/NawaraTafa/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/NawaraTafa/followers",
-         "following_url" : "https://api.github.com/users/NawaraTafa/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/NawaraTafa/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/NawaraTafa",
-         "id" : 106447746,
-         "login" : "NawaraTafa",
-         "node_id" : "U_kgDOBlhDgg",
-         "organizations_url" : "https://api.github.com/users/NawaraTafa/orgs",
-         "received_events_url" : "https://api.github.com/users/NawaraTafa/received_events",
-         "repos_url" : "https://api.github.com/users/NawaraTafa/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/NawaraTafa/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/NawaraTafa/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/NawaraTafa"
-      }
-   },
-   {
-      "_links" : {
-         "html" : {
             "href" : "https://github.com/bitcoin/bitcoin/pull/25383#discussion_r901106923"
          },
          "pull_request" : {
@@ -1359,7 +1306,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/901106923"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Looks like this is changing the semantics of \"last client\". It used to be the newest version ever used, but now it is the most recent version used, newer or not. I'm not sure the latter is preferable\r\n\r\nyeah, not sure if you have checked it already but we had the discussion above: https://github.com/bitcoin/bitcoin/pull/25383#discussion_r899188122.\r\n\r\nComments there are very welcome, I'm fine either way.\r\nI moved forward with what seemed to be the desired workflow for this variable (based on the code comments). At the end, as achow101 said, this variable is never actually used for anything important except for the 0.4 and 0.5 encryption fixes (on which, this will still be fine).",
       "commit_id" : "c318211ddd48d44dd81dded553afeee3bc41c89e",
       "created_at" : "2022-06-19T13:27:29Z",
@@ -1392,6 +1339,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-19T13:27:29Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/901106923",
       "user" : {
@@ -1460,6 +1408,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-20T19:45:50Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/901962399",
       "user" : {

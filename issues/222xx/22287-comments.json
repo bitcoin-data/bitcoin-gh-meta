@@ -8,6 +8,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDQ4MDc2NQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864480765/reactions"
+      },
       "updated_at" : "2021-06-20T00:29:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864480765",
       "user" : {
@@ -45,24 +57,37 @@
       },
       "author_association" : "MEMBER",
       "body" : "Don't remove the exit here. This is sort of an assert; if you continue it'll invoke fcntl with who knows what behavior.",
-      "commit_id" : "639bfc4b359bd9364829d3abb8e12e16d432471c",
+      "commit_id" : "530bc278b9fab19560f7de51814ded13759e5bd4",
       "created_at" : "2021-06-20T00:35:01Z",
       "diff_hunk" : "@@ -6,8 +6,132 @@\n #include <config/bitcoin-config.h>\n #endif\n \n+#include <cstdarg>\n #include <cstddef>\n #include <cstdint>\n+#include <cstdio>\n+#include <cstdlib>\n+\n+#include <fcntl.h>\n+\n+// See https://stackoverflow.com/a/58472959\n+#ifdef __i386__\n+__asm(\".symver fcntl64,fcntl@GLIBC_2.1\");\n+#elif defined(__amd64__)\n+__asm(\".symver fcntl64,fcntl@GLIBC_2.2.5\");\n+#elif defined(__arm__)\n+__asm(\".symver fcntl64,fcntl@GLIBC_2.4\");\n+#elif defined(__aarch64__)\n+__asm(\".symver fcntl64,fcntl@GLIBC_2.17\");\n+#elif defined(__powerpc64__)\n+#  ifdef WORDS_BIGENDIAN\n+__asm(\".symver fcntl64,fcntl@GLIBC_2.3\");\n+#  else\n+__asm(\".symver fcntl64,fcntl@GLIBC_2.17\");\n+#  endif\n+#elif defined(__riscv)\n+__asm(\".symver fcntl64,fcntl@GLIBC_2.27\");\n+#endif\n+extern \"C\" int __wrap_fcntl64(int fd, int cmd, ...)\n+{\n+    int result;\n+    va_list va;\n+    va_start(va, cmd);\n+\n+    switch (cmd) {\n+    //\n+    // File descriptor flags\n+    //\n+    case F_GETFD: goto takes_void;\n+    case F_SETFD: goto takes_int;\n+\n+    // File status flags\n+    //\n+    case F_GETFL: goto takes_void;\n+    case F_SETFL: goto takes_int;\n+\n+    // File byte range locking, not held across fork() or clone()\n+    //\n+    case F_SETLK: goto takes_flock_ptr_INCOMPATIBLE;\n+    case F_SETLKW: goto takes_flock_ptr_INCOMPATIBLE;\n+    case F_GETLK: goto takes_flock_ptr_INCOMPATIBLE;\n+\n+    // File byte range locking, held across fork()/clone() -- Not POSIX\n+    //\n+    case F_OFD_SETLK: goto takes_flock_ptr_INCOMPATIBLE;\n+    case F_OFD_SETLKW: goto takes_flock_ptr_INCOMPATIBLE;\n+    case F_OFD_GETLK: goto takes_flock_ptr_INCOMPATIBLE;\n+\n+    // Managing I/O availability signals\n+    //\n+    case F_GETOWN: goto takes_void;\n+    case F_SETOWN: goto takes_int;\n+    case F_GETOWN_EX: goto takes_f_owner_ex_ptr;\n+    case F_SETOWN_EX: goto takes_f_owner_ex_ptr;\n+    case F_GETSIG: goto takes_void;\n+    case F_SETSIG: goto takes_int;\n+\n+    // Notified when process tries to open or truncate file (Linux 2.4+)\n+    //\n+    case F_SETLEASE: goto takes_int;\n+    case F_GETLEASE: goto takes_void;\n+\n+    // File and directory change notification\n+    //\n+    case F_NOTIFY: goto takes_int;\n+\n+    // Changing pipe capacity (Linux 2.6.35+)\n+    //\n+    case F_SETPIPE_SZ: goto takes_int;\n+    case F_GETPIPE_SZ: goto takes_void;\n+\n+    // File sealing (Linux 3.17+)\n+    //\n+    case F_ADD_SEALS: goto takes_int;\n+    case F_GET_SEALS: goto takes_void;\n+\n+    // File read/write hints (Linux 4.13+)\n+    //\n+    case F_GET_RW_HINT: goto takes_uint64_t_ptr;\n+    case F_SET_RW_HINT: goto takes_uint64_t_ptr;\n+    case F_GET_FILE_RW_HINT: goto takes_uint64_t_ptr;\n+    case F_SET_FILE_RW_HINT: goto takes_uint64_t_ptr;\n+\n+    default:\n+        fprintf(stderr, \"fcntl64 workaround got unknown F_XXX constant\");",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22287#discussion_r654857182",
       "id" : 654857182,
-      "line" : 101,
+      "line" : null,
       "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY1NDg1NzE4Mg==",
       "original_commit_id" : "639bfc4b359bd9364829d3abb8e12e16d432471c",
       "original_line" : 101,
       "original_position" : 96,
       "original_start_line" : null,
       "path" : "src/compat/glibc_compat.cpp",
-      "position" : 96,
+      "position" : null,
       "pull_request_review_id" : 687858226,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/22287",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/654857182/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-06-20T00:35:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/654857182",
       "user" : {
@@ -95,6 +120,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDUwMDY5NQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864500695/reactions"
+      },
       "updated_at" : "2021-06-20T05:11:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864500695",
       "user" : {
@@ -127,6 +164,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDUwMTI1Ng==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864501256/reactions"
+      },
       "updated_at" : "2021-06-20T05:18:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864501256",
       "user" : {
@@ -159,6 +208,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDUwMTc1Nw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864501757/reactions"
+      },
       "updated_at" : "2021-06-20T05:25:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864501757",
       "user" : {
@@ -191,6 +252,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDUwMjk4Mg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864502982/reactions"
+      },
       "updated_at" : "2021-06-20T05:42:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864502982",
       "user" : {
@@ -223,6 +296,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDUwNDMwNw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864504307/reactions"
+      },
       "updated_at" : "2021-06-20T05:58:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864504307",
       "user" : {
@@ -255,6 +340,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDUwNDQyNA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864504424/reactions"
+      },
       "updated_at" : "2021-06-20T06:00:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864504424",
       "user" : {
@@ -287,6 +384,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDUwNDUzMg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864504532/reactions"
+      },
       "updated_at" : "2021-06-20T06:02:29Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864504532",
       "user" : {
@@ -319,6 +428,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDUwNDg3OA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864504878/reactions"
+      },
       "updated_at" : "2021-06-20T06:05:27Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864504878",
       "user" : {
@@ -351,6 +472,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDUwNDk1NA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864504954/reactions"
+      },
       "updated_at" : "2021-06-20T06:06:21Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864504954",
       "user" : {
@@ -383,6 +516,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDUwNTc5Mw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864505793/reactions"
+      },
       "updated_at" : "2021-06-20T06:16:22Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864505793",
       "user" : {
@@ -415,6 +560,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDUwNzE5NQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864507195/reactions"
+      },
       "updated_at" : "2021-06-20T06:34:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864507195",
       "user" : {
@@ -447,6 +604,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDUwNzMyMQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864507321/reactions"
+      },
       "updated_at" : "2021-06-20T06:36:29Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864507321",
       "user" : {
@@ -479,6 +648,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDU0OTY5MA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864549690/reactions"
+      },
       "updated_at" : "2021-06-20T12:50:37Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864549690",
       "user" : {
@@ -511,6 +692,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDU1NzU0Ng==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864557546/reactions"
+      },
       "updated_at" : "2021-06-20T13:44:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864557546",
       "user" : {
@@ -543,6 +736,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDc0MTMwMw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864741303/reactions"
+      },
       "updated_at" : "2021-06-21T05:33:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864741303",
       "user" : {
@@ -575,6 +780,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDg4NTQ5NA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864885494/reactions"
+      },
       "updated_at" : "2021-06-21T09:32:15Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864885494",
       "user" : {
@@ -607,6 +824,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDg4NTgyNw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864885827/reactions"
+      },
       "updated_at" : "2021-06-21T14:38:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864885827",
       "user" : {
@@ -639,6 +868,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NDg4ODIzOQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864888239/reactions"
+      },
       "updated_at" : "2021-06-21T09:36:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/864888239",
       "user" : {
@@ -671,6 +912,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NTA4NzY1Ng==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/865087656/reactions"
+      },
       "updated_at" : "2021-06-21T14:40:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/865087656",
       "user" : {
@@ -695,7 +948,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--9cd9c72976c961c55c7acef8f6ba82cd-->\n### Guix builds\n\n| File | commit 6a67366fdc3e1d383fe7cbfa209d7e85f0d96638<br>(master) | commit b5b94f1336c4a8019cfb6709e50e423def1bf5fe<br>(master and this pull) |\n|--|--|--|\n| SKIPATTEST.TAG | [`e3b0c44298fc1c14...`](https://drahtbot.space/guix/bitcoin/bitcoin/6a67366fdc3e1d383fe7cbfa209d7e85f0d96638/SKIPATTEST.TAG) | [`e3b0c44298fc1c14...`](https://drahtbot.space/guix/bitcoin/bitcoin/b5b94f1336c4a8019cfb6709e50e423def1bf5fe/SKIPATTEST.TAG) |\n| *.tar.gz | [`ed3096aa949f1b56...`](https://drahtbot.space/guix/bitcoin/bitcoin/6a67366fdc3e1d383fe7cbfa209d7e85f0d96638/bitcoin-6a67366fdc3e.tar.gz) | [`4a313dce87f47a84...`](https://drahtbot.space/guix/bitcoin/bitcoin/b5b94f1336c4a8019cfb6709e50e423def1bf5fe/bitcoin-b5b94f1336c4.tar.gz) |\n| guix_build.log | [`7920a375a22476b1...`](https://drahtbot.space/guix/bitcoin/bitcoin/6a67366fdc3e1d383fe7cbfa209d7e85f0d96638/guix_build.log) | [`7d5cc645c0a46904...`](https://drahtbot.space/guix/bitcoin/bitcoin/b5b94f1336c4a8019cfb6709e50e423def1bf5fe/guix_build.log) |\n| guix_build.log.diff |  | [`ec96553de4e951ec...`](https://drahtbot.space/guix/bitcoin/bitcoin/b5b94f1336c4a8019cfb6709e50e423def1bf5fe/guix_build.log.diff) |\n\n",
       "created_at" : "2021-06-21T18:37:16Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22287#issuecomment-865257452",
@@ -703,6 +956,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NTI1NzQ1Mg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/865257452/reactions"
+      },
       "updated_at" : "2021-06-21T18:37:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/865257452",
       "user" : {
@@ -735,6 +1000,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NTQ1MjAzNw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/865452037/reactions"
+      },
       "updated_at" : "2021-06-22T01:26:09Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/865452037",
       "user" : {
@@ -759,7 +1036,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--a722867cd34abeea1fadc8d60700f111-->\n### Gitian builds\n\n| File | commit 398dd678338971d2189934713c83c184742f293f<br>(master) | commit af38111ffb11e63339214ee1bfeffcc491d0c975<br>(master and this pull) |\n|--|--|--|\n| *-osx-unsigned.dmg | [`92e2d116b58d4214...`](https://drahtbot.space/gitian/bitcoin/bitcoin/398dd678338971d2189934713c83c184742f293f/bitcoin-398dd6783389-osx-unsigned.dmg) | [`84609ca486e37151...`](https://drahtbot.space/gitian/bitcoin/bitcoin/af38111ffb11e63339214ee1bfeffcc491d0c975/bitcoin-af38111ffb11-osx-unsigned.dmg) |\n| *-osx64.tar.gz | [`02578406a266bd45...`](https://drahtbot.space/gitian/bitcoin/bitcoin/398dd678338971d2189934713c83c184742f293f/bitcoin-398dd6783389-osx64.tar.gz) | [`edf43cc82a17ce60...`](https://drahtbot.space/gitian/bitcoin/bitcoin/af38111ffb11e63339214ee1bfeffcc491d0c975/bitcoin-af38111ffb11-osx64.tar.gz) |\n| *.tar.gz | [`b16fc2a40cba5b8c...`](https://drahtbot.space/gitian/bitcoin/bitcoin/398dd678338971d2189934713c83c184742f293f/bitcoin-398dd6783389.tar.gz) | [`a154737ea6fb8a77...`](https://drahtbot.space/gitian/bitcoin/bitcoin/af38111ffb11e63339214ee1bfeffcc491d0c975/bitcoin-af38111ffb11.tar.gz) |\n| bitcoin-core-osx-22-res.yml | [`f2972b31a41adb54...`](https://drahtbot.space/gitian/bitcoin/bitcoin/398dd678338971d2189934713c83c184742f293f/bitcoin-core-osx-22-res.yml) | [`09a3a0c97a691317...`](https://drahtbot.space/gitian/bitcoin/bitcoin/af38111ffb11e63339214ee1bfeffcc491d0c975/bitcoin-core-osx-22-res.yml) |\n| linux-build.log | [`6c8e74cad31e39a3...`](https://drahtbot.space/gitian/bitcoin/bitcoin/398dd678338971d2189934713c83c184742f293f/linux-build.log) | [`ed443242cb7063fd...`](https://drahtbot.space/gitian/bitcoin/bitcoin/af38111ffb11e63339214ee1bfeffcc491d0c975/linux-build.log) |\n| osx-build.log | [`bb8f3e7c16328172...`](https://drahtbot.space/gitian/bitcoin/bitcoin/398dd678338971d2189934713c83c184742f293f/osx-build.log) | [`b83096dfc1d68087...`](https://drahtbot.space/gitian/bitcoin/bitcoin/af38111ffb11e63339214ee1bfeffcc491d0c975/osx-build.log) |\n| win-build.log | [`2eea226b75083143...`](https://drahtbot.space/gitian/bitcoin/bitcoin/398dd678338971d2189934713c83c184742f293f/win-build.log) | [`c97c905ce7e176db...`](https://drahtbot.space/gitian/bitcoin/bitcoin/af38111ffb11e63339214ee1bfeffcc491d0c975/win-build.log) |\n| bitcoin-core-osx-22-res.yml.diff |  | [`65aeb4d4d464eee3...`](https://drahtbot.space/gitian/bitcoin/bitcoin/af38111ffb11e63339214ee1bfeffcc491d0c975/bitcoin-core-osx-22-res.yml.diff) |\n| linux-build.log.diff |  | [`b140ad14e0f0c7b5...`](https://drahtbot.space/gitian/bitcoin/bitcoin/af38111ffb11e63339214ee1bfeffcc491d0c975/linux-build.log.diff) |\n| osx-build.log.diff |  | [`1d12c97443fcdbee...`](https://drahtbot.space/gitian/bitcoin/bitcoin/af38111ffb11e63339214ee1bfeffcc491d0c975/osx-build.log.diff) |\n| win-build.log.diff |  | [`82e48d93bb7e9584...`](https://drahtbot.space/gitian/bitcoin/bitcoin/af38111ffb11e63339214ee1bfeffcc491d0c975/win-build.log.diff) |\n\n",
       "created_at" : "2021-06-22T03:54:04Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22287#issuecomment-865507350",
@@ -767,6 +1044,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg2NTUwNzM1MA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/865507350/reactions"
+      },
       "updated_at" : "2021-06-22T03:54:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/865507350",
       "user" : {
@@ -799,6 +1088,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22287",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg3MjA2MjExMA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/872062110/reactions"
+      },
       "updated_at" : "2021-07-01T08:59:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/872062110",
       "user" : {

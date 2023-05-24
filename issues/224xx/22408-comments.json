@@ -8,6 +8,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22408",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg3NDg2NzE0OA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/874867148/reactions"
+      },
       "updated_at" : "2021-07-07T04:46:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/874867148",
       "user" : {
@@ -32,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks for the reviews so far! ð \r\n\r\n@rajarshimaitra:\r\n\r\n> * Is such invalid transaction handling and intended behavior is same for both `p2p` and `mempool validation`? If not we might wanna have some checks there too??\r\n\r\nThe routine throwing `bad-txns-prevout-null` (-> `CheckTransaction()`) is called on two places in the codebase: block validation (`CheckBlock(...)`) and mempool acceptance (`MemPoolAccept::PreChecks(...)`). Both are covered by the tests in this PR: block validation in `feature_block.py` and mempool acceptance in `p2p_invalid_txs.py` (tx sent to peer, which tries to add it to its mempool) and `mempool_accept.py` (tx locally added to mempool).\r\n\r\n> * What's the purpose of `PrevoutNullInput` and other classes in `invalid_txs.py` in general? It seems they are not much used anywhere?\r\n\r\n`invalid_txs.py` provides a general template framework for invalid txs. It is currently used in the tests `feature_block.py` and `p2p_invalid_tx.py` (see also first commit message). All classes inheriting of `BadTxTemplate` can be iterated with the following loop: `for TxTemplate in invalid_txs.iter_all_templates():`. Also found this a bit confusing that the classes are never directly referenced anywhere :)\r\n\r\n\r\n> * It seems here we are having a previously valid tx, and then appending an invalid input [...]\r\n>   So maybe it can be used there instead of doing it via hand (adding a reason to have the class)? Or if its just that easy to append      an invalid input, does it make sense to have the class?\r\n\r\nGood point, I think reusing the invalid_tx templates in `mempool_accept.py` would be worth a separate PR.\r\n\r\n> * As you are touching `invalid_txs.py`, maybe regarding [test: refactor: use `script_util` helpers for creating P2{PKH,SH,WPKH,WSH} scriptsÂ #22363 (comment)](https://github.com/bitcoin/bitcoin/pull/22363#discussion_r663990893), it makes sense to apply same changes here too?\r\n>   https://github.com/theStack/bitcoin/blob/1f449586a9e39bc4fb53cb5c7a31362e47aea19b/test/functional/data/invalid_txs.py#L233\r\n>   It probably makes more sense to change it in [test: refactor: use `script_util` helpers for creating P2{PKH,SH,WPKH,WSH} scriptsÂ #22363](https://github.com/bitcoin/bitcoin/pull/22363) , just wanna note it, as I i missed it in that review.\r\n> \r\n\r\nSince I am quite confident that #22363 gets merged (has already several Concept ACKs), I don't think there is a need to repeat its style changes in `invalid_txs.py` in this PR too.\r\n\r\n",
       "created_at" : "2021-07-07T14:24:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22408#issuecomment-875649499",
@@ -40,6 +52,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22408",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg3NTY0OTQ5OQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/875649499/reactions"
+      },
       "updated_at" : "2021-07-07T14:29:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/875649499",
       "user" : {
@@ -72,6 +96,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22408",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg3NjI4MjY2NQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/876282665/reactions"
+      },
       "updated_at" : "2021-07-08T09:25:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/876282665",
       "user" : {
@@ -96,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@rajarshimaitra:\r\n\r\n> > Since I am quite confident that #22363 gets merged (has already several Concept ACKs), I don't think there is a need to repeat its style changes in invalid_txs.py in this PR too.\r\n> \r\n> I think the change I pointed here is not present in #22363, The `basic_p2sh` was changed to have a use `CScript` directly, but this line wasn't. https://github.com/theStack/bitcoin/blob/1f449586a9e39bc4fb53cb5c7a31362e47aea19b/test/functional/data/invalid_txs.py#L233\r\n> Otherwise, the same file will contain different formatting of using `CScript`.\r\n> I probably should have made the comment in #22363 instead of here.\r\n\r\nIn the latest version in #22363, all references in `invalid_txs.py` to `sc` were eliminated [after your suggestion](https://github.com/bitcoin/bitcoin/pull/22363#discussion_r663990893), see commit https://github.com/bitcoin/bitcoin/pull/22363/commits/285a65ccfde2e811cfe01e916b998c02ee534a97, e.g. https://github.com/bitcoin/bitcoin/commit/285a65ccfde2e811cfe01e916b998c02ee534a97#diff-d390e9e12bfa34a462fdff9f1894d7dc3edb45c26cf55df486d92864a3052fafR224-R226 :)",
       "created_at" : "2021-07-08T17:00:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/22408#issuecomment-876598818",
@@ -104,6 +140,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22408",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg3NjU5ODgxOA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/876598818/reactions"
+      },
       "updated_at" : "2021-07-08T17:00:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/876598818",
       "user" : {
@@ -136,6 +184,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22408",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg3NjYyNDI0MA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/876624240/reactions"
+      },
       "updated_at" : "2021-07-08T17:52:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/876624240",
       "user" : {

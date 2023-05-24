@@ -9,15 +9,15 @@
       "node_id" : "IC_kwDOABII5846f-nL",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
-         "eyes" : 0,
+         "eyes" : 1,
          "heart" : 0,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/981461451/reactions"
       },
       "updated_at" : "2021-11-29T09:46:29Z",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "For now, a workaround I found is to patch `CZMQNotificationInterface::BlockDisconnected` before building Bitcoin Core and comment out the loop that fires `NotifyTransaction()` like so:\r\n\r\n```\r\nvoid CZMQNotificationInterface::BlockDisconnected(const std::shared_ptr<const CBlock>& pblock, const CBlockIndex* pindexDisconnected)\r\n{\r\n/* ----- this part is deleted - causes Core to *not* publish confirmed transactions\r\n    for (const CTransactionRef& ptx : pblock->vtx) {\r\n        const CTransaction& tx = *ptx;\r\n        TryForEachAndRemoveFailed(notifiers, [&tx](CZMQAbstractNotifier* notifier) {\r\n            return notifier->NotifyTransaction(tx);\r\n        });\r\n    }\r\n--------- */\r\n    // Next we notify BlockDisconnect listeners for *all* blocks\r\n    TryForEachAndRemoveFailed(notifiers, [pindexDisconnected](CZMQAbstractNotifier* notifier) {\r\n        return notifier->NotifyBlockDisconnect(pindexDisconnected);\r\n    });\r\n}\r\n```\r\n\r\nFor reading only confirmed transactions (and throwing away the unconfirmed ones from the mempool), I believe a similar patch can be made to `CZMQNotificationInterface::BlockDisconnected` or `CZMQNotificationInterface::TransactionAddedToMempool`, but I have not tested this. But the procedure is similar.\r\n\r\nOf course, I know that such a modification cannot be merged, I'm just leaving this here for anyone else who finds themselves in a similar situation in the future.",
       "created_at" : "2021-11-29T10:54:55Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23624#issuecomment-981521333",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "> Have you seen #7753?\r\n\r\nAccording to the description of this PR:\r\n\r\n_Add notifications when transactions enter or leave the mempool._\r\n_It also makes it possible to keep statistics on why transactions disappear from the mempool._\r\n\r\nIsn't this already possible with https://github.com/bitcoin/bitcoin/pull/19572 ?\r\n",
       "created_at" : "2021-11-29T15:19:53Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23624#issuecomment-981735180",
@@ -199,24 +199,24 @@
       "updated_at" : "2021-11-29T15:19:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/981735180",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
-         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/prayank23/followers",
-         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/prayank23",
-         "id" : 13405205,
-         "login" : "prayank23",
-         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
-         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
-         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
-         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/prayank23"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This topic needs documentation and a rebase with #23471 merged.",
       "created_at" : "2021-12-14T13:29:46Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23624#issuecomment-993540308",
@@ -396,7 +396,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2021-12-26T20:14:58Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23624#issuecomment-1001237357",
@@ -440,7 +440,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#17783](https://github.com/bitcoin/bitcoin/pull/17783) (util: Fix -norpcwhitelist, -norpcallowip, and similar corner case behavior by ryanofsky)\n* [#17581](https://github.com/bitcoin/bitcoin/pull/17581) (refactor: Remove settings merge reverse precedence code by ryanofsky)\n* [#17580](https://github.com/bitcoin/bitcoin/pull/17580) (refactor: Add ALLOW_LIST flags and enforce usage in CheckArgFlags by ryanofsky)\n* [#17493](https://github.com/bitcoin/bitcoin/pull/17493) (util: Forbid ambiguous multiple assignments in config file by ryanofsky)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2021-12-31T09:24:15Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23624#issuecomment-1003320844",
@@ -484,7 +484,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I haven't gotten around to pick this up again and will close it for now. It has a few Concept ACKs so might be worth adding an up-for-grabs label.",
       "created_at" : "2022-10-18T10:37:00Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23624#issuecomment-1282180731",

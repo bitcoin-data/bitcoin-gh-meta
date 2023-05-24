@@ -13,7 +13,7 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "nit:\r\n```suggestion\r\n        # TODO: use helper create_confirmed_utxos as soon as it uses MiniWallet\r\n```",
-      "commit_id" : "b33bfe3335770adcc805b61249c55d5c51d1dee0",
+      "commit_id" : "b167e536d0f5ae4c86d0c3da4a63337f9f0448ba",
       "created_at" : "2022-04-13T16:21:45Z",
       "diff_hunk" : "@@ -131,7 +134,11 @@ def run_test(self):\n         self.relayfee = self.nodes[0].getnetworkinfo()['relayfee']\n \n         utxo_count = 90\n-        utxos = create_confirmed_utxos(self, self.relayfee, self.nodes[0], utxo_count)\n+        # TODO: use helper create_confirmed_utxos as soon at it uses MiniWallet",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24839#discussion_r849671970",
@@ -43,6 +43,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-13T18:44:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/849671970",
       "user" : {
@@ -78,9 +79,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/849953337"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks for your review, fixed.",
-      "commit_id" : "b33bfe3335770adcc805b61249c55d5c51d1dee0",
+      "commit_id" : "b167e536d0f5ae4c86d0c3da4a63337f9f0448ba",
       "created_at" : "2022-04-13T22:44:20Z",
       "diff_hunk" : "@@ -131,7 +134,11 @@ def run_test(self):\n         self.relayfee = self.nodes[0].getnetworkinfo()['relayfee']\n \n         utxo_count = 90\n-        utxos = create_confirmed_utxos(self, self.relayfee, self.nodes[0], utxo_count)\n+        # TODO: use helper create_confirmed_utxos as soon at it uses MiniWallet",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24839#discussion_r849953337",
@@ -111,6 +112,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-13T22:44:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/849953337",
       "user" : {
@@ -148,19 +150,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "I am not a fan of putting TODO in the source code. If (for any reason) they become stale, they will cause more damage/confusion than helping.\r\n\r\nIt would be better as an issue, so that it can be tracked easier as the code evolves. Also it can be discussed easier and discarded trivially if needed without touching the code.\r\n\r\nMoreover, it seems that `send_large_txs` can be replaced by `create_lots_of_big_transactions`?\r\nSame for `mine_large_block`?",
-      "commit_id" : "b33bfe3335770adcc805b61249c55d5c51d1dee0",
+      "commit_id" : "b167e536d0f5ae4c86d0c3da4a63337f9f0448ba",
       "created_at" : "2022-04-15T11:06:38Z",
       "diff_hunk" : "@@ -131,7 +134,11 @@ def run_test(self):\n         self.relayfee = self.nodes[0].getnetworkinfo()['relayfee']\n \n         utxo_count = 90\n-        utxos = create_confirmed_utxos(self, self.relayfee, self.nodes[0], utxo_count)\n+        # TODO: use helper create_confirmed_utxos as soon as it uses MiniWallet",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24839#discussion_r851214685",
       "id" : 851214685,
-      "line" : 137,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584yvIFd",
       "original_commit_id" : "b33bfe3335770adcc805b61249c55d5c51d1dee0",
       "original_line" : 137,
       "original_position" : 53,
       "original_start_line" : null,
       "path" : "test/functional/mining_prioritisetransaction.py",
-      "position" : 53,
+      "position" : null,
       "pull_request_review_id" : 943345497,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24839",
       "reactions" : {
@@ -178,6 +180,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-15T11:07:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851214685",
       "user" : {
@@ -213,7 +216,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851663988"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> It would be better as an issue, so that it can be tracked easier as the code evolves. Also it can be discussed easier and discarded trivially if needed without touching the code.\r\n\r\nI see your point, though I think creating an issue for merely refactoring three lines of code is a bit like taking a sledgehammer to crack a nut (and one also has to think about opening it after the PR is merged which \"triggers\" the TODO). Removed the TODO for now -- replacing `create_confirmed_utxos` (and feature_dbcrash.py) with MiniWallet is one of the next things I'll work on anyways and in the course of that I'll check where it can dedup code.\r\n\r\n> Moreover, it seems that send_large_txs can be replaced by create_lots_of_big_transactions?\r\nSame for mine_large_block?\r\n\r\nGood idea, I added a second refactoring commit doing exactly that. For that to work, I had to generalize `create_lots_of_big_transactions` a bit, in particular the possibility to not pass in any UTXOs (MiniWallet picks one of it's internal UTXOs then in this case). Also it validates the fee now, like it's done in `send_large_txs`, which I think makes a lot of sense.",
       "commit_id" : "b167e536d0f5ae4c86d0c3da4a63337f9f0448ba",
       "created_at" : "2022-04-16T19:38:48Z",
@@ -246,6 +249,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-16T19:38:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851663988",
       "user" : {
@@ -270,7 +274,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Force-pushed with [suggestions from MarcoFalke](https://github.com/bitcoin/bitcoin/pull/24839#discussion_r851214685) taken into account. There is now a second commit which takes use of the brand-new shiny MiniWallet-variant of `create_lots_of_big_transactions` to deduplicate code. This PR affects the functional tests\r\n\r\n- `mining_prioritisetransaction.py` (obviously)\r\n- `mempool_limit.py` (`send_large_txs` is replaced by `create_lots_of_big_transactions`)\r\n- `feature_maxuploadtarget.py` (calls `mine_large_block` where also `create_lots_of_big_transactions` is used to replace part of its function)",
       "created_at" : "2022-04-16T19:46:38Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24839#issuecomment-1100742857",
@@ -369,7 +373,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/886987884"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "MEMBER",
       "body" : "nit: `create_lots_of_big_transactions` is not introduced in this PR, but maybe include \"send\" in the name, to clearly indicate functionality? ",
       "commit_id" : "b167e536d0f5ae4c86d0c3da4a63337f9f0448ba",
       "created_at" : "2022-06-01T16:09:54Z",
@@ -401,6 +405,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-01T16:24:15Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/886987884",
       "user" : {
@@ -436,7 +441,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/894565455"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "tiny nit:\r\nif utxos is not empty, maybe assert that `tx_batch_size >= len(utxos)`.",
       "commit_id" : "b167e536d0f5ae4c86d0c3da4a63337f9f0448ba",
       "created_at" : "2022-06-10T13:59:37Z",
@@ -468,6 +473,7 @@
       "side" : "RIGHT",
       "start_line" : 559,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-06-10T14:31:26Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/894565455",
       "user" : {
@@ -535,6 +541,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-14T07:31:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/896472729",
       "user" : {
@@ -570,7 +577,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/897394751"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Right, I agree that it's not worth it, calling `send_self_transfer_multi` with a subsequent `generate` is simple enough. Opened a follow-up PR: #25374",
       "commit_id" : "b167e536d0f5ae4c86d0c3da4a63337f9f0448ba",
       "created_at" : "2022-06-14T23:17:40Z",
@@ -603,6 +610,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-14T23:17:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/897394751",
       "user" : {

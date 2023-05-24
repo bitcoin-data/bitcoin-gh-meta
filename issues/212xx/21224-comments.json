@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> This PR halts the processing of unrequested transactions in Bitcoin at TX message reception. An unrequested transaction is one defined by which a \"getdata\" message for its specific identifier (either txid or wtxid) has not been previously issued by the node.\r\n\r\nI don't see the point of this? An attacker with valid utxos can generate invalid txs that are costly to reject, and simply announce their txids and wait for a request. That's limited to 5000 txs in a batch (MAX_PEER_TX_ANNOUNCEMENTS), and I think each batch would have at least a 4s window (NONPREF_PEER_TX_DELAY + OVERLOADED_PEER_TX_DELAY). But that seems like it should be enough to keep the CPU busy? Even then, we'll make progress through every other node in between dealing with each tx from the attacker, so this shouldn't cause a denial of service as far as I can see? Presuming the tx's are consensus invalid, the attacker will get given a Misbehaving score for each invalid tx and eventually kicked.\r\n\r\n> It comes with a meaningful delay of running the framework (e.g +4min to run p2p_segwit.py)\r\n\r\nErr nack? :) Maybe better to add PF_RELAY to those tests than slow them down?",
       "created_at" : "2021-02-18T14:48:49Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21224#issuecomment-781395303",
@@ -8,6 +8,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21224",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc4MTM5NTMwMw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/781395303/reactions"
+      },
       "updated_at" : "2021-02-18T14:48:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/781395303",
       "user" : {
@@ -32,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* #21160 (Net/Net processing: Move tx inventory into net_processing by jnewbery)\n* #21148 (Split orphan handling from net_processing into txorphanage by ajtowns)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2021-02-18T14:57:32Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21224#issuecomment-781401545",
@@ -84,6 +96,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21224",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc4MTU0MTcwOA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/781541708/reactions"
+      },
       "updated_at" : "2021-02-18T18:21:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/781541708",
       "user" : {
@@ -116,6 +140,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21224",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc4MTU2NzE1Mg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/781567152/reactions"
+      },
       "updated_at" : "2021-02-18T19:01:38Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/781567152",
       "user" : {
@@ -140,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "If a single tx can take 1s to validate and fail for policy reasons to avoid getting disconnected/banned, then a single peer can generate a backlog of about 1h20m (5000 seconds) of processing, beginning only 2s after getting connected using INV/GETDATA rather than just using TX, so this doesn't seem like a big help?\r\n\r\nI think an attacker could also queue ~50 slow orphan txs, have them all downloaded without revealing anything slow is happening, and then activate them by relaying a good parent for them -- without INV/GETDATA delays only able to prevent them from doing the next round of 50 slows txs. Depending on the scoring mechanism, rotating that sort of spam amongst a few peers might be enough to keep 100% load without much hassle.\r\n\r\nThe way I've been looking at this is that INV/GETDATA (and eventually erlay) is just a way to avoid wasting bandwidth, and that we should be robust to having to validate any random tx that anyone decides to send to us. Avoiding wasting bandwidth only matters for honest peers not attackers, who can presumably find plenty of ways to send us garbage data -- masses of PINGs eg. That seems easier to design for to me -- in particular, I think it might be hard to get txrequest to handle changes in the delay between INV/GETDATA efficiently, which might mean adding DoS vectors rather than removing them.\r\n\r\nAs an alternative approach, if we think a peer is wasting too much time, we could avoid calling `ProcessMessages()` for it at all until they're back at a reasonable level, relying on hitting the `fPauseRecv=true` flag as new messages get queued, and it not being cleared again until we start doing `ProcessMessages()` again. We'd need to ensure that orphan tx's get put in the from peer's workset instead of the workset of whichever peer relayed the parent that made the tx minable, but that seems fine. Something like:\r\n\r\n```c++\r\nstd::chrono::microseconds CNode::delay_processing_until{0};\r\n\r\nfor (pnode : vNodes) {\r\n    // for caling ProcessMessages\r\n    start = GetTimeMicros();\r\n    if (start > pnode->delay_processing_until) {\r\n        ProcessMessages(pnode);\r\n        fin = GetTimeMicros();\r\n        pnode->delay_processing_until = std::clamp(pnode->delay_processing_until + 20*(fin-start), fin - 10s, fin + 60s);\r\n    }\r\n}\r\n```\r\n\r\n(I think the factor of 20 there would means each peer can only use up 5% of your CPU)\r\n\r\nEDIT: Changed to use `std::clamp` so that peers don't get delayed too excessively. I've tried this out now (along with some changes to make it monitorable) on a node with no inbound connections; it takes about 5 minutes for the mempool to load at present and peers get delayed while that's happening, but otherwise it seems to have no effect, as expected in the absence of an attack.",
       "created_at" : "2021-02-19T01:05:38Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21224#issuecomment-781741925",
@@ -148,6 +184,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21224",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc4MTc0MTkyNQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/781741925/reactions"
+      },
       "updated_at" : "2021-02-19T05:17:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/781741925",
       "user" : {
@@ -180,6 +228,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21224",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc4MjEwMjYwNA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/782102604/reactions"
+      },
       "updated_at" : "2021-02-19T14:17:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/782102604",
       "user" : {
@@ -204,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Rearranging:\r\n\r\n> Getting back to this proposal: what do you think the downside is of adopting this change, and not processing unrequested transactions? If it breaks a lot of existing software, [...]\r\n\r\nI don't think it solves the problem -- `INV/GETDATA` needs to be able to feed us ~7 tx/s to us just to keep up with block capacity and RBF, and if we receive 7 tx's that take 1s to validate each second, we already can't keep up.\r\n\r\nI just don't see the `INV/GETDATA` pairing as adding any useful information beyond de-duping across peers; if what we want to do is rate-limit `TX` messages we receive from a peer IMO we should literally do that -- and we can do it when we get up to the `TX` message by pausing processing for that peer, there's no need to complicate it by adding it into the INV handling.\r\n\r\n> > If a single tx can take 1s to validate and fail for policy reasons to avoid getting disconnected/banned, then a single peer can generate a backlog of about 1h20m (5000 seconds) of processing, beginning only 2s after getting connected using INV/GETDATA rather than just using TX, so this doesn't seem like a big help? \r\n> That assumes that we don't limit the number of transactions in flight to each peer, which I think we could do as well.\r\n\r\nWe dropped per-peer inflight limits with txrequest; see the rationale in the PR summary for #19988. The argument was similar to your point about my patch potentially meaning we just sit idle because we're punishing all peers -- we don't want to limit inflights from any peer because that might delay us hearing about a transaction only offered by that peer.\r\n\r\n>  I think it'd be reasonable to limit to something like 5 in-flight transactions to a new peer (say) until we have some track record of accepting the transactions they send us, and then increasing it.\r\n\r\nWouldn't we expect an attacker to just wait until we've increased the limit before attacking us?\r\n \r\n> I hadn't thought of using orphans in this way -- good point! I'll have to give this more thought, but presumably a good first start would just be to ensure orphan validation times get accounted to the peers that relay them,\r\n\r\nYes, I think so. I think after #21148 we could move the orphan worksets out of the per-peer structures and into txorphanage directly which I think would make this a little easier.\r\n\r\nHmm, actually I don't think even a per-peer-orphan limit would help enough? If you're attack is just increasing latency, then you could connect 20 peers to your victim, have each propose 5 orphan txs that will all take 1s to fail to validate and all depend on a single valid tx; then relay the valid tx. On the next run, you'll take take 20s to process the first of each of those orphans; the run after that you'll take 20s to process the next set, etc -- but your honest peer will also only be getting one message processed in each of these sets of 20s too....\r\n \r\n> However I do think that your proposed strategy of delaying all messages from a peer has problems. In particular it means that honest peers relaying us a lot of valid transactions, and maybe also blocks, would have all their messages delayed relative to less useful peers -- which could easily be expected to slow down block propagation. (Also it seems like as you coded it, there could be plenty of times when we don't process any peers' traffic, because they all are in a suspended state, which just seems wasteful and will increase our backlogs and latency.)\r\n\r\nPeers that don't do much work will end up with a 10s buffer (`delay_until = fin-10s`) so they'd need to actually use up ~an entire~ half a second in ProcessMessages before they'll get delayed at all -- I'm seeing something like 100 potential calls to ProcessMessages being missed per peer (so a total of 10s of additional latency -- though I'm not checking whether there's any actual work for the peer to do so it might just be latency for ProcessMessages saying \"nope, nothing to do\") for peers that have been connected for about 10 hours.\r\n\r\nIt was the simplest token-bucket like thing I could think of in five minutes, so that's already performing way better than I expected...\r\n\r\n> I think the fundamental problem here is that we will have lots of cases where a peer can be getting us to use our CPU and it will not be possible for us to tell if the peer is adversarial or not. That's basically the issue with transactions that fail policy checks but pass consensus checks: [...]\r\n\r\nSo... the next thought that comes to mind is what if `ProcessMessages` returned a \"that message was useful!\" boolean, and we only considered it a waste of time when the boolean indicated it was useless? So non-standard, too-low-fee, too-many-in-mempool-ancestors, pong-that-wasn't-in-response-to-a-ping, etc? That is, have a per-peer token bucket of some sort for useless messages, and temporarily de-prioritise peers for useless messages, without building up a misbehaving/ban score. If a peer is sending hard-to-validate transactions that are actually valid and make it into our mempool, we'll forward them, and therefore we can't consider the peer to be an attacker, even if this is an attack, I think?",
       "created_at" : "2021-02-19T16:18:31Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21224#issuecomment-782178622",
@@ -212,6 +272,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21224",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc4MjE3ODYyMg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/782178622/reactions"
+      },
       "updated_at" : "2021-02-19T16:20:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/782178622",
       "user" : {
@@ -244,6 +316,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21224",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc4MjI1NDQ0MA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/782254440/reactions"
+      },
       "updated_at" : "2021-02-19T18:25:02Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/782254440",
       "user" : {
@@ -268,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@sdaftuar Maybe we should at least move to the mailing list at least?\r\n\r\nI think as long as `PF_RELAY` bypasses the INV/GETDATA requirement, forbidding TX's that we haven't asked for via GETDATA is fine on the current network (provided that doesn't make tests slower) -- I might think the only value is in deduping tx relay, but that's still valuable enough on the live network that everyone should be doing it.\r\n\r\nI'm more thinking that once we figure out some sane/implementable rate-limiting strategy, that some more careful thought will mean we can apply it at the \"received a TX\" point instead, or generalise it to \"received any sort of message\"; which is more general but would also allow INV handling to be less complicated. I guess that's a variant on (2) -- yes, it's likely that some approach of this nature might work, but I think once we figure one out that does we can adapt it to be better/more general in a way that won't need this patch; and until that point this change doesn't really help much in other ways?\r\n\r\n(On the other hand, I thought the previous idea of ignoring TX's during IBD made sense because we've already said via FEEFILTER that we don't want TX's yet, but I took that as more of dont-waste-time thing than DoS prevention per se)",
       "created_at" : "2021-02-20T04:22:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21224#issuecomment-782557211",
@@ -276,6 +360,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21224",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc4MjU1NzIxMQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/782557211/reactions"
+      },
       "updated_at" : "2021-02-20T04:22:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/782557211",
       "user" : {
@@ -308,6 +404,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21224",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc4MjYwMTk4Mw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/782601983/reactions"
+      },
       "updated_at" : "2021-02-20T10:25:50Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/782601983",
       "user" : {
@@ -340,6 +448,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21224",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc4MjcyNDkyMg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/782724922/reactions"
+      },
       "updated_at" : "2021-02-20T18:05:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/782724922",
       "user" : {
@@ -375,7 +495,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/582024593"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I'm just trying to understand the boost multi-index data structure, and want to do due diligence whenever I see a `while` loop: This will iterate only as many times as we have actively requested a given TX, correct? So the most number of iterations possible is the total number of peers we have? Because the TX hash is specified, so it's not like we run through the entire data structure.",
       "commit_id" : "63103daf80352fa48b671a66b624a15d0c00d2f7",
       "created_at" : "2021-02-24T14:52:33Z",
@@ -392,9 +512,22 @@
       "position" : 12,
       "pull_request_review_id" : 597565451,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21224",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/582024593/reactions"
+      },
       "side" : "RIGHT",
       "start_line" : 686,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2021-02-24T14:58:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/582024593",
       "user" : {
@@ -419,7 +552,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
       "created_at" : "2021-12-13T23:18:45Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21224#issuecomment-993000406",
@@ -460,6 +593,94 @@
          "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "<!--13523179cfe9479db18ec6c5d236f789-->There hasn't been much activity lately and the patch still needs rebase. What is the status here?\n\n* Is it still relevant? â¡ï¸ Please solve the conflicts to make it ready for review and to ensure the CI passes.\n* Is it no longer relevant? â¡ï¸ Please close.\n* Did the author lose interest or time to work on this? â¡ï¸ Please close it and mark it 'Up for grabs' with the label, so that it can be picked up in the future.\n",
+      "created_at" : "2022-03-21T13:06:47Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/21224#issuecomment-1073871526",
+      "id" : 1073871526,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21224",
+      "node_id" : "IC_kwDOABII585AAfqm",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1073871526/reactions"
+      },
+      "updated_at" : "2022-03-21T13:06:47Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1073871526",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
+         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
+         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/DrahtBot",
+         "id" : 39886733,
+         "login" : "DrahtBot",
+         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
+         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
+         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
+         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Closing for now. Let us know when this should be reopened.",
+      "created_at" : "2022-03-21T13:42:33Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/21224#issuecomment-1073913173",
+      "id" : 1073913173,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21224",
+      "node_id" : "IC_kwDOABII585AAp1V",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1073913173/reactions"
+      },
+      "updated_at" : "2022-03-21T13:42:33Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1073913173",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
       }
    }
 ]

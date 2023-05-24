@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [hebasto](https://github.com/bitcoin/bitcoin/pull/27556#pullrequestreview-1428676304), [achow101](https://github.com/bitcoin/bitcoin/pull/27556#issuecomment-1553197160) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#27286](https://github.com/bitcoin/bitcoin/pull/27286) (wallet: Keep track of the wallet's own transaction outputs in memory by achow101)\n* [#24914](https://github.com/bitcoin/bitcoin/pull/24914) (wallet: Load database records in a particular order by achow101)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2023-05-02T18:09:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27556#issuecomment-1531926322",
@@ -145,7 +145,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "We should just make the `batch` argument required to avoid this kind of issue in the future.",
-      "commit_id" : "de202f860b3f79774d5235dec59a140fa5c82fa7",
+      "commit_id" : "69d43905b7f1d4849dfaea1b5744ee473ccc8744",
       "created_at" : "2023-05-03T15:43:42Z",
       "diff_hunk" : "@@ -713,7 +713,7 @@ BerkeleyCursor::~BerkeleyCursor()\n std::unique_ptr<DatabaseCursor> BerkeleyBatch::GetNewCursor()\n {\n     if (!pdb) return nullptr;\n-    return std::make_unique<BerkeleyCursor>(m_database);\n+    return std::make_unique<BerkeleyCursor>(m_database, this);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27556#discussion_r1183870974",
@@ -213,7 +213,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "sure",
-      "commit_id" : "de202f860b3f79774d5235dec59a140fa5c82fa7",
+      "commit_id" : "69d43905b7f1d4849dfaea1b5744ee473ccc8744",
       "created_at" : "2023-05-03T15:54:18Z",
       "diff_hunk" : "@@ -713,7 +713,7 @@ BerkeleyCursor::~BerkeleyCursor()\n std::unique_ptr<DatabaseCursor> BerkeleyBatch::GetNewCursor()\n {\n     if (!pdb) return nullptr;\n-    return std::make_unique<BerkeleyCursor>(m_database);\n+    return std::make_unique<BerkeleyCursor>(m_database, this);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27556#discussion_r1183886841",
@@ -414,7 +414,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Does this comment remain true?",
-      "commit_id" : "de202f860b3f79774d5235dec59a140fa5c82fa7",
+      "commit_id" : "69d43905b7f1d4849dfaea1b5744ee473ccc8744",
       "created_at" : "2023-05-11T16:30:25Z",
       "diff_hunk" : "@@ -668,14 +668,14 @@ void BerkeleyDatabase::ReloadDbEnv()\n     env->ReloadDbEnv();\n }\n \n-BerkeleyCursor::BerkeleyCursor(BerkeleyDatabase& database, BerkeleyBatch* batch)\n+BerkeleyCursor::BerkeleyCursor(BerkeleyDatabase& database, const BerkeleyBatch& batch)\n {\n     if (!database.m_db.get()) {\n         throw std::runtime_error(STR_INTERNAL_BUG(\"BerkeleyDatabase does not exist\"));\n     }\n     // Transaction argument to cursor is only needed when using the cursor to\n     // write to the database. Read-only cursors do not need a txn pointer.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27556#discussion_r1191433122",
@@ -482,7 +482,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "A note for myself: Seems unfortunate to `reset` a `std::unique_ptr` instance explicitly instead of using its RAII capabilities.",
-      "commit_id" : "de202f860b3f79774d5235dec59a140fa5c82fa7",
+      "commit_id" : "69d43905b7f1d4849dfaea1b5744ee473ccc8744",
       "created_at" : "2023-05-11T16:53:35Z",
       "diff_hunk" : "@@ -1144,15 +1147,16 @@ bool WalletBatch::EraseRecords(const std::unordered_set<std::string>& types)\n     }\n \n     // Iterate the DB and look for any records that have the type prefixes\n-    while (true)\n-    {\n+    while (true) {\n         // Read next record\n         DataStream key{};\n         DataStream value{};\n         DatabaseCursor::Status status = cursor->Next(key, value);\n         if (status == DatabaseCursor::Status::DONE) {\n             break;\n         } else if (status == DatabaseCursor::Status::FAIL) {\n+            cursor.reset(nullptr);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27556#discussion_r1191456854",
@@ -578,6 +578,144 @@
          "subscriptions_url" : "https://api.github.com/users/hebasto/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/hebasto"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/27556#discussion_r1191686510"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/27556"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1191686510"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "It is true while you use the db handler only for reading operations at that point. In that case, you don't need the transaction argument and `batch.txn()` returns a `nullptr`.\r\nIf you mix an already open read-only cursor with some write operations, then the code is no longer performing a read-only operation, so it will need to provide the transaction arg (probably by re-arranging the code in the same way as I did with `EraseRecords`).",
+      "commit_id" : "69d43905b7f1d4849dfaea1b5744ee473ccc8744",
+      "created_at" : "2023-05-11T21:02:47Z",
+      "diff_hunk" : "@@ -668,14 +668,14 @@ void BerkeleyDatabase::ReloadDbEnv()\n     env->ReloadDbEnv();\n }\n \n-BerkeleyCursor::BerkeleyCursor(BerkeleyDatabase& database, BerkeleyBatch* batch)\n+BerkeleyCursor::BerkeleyCursor(BerkeleyDatabase& database, const BerkeleyBatch& batch)\n {\n     if (!database.m_db.get()) {\n         throw std::runtime_error(STR_INTERNAL_BUG(\"BerkeleyDatabase does not exist\"));\n     }\n     // Transaction argument to cursor is only needed when using the cursor to\n     // write to the database. Read-only cursors do not need a txn pointer.",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/27556#discussion_r1191686510",
+      "id" : 1191686510,
+      "in_reply_to_id" : 1191433122,
+      "line" : 677,
+      "node_id" : "PRRC_kwDOABII585HB7Fu",
+      "original_commit_id" : "de202f860b3f79774d5235dec59a140fa5c82fa7",
+      "original_line" : 677,
+      "original_position" : 11,
+      "original_start_line" : 676,
+      "path" : "src/wallet/bdb.cpp",
+      "position" : 11,
+      "pull_request_review_id" : 1423433104,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/27556",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1191686510/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : 676,
+      "start_side" : "RIGHT",
+      "subject_type" : "line",
+      "updated_at" : "2023-05-12T18:02:52Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1191686510",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/5377650?v=4",
+         "events_url" : "https://api.github.com/users/furszy/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/furszy/followers",
+         "following_url" : "https://api.github.com/users/furszy/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/furszy/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/furszy",
+         "id" : 5377650,
+         "login" : "furszy",
+         "node_id" : "MDQ6VXNlcjUzNzc2NTA=",
+         "organizations_url" : "https://api.github.com/users/furszy/orgs",
+         "received_events_url" : "https://api.github.com/users/furszy/received_events",
+         "repos_url" : "https://api.github.com/users/furszy/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/furszy/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/furszy/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/furszy"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/27556#discussion_r1191688310"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/27556"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1191688310"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Yeah, I explained the reason inside the commit description ca1871d48558b356257d2a95b046f63739dfe3a0:\r\n\r\n> extra note from the Db.cursor doc:\r\n\"If transaction protection is enabled, cursors must be\r\nopened and closed within the context of a transaction\"\r\n>\r\n> thus why added a `CloseCursor` call before calling to\r\n`TxnAbort/TxnCommit`.\r\n\r\nThe `CloseCursor` call is the ptr reset.\r\nJust extra safety measures.",
+      "commit_id" : "69d43905b7f1d4849dfaea1b5744ee473ccc8744",
+      "created_at" : "2023-05-11T21:05:08Z",
+      "diff_hunk" : "@@ -1144,15 +1147,16 @@ bool WalletBatch::EraseRecords(const std::unordered_set<std::string>& types)\n     }\n \n     // Iterate the DB and look for any records that have the type prefixes\n-    while (true)\n-    {\n+    while (true) {\n         // Read next record\n         DataStream key{};\n         DataStream value{};\n         DatabaseCursor::Status status = cursor->Next(key, value);\n         if (status == DatabaseCursor::Status::DONE) {\n             break;\n         } else if (status == DatabaseCursor::Status::FAIL) {\n+            cursor.reset(nullptr);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/27556#discussion_r1191688310",
+      "id" : 1191688310,
+      "in_reply_to_id" : 1191456854,
+      "line" : 1158,
+      "node_id" : "PRRC_kwDOABII585HB7h2",
+      "original_commit_id" : "de202f860b3f79774d5235dec59a140fa5c82fa7",
+      "original_line" : 1158,
+      "original_position" : 24,
+      "original_start_line" : null,
+      "path" : "src/wallet/walletdb.cpp",
+      "position" : 24,
+      "pull_request_review_id" : 1423436012,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/27556",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1191688310/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2023-05-11T21:05:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1191688310",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/5377650?v=4",
+         "events_url" : "https://api.github.com/users/furszy/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/furszy/followers",
+         "following_url" : "https://api.github.com/users/furszy/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/furszy/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/furszy",
+         "id" : 5377650,
+         "login" : "furszy",
+         "node_id" : "MDQ6VXNlcjUzNzc2NTA=",
+         "organizations_url" : "https://api.github.com/users/furszy/orgs",
+         "received_events_url" : "https://api.github.com/users/furszy/received_events",
+         "repos_url" : "https://api.github.com/users/furszy/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/furszy/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/furszy/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/furszy"
       }
    },
    {

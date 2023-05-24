@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "Confirmed this in an underpowered VM.  I know it was discussed to use a warning instead of an error.  I think that a warning, however, should probably not terminate the process.  So perhaps it would be better to change this function to return `true` after emitting the warning.\r\n\r\n```\r\n2022-06-09T11:42:03Z init message: Verifying blocksâ¦\r\n2022-06-09T11:42:03Z  block index             463ms\r\n2022-06-09T11:42:03Z Warning: Disk space for \"/home/litch/.bitcoin/blocks\" may not accommodate the block files\r\nWarning: Disk space for \"/home/litch/.bitcoin/blocks\" may not accommodate the block files\r\n2022-06-09T11:42:03Z Shutdown: In progress...\r\n2022-06-09T11:42:03Z scheduler thread exit\r\n2022-06-09T11:42:03Z Shutdown: done\r\nlitch@bitcoind-test:~/bitcoin$\r\n```",
       "created_at" : "2022-06-09T11:44:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25315#issuecomment-1151019066",
@@ -101,7 +101,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "would be nice to use `args` (the local reference) over `gArgs` (the global) for new code",
-      "commit_id" : "f2d7bf55d3f02eeedad90eb153bb1c749306a0e3",
+      "commit_id" : "6630a1e8448c633e4abaa8f5903f11cac6f433a7",
       "created_at" : "2022-06-09T14:20:53Z",
       "diff_hunk" : "@@ -1633,6 +1636,21 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)\n         return false;\n     }\n \n+    uint64_t additional_bytes_needed = 0;\n+    if (!fReindex) {\n+        int height = WITH_LOCK(cs_main, return node.chainman->ActiveHeight());\n+\n+        if (height <= 1) { // If first startup\n+          additional_bytes_needed = fPruneMode ? nPruneTarget\n+              : chainparams.AssumedBlockchainSize() * GIB_BYTES;\n+        }\n+    }\n+    if (!CheckDiskSpace(gArgs.GetBlocksDirPath(), additional_bytes_needed)) {\n+        InitWarning(strprintf(_(\"Disk space for %s may not accommodate the block files\"),\n+          fs::quoted(fs::PathToString(gArgs.GetBlocksDirPath())))",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25315#discussion_r893567362",
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-09T14:20:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/893567362",
       "user" : {
@@ -168,7 +169,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "ð ",
-      "commit_id" : "f2d7bf55d3f02eeedad90eb153bb1c749306a0e3",
+      "commit_id" : "6630a1e8448c633e4abaa8f5903f11cac6f433a7",
       "created_at" : "2022-06-09T14:50:11Z",
       "diff_hunk" : "@@ -1633,6 +1636,21 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)\n         return false;\n     }\n \n+    uint64_t additional_bytes_needed = 0;\n+    if (!fReindex) {\n+        int height = WITH_LOCK(cs_main, return node.chainman->ActiveHeight());\n+\n+        if (height <= 1) { // If first startup\n+          additional_bytes_needed = fPruneMode ? nPruneTarget\n+              : chainparams.AssumedBlockchainSize() * GIB_BYTES;\n+        }\n+    }\n+    if (!CheckDiskSpace(gArgs.GetBlocksDirPath(), additional_bytes_needed)) {\n+        InitWarning(strprintf(_(\"Disk space for %s may not accommodate the block files\"),\n+          fs::quoted(fs::PathToString(gArgs.GetBlocksDirPath())))",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25315#discussion_r893605058",
@@ -199,6 +200,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-09T14:50:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/893605058",
       "user" : {
@@ -223,7 +225,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "```\r\n...\r\n2022-06-09T15:43:48Z Initializing databases...\r\n2022-06-09T15:43:48Z Opening LevelDB in /home/litch/.bitcoin/chainstate\r\n2022-06-09T15:43:49Z Opened LevelDB successfully\r\n2022-06-09T15:43:49Z Wrote new obfuscate key for /home/litch/.bitcoin/chainstate: 5da37d724c848cd8\r\n2022-06-09T15:43:49Z Using obfuscation key for /home/litch/.bitcoin/chainstate: 5da37d724c848cd8\r\n2022-06-09T15:43:49Z init message: Verifying blocksâ¦\r\n2022-06-09T15:43:49Z  block index            1014ms\r\n2022-06-09T15:43:49Z Warning: Disk space for \"/home/litch/.bitcoin/blocks\" may not accommodate the block files. Approximately 460 GB of data will be stored in this directory.\r\nWarning: Disk space for \"/home/litch/.bitcoin/blocks\" may not accommodate the block files. Approximately 460 GB of data will be stored in this directory.\r\n2022-06-09T15:43:49Z loadblk thread start\r\n2022-06-09T15:43:49Z UpdateTip: new best=000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f height=0 version=0x00000001 log2_work=32.000022 tx=1 date='2009-01-03T18:15:05Z' progr\r\ness=0.000000 cache=0.0MiB(0txo)\r\n2022-06-09T15:43:49Z Failed to open mempool file from disk. Continuing anyway.\r\n2022-06-09T15:43:49Z loadblk thread exit\r\n2022-06-09T15:43:49Z block tree size = 1\r\n...\r\n```\r\n\r\nWhen running on a VM with a small HDD, this prints the warning as expected.\r\n\r\nAfter downloading a number of blocks, then re-starting `bitcoind`, the warning is not re-emitted.",
       "created_at" : "2022-06-09T15:48:48Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25315#issuecomment-1151307415",
@@ -278,21 +280,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/893692138"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I think the reason for this is that `fReindex` sets back the height to 0 without deleting blocks (to rebuild the chain later in init), so that it would be wrong to give a warning that doesn't account for the already downloaded blocks.\r\nBut in that case, I think that this should also be skipped for `fReindexChainState`, for the same reason. ",
-      "commit_id" : "f2d7bf55d3f02eeedad90eb153bb1c749306a0e3",
+      "commit_id" : "6630a1e8448c633e4abaa8f5903f11cac6f433a7",
       "created_at" : "2022-06-09T15:57:12Z",
       "diff_hunk" : "@@ -1633,6 +1633,25 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)\n         return false;\n     }\n \n+    uint64_t additional_bytes_needed = 0;\n+    if (!fReindex) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25315#discussion_r893692138",
       "id" : 893692138,
-      "line" : 1640,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5841RKjq",
       "original_commit_id" : "82533930cce88a51fc0d5e2eb0f2ed01bfadcd76",
       "original_line" : 1637,
       "original_position" : 5,
       "original_start_line" : null,
       "path" : "src/init.cpp",
-      "position" : 5,
+      "position" : null,
       "pull_request_review_id" : 1001613514,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25315",
       "reactions" : {
@@ -310,6 +312,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-09T15:57:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/893692138",
       "user" : {
@@ -347,7 +350,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "While I'm not able to confirm your point, disabling the check in that case seems prudent as this check is intended for the common case.",
-      "commit_id" : "6f935fde9559e82435d691fb74ff2070348870b4",
+      "commit_id" : "6630a1e8448c633e4abaa8f5903f11cac6f433a7",
       "created_at" : "2022-06-16T05:44:01Z",
       "diff_hunk" : "@@ -1633,6 +1633,25 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)\n         return false;\n     }\n \n+    uint64_t additional_bytes_needed = 0;\n+    if (!fReindex) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25315#discussion_r898712571",
@@ -378,6 +381,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-16T05:44:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/898712571",
       "user" : {
@@ -578,7 +582,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [achow101](https://github.com/bitcoin/bitcoin/pull/25315#issuecomment-1291218854), [aureleoules](https://github.com/bitcoin/bitcoin/pull/25315#pullrequestreview-1137876062), [willcl-ark](https://github.com/bitcoin/bitcoin/pull/25315#issuecomment-1319180147) |\n| Concept ACK | [hernanmarino](https://github.com/bitcoin/bitcoin/pull/25315#pullrequestreview-1186211338), [luke-jr](https://github.com/bitcoin/bitcoin/pull/25315#issuecomment-1159521483), [pablomartin4btc](https://github.com/bitcoin/bitcoin/pull/25315#pullrequestreview-1186191452) |\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.\n",
       "created_at" : "2022-06-21T00:54:10Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25315#issuecomment-1161007935",
@@ -622,7 +626,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "I agree with @achow101  I believe this should be done earlier.",
       "created_at" : "2022-08-05T17:24:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25315#issuecomment-1206680660",
@@ -675,7 +679,7 @@
       "node_id" : "IC_kwDOABII585H-9Bw",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -683,7 +687,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1207685232/reactions"
       },
       "updated_at" : "2022-08-08T05:32:38Z",
@@ -754,7 +758,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "@Empact, I also get these 2 funtional tests failing when I run them locally (they pass on the master):\r\n\r\n![image](https://user-images.githubusercontent.com/110166421/183622720-456d1897-6f80-468d-8103-2943e4bdc517.png)\r\n",
       "created_at" : "2022-08-09T10:08:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25315#issuecomment-1209181751",
@@ -886,7 +890,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "tACK 6630a1e8448c633e4abaa8f5903f11cac6f433a7 rebased on master. Warning shows on first start but not on restart after some blocks have been downloaded.",
       "created_at" : "2022-11-17T20:45:31Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25315#issuecomment-1319180147",
@@ -939,15 +943,15 @@
       "node_id" : "IC_kwDOABII585OsuOz",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
          "heart" : 0,
-         "hooray" : 0,
+         "hooray" : 1,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1320346547/reactions"
       },
       "updated_at" : "2022-11-18T17:54:17Z",

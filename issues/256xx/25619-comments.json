@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`5b3c6bc788..7f4aa41772`: simplify `OptionsDialog::updateDefaultProxyNets()` to not use `CService::ToStringPort()` and drop the latter.\r\n\r\n> ToStringPort should probably be removed.\r\n\r\nDone! :)\r\n\r\n> The only place where it is used in the gui should probably use ToStringIPPort to properly display IPV6, no?\r\n\r\nTo be honest, I stared at that code in the GUI for a few minutes before opening this PR, trying to figure out what is going on and \"how is it possible that it displays ipv6addr:port without `[` `]` !?\", but it only used that (non-standard) representation to compare with another string internally, never displayed it. It could have used any other separator, e.g. \"ipv6addr-port\". Anyway, we have `CService::operator==()` for that, so I changed it.",
       "created_at" : "2022-07-15T16:03:10Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1185684262",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [sipa](https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1428811771), [jonatack](https://github.com/bitcoin/bitcoin/pull/25619#pullrequestreview-1297971845), [LarryRuane](https://github.com/bitcoin/bitcoin/pull/25619#pullrequestreview-1303879920), [achow101](https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1435065439) |\n| Stale ACK | [Empact](https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1278091789) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#27071](https://github.com/bitcoin/bitcoin/pull/27071) (Handle CJDNS from LookupSubNet() by vasild)\n* [#26621](https://github.com/bitcoin/bitcoin/pull/26621) (refactor: Continue moving application data from CNode to Peer by dergoegge)\n* [#26312](https://github.com/bitcoin/bitcoin/pull/26312) (Remove Sock::Get() and Sock::Sock() by vasild)\n* [#26261](https://github.com/bitcoin/bitcoin/pull/26261) (p2p: cleanup `LookupIntern`, `Lookup` and `LookupHost` by brunoerg)\n* [#25390](https://github.com/bitcoin/bitcoin/pull/25390) (sync: introduce a thread-safe generic container and use it to remove a bunch of \"GlobalMutex\"es by vasild)\n* [#24545](https://github.com/bitcoin/bitcoin/pull/24545) (BIP324: Enable v2 P2P encrypted transport by dhruv)\n* [#21878](https://github.com/bitcoin/bitcoin/pull/21878) (Make all networking code mockable by vasild)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2022-07-16T01:44:51Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1186052741",
@@ -308,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`7f4aa41772...b9ca6d0af3`: do the scripted-diff first\r\n\r\nCumulative diff of the PR is unchanged before and after this force push:\r\nbefore: `git diff 85b601e043..7f4aa41772`\r\nafter: `git diff d806407173..b9ca6d0af3`\r\n(identical)\r\n\r\n> Maybe the scripted-diff can be made first to avoid repeatedly changing the same line of code several times?\r\n\r\nI actually made it this way originally but then decided it is better to have the scripted-diff at the end so that it is optional and if it is contentious, then just drop the last commit (the scripted-diff). Changed now, since there are two more commits on top. For reviewing it shouldn't matter much since, I guess, reviewers are not staring carefully at the entire diff of scripted-diffs. It would matter for history chasing - to reduce the number of hops (\"git blame\"s) one has to do.\r\n\r\n> nit: \"host\" seems preferable to \"addr\"\r\n\r\nCould be, can you elaborate a bit why? I did not change it yet because I am somewhat in favor of \"addr\" because \"host\" may be misunderstood to return a host (aka hostname): e.g. `ToStringHost()` could be misunderstood to return `bar.foo.com` instead of `34.206.39.153`. I am fine either way, what do others think?",
       "created_at" : "2022-07-18T13:11:27Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1187385809",
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`b9ca6d0af3...9854d3a820`: rebase due to conflicts",
       "created_at" : "2022-07-19T12:48:16Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1189011414",
@@ -396,51 +396,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-07-26T14:26:10Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1195555208",
-      "id" : 1195555208,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25619",
-      "node_id" : "IC_kwDOABII585HQrmI",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1195555208/reactions"
-      },
-      "updated_at" : "2022-07-26T14:26:10Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1195555208",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`9854d3a820...0a798d56c2`: rebase due to conflicts",
       "created_at" : "2022-07-27T05:58:13Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1196297183",
@@ -484,7 +440,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`0a798d56c2...cbfa859028`: rebase due to conflicts",
       "created_at" : "2022-07-27T11:07:11Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1196587414",
@@ -541,7 +497,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "cbfa859 would this avoid a copy, or is copy ellision doing it for us\r\n```suggestion\r\n    const auto& port_str = strprintf(\"%u\", port);\r\n```",
-      "commit_id" : "d4117c37f6e4030af623d56c22bdb7a8c84a38c6",
+      "commit_id" : "c9d548c91fb12fba516dee896f1f97692cfa2104",
       "created_at" : "2022-07-30T09:58:52Z",
       "diff_hunk" : "@@ -916,25 +911,17 @@ std::vector<unsigned char> CService::GetKey() const\n     return key;\n }\n \n-std::string CService::ToStringPort() const\n+std::string CService::ToStringAddrPort() const\n {\n-    return strprintf(\"%u\", port);\n-}\n+    const auto port_str = strprintf(\"%u\", port);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#discussion_r933780913",
@@ -571,6 +527,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-30T18:49:29Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/933780913",
       "user" : {
@@ -608,15 +565,15 @@
       },
       "author_association" : "MEMBER",
       "body" : "7f420c508968 TIL about `toUShort()` (https://doc.qt.io/qt-5/qlocale.html#toUShort) used for the first time in this codebase. It seems compatible with our minimum required version of qt 5.11.3. ",
-      "commit_id" : "d4117c37f6e4030af623d56c22bdb7a8c84a38c6",
+      "commit_id" : "c9d548c91fb12fba516dee896f1f97692cfa2104",
       "created_at" : "2022-07-30T10:08:23Z",
       "diff_hunk" : "@@ -406,24 +406,21 @@ void OptionsDialog::updateProxyValidationState()\n \n void OptionsDialog::updateDefaultProxyNets()\n {\n+    CNetAddr ui_proxy_netaddr;\n+    LookupHost(ui->proxyIp->text().toStdString(), ui_proxy_netaddr, /*fAllowLookup=*/false);\n+    const CService ui_proxy{ui_proxy_netaddr, ui->proxyPort->text().toUShort()};",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#discussion_r933781750",
       "id" : 933781750,
-      "line" : 411,
+      "line" : 413,
       "node_id" : "PRRC_kwDOABII5843qGD2",
       "original_commit_id" : "cbfa85902839255a382a9f4556372ba5ceecf819",
-      "original_line" : 411,
+      "original_line" : 413,
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "src/qt/optionsdialog.cpp",
@@ -638,6 +595,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-30T10:13:17Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/933781750",
       "user" : {
@@ -662,50 +620,6 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-08-05T09:43:59Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1206257815",
-      "id" : 1206257815,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25619",
-      "node_id" : "IC_kwDOABII585H5giX",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1206257815/reactions"
-      },
-      "updated_at" : "2022-08-05T09:43:59Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1206257815",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
       "_links" : {
          "html" : {
             "href" : "https://github.com/bitcoin/bitcoin/pull/25619#discussion_r944556656"
@@ -717,9 +631,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/944556656"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "There is no copy elision because [there is no copy](https://www.youtube.com/watch?v=uAXtO5dMqEI). The standard mandates that in this case there is no temporary to be copied and that the object should be [constructed directly into `port_str`](ttps://stackoverflow.com/questions/38043319/how-does-guaranteed-copy-elision-work#38043447).",
-      "commit_id" : "d4117c37f6e4030af623d56c22bdb7a8c84a38c6",
+      "commit_id" : "c9d548c91fb12fba516dee896f1f97692cfa2104",
       "created_at" : "2022-08-12T15:02:52Z",
       "diff_hunk" : "@@ -916,25 +911,17 @@ std::vector<unsigned char> CService::GetKey() const\n     return key;\n }\n \n-std::string CService::ToStringPort() const\n+std::string CService::ToStringAddrPort() const\n {\n-    return strprintf(\"%u\", port);\n-}\n+    const auto port_str = strprintf(\"%u\", port);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#discussion_r944556656",
@@ -750,6 +664,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-12T15:02:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/944556656",
       "user" : {
@@ -785,18 +700,18 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/944558237"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I wasn't aware of `toUShort()` either. IIRC the auto-completion showed it to me ;-)",
-      "commit_id" : "d4117c37f6e4030af623d56c22bdb7a8c84a38c6",
+      "commit_id" : "c9d548c91fb12fba516dee896f1f97692cfa2104",
       "created_at" : "2022-08-12T15:04:34Z",
       "diff_hunk" : "@@ -406,24 +406,21 @@ void OptionsDialog::updateProxyValidationState()\n \n void OptionsDialog::updateDefaultProxyNets()\n {\n+    CNetAddr ui_proxy_netaddr;\n+    LookupHost(ui->proxyIp->text().toStdString(), ui_proxy_netaddr, /*fAllowLookup=*/false);\n+    const CService ui_proxy{ui_proxy_netaddr, ui->proxyPort->text().toUShort()};",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#discussion_r944558237",
       "id" : 944558237,
       "in_reply_to_id" : 933781750,
-      "line" : 411,
+      "line" : 413,
       "node_id" : "PRRC_kwDOABII5844TNCd",
       "original_commit_id" : "cbfa85902839255a382a9f4556372ba5ceecf819",
-      "original_line" : 411,
+      "original_line" : 413,
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "src/qt/optionsdialog.cpp",
@@ -818,6 +733,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-12T15:04:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/944558237",
       "user" : {
@@ -842,7 +758,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`cbfa859028...d4117c37f6`: rebase due to conflicts\r\n\r\nInvalidates ACK from @jonatack \r\n",
       "created_at" : "2022-08-12T15:22:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1213229284",
@@ -886,51 +802,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-08-26T22:25:41Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1229011173",
-      "id" : 1229011173,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25619",
-      "node_id" : "IC_kwDOABII585JQTjl",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1229011173/reactions"
-      },
-      "updated_at" : "2022-08-26T22:25:41Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1229011173",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`d4117c37f6...e5d1916425`: rebase due to conflicts\r\n\r\nInvalidates ACK from @jonatack",
       "created_at" : "2022-08-30T09:44:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1231428289",
@@ -1062,50 +934,6 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-10-12T21:16:26Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1276745849",
-      "id" : 1276745849,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25619",
-      "node_id" : "IC_kwDOABII585MGZh5",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1276745849/reactions"
-      },
-      "updated_at" : "2022-10-12T21:16:26Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1276745849",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
       "author_association" : "MEMBER",
       "body" : "Code Review ACK e5d191642503346ba6d9fe24f0c8f4414ffa00bc",
       "created_at" : "2022-10-13T19:33:21Z",
@@ -1150,7 +978,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`e5d1916425...caeec22664`: rebase due to conflicts\r\n\r\nInvalidates ACKs from @jonatack, @Empact \r\n",
       "created_at" : "2022-10-14T10:04:10Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1278786599",
@@ -1194,51 +1022,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n",
-      "created_at" : "2022-12-12T10:01:52Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1346198907",
-      "id" : 1346198907,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25619",
-      "node_id" : "IC_kwDOABII585QPV17",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1346198907/reactions"
-      },
-      "updated_at" : "2022-12-12T10:01:52Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1346198907",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`caeec22664...c9d548c91f`: rebase due to conflicts\r\n\r\nPreviously invalidated ACKs from @jonatack, @Empact",
       "created_at" : "2022-12-12T11:01:40Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25619#issuecomment-1346275693",
@@ -1295,11 +1079,11 @@
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1428811771/reactions"
       },
       "updated_at" : "2023-02-13T22:50:39Z",
@@ -1339,11 +1123,11 @@
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1435065439/reactions"
       },
       "updated_at" : "2023-02-17T18:21:36Z",

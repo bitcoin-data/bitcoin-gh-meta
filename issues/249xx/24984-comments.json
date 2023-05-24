@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "~~This breaks `feature_pruning.py`, putting into draft until I have analyzed it.~~ \r\n\r\nFixed.",
       "created_at" : "2022-04-26T01:09:28Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24984#issuecomment-1109192370",
@@ -55,9 +55,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858379915"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "If you never started a rescan, than you would leave `m_attaching_chain` in true state forever",
-      "commit_id" : "d533b0429cd03dc0700c9c28caecbd6ae5d11429",
+      "commit_id" : "2052e3aa9aa666bdc86dac370f1dd8fb978d3497",
       "created_at" : "2022-04-26T07:36:37Z",
       "diff_hunk" : "@@ -3007,6 +3015,7 @@ bool CWallet::AttachChain(const std::shared_ptr<CWallet>& walletInstance, interf\n                 return false;\n             }\n         }\n+        walletInstance->m_attaching_chain = false;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24984#discussion_r858379915",
@@ -69,7 +69,7 @@
       "original_position" : 28,
       "original_start_line" : null,
       "path" : "src/wallet/wallet.cpp",
-      "position" : 28,
+      "position" : 33,
       "pull_request_review_id" : 952900468,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24984",
       "reactions" : {
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-26T07:37:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858379915",
       "user" : {
@@ -122,7 +123,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858423829"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Oh yes, thanks. Moved the spot where we set `m_attaching_chain` into the conditional, which should also fix the previous issue with feature_pruning.",
       "commit_id" : "2052e3aa9aa666bdc86dac370f1dd8fb978d3497",
       "created_at" : "2022-04-26T08:18:33Z",
@@ -155,6 +156,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-26T08:19:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858423829",
       "user" : {
@@ -179,7 +181,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> With current implementation we don't save the rescan progress and on the next load we will have to start from scratch. Is it possible to save the last processed blocked at shutdown?\r\n\r\nYes, that's true. I think it should be possible to call `chainStateFlushed` with a locator to the block that was last processed  - I'll look into that. Of course it would save some time only in the rather rare situation of a clean shutdown during rescan (the bug must have existed for years but wasn't reported until very recently), so I'm not sure how important a feature like this would actually be for users.",
       "created_at" : "2022-04-26T10:27:25Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24984#issuecomment-1109625629",
@@ -267,7 +269,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#23997](https://github.com/bitcoin/bitcoin/pull/23997) (wallet: avoid rescans under assumed-valid blocks by jamesob)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-04-26T14:50:17Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24984#issuecomment-1109894259",
@@ -311,7 +313,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Yes, that's true. I think it should be possible to call `chainStateFlushed` with a locator to the block that was last processed - I'll look into that. Of course it would save some time only in the rather rare situation of a clean shutdown during rescan (the bug must have existed for years but wasn't reported until very recently), so I'm not sure how important a feature like this would actually be for users.\r\n\r\nThe wallet already tracks last processed block, why can't we just write that form `chainStateFlushed` handler regardless of what locator was passed in. That way we don't need any bool flags I believe.\r\n\r\n",
       "created_at" : "2022-04-26T18:50:55Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24984#issuecomment-1110138042",
@@ -355,7 +357,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> The wallet already tracks last processed block, why can't we just write that form `chainStateFlushed` handler regardless of what locator was passed in. That way we don't need any bool flags I believe.\r\n\r\nNot sure I understand this right - do you mean why locators are used in general instead of single block hashes? I think that's because we want to be flexible and not dependent on a specific block: There may be a reorg so a given block is no longer part of the chain when the wallet is loaded, or maybe the the wallet called the chainStateFlushed handler manually without the actual chainstate being flushed, and then an unclean shutdown happens so that the wallet would be ahead of the chain at next startup.\r\n\r\nIn any case, any block must be converted to a locator anyway to be stored in `BESTBLOCK_NOMERKLE` in order not to break the db format.\r\n\r\nAlso note that `AttachChain()` updates `m_last_block_processed` optimistically to the tip (before actually processing any missing blocks) and not incrementally. So if it gets interrupted early, `m_last_block_processed` is not correct.",
       "created_at" : "2022-04-26T20:53:32Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24984#issuecomment-1110238553",
@@ -443,7 +445,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Agree that \"this PR should be a strict improvement over the status quo\".\r\n\r\nThe only thing that still slightly worries me is two `return false` statements between setting and unsetting the `m_attaching_chain` flag. In both cases rescan fails, so I guess the behaviour is still correct, but it looks fragile.",
       "created_at" : "2022-04-28T07:05:26Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24984#issuecomment-1111825456",
@@ -487,7 +489,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> It would be nice to write a test for this but probably would be tricky to write.\r\n\r\nYes, I'd like that too. the problem is how to deal with the racing condition, timing the shutdown to be during the sync and not after. I played around a bit with bpftrace / uprobes after an idea by @jnewbery (e.g. hook into a function such as `SyncTransaction()` and send a SIGINT when it is invoked the 20th time) and that is really cool and seems to work, but obviously still very experimental and not ready for the CI.\r\n\r\n> The only thing that still slightly worries me is two `return false` statements between setting and unsetting the `m_attaching_chain` flag. In both cases rescan fails, so I guess the behaviour is still correct, but it looks fragile.\r\n\r\nYes, we currently rely on this to be the case. We aren't only concerned about accidental signals during the sync but also after it, caused by the interrupting signal: In case of a shutdown by SIGINT, [Shutdown()](https://github.com/bitcoin/bitcoin/blob/9446de160f37ccf9d639960f38bc1e4337b0c5f7/src/init.cpp#L200 ) in Init will  create a `chainStateFlushed` signal which is processed by the wallet. At this point in time, `m_attaching_chain` must still be true or the bug is not fixed.\r\n",
       "created_at" : "2022-04-28T11:00:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24984#issuecomment-1112068398",

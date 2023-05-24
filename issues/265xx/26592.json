@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "As mentioned in #26571, the task running the USDT interface tests fail when run in docker. cc7335edc87c6ef34429b4df94f53973db520aac in #25528 added that the tests are run in a **VM** in Cirrus CI. Running them locally in docker containers might not work:\r\n\r\n- We use [bcc] as tracing toolkit which requires the kernel headers to compile the BPF bytecode. As docker containers use the hosts kernel and don't run their own, there is a potential for mismatches between kernel headers available in the container and the host kernel. This results in a failure loading the BPF byte code.\r\n- Privilges are required to load the BPF byte code into the kernel. Normally, the docker containers aren't run with these.\r\n- We currently use an untrusted third-party PPA to install the bpfcc-tools package on Ubuntu 22.04. Using this on a local dev system could be a security risk.\r\n\r\nTo not hinder the ASan + LSan + UBSan part of the CI task, the USDT tests are disabled on non-CirrusCI runs.\r\n\r\n[bcc]: https://github.com/iovisor/bcc\r\n",
    "closed_at" : "2022-12-02T09:55:47Z",
    "closed_by" : {

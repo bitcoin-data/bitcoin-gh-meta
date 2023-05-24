@@ -88,8 +88,8 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24253](https://github.com/bitcoin/bitcoin/pull/24253) (Remove broken and unused CDataStream methods by MarcoFalke)\n* [#14485](https://github.com/bitcoin/bitcoin/pull/14485) (Try to use posix_fadvise with CBufferedFile by luke-jr)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#14485](https://github.com/bitcoin/bitcoin/pull/14485) (Try to use posix_fadvise with CBufferedFile by luke-jr)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-02-04T04:31:01Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24231#issuecomment-1029624629",
       "id" : 1029624629,
@@ -108,7 +108,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1029624629/reactions"
       },
-      "updated_at" : "2022-02-06T10:29:39Z",
+      "updated_at" : "2022-02-11T15:40:41Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1029624629",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -145,7 +145,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Won't this truncate `num_ignore` to 32-bits before checking for overflows?",
-      "commit_id" : "fa65d44149160c9d3ec17e80817f28e2bf0d429b",
+      "commit_id" : "fa1b89a6bdbab50bdb0504782afd4bb3375d1b57",
       "created_at" : "2022-02-05T21:57:10Z",
       "diff_hunk" : "@@ -348,36 +349,32 @@ class CDataStream\n         if (dst.size() == 0) return;\n \n         // Read from the beginning of the buffer\n-        unsigned int nReadPosNext = nReadPos + dst.size();\n-        if (nReadPosNext > vch.size()) {\n+        auto next_read_pos{CheckedAdd<uint32_t>(nReadPos, dst.size())};\n+        if (!next_read_pos.has_value() || next_read_pos.value() > vch.size()) {\n             throw std::ios_base::failure(\"CDataStream::read(): end of data\");\n         }\n         memcpy(dst.data(), &vch[nReadPos], dst.size());\n-        if (nReadPosNext == vch.size())\n-        {\n+        if (next_read_pos.value() == vch.size()) {\n             nReadPos = 0;\n             vch.clear();\n             return;\n         }\n-        nReadPos = nReadPosNext;\n+        nReadPos = next_read_pos.value();\n     }\n \n-    void ignore(int nSize)\n+    void ignore(size_t num_ignore)\n     {\n         // Ignore from the beginning of the buffer\n-        if (nSize < 0) {\n-            throw std::ios_base::failure(\"CDataStream::ignore(): nSize negative\");\n+        auto next_read_pos{CheckedAdd<uint32_t>(nReadPos, num_ignore)};",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24231#discussion_r800104114",
@@ -157,7 +157,7 @@
       "original_position" : 36,
       "original_start_line" : null,
       "path" : "src/streams.h",
-      "position" : 36,
+      "position" : null,
       "pull_request_review_id" : 873973228,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24231",
       "reactions" : {
@@ -175,6 +175,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-05T22:01:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/800104114",
       "user" : {
@@ -212,7 +213,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Yes, but this is already done on current master. The second commit fixes this.",
-      "commit_id" : "fa65d44149160c9d3ec17e80817f28e2bf0d429b",
+      "commit_id" : "fa1b89a6bdbab50bdb0504782afd4bb3375d1b57",
       "created_at" : "2022-02-06T09:46:23Z",
       "diff_hunk" : "@@ -348,36 +349,32 @@ class CDataStream\n         if (dst.size() == 0) return;\n \n         // Read from the beginning of the buffer\n-        unsigned int nReadPosNext = nReadPos + dst.size();\n-        if (nReadPosNext > vch.size()) {\n+        auto next_read_pos{CheckedAdd<uint32_t>(nReadPos, dst.size())};\n+        if (!next_read_pos.has_value() || next_read_pos.value() > vch.size()) {\n             throw std::ios_base::failure(\"CDataStream::read(): end of data\");\n         }\n         memcpy(dst.data(), &vch[nReadPos], dst.size());\n-        if (nReadPosNext == vch.size())\n-        {\n+        if (next_read_pos.value() == vch.size()) {\n             nReadPos = 0;\n             vch.clear();\n             return;\n         }\n-        nReadPos = nReadPosNext;\n+        nReadPos = next_read_pos.value();\n     }\n \n-    void ignore(int nSize)\n+    void ignore(size_t num_ignore)\n     {\n         // Ignore from the beginning of the buffer\n-        if (nSize < 0) {\n-            throw std::ios_base::failure(\"CDataStream::ignore(): nSize negative\");\n+        auto next_read_pos{CheckedAdd<uint32_t>(nReadPos, num_ignore)};",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24231#discussion_r800154218",
@@ -225,11 +226,11 @@
       "original_position" : 36,
       "original_start_line" : null,
       "path" : "src/streams.h",
-      "position" : 36,
+      "position" : null,
       "pull_request_review_id" : 874016116,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24231",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -237,12 +238,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/800154218/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-06T09:46:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/800154218",
       "user" : {
@@ -412,11 +414,11 @@
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1035013964/reactions"
       },
       "updated_at" : "2022-02-10T14:56:26Z",

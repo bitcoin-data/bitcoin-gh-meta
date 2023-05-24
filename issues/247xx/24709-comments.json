@@ -44,51 +44,7 @@
       }
    },
    {
-      "author_association" : "NONE",
-      "body" : "> Now that most consistency checks have been made a runtime option instead of configure option (see commit [803ef70](https://github.com/bitcoin/bitcoin/commit/803ef70fd9f65ef800567ff9456fac525bc3e3c2)), it could make sense to enable them on `--enable-debug`. Otherwise they are only run when explicitly passed the runtime setting.\r\n\r\n https://www.wallsolution.xyz/ had similar issues and i used it and it worked",
-      "created_at" : "2022-07-18T01:57:58Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/issues/24709#issuecomment-1186686232",
-      "id" : 1186686232,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24709",
-      "node_id" : "IC_kwDOABII585Gu2UY",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1186686232/reactions"
-      },
-      "updated_at" : "2022-07-18T01:57:58Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1186686232",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/109486040?v=4",
-         "events_url" : "https://api.github.com/users/Veterangrail/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/Veterangrail/followers",
-         "following_url" : "https://api.github.com/users/Veterangrail/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/Veterangrail/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/Veterangrail",
-         "id" : 109486040,
-         "login" : "Veterangrail",
-         "node_id" : "U_kgDOBoaf2A",
-         "organizations_url" : "https://api.github.com/users/Veterangrail/orgs",
-         "received_events_url" : "https://api.github.com/users/Veterangrail/received_events",
-         "repos_url" : "https://api.github.com/users/Veterangrail/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/Veterangrail/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/Veterangrail/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/Veterangrail"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@MarcoFalke, I've implemented this in a branch but don't feel I understand the rationale for the change fully to open a PR yet. Is the idea that (mainly devs) running after building with `--enable-debug` would have this running by default to potentially catch consistency issues e.g. on mainnet?\r\n\r\n(Otherwise it seems to me that we could just enable it via the flag in the two Ci tests which build in debug mode, native QT5 and i686 multiprocess)",
       "created_at" : "2023-03-22T11:52:35Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24709#issuecomment-1479417856",
@@ -176,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Not sure this is a good idea? If the consistency check is runtime configurable, why not just configure it at runtime -- anyone who's going to actively debug any problems found isn't going to find it too hard to add a line in bitcoin.conf? If the problem is just that there might be lots of different options and someone might want to get all of them, wouldn't adding an `allchecks=1` option be better? (Or `-checks=addrman -checks=mempool -checks=all` similar to the `-debug=*` option)\r\n\r\nThe drawback of setting these options on by default is that they might make a node unusable under load (https://github.com/bitcoin/bitcoin/pull/27300#issuecomment-1479890611 for addrman checks or #27586 for others). Due to `cs_main` and the mempool, a lot of what we do is effectively single-threaded, so using 100% of a single core can easily be a pretty severe bottleneck.",
       "created_at" : "2023-05-19T07:21:09Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24709#issuecomment-1554148356",
@@ -264,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Before I actually push any more changes, I wonder if the following would work and feel \"expected\" to developers:\r\n\r\n1. `--enable-debug`: behaviour change to disable lockorder/lockcontention consistency checks + behaviour change to disable `boost_multi_index_safe_mode`\r\n2. `--enable-debug-checks`: implies 1. plus enables consistency checks (addrman, lockorder, lockcontention)\r\n3. `--enable-debug-all`?: implies 2. plus enables `boost_multi_index_safe_mode`\r\n\r\nThe way I had been approaching this was to use a new `DEBUG_CONFIGURATION` macro in configure to avoid too much code repetition in configure (not updated with `boost_multi_index_safe_mode` code yet):\r\n\r\n```ac\r\ndefine([DEBUG_CONFIGURATION],\r\n[\r\n  dnl If debugging is enabled, and the user hasn't overridden CXXFLAGS, clear\r\n  dnl them, to prevent autoconfs \"-g -O2\" being added. Otherwise we'd end up\r\n  dnl with \"-O0 -g3 -g -O2\".\r\n  if test \"$CXXFLAGS_overridden\" = \"no\"; then\r\n    CXXFLAGS=\"\"\r\n  fi\r\n\r\n  dnl Disable all optimizations\r\n  AX_CHECK_COMPILE_FLAG([-O0], [DEBUG_CXXFLAGS=\"$DEBUG_CXXFLAGS -O0\"], [], [$CXXFLAG_WERROR])\r\n\r\n  dnl Prefer -g3, fall back to -g if that is unavailable.\r\n  AX_CHECK_COMPILE_FLAG(\r\n    [-g3],\r\n    [DEBUG_CXXFLAGS=\"$DEBUG_CXXFLAGS -g3\"],\r\n    [AX_CHECK_COMPILE_FLAG([-g], [DEBUG_CXXFLAGS=\"$DEBUG_CXXFLAGS -g\"], [], [$CXXFLAG_WERROR])],\r\n    [$CXXFLAG_WERROR])\r\n\r\n  AX_CHECK_PREPROC_FLAG([-DDEBUG], [DEBUG_CPPFLAGS=\"$DEBUG_CPPFLAGS -DDEBUG\"], [], [$CXXFLAG_WERROR])\r\n  $1\r\n  AX_CHECK_PREPROC_FLAG([-DABORT_ON_FAILED_ASSUME], [DEBUG_CPPFLAGS=\"$DEBUG_CPPFLAGS -DABORT_ON_FAILED_ASSUME\"], [], [$CXXFLAG_WERROR])\r\n  AX_CHECK_PREPROC_FLAG([-DRPC_DOC_CHECK], [DEBUG_CPPFLAGS=\"$DEBUG_CPPFLAGS -DRPC_DOC_CHECK\"], [], [$CXXFLAG_WERROR])\r\n  AX_CHECK_COMPILE_FLAG([-ftrapv], [DEBUG_CXXFLAGS=\"$DEBUG_CXXFLAGS -ftrapv\"], [], [$CXXFLAG_WERROR])\r\n])\r\n\r\nif test \"$enable_debug\" = \"yes\"; then\r\n  DEBUG_CONFIGURATION([AX_CHECK_PREPROC_FLAG([-DRPC_DOC_CHECK], [DEBUG_CPPFLAGS=\"$DEBUG_CPPFLAGS -DRPC_DOC_CHECK\"], [], [$CXXFLAG_WERROR])])\r\nfi\r\n\r\nif test \"$enable_debug_checks\" = \"yes\"; then\r\n  DEBUG_CONFIGURATION([\r\n    AX_CHECK_PREPROC_FLAG([-DDEBUG_ADDRMAN], [DEBUG_CPPFLAGS=\"$DEBUG_CPPFLAGS -DDEBUG_ADDRMAN\"], [], [$CXXFLAG_WERROR])\r\n    AX_CHECK_PREPROC_FLAG([-DDEBUG_LOCKORDER], [DEBUG_CPPFLAGS=\"$DEBUG_CPPFLAGS -DDEBUG_LOCKORDER\"], [], [$CXXFLAG_WERROR])\r\n    AX_CHECK_PREPROC_FLAG([-DDEBUG_LOCKCONTENTION], [DEBUG_CPPFLAGS=\"$DEBUG_CPPFLAGS -DDEBUG_LOCKCONTENTION\"], [], [$CXXFLAG_WERROR])\r\n  ])\r\nfi\r\n\r\ndnl Add enable_debug_all here\r\n```\r\n\r\nBefore I make any more changes though I'd like to make sure that I'm getting the right balance of preconfigured-bundles-of-options vs. just set it at runtime. To me, the above 3 preconfigured option bundles make sense in the absence of totally changing (or renaming) `--enable-debug`.\r\n\r\nThoughts?",
       "created_at" : "2023-05-19T08:28:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24709#issuecomment-1554227886",
@@ -308,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Linux distros do detached debug symbols so that you can grab them after the fact and just use them with your regular production binaries. cf http://debug.mirrors.debian.org/debian-debug/pool/main/b/bitcoin/ Doing that for our guix builds might be worthwhile, in which case perhaps we could always build with debug symbols?\r\n\r\nThinking about it more, I think for me the levels are more something like:\r\n\r\n * production -- should only abort on unrecoverable errors, should be as fast as possible\r\n * debug -- should run any checks that have negligible impact on performance and crash on errors so they're easy to detect. good for unit/functional/fuzz tests and also running against mainnet (to catch bugs triggered by live behaviour but not our test suite) as long as you can deal with unnecessary crashes\r\n * thorough -- additional tests that more thoroughly check for bugs but cause serious performance impacts\r\n\r\nBut I think \"causes serious performance impacts\" means they should be selected individually, not just turned on by default -- so you might run with valgrind, or with sanitizers, or with addrman checks, or with boost multiindex checks, but you should be picking which of those you're comfortable enabling, because some aren't suitable for some workloads (like running on mainnet) and some are incompatible with others?\r\n\r\nAnd then at that point, some thorough checks can be enabled at runtime (addrman checks, valgrind), and some can only be enabled at compile time (boost multiindex, sanitizers, Assume checks).\r\n\r\nWith that perspective, `--enable-slow-debug` maybe doesn't make sense; instead it should just be `--enable-boostmultiindexsafemode` and that should be added to some of the CI tasks?\r\n\r\nGetting back to the original point: if you're always enabling each \"thorough\" check explicitly, there's (IMHO) not much advantage to doing it via a compile time flag that just changes a default vs explicitly setting it in bitcoin.conf; and the code's simpler if we only provide one way to override the default.",
       "created_at" : "2023-05-22T07:44:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24709#issuecomment-1556705320",
@@ -317,7 +273,7 @@
       "node_id" : "IC_kwDOABII585cyXAo",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -325,7 +281,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1556705320/reactions"
       },
       "updated_at" : "2023-05-22T07:44:14Z",

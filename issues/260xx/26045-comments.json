@@ -1,7 +1,7 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [TheCharlatan](https://github.com/bitcoin/bitcoin/pull/26045#issuecomment-1529437357) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#27008](https://github.com/bitcoin/bitcoin/pull/27008) (assumeutxo: keep cache when flushing snapshot (#17487 followup) by jamesob)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [TheCharlatan](https://github.com/bitcoin/bitcoin/pull/26045#issuecomment-1529437357) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#27572](https://github.com/bitcoin/bitcoin/pull/27572) (test: dedup file hashing using `sha256sum_file` helper by theStack)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2022-09-08T17:13:08Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26045#issuecomment-1240993698",
       "id" : 1240993698,
@@ -20,7 +20,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1240993698/reactions"
       },
-      "updated_at" : "2023-05-01T07:27:26Z",
+      "updated_at" : "2023-05-06T21:10:51Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1240993698",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Not sure it's worth it to save 20%. Presumably generic compressors could do better anyway?\r\n\r\nYes I agree but at least with this implementation the utxo set is still readable as is and doesn't need decompression.",
       "created_at" : "2022-09-12T07:26:40Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26045#issuecomment-1243324603",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> The main downside of this implementation is that the entire UTXO set must be loaded in RAM (in mapCoins) before being written to disk. So running dumptxoutset will consome a lot of RAM on mainnet since the utxo set is large.\r\n>  Not sure how to improve this.\r\n\r\nThe keys in leveldb are guaranteed to be lexicographically sorted. You just need to cache the last txid and flush the txid and outpoint tuples once the next one is reached in the database iterator. I pushed a dirty proof of concept [here](https://github.com/TheCharlatan/bitcoin/commit/b0a22fbd2eee90982d3bc5f65f0d3cde049fd0f4) and it produced the same output file as your current implementation.\r\n\r\nOtherwise Concept ACK. For a file that might be lugged over a network or other data carrier this space improvement is nice. Users can still apply their own compression on top of it. I also like that this provides additional structure to the data.\r\n",
       "created_at" : "2023-03-02T13:53:48Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26045#issuecomment-1451900443",
@@ -220,7 +220,143 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/26045#discussion_r1178515444"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26045"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1178515444"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "This needs to be dropped.",
+      "commit_id" : "7acfc2a221237877aa3522266cac6c326ae7fe8e",
+      "created_at" : "2023-04-27T00:33:36Z",
+      "diff_hunk" : "@@ -2672,21 +2672,46 @@ UniValue CreateUTXOSnapshot(\n \n     afile << metadata;\n \n+    std::map<uint256, std::vector<std::pair<uint32_t, Coin>>> mapCoins;\n+    unsigned int iter{0};\n     COutPoint key;\n+    uint256 last_hash;\n     Coin coin;\n-    unsigned int iter{0};\n+    std::vector<std::pair<uint32_t, Coin>> coins;\n \n+    pcursor->GetKey(key);\n+    last_hash = key.hash;\n     while (pcursor->Valid()) {\n         if (iter % 5000 == 0) node.rpc_interruption_point();\n         ++iter;\n         if (pcursor->GetKey(key) && pcursor->GetValue(coin)) {\n-            afile << key;\n-            afile << coin;\n+            std::cout << key.ToString() << \"\\n\";",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26045#discussion_r1178515444",
+      "id" : 1178515444,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII585GPrf0",
+      "original_commit_id" : "04887de4f435354529ac8a0bfbdf5f6d9c038b3b",
+      "original_line" : 2688,
+      "original_position" : 20,
+      "original_start_line" : null,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 1403015467,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26045",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1178515444/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2023-04-29T23:11:24Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1178515444",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/8421793?v=4",
+         "events_url" : "https://api.github.com/users/TheCharlatan/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/TheCharlatan/followers",
+         "following_url" : "https://api.github.com/users/TheCharlatan/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/TheCharlatan/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/TheCharlatan",
+         "id" : 8421793,
+         "login" : "TheCharlatan",
+         "node_id" : "MDQ6VXNlcjg0MjE3OTM=",
+         "organizations_url" : "https://api.github.com/users/TheCharlatan/orgs",
+         "received_events_url" : "https://api.github.com/users/TheCharlatan/received_events",
+         "repos_url" : "https://api.github.com/users/TheCharlatan/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/TheCharlatan/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/TheCharlatan/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/TheCharlatan"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/26045#discussion_r1180726604"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26045"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1180726604"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Using explicit `make_pair` can be avoided by directly calling `emplace_back` instead (same for further below).",
+      "commit_id" : "7acfc2a221237877aa3522266cac6c326ae7fe8e",
+      "created_at" : "2023-04-28T18:58:40Z",
+      "diff_hunk" : "@@ -2672,21 +2672,46 @@ UniValue CreateUTXOSnapshot(\n \n     afile << metadata;\n \n+    std::map<uint256, std::vector<std::pair<uint32_t, Coin>>> mapCoins;\n+    unsigned int iter{0};\n     COutPoint key;\n+    uint256 last_hash;\n     Coin coin;\n-    unsigned int iter{0};\n+    std::vector<std::pair<uint32_t, Coin>> coins;\n \n+    pcursor->GetKey(key);\n+    last_hash = key.hash;\n     while (pcursor->Valid()) {\n         if (iter % 5000 == 0) node.rpc_interruption_point();\n         ++iter;\n         if (pcursor->GetKey(key) && pcursor->GetValue(coin)) {\n-            afile << key;\n-            afile << coin;\n+            std::cout << key.ToString() << \"\\n\";\n+            if (key.hash == last_hash) {\n+                coins.push_back(std::make_pair(key.n, coin));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26045#discussion_r1180726604",
+      "id" : 1180726604,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII585GYHVM",
+      "original_commit_id" : "04887de4f435354529ac8a0bfbdf5f6d9c038b3b",
+      "original_line" : 2690,
+      "original_position" : 22,
+      "original_start_line" : null,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 1403015467,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26045",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1180726604/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2023-04-29T23:11:24Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1180726604",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/8421793?v=4",
+         "events_url" : "https://api.github.com/users/TheCharlatan/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/TheCharlatan/followers",
+         "following_url" : "https://api.github.com/users/TheCharlatan/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/TheCharlatan/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/TheCharlatan",
+         "id" : 8421793,
+         "login" : "TheCharlatan",
+         "node_id" : "MDQ6VXNlcjg0MjE3OTM=",
+         "organizations_url" : "https://api.github.com/users/TheCharlatan/orgs",
+         "received_events_url" : "https://api.github.com/users/TheCharlatan/received_events",
+         "repos_url" : "https://api.github.com/users/TheCharlatan/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/TheCharlatan/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/TheCharlatan/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/TheCharlatan"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
       "body" : "Re https://github.com/bitcoin/bitcoin/pull/26045#issuecomment-1472285629\r\n\r\n> I was also wondering why the bitcoin-cli savetxoutset API (same goes for savemempool) requires to specify a filename instead of writing to stdout that would offer better composition while maintaining the possibility to write to file with >utxo.bin\r\n\r\nWriting to stdout would mean that the data would have to be carried over the rpc connection, right?",
       "created_at" : "2023-04-29T08:26:20Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26045#issuecomment-1528716678",
@@ -242,6 +378,74 @@
       },
       "updated_at" : "2023-04-29T08:26:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1528716678",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/8421793?v=4",
+         "events_url" : "https://api.github.com/users/TheCharlatan/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/TheCharlatan/followers",
+         "following_url" : "https://api.github.com/users/TheCharlatan/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/TheCharlatan/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/TheCharlatan",
+         "id" : 8421793,
+         "login" : "TheCharlatan",
+         "node_id" : "MDQ6VXNlcjg0MjE3OTM=",
+         "organizations_url" : "https://api.github.com/users/TheCharlatan/orgs",
+         "received_events_url" : "https://api.github.com/users/TheCharlatan/received_events",
+         "repos_url" : "https://api.github.com/users/TheCharlatan/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/TheCharlatan/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/TheCharlatan/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/TheCharlatan"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/26045#discussion_r1181134612"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26045"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1181134612"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "The file writing would be more DRY if it were declared as a lambda and then called here and below, e.g. like:\r\n```\r\n auto write_coins_to_file = [&](AutoFile& afile, const uint256& last_hash, const std::vector<std::pair<uint32_t, Coin>>& coins) {\r\n    afile << last_hash;\r\n    afile << static_cast<uint16_t>(coins.size());\r\n    for (auto [vout, coin] : coins) {\r\n        afile << vout;\r\n        afile << coin;\r\n    }\r\n};\r\n```",
+      "commit_id" : "7acfc2a221237877aa3522266cac6c326ae7fe8e",
+      "created_at" : "2023-04-29T22:12:34Z",
+      "diff_hunk" : "@@ -2672,21 +2672,46 @@ UniValue CreateUTXOSnapshot(\n \n     afile << metadata;\n \n+    std::map<uint256, std::vector<std::pair<uint32_t, Coin>>> mapCoins;\n+    unsigned int iter{0};\n     COutPoint key;\n+    uint256 last_hash;\n     Coin coin;\n-    unsigned int iter{0};\n+    std::vector<std::pair<uint32_t, Coin>> coins;\n \n+    pcursor->GetKey(key);\n+    last_hash = key.hash;\n     while (pcursor->Valid()) {\n         if (iter % 5000 == 0) node.rpc_interruption_point();\n         ++iter;\n         if (pcursor->GetKey(key) && pcursor->GetValue(coin)) {\n-            afile << key;\n-            afile << coin;\n+            std::cout << key.ToString() << \"\\n\";\n+            if (key.hash == last_hash) {\n+                coins.push_back(std::make_pair(key.n, coin));\n+            } else {\n+                afile << last_hash;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26045#discussion_r1181134612",
+      "id" : 1181134612,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII585GZq8U",
+      "original_commit_id" : "04887de4f435354529ac8a0bfbdf5f6d9c038b3b",
+      "original_line" : 2692,
+      "original_position" : 24,
+      "original_start_line" : null,
+      "path" : "src/rpc/blockchain.cpp",
+      "position" : null,
+      "pull_request_review_id" : 1403015467,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26045",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1181134612/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2023-04-29T23:11:24Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1181134612",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/8421793?v=4",
          "events_url" : "https://api.github.com/users/TheCharlatan/events{/privacy}",
@@ -317,7 +521,7 @@
       "node_id" : "IC_kwDOABII585bIx2C",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -325,7 +529,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1529027970/reactions"
       },
       "updated_at" : "2023-04-30T13:37:42Z",
@@ -396,7 +600,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I ran some more numbers, dumping a mainnet snapshot on height 787535:\r\n\r\n| Filename        | Size (bytes) |\r\n|-----------------|--------------|\r\n| this_branch.dat |  4'697'836'541  |\r\n| this_branch.tar.xz | 3'899'452'268 |\r\n| master.dat      |  5'718'308'597  |\r\n| master.tar.xz   |  3'925'608'176  |\r\n\r\nSo even in the compressed form the encoding saves some megabytes. ",
       "created_at" : "2023-04-30T16:24:24Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26045#issuecomment-1529067823",
@@ -409,11 +613,11 @@
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1529067823/reactions"
       },
       "updated_at" : "2023-04-30T16:24:24Z",
@@ -440,7 +644,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK 7acfc2a221237877aa3522266cac6c326ae7fe8e\r\n\r\nSince we are changing the format of dumptxoutset anyway here in a non backwards compatible fashion, I'd like to suggest moving the metadata to the end of the file. This would take care of the double iteration described in https://github.com/bitcoin/bitcoin/pull/26045#pullrequestreview-1403015467. In my eyes, this does not significantly hurt the integrity of the file. If an exception occurs during writing, only the temporary file remains. Other common file formats also embed metadata at the end.",
       "created_at" : "2023-05-01T07:27:24Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26045#issuecomment-1529437357",
@@ -449,7 +653,7 @@
       "node_id" : "IC_kwDOABII585bKVyt",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -457,7 +661,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1529437357/reactions"
       },
       "updated_at" : "2023-05-01T07:27:24Z",

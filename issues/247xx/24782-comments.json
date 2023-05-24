@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I've looked at and experimented with the ARM tasks. Our ARM tasks run in an `arm_container`. https://github.com/bitcoin/bitcoin/blob/f3e35633690c71ebb69ec2ed08998565cade1522/.cirrus.yml#L190-L196\r\n\r\nThe [CirrusCI docs](https://cirrus-ci.org/guide/linux/#linux-containers) mention that `arm_container` tasks run on Graviton2 (ARM processor) instances in AWS via Kubernetes (`container` runs via Kubernetes in the Google Cloud). We can't use the macOS tasks as the tracepoints are Linux only..\r\n\r\nI'll look into converting an existing task into a VM.",
       "created_at" : "2022-04-06T12:05:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24782#issuecomment-1090191600",
@@ -97,7 +97,7 @@
       "node_id" : "IC_kwDOABII585A_EAT",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -105,7 +105,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1090273299/reactions"
       },
       "updated_at" : "2022-04-06T13:28:41Z",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> https://cirrus-ci.org/guide/custom-vms/ could work, though.\r\n\r\nThat worked! I've used a `compute_engine_instance` to build and test the tracepoints. We have the required privileges there.\r\n```\r\ntask:\r\n  name: '[usdt] [VM]'\r\n  << : *GLOBAL_TASK_TEMPLATE\r\n  compute_engine_instance:\r\n    image_project: ubuntu-os-cloud\r\n    image: family/ubuntu-minimal-2204-lts\r\n```\r\nHowever, the Ubuntu [`bpf-tools`](https://packages.ubuntu.com/jammy/bpfcc-tools) package is quite outdated (v0.18 (Jan 05, 2021) vs v0.24 (Jan 14, 2022)). It prints a warning about `warning: '__HAVE_BUILTIN_BSWAP64__' macro redefined` to stderr when compiling to BPF bytecode. This has been fixed with https://github.com/iovisor/bcc/pull/3391 ([May 1, 2021](https://github.com/iovisor/bcc/pull/3391#event-4672496859)).\r\n\r\nPrinting to stderr let's interface tests in `test_runner.py` fail.\r\n\r\nI don't really want to build bcc from source in the CI, but also didn't have any luck installing it from their [PPA](https://github.com/iovisor/bcc/blob/master/INSTALL.md#ubuntu---binary). Might give it another shot, though. This could probably be removed with the next Ubuntu release.\r\n",
       "created_at" : "2022-06-29T22:56:53Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24782#issuecomment-1170573083",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I think the debian `bookworm` image is not yet available in GCE. https://cirrus-ci.com/task/6440165211111424\r\n\r\nedit: yes, debian-11 is the latest available image: https://cloud.google.com/compute/docs/images/os-details",
       "created_at" : "2022-06-30T10:44:02Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24782#issuecomment-1171061487",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "The up coming Ubuntu 23.04 seems to be shipping with an up-to-date bpfcc: https://packages.ubuntu.com/lunar/python3-bpfcc",
       "created_at" : "2023-04-01T12:59:31Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24782#issuecomment-1492963404",

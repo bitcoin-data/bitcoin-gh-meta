@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.",
       "created_at" : "2022-08-22T01:30:53Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25896#issuecomment-1221686187",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "> This is incorrect. `loadwallet` does not change the wallet version. It occurs during `CWallet::Create`, which calls `WalletBatch::LoadWallet` in order to create the db file. The \"incorrect\" log line occurs during this `LoadWallet`.\r\n\r\nYeah, obviously I had to know that since the section that updates the wallet version is in `WalletBatch::LoadWallet`. The reason I said it came from `loadwallet` is because during my testing, calling the `loadwallet` RPC call eventually triggers `WalletBatch::Loadwallet`. I was never able to trigger this function from `createwallet`. Here is part of my debug.log output on regtest to supplement this hypothesis:\r\n\r\n```\r\n2022-08-21T20:52:10Z [rpc] ThreadRPCServer method=createwallet user=notatether                                                                                                                                                                                                \r\n2022-08-21T20:52:10Z Using SQLite Version 3.31.1                                                                                                                                                                                                                              \r\n2022-08-21T20:52:10Z Using wallet /home/zenulabidin/.bitcoin/regtest/wallets/prtest7                                                                                                                                                                                          \r\n2022-08-21T20:52:10Z init message: Loading walletâ¦                                                                                                                                                                                                                            \r\n2022-08-21T20:52:10Z [prtest7] Wallet file version = 10500, last client version = 239900                                                                                                                                                                                      \r\n2022-08-21T20:52:10Z [prtest7] Keys: 0 plaintext, 0 encrypted, 0 w/ metadata, 0 total. Unknown wallet records: 0                                                                                                                                                              \r\n2022-08-21T20:52:11Z [prtest7] Setting spkMan to active: id = 1e60986d600b86b498d7f5fec0984af074366a234cc825b16e66ef229632b066, type = legacy, internal = false                                                                                                               \r\n2022-08-21T20:52:12Z [prtest7] Setting spkMan to active: id = 8189854c5db714cc58ffc1ab7ae4f1fa340e25d8252f1a9e7f1a20221b96d05c, type = p2sh-segwit, internal = false                                                                                                          \r\n2022-08-21T20:52:12Z [prtest7] Setting spkMan to active: id = efe8901b28b0330fca53a354d32290377c3014f5712faaebd9b552b43cd05a1c, type = bech32, internal = false                                                                                                               \r\n2022-08-21T20:52:13Z [prtest7] Setting spkMan to active: id = 93591c1fd54c434bed79a12d75a36d9cdd9d14f2a503e95d3cbd42699205b83d, type = bech32m, internal = false                                                                                                              \r\n2022-08-21T20:52:14Z [prtest7] Setting spkMan to active: id = 32a04d1773be2f4bf3b9a3fd39b1ac66145d2b7d0dc15424ae1e71cd3ea52203, type = legacy, internal = true                                                                                                                \r\n2022-08-21T20:52:15Z [prtest7] Setting spkMan to active: id = 0093bc4675eb72f188f0729bf2bccdcdf09039d6c51686b9a00edfa51247d293, type = p2sh-segwit, internal = true                                                                                                           \r\n2022-08-21T20:52:16Z [prtest7] Setting spkMan to active: id = b67e3643f790b7e0ba855067b8fa97ba386022aed984cd2b347b7570fcbbd335, type = bech32, internal = true                                                                                                                \r\n2022-08-21T20:52:17Z [prtest7] Setting spkMan to active: id = fa147979b83634d90d47adb6af966a54d7a5f908a081b7dce42da9f8e49c2338, type = bech32m, internal = true                                                                                                               \r\n2022-08-21T20:52:17Z [prtest7] Wallet completed loading in            7325ms                                                                                                                                                                                                  \r\n2022-08-21T20:52:18Z [prtest7] setKeyPool.size() = 8000                                                                                                                                                                                                                       \r\n2022-08-21T20:52:18Z [prtest7] mapWallet.size() = 0                                                                                                                                                                                                                           \r\n2022-08-21T20:52:18Z [prtest7] m_address_book.size() = 0                                                                                                                                                                                                                      \r\n...\r\n2022-08-21T20:52:53Z [rpc] ThreadRPCServer method=unloadwallet user=notatether                                                                                                                                                                                                \r\n2022-08-21T20:52:53Z [prtest7] Releasing wallet                                                                                                                                                                                                                               \r\n2022-08-21T20:53:02Z [rpc] ThreadRPCServer method=loadwallet user=notatether                                                                                                                                                                                                  \r\n2022-08-21T20:53:02Z Using SQLite Version 3.31.1                                                                                                                                                                                                                              \r\n2022-08-21T20:53:02Z Using wallet /home/zenulabidin/.bitcoin/regtest/wallets/prtest7                                                                                                                                                                                          \r\n2022-08-21T20:53:02Z init message: Loading walletâ¦                                                                                                                                                                                                                            \r\n2022-08-21T20:53:02Z [prtest7] Changing minversion from 10500 to 169900                                                                                                                                                                                                       \r\n2022-08-21T20:53:02Z [prtest7] Setting spkMan to active: id = 1e60986d600b86b498d7f5fec0984af074366a234cc825b16e66ef229632b066, type = legacy, internal = false                                                                                                               \r\n2022-08-21T20:53:02Z [prtest7] Setting spkMan to active: id = 8189854c5db714cc58ffc1ab7ae4f1fa340e25d8252f1a9e7f1a20221b96d05c, type = p2sh-segwit, internal = false                                                                                                          \r\n2022-08-21T20:53:02Z [prtest7] Setting spkMan to active: id = efe8901b28b0330fca53a354d32290377c3014f5712faaebd9b552b43cd05a1c, type = bech32, internal = false                                                                                                               \r\n2022-08-21T20:53:02Z [prtest7] Setting spkMan to active: id = 93591c1fd54c434bed79a12d75a36d9cdd9d14f2a503e95d3cbd42699205b83d, type = bech32m, internal = false                                                                                                              \r\n2022-08-21T20:53:02Z [prtest7] Setting spkMan to active: id = 32a04d1773be2f4bf3b9a3fd39b1ac66145d2b7d0dc15424ae1e71cd3ea52203, type = legacy, internal = true                                                                                                                \r\n2022-08-21T20:53:02Z [prtest7] Setting spkMan to active: id = 0093bc4675eb72f188f0729bf2bccdcdf09039d6c51686b9a00edfa51247d293, type = p2sh-segwit, internal = true                                                                                                           \r\n2022-08-21T20:53:02Z [prtest7] Setting spkMan to active: id = b67e3643f790b7e0ba855067b8fa97ba386022aed984cd2b347b7570fcbbd335, type = bech32, internal = true                                                                                                                \r\n2022-08-21T20:53:02Z [prtest7] Setting spkMan to active: id = fa147979b83634d90d47adb6af966a54d7a5f908a081b7dce42da9f8e49c2338, type = bech32m, internal = true                                                                                                               \r\n2022-08-21T20:53:03Z [prtest7] Wallet file version = 169900, last client version = 239900                                                                                                                                                                                     \r\n2022-08-21T20:53:03Z [prtest7] Keys: 8 plaintext, 0 encrypted, 0 w/ metadata, 8 total. Unknown wallet records: 0                                                                                                                                                              \r\n2022-08-21T20:53:04Z [prtest7] Wallet completed loading in            1068ms                                                                                                                                                                                                  \r\n2022-08-21T20:53:04Z [prtest7] setKeyPool.size() = 8000                                                                                                                                                                                                                       \r\n2022-08-21T20:53:04Z [prtest7] mapWallet.size() = 0                                                                                                                                                                                                                           \r\n2022-08-21T20:53:04Z [prtest7] m_address_book.size() = 0\r\n... # Some time later, I repeated the unloadwallet/loadwallet sequence\r\n2022-08-22T03:48:54Z [rpc] ThreadRPCServer method=unloadwallet user=notatether\r\n2022-08-22T03:48:54Z [prtest7] Releasing wallet\r\n2022-08-22T03:48:56Z [rpc] ThreadRPCServer method=loadwallet user=notatether\r\n2022-08-22T03:48:56Z Using SQLite Version 3.31.1\r\n2022-08-22T03:48:56Z Using wallet /home/zenulabidin/.bitcoin/regtest/wallets/prtest7\r\n2022-08-22T03:48:56Z init message: Loading walletâ¦\r\n2022-08-22T03:48:56Z [prtest7] Changing minversion from 10500 to 169900\r\n2022-08-22T03:48:56Z [prtest7] Setting spkMan to active: id = 1e60986d600b86b498d7f5fec0984af074366a234cc825b16e66ef229632b066, type = legacy, internal = false\r\n2022-08-22T03:48:56Z [prtest7] Setting spkMan to active: id = 8189854c5db714cc58ffc1ab7ae4f1fa340e25d8252f1a9e7f1a20221b96d05c, type = p2sh-segwit, internal = false\r\n2022-08-22T03:48:56Z [prtest7] Setting spkMan to active: id = efe8901b28b0330fca53a354d32290377c3014f5712faaebd9b552b43cd05a1c, type = bech32, internal = false\r\n2022-08-22T03:48:56Z [prtest7] Setting spkMan to active: id = 93591c1fd54c434bed79a12d75a36d9cdd9d14f2a503e95d3cbd42699205b83d, type = bech32m, internal = false\r\n2022-08-22T03:48:56Z [prtest7] Setting spkMan to active: id = 32a04d1773be2f4bf3b9a3fd39b1ac66145d2b7d0dc15424ae1e71cd3ea52203, type = legacy, internal = true\r\n2022-08-22T03:48:56Z [prtest7] Setting spkMan to active: id = 0093bc4675eb72f188f0729bf2bccdcdf09039d6c51686b9a00edfa51247d293, type = p2sh-segwit, internal = true\r\n2022-08-22T03:48:56Z [prtest7] Setting spkMan to active: id = b67e3643f790b7e0ba855067b8fa97ba386022aed984cd2b347b7570fcbbd335, type = bech32, internal = true\r\n2022-08-22T03:48:56Z [prtest7] Setting spkMan to active: id = fa147979b83634d90d47adb6af966a54d7a5f908a081b7dce42da9f8e49c2338, type = bech32m, internal = true\r\n2022-08-22T03:48:57Z [prtest7] Wallet file version = 169900, last client version = 239900\r\n2022-08-22T03:48:57Z [prtest7] Keys: 8 plaintext, 0 encrypted, 0 w/ metadata, 8 total. Unknown wallet records: 0\r\n2022-08-22T03:48:57Z [prtest7] Wallet completed loading in             997ms\r\n2022-08-22T03:48:58Z [prtest7] setKeyPool.size() = 8000\r\n2022-08-22T03:48:58Z [prtest7] mapWallet.size() = 0\r\n2022-08-22T03:48:58Z [prtest7] m_address_book.size() = 0\r\n\r\n```\r\n\r\nNotice how the new message is only printed during an RPC invocation of `loadwallet`.",
       "created_at" : "2022-08-22T03:57:19Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25896#issuecomment-1221772687",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "> It is incorrect to have the logline occur during `loadwallet`. It needs to occur with `createwallet` because the version is written during creating, not during loading. It is written somewhere in `CWallet::Create`, after that function has called `LoadWallet`.\r\n> \r\n> Furthermore, what you have done is log the default value just before the actual minversion is read from the wallet file. This is completely useless information.\r\n\r\nChanges have been implemented. Now the logging only prints the read minversion.",
       "created_at" : "2022-08-22T05:20:19Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25896#issuecomment-1221843085",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "> Perhaps it would be better to have the log line in `SetMinVersion` itself so that it can log everywhere we actually upgrade the minimum version. Of course it should only log if the version is changed.\r\n\r\nBoth of these adjustments have been made.",
       "created_at" : "2022-08-24T10:26:46Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25896#issuecomment-1225528909",
@@ -321,19 +321,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "`this->` is unneeded.",
-      "commit_id" : "d3304806d7652ea70d8439f23b56978be6adf138",
+      "commit_id" : "835bd27e9a0dd627f266e3dc0a7422d8d0612eff",
       "created_at" : "2022-08-24T22:07:27Z",
       "diff_hunk" : "@@ -542,6 +542,7 @@ void CWallet::SetMinVersion(enum WalletFeature nVersion, WalletBatch* batch_in)\n     LOCK(cs_wallet);\n     if (nWalletVersion >= nVersion)\n         return;\n+    this->WalletLogPrintf(\"Setting minversion to %d\\n\", nVersion);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25896#discussion_r954339374",
       "id" : 954339374,
-      "line" : 545,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII58444hAu",
       "original_commit_id" : "d3304806d7652ea70d8439f23b56978be6adf138",
       "original_line" : 545,
       "original_position" : 4,
       "original_start_line" : null,
       "path" : "src/wallet/wallet.cpp",
-      "position" : 4,
+      "position" : null,
       "pull_request_review_id" : 1084565113,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25896",
       "reactions" : {
@@ -351,6 +351,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-24T22:07:27Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/954339374",
       "user" : {
@@ -430,7 +431,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/955264151"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "@achow101 I pushed a revision without it (I actually had the patch ready since this afternoon, but I forgot to push it until now).",
       "commit_id" : "835bd27e9a0dd627f266e3dc0a7422d8d0612eff",
       "created_at" : "2022-08-25T17:54:35Z",
@@ -463,6 +464,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-25T17:54:36Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/955264151",
       "user" : {
@@ -487,7 +489,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "Just a question, since I haven't done this kind of thing before:\r\n\r\nMust I keep rebasing the FETCH_HEAD and force-pushing before this PR can be merged?\r\n\r\nI'm asking because apparently other merges are being made and CONTRIBUTING.md says that maintainers might request to rebase the FETCH_HEAD first.",
       "created_at" : "2022-08-26T18:28:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25896#issuecomment-1228796700",

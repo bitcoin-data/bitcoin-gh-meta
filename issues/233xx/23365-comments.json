@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "The proposed change would also mean that it would now be possible to prune up to the best block of an index without needing to reindex (+1 block compared to master). I hope I'm not missing something, but I don't see why we still need the full data of `block->pprev` in the case where `block` is the best block of the index and `block->pprev`  was indexed in the past.\r\nI added a test for this edge case to `feature_blockfilterindex_prune.py`.",
       "created_at" : "2021-10-27T23:17:23Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23365#issuecomment-953378550",
@@ -88,8 +88,8 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#23474](https://github.com/bitcoin/bitcoin/pull/23474) (test: scripted-diff cleanups after generate* changes by MarcoFalke)\n* [#21726](https://github.com/bitcoin/bitcoin/pull/21726) (Improve Indices on pruned nodes via prune blockers by fjahr)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#21726](https://github.com/bitcoin/bitcoin/pull/21726) (Improve Indices on pruned nodes via prune blockers by fjahr)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2021-10-28T01:35:11Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23365#issuecomment-953430094",
       "id" : 953430094,
@@ -108,7 +108,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/953430094/reactions"
       },
-      "updated_at" : "2021-11-10T05:13:17Z",
+      "updated_at" : "2021-12-05T05:25:56Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/953430094",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Moved out of draft and added steps to reproduce to OP.\r\nNot sure if the second commit (test) should be merged, maybe it's too detailed, plus the test gets reworked in #21726 anyway. \r\n\r\nNote that the last commit of #21726 would partly \"fix\" the issue too by just not running the affected code unless `-prune=1` is specified but doesn't address the root cause.",
       "created_at" : "2021-11-09T00:20:03Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23365#issuecomment-963694506",
@@ -189,7 +189,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Why is this change correct?",
-      "commit_id" : "a36e23b183a6b8d1c60598618f2a5c8f31da02e0",
+      "commit_id" : "9600ea01450b0d39be90eb2971c1ac5c9b69a66e",
       "created_at" : "2021-11-09T09:54:34Z",
       "diff_hunk" : "@@ -24,11 +24,7 @@ def run_test(self):\n         self.log.info(\"check if we can access a blockfilter when pruning is enabled but no blocks are actually pruned\")\n         self.sync_index(height=200)\n         assert_greater_than(len(self.nodes[0].getblockfilter(self.nodes[0].getbestblockhash())['filter']), 0)\n-        # Mine two batches of blocks to avoid hitting NODE_NETWORK_LIMITED_MIN_BLOCKS disconnection\n-        self.generate(self.nodes[0], 250)\n-        self.sync_all()\n-        self.generate(self.nodes[0], 250)\n-        self.sync_all()\n+        self.generate(self.nodes[0], 500)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23365#discussion_r745454407",
@@ -201,7 +201,7 @@
       "original_position" : 9,
       "original_start_line" : null,
       "path" : "test/functional/feature_blockfilterindex_prune.py",
-      "position" : 9,
+      "position" : 7,
       "pull_request_review_id" : 801063611,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23365",
       "reactions" : {
@@ -219,6 +219,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-11-09T09:54:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/745454407",
       "user" : {
@@ -254,9 +255,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/745466739"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Because preventing disconnections due to NODE_NETWORK_LIMITED_MIN_BLOCKS makes little sense  when there is just one node involved in the test. ",
-      "commit_id" : "a36e23b183a6b8d1c60598618f2a5c8f31da02e0",
+      "commit_id" : "9600ea01450b0d39be90eb2971c1ac5c9b69a66e",
       "created_at" : "2021-11-09T10:09:37Z",
       "diff_hunk" : "@@ -24,11 +24,7 @@ def run_test(self):\n         self.log.info(\"check if we can access a blockfilter when pruning is enabled but no blocks are actually pruned\")\n         self.sync_index(height=200)\n         assert_greater_than(len(self.nodes[0].getblockfilter(self.nodes[0].getbestblockhash())['filter']), 0)\n-        # Mine two batches of blocks to avoid hitting NODE_NETWORK_LIMITED_MIN_BLOCKS disconnection\n-        self.generate(self.nodes[0], 250)\n-        self.sync_all()\n-        self.generate(self.nodes[0], 250)\n-        self.sync_all()\n+        self.generate(self.nodes[0], 500)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23365#discussion_r745466739",
@@ -269,7 +270,7 @@
       "original_position" : 9,
       "original_start_line" : null,
       "path" : "test/functional/feature_blockfilterindex_prune.py",
-      "position" : 9,
+      "position" : 7,
       "pull_request_review_id" : 801080315,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23365",
       "reactions" : {
@@ -287,6 +288,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-11-09T10:09:37Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/745466739",
       "user" : {
@@ -355,51 +357,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2021-11-16T04:02:29Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/23365#issuecomment-969836721",
-      "id" : 969836721,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/23365",
-      "node_id" : "IC_kwDOABII5845zoix",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/969836721/reactions"
-      },
-      "updated_at" : "2021-11-16T04:02:29Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/969836721",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> The `block = block->pprev;` does make me a little nervous (although as-written the code would never cause any problems given how we initialize `block_to_test`), so if you wanted to you could include an assertion like\r\n\r\nThanks - I added the assertion as suggested, and rebased. Note that adding the assert only changes the kind of error: Before, if `block->pprev` had not existed (which I agree shouldn't be possible), the InitError would have been thrown  (because the while condition includes a check for `block`).\r\n",
       "created_at" : "2021-11-26T15:43:40Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23365#issuecomment-980067148",
@@ -486,6 +444,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-07T13:18:21Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/763981042",
       "user" : {
@@ -553,6 +512,7 @@
       "side" : "RIGHT",
       "start_line" : 52,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2021-12-07T13:18:21Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/763982639",
       "user" : {
@@ -621,6 +581,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-07T14:37:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/764056096",
       "user" : {
@@ -689,6 +650,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-07T15:46:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/764126299",
       "user" : {
@@ -724,7 +686,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/768146262"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Is it because that's where the block file happens to wrap\r\n\r\nYes, I believe that is the reason, and I agree it's brittle (although the test relied before on this, e.g. at `assert_equal(pruneheight, 248)` - I'm not sure though if there is a better way to test pruning in a detailed way.",
       "commit_id" : "9600ea01450b0d39be90eb2971c1ac5c9b69a66e",
       "created_at" : "2021-12-13T21:45:32Z",
@@ -757,6 +719,7 @@
       "side" : "RIGHT",
       "start_line" : 52,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2021-12-13T21:45:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/768146262",
       "user" : {
@@ -792,7 +755,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/768149008"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Sorry I didn't get to this earlier, would have added a comment, do people think that this warrants a follow-up?",
       "commit_id" : "9600ea01450b0d39be90eb2971c1ac5c9b69a66e",
       "created_at" : "2021-12-13T21:50:01Z",
@@ -825,6 +788,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-13T21:50:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/768149008",
       "user" : {
@@ -893,6 +857,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-14T01:30:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/768248831",
       "user" : {
@@ -928,7 +893,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/769095589"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done in #23777",
       "commit_id" : "9600ea01450b0d39be90eb2971c1ac5c9b69a66e",
       "created_at" : "2021-12-14T22:28:08Z",
@@ -961,6 +926,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-14T22:28:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/769095589",
       "user" : {
@@ -996,7 +962,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/769095728"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "comment added in #23777",
       "commit_id" : "9600ea01450b0d39be90eb2971c1ac5c9b69a66e",
       "created_at" : "2021-12-14T22:28:21Z",
@@ -1029,6 +995,7 @@
       "side" : "RIGHT",
       "start_line" : 52,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2021-12-14T22:28:21Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/769095728",
       "user" : {
@@ -1050,74 +1017,6 @@
          "subscriptions_url" : "https://api.github.com/users/mzumsande/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/mzumsande"
-      }
-   },
-   {
-      "_links" : {
-         "html" : {
-            "href" : "https://github.com/bitcoin/bitcoin/pull/23365#discussion_r769096938"
-         },
-         "pull_request" : {
-            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23365"
-         },
-         "self" : {
-            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/769096938"
-         }
-      },
-      "author_association" : "NONE",
-      "body" : "Star\r\n",
-      "commit_id" : "9600ea01450b0d39be90eb2971c1ac5c9b69a66e",
-      "created_at" : "2021-12-14T22:30:40Z",
-      "diff_hunk" : "@@ -39,16 +37,29 @@ def run_test(self):\n         self.log.info(\"check if we can access the blockfilter of a pruned block\")\n         assert_greater_than(len(self.nodes[0].getblockfilter(self.nodes[0].getblockhash(2))['filter']), 0)\n \n+        # mine and sync index up to a height that will later be the pruneheight\n+        self.generate(self.nodes[0], 298)\n+        self.sync_index(height=998)\n+\n         self.log.info(\"start node without blockfilterindex\")\n         self.restart_node(0, extra_args=[\"-fastprune\", \"-prune=1\"])\n \n         self.log.info(\"make sure accessing the blockfilters throws an error\")\n         assert_raises_rpc_error(-1, \"Index is not enabled for filtertype basic\", self.nodes[0].getblockfilter, self.nodes[0].getblockhash(2))\n-        self.generate(self.nodes[0], 1000)\n+        self.generate(self.nodes[0], 502)\n+\n+        self.log.info(\"prune exactly up to the blockfilterindexes best block while blockfilters are disabled\")\n+        pruneheight_2 = self.nodes[0].pruneblockchain(1000)\n+        assert_equal(pruneheight_2, 998)",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/23365#discussion_r769096938",
-      "id" : 769096938,
-      "in_reply_to_id" : 763982639,
-      "line" : 53,
-      "node_id" : "PRRC_kwDOABII584t13zq",
-      "original_commit_id" : "9600ea01450b0d39be90eb2971c1ac5c9b69a66e",
-      "original_line" : 53,
-      "original_position" : 29,
-      "original_start_line" : 52,
-      "path" : "test/functional/feature_blockfilterindex_prune.py",
-      "position" : 29,
-      "pull_request_review_id" : 832112850,
-      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23365",
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/769096938/reactions"
-      },
-      "side" : "RIGHT",
-      "start_line" : 52,
-      "start_side" : "RIGHT",
-      "updated_at" : "2021-12-14T22:30:40Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/769096938",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/90076990?v=4",
-         "events_url" : "https://api.github.com/users/2310Mas/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/2310Mas/followers",
-         "following_url" : "https://api.github.com/users/2310Mas/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/2310Mas/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/2310Mas",
-         "id" : 90076990,
-         "login" : "2310Mas",
-         "node_id" : "MDQ6VXNlcjkwMDc2OTkw",
-         "organizations_url" : "https://api.github.com/users/2310Mas/orgs",
-         "received_events_url" : "https://api.github.com/users/2310Mas/received_events",
-         "repos_url" : "https://api.github.com/users/2310Mas/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/2310Mas/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/2310Mas/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/2310Mas"
       }
    }
 ]

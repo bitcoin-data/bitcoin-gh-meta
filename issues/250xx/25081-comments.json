@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This looks interesting. Planning to play around with this, e.g. running this on [bitcoind.observer](https://bitcoind.observer).\r\n\r\nI think it would be good to document these tracepoints in [doc/tracing.md](https://github.com/bitcoin/bitcoin/blob/master/doc/tracing.md) and, if possible, have an interface test similar to these added in e.g. https://github.com/bitcoin/bitcoin/pull/24358 (`test/functional/interface_usdt_*.py`).\n\nEdit: Oh also, documentation of the bpftrace script in `contrib/tracing/README.md` would be nice :). ",
       "created_at" : "2022-05-07T18:56:19Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25081#issuecomment-1120264468",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| Concept ACK | [laanwj](https://github.com/bitcoin/bitcoin/pull/25081#issuecomment-1121493683), [hebasto](https://github.com/bitcoin/bitcoin/pull/25081#issuecomment-1121562252), [jb55](https://github.com/bitcoin/bitcoin/pull/25081#issuecomment-1129362470) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25819](https://github.com/bitcoin/bitcoin/pull/25819) (msvc, refactor: Avoid some rare compiler warnings by hebasto)\n* [#25676](https://github.com/bitcoin/bitcoin/pull/25676) (sync: simplify and remove unused code from sync.h by vasild)\n* [#24923](https://github.com/bitcoin/bitcoin/pull/24923) (Rework logging timer by MarcoFalke)\n* [#16545](https://github.com/bitcoin/bitcoin/pull/16545) (refactor: Implement missing error checking for ArgsManager flags by ryanofsky)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-05-08T06:30:23Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25081#issuecomment-1120359585",
@@ -317,7 +317,7 @@
       "node_id" : "IC_kwDOABII585DT4Pp",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -325,7 +325,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1129284585/reactions"
       },
       "updated_at" : "2022-05-17T20:24:26Z",
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK!\n\nThis was one of the main usecases of tracepoints that I had in mind! Very nice, will test.\n",
       "created_at" : "2022-05-17T22:06:10Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25081#issuecomment-1129362470",
@@ -396,7 +396,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I've started playing around with these tracepoints. It seems like there are **two** ELF notes generated for each `sync` tracepoint. \r\n\r\n<details>\r\n<summary>\r\nOutput of `readelf -n ./src/bitcoind`\r\n</summary>\r\n\r\n```\r\n...\r\n  stapsdt              0x0000002f\tNT_STAPSDT (SystemTap probe descriptors)\r\n    Provider: sync\r\n    Name: mutex_ctor\r\n    Location: 0x00000000005dca7b, Base: 0x000000000086f360, Semaphore: 0x0000000000000000\r\n    Arguments: 8@%rdi\r\n  stapsdt              0x0000002f\tNT_STAPSDT (SystemTap probe descriptors)\r\n    Provider: sync\r\n    Name: mutex_dtor\r\n    Location: 0x00000000005dcab8, Base: 0x000000000086f360, Semaphore: 0x0000000000000000\r\n    Arguments: 8@%rdi\r\n  stapsdt              0x0000002f\tNT_STAPSDT (SystemTap probe descriptors)\r\n    Provider: sync\r\n    Name: mutex_ctor\r\n    Location: 0x00000000005dcc12, Base: 0x000000000086f360, Semaphore: 0x0000000000000000\r\n    Arguments: 8@%rdi\r\n  stapsdt              0x0000002f\tNT_STAPSDT (SystemTap probe descriptors)\r\n    Provider: sync\r\n    Name: mutex_dtor\r\n    Location: 0x00000000005dcc48, Base: 0x000000000086f360, Semaphore: 0x0000000000000000\r\n    Arguments: 8@%rdi\r\n  stapsdt              0x0000004e\tNT_STAPSDT (SystemTap probe descriptors)\r\n    Provider: sync\r\n    Name: enter\r\n    Location: 0x00000000005dcd8c, Base: 0x000000000086f360, Semaphore: 0x0000000000000000\r\n    Arguments: 8@(%rdi) 8@16(%rdi) 8@24(%rdi) -4@32(%rdi)\r\n  stapsdt              0x0000004d\tNT_STAPSDT (SystemTap probe descriptors)\r\n    Provider: sync\r\n    Name: locked\r\n    Location: 0x00000000005dcdb5, Base: 0x000000000086f360, Semaphore: 0x0000000000000000\r\n    Arguments: 8@%rdi 8@16(%rbx) 8@24(%rbx) -4@32(%rbx)\r\n  stapsdt              0x00000051\tNT_STAPSDT (SystemTap probe descriptors)\r\n    Provider: sync\r\n    Name: try_locked\r\n    Location: 0x00000000005dce5c, Base: 0x000000000086f360, Semaphore: 0x0000000000000000\r\n    Arguments: 8@%rdi 8@16(%rbx) 8@24(%rbx) -4@32(%rbx)\r\n  stapsdt              0x00000044\tNT_STAPSDT (SystemTap probe descriptors)\r\n    Provider: sync\r\n    Name: unlock\r\n    Location: 0x00000000005dceae, Base: 0x000000000086f360, Semaphore: 0x0000000000000000\r\n    Arguments: 8@(%rdi) 8@24(%rdi) -4@32(%rdi)\r\n  stapsdt              0x0000004e\tNT_STAPSDT (SystemTap probe descriptors)\r\n    Provider: sync\r\n    Name: enter\r\n    Location: 0x00000000005dd14c, Base: 0x000000000086f360, Semaphore: 0x0000000000000000\r\n    Arguments: 8@(%rdi) 8@16(%rdi) 8@24(%rdi) -4@32(%rdi)\r\n  stapsdt              0x0000004d\tNT_STAPSDT (SystemTap probe descriptors)\r\n    Provider: sync\r\n    Name: locked\r\n    Location: 0x00000000005dd175, Base: 0x000000000086f360, Semaphore: 0x0000000000000000\r\n    Arguments: 8@%rdi 8@16(%rbx) 8@24(%rbx) -4@32(%rbx)\r\n  stapsdt              0x00000051\tNT_STAPSDT (SystemTap probe descriptors)\r\n    Provider: sync\r\n    Name: try_locked\r\n    Location: 0x00000000005dd21c, Base: 0x000000000086f360, Semaphore: 0x0000000000000000\r\n    Arguments: 8@%rdi 8@16(%rbx) 8@24(%rbx) -4@32(%rbx)\r\n  stapsdt              0x00000044\tNT_STAPSDT (SystemTap probe descriptors)\r\n    Provider: sync\r\n    Name: unlock\r\n    Location: 0x00000000005dd26e, Base: 0x000000000086f360, Semaphore: 0x0000000000000000\r\n    Arguments: 8@(%rdi) 8@24(%rdi) -4@32(%rdi)\r\n```\r\n\r\n</details>\r\n\r\nI think, this is caused the templates were using - and that's not something we want to change.  E.g. https://github.com/bitcoin/bitcoin/blob/f7917c26970956bf5fc423b9cc995554694c87be/src/sync.cpp#L329-L333\r\n\r\nTwo ELF notes with the same context/provider and name cause problems for me. E.g., when using bcc via the binary path (as we do it in e.g. [the interface tests](https://github.com/bitcoin/bitcoin/blob/d5d40d59f8d12cf53c5ad1ce9710f3f108cec386/test/functional/interface_usdt_net.py#L112)). According to https://github.com/iovisor/bcc/issues/1774#issuecomment-390723275 this works when using the PID, which we can do for the interface tests. Still, supporting hooking into the tracepoints both via PID and binary path would be good, but I'm not sure if that's possible in this case.\r\n\r\n ",
       "created_at" : "2022-05-17T22:19:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25081#issuecomment-1129370599",
@@ -484,7 +484,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> there are two ELF notes generated for each sync tracepoint\n\nIf the template is getting instantiated twice creating two tracepoints, why not just create a standalone function containing the trace? Then perhaps we wouldn't need to move the header-only templates as well.\n",
       "created_at" : "2022-05-18T16:14:41Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25081#issuecomment-1130218739",
@@ -528,7 +528,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
       "created_at" : "2022-10-03T19:04:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25081#issuecomment-1265899850",
@@ -572,7 +572,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--13523179cfe9479db18ec6c5d236f789-->\nThere hasn't been much activity lately and the patch still needs rebase. What is the status here?\n\n* Is it still relevant? â¡ï¸ Please solve the conflicts to make it ready for review and to ensure the CI passes.\n* Is it no longer relevant? â¡ï¸ Please close.\n* Did the author lose interest or time to work on this? â¡ï¸ Please close it and mark it 'Up for grabs' with the label, so that it can be picked up in the future.\n",
       "created_at" : "2023-02-28T01:00:48Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25081#issuecomment-1447383761",
@@ -625,7 +625,7 @@
       "node_id" : "IC_kwDOABII585WSsKl",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -633,7 +633,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1447740069/reactions"
       },
       "updated_at" : "2023-02-28T08:05:14Z",

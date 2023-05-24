@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "This started in #24845 but grew out of scope of it. \r\n\r\nSo, points tackled:\r\n\r\n1) Avoid extra `GetWalletTx` lookups inside `AvailableCoins -> IsSpentKey`.\r\n    `IsSpentKey` was receiving the tx hash and index to internally lookup the tx inside the wallet's map. As all the `IsSpentKey` function callers already have the wtx available, them can provide the `scriptPubKey` directly.\r\n\r\n2) Most of the time, we call `Wallet::AvailableCoins`, and later on the process, skip the non-spendable coins from the result in subsequent for-loops. So to speedup the process: introduced the ability to filter by \"only_spendable\" coins inside `Wallet::AvailableCoins` directly.\r\n(the non-spendable coins skip examples are inside `AttemptSelection->GroupOutputs` and `GetAvailableBalance`).\r\n\r\n4) Refactored `AvailableCoins` in several ways:\r\n\r\n   a) Now it will return a new struct `CoinsResult` instead of receiving the vCoins vector reference (which was being cleared at the beginning of the method anyway). --> this is coming from #24845 but cherry-picked it here too to make the following commits look nicer.\r\n\r\n   b) Unified all the 'wtx.tx->vout[I]' calls into a single call (coming from this comment https://github.com/bitcoin/bitcoin/pull/24699#discussion_r854163032). \r\n\r\n5) The wallet `IsLockedCoin` and `IsSpent` methods now accept an `OutPoint` instead of a hash:index. Which let me cleanup a bunch of extra code.\r\n\r\n6) Speeded up the wallet 'GetAvailableBalance': filtering `AvailableCoins` by spendable outputs only and using the 'AvailableCoins' retrieved `total_amount` instead of looping over all the retrieved coins once more.\r\n\r\n-------------------------------------------------------\r\n\r\nSide topic, all this process will look even nicer with #25218",
    "closed_at" : "2022-06-17T22:03:07Z",
    "closed_by" : {
@@ -25,7 +25,7 @@
       "type" : "User",
       "url" : "https://api.github.com/users/achow101"
    },
-   "comments" : 11,
+   "comments" : 12,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25005/comments",
    "created_at" : "2022-04-27T15:09:06Z",
    "draft" : false,
@@ -73,7 +73,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25005/timeline",
    "title" : "wallet: remove extra wtx lookup in 'AvailableCoins' + several code cleanups.",
-   "updated_at" : "2022-06-17T23:47:45Z",
+   "updated_at" : "2022-07-22T23:45:04Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25005",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/5377650?v=4",

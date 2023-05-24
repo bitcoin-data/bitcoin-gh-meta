@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "Call `fs::u8path()` to convert some UTF-8 string literals to paths, instead of relying on the implicit conversion. Fake Macro pointed out in https://github.com/bitcoin/bitcoin/pull/24306#discussion_r818566106 that `fs_tests` are incorrectly decoding some literal UTF-8 paths using the current windows codepage, instead of treating them as UTF-8. This could cause test failures depending what environment windows tests are run under.\r\n\r\nThe `fs::path` class exists to avoid problems like this, but because it is lenient with `const char*` conversions, under assumption that they are [\"safe as long as the literals are ASCII\"](https://github.com/bitcoin/bitcoin/blob/727b0cb59259ac63c627b09b503faada1a89bfb8/src/fs.h#L39), bugs like this are still possible.\r\n\r\nIf we think this is a concern, followup options to try to prevent this bug in the future are:\r\n\r\n0. Do nothing\r\n1. Improve the \"safe as long as the literals are ASCII\" comment. Make it clear that non-ASCII strings are invalid.\r\n2. Drop the implicit `const char*` conversion functions. This would be nice because it would simplifify the `fs::path` class a little, while making it safer. Drawback is that it would require some more verbosity from callers. For example, instead of `GetDataDirNet() / \"mempool.dat\"` they would have to write `GetDataDirNet() / fs::u8path(\"mempool.dat\")`\r\n3. Keep the implicit `const char*` conversion functions, but make them call `fs::u8path()` internally. Change the \"safe as long as the literals are *ASCII*\" comment to \"safe as long as the literals are *UTF-8*\".\r\n\r\nI'd be happy with 0, 1, or 2. I'd be a little resistant to 3 even though it was would add more safety, because it would slightly increase complexity, and because I think it would encourage representing paths as strings, when I think there are so many footguns associated with paths as strings, that it's best to convert strings to paths at the earliest point possible, and convert paths to strings at the latest point possible.",
    "closed_at" : "2022-03-10T11:51:55Z",
    "closed_by" : {
@@ -44,7 +44,7 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24469/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "PR_kwDOABII584z6Z4t",
    "number" : 24469,
@@ -70,9 +70,10 @@
    },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24469/timeline",
    "title" : "test: Correctly decode UTF-8 literal string paths",
-   "updated_at" : "2022-03-10T11:51:56Z",
+   "updated_at" : "2023-03-10T10:18:25Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24469",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/7133040?v=4",

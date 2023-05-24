@@ -18,17 +18,36 @@
       "diff_hunk" : "@@ -133,5 +134,20 @@ def run_test(self):\n         self.log.info(\"Test inflation by duplicating input\")\n         node.p2p.send_blocks_and_test([block4], node, success=False,  reject_reason='bad-txns-inputs-duplicate')\n \n+\n+        self.log.info(\"Test accepting identical block after rejecting it due to a future timestamp.\")\n+\n+        t = int(time.time())\n+        node.setmocktime(t)\n+        block = create_block(tip, create_coinbase(height), t + 7201)\n+        block.hashMerkleRoot = block.calc_merkle_root()\n+        block.solve()\n+        # NOTE: Need force_send because the block will get rejected without a getdata otherwise\n+        node.p2p.send_blocks_and_test([block], node, force_send=True, success=False, reject_reason='time-too-new')#, expect_disconnect=True)\n+        #self.reconnect_p2p()",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/17872#discussion_r363146120",
       "id" : 363146120,
+      "line" : 147,
       "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM2MzE0NjEyMA==",
       "original_commit_id" : "ffbfba7be11ad9da3c69bf9393cd37312cf3e587",
+      "original_line" : 147,
       "original_position" : 22,
+      "original_start_line" : null,
       "path" : "test/functional/p2p_invalid_block.py",
       "position" : 22,
       "pull_request_review_id" : 338453362,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17872",
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/363146120/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2020-01-06T03:20:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/363146120",
       "user" : {
-         "avatar_url" : "https://avatars0.githubusercontent.com/u/524761?v=4",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/524761?v=4",
          "events_url" : "https://api.github.com/users/jimmysong/events{/privacy}",
          "followers_url" : "https://api.github.com/users/jimmysong/followers",
          "following_url" : "https://api.github.com/users/jimmysong/following{/other_user}",
@@ -49,6 +68,142 @@
       }
    },
    {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17872#discussion_r428949712"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17872"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/428949712"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Should update description to include the added test?",
+      "commit_id" : "ffbfba7be11ad9da3c69bf9393cd37312cf3e587",
+      "created_at" : "2020-05-21T22:28:28Z",
+      "diff_hunk" : "@@ -11,6 +11,7 @@\n re-requested.",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17872#discussion_r428949712",
+      "id" : 428949712,
+      "line" : 11,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyODk0OTcxMg==",
+      "original_commit_id" : "ffbfba7be11ad9da3c69bf9393cd37312cf3e587",
+      "original_line" : 11,
+      "original_position" : 1,
+      "original_start_line" : null,
+      "path" : "test/functional/p2p_invalid_block.py",
+      "position" : 1,
+      "pull_request_review_id" : 416535600,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17872",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/428949712/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2020-05-21T22:34:15Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/428949712",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/25183001?v=4",
+         "events_url" : "https://api.github.com/users/glozow/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/glozow/followers",
+         "following_url" : "https://api.github.com/users/glozow/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/glozow/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/glozow",
+         "id" : 25183001,
+         "login" : "glozow",
+         "node_id" : "MDQ6VXNlcjI1MTgzMDAx",
+         "organizations_url" : "https://api.github.com/users/glozow/orgs",
+         "received_events_url" : "https://api.github.com/users/glozow/received_events",
+         "repos_url" : "https://api.github.com/users/glozow/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/glozow/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/glozow/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/glozow"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/17872#discussion_r428951425"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17872"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/428951425"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Stray in-line comment, and I'm pretty sure we don't expect disconnect?",
+      "commit_id" : "ffbfba7be11ad9da3c69bf9393cd37312cf3e587",
+      "created_at" : "2020-05-21T22:33:45Z",
+      "diff_hunk" : "@@ -133,5 +134,20 @@ def run_test(self):\n         self.log.info(\"Test inflation by duplicating input\")\n         node.p2p.send_blocks_and_test([block4], node, success=False,  reject_reason='bad-txns-inputs-duplicate')\n \n+\n+        self.log.info(\"Test accepting identical block after rejecting it due to a future timestamp.\")\n+\n+        t = int(time.time())\n+        node.setmocktime(t)\n+        block = create_block(tip, create_coinbase(height), t + 7201)\n+        block.hashMerkleRoot = block.calc_merkle_root()\n+        block.solve()\n+        # NOTE: Need force_send because the block will get rejected without a getdata otherwise\n+        node.p2p.send_blocks_and_test([block], node, force_send=True, success=False, reject_reason='time-too-new')#, expect_disconnect=True)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/17872#discussion_r428951425",
+      "id" : 428951425,
+      "line" : 146,
+      "node_id" : "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyODk1MTQyNQ==",
+      "original_commit_id" : "ffbfba7be11ad9da3c69bf9393cd37312cf3e587",
+      "original_line" : 146,
+      "original_position" : 21,
+      "original_start_line" : null,
+      "path" : "test/functional/p2p_invalid_block.py",
+      "position" : 21,
+      "pull_request_review_id" : 416535600,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/17872",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/428951425/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2020-05-21T22:34:15Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/428951425",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/25183001?v=4",
+         "events_url" : "https://api.github.com/users/glozow/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/glozow/followers",
+         "following_url" : "https://api.github.com/users/glozow/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/glozow/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/glozow",
+         "id" : 25183001,
+         "login" : "glozow",
+         "node_id" : "MDQ6VXNlcjI1MTgzMDAx",
+         "organizations_url" : "https://api.github.com/users/glozow/orgs",
+         "received_events_url" : "https://api.github.com/users/glozow/received_events",
+         "repos_url" : "https://api.github.com/users/glozow/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/glozow/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/glozow/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/glozow"
+      }
+   },
+   {
       "author_association" : "MEMBER",
       "body" : "Two concept ACKs, but this needs review comments addressing, added \"waiting for author\".",
       "created_at" : "2021-04-08T06:02:03Z",
@@ -57,6 +212,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17872",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgxNTQ3MzExNg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/815473116/reactions"
+      },
       "updated_at" : "2021-04-08T06:02:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/815473116",
       "user" : {
@@ -89,6 +256,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17872",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg1MTIyNDIzMg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/851224232/reactions"
+      },
       "updated_at" : "2021-05-31T06:29:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/851224232",
       "user" : {
@@ -121,6 +300,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/17872",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg1MjgzMjUzMw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/852832533/reactions"
+      },
       "updated_at" : "2021-06-02T08:06:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/852832533",
       "user" : {

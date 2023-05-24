@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| Concept ACK | [sdaftuar](https://github.com/bitcoin/bitcoin/pull/27625#issuecomment-1547892773), [ajtowns](https://github.com/bitcoin/bitcoin/pull/27625#issuecomment-1552435967) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n",
       "created_at" : "2023-05-11T13:53:20Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27625#issuecomment-1544032117",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n",
       "created_at" : "2023-05-11T14:40:15Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27625#issuecomment-1544111666",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "FWIW, I've thought about moving `mapRelay` into txmempool so that its size can be counted as part of the 300MB (or whatever), and, if it grows too large, that we could trim `mapRelay` before their scheduled expiry time has actually been reached. Then you could have a multi_index amongst `txid`, `wtxid`, `expiry` to an `CTransactionRef`, along with a counter of how many entries in `mapRelay` aren't also in the mempool for handling memory usage?",
       "created_at" : "2023-05-11T16:08:23Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27625#issuecomment-1544274997",
@@ -308,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > we could trim mapRelay before their scheduled expiry time has actually been reached.\r\n> \r\n> Sounds like this would either degrade compact block relay when the mempool is full due to trimming `mapRelay`, or turn one DoS (OOM) into another DoS (lost fee income) due to trimming valid mempool txs? And if you use separate and dedicated size limits for `mapRelay` and the mempool, it might be easier to keep them separate data structures?\r\n\r\nThe memory usage of `mapRelay` depends on whether the transactions in it have been removed from the mempool -- if you've got 15k txs in `mapRelay` but all of them are in the mempool, then that's likely using up ~1MB; but if 50% of them were removed from the mempool and each `CTransactionRef` is using up 1kB, then that's more an extra ~15MB. You maybe get the latter scenario if you're relaying a lot of RBF txs. So I don't think you can sensibly put a figure on how much memory `mapRelay` is using if you don't track the relationship.\r\n\r\nBeyond that, the advantage of linking the two together for limits is that if you start trimming the mempool because `mapRelay` is too large, then you're increasing the mempool minfee, which reduces the RBF headroom -- instead of being able to RBF 50 times from 10 sat/vb up to 60 sat/vb, you might only see and relay 40 RBFs, from 20 sat/vb up to 60 sat/vb, which then reduces pressure on `mapRelay`.\r\n\r\n> What is the benefit of `mapRelay` overlapping with mempool?\r\n\r\n(a) We want things to expire from `mapRelay` based on when we first announced them, not when we first received them or when we evicted them, so that's extra data to store.\r\n\r\n(b) The number of txs we announce in 15 minutes is (currently) relatively tightly constrained (35tx every 2s for outbounds over 15min is ~16k; chance of >20k in 15min is about 1-in-5M).\r\n\r\n> If the main reason is transactions that could be in blocks, it seems reasonable to cap it at just a few thousand entries?\r\n\r\nWith RBF, you could have many different variants of a single tx, each relatively likely to make it into a block depending on when the miner picked the block template, so I think the time-based cap makes sense.\r\n\r\nThat said, I don't think there's a strong reason for the expiry duration to be 15 minutes rather than something shorter -- that was just left unchanged in #16851 when `mapRelay` went from being the only way to find a tx to just being the way to get at txs that are new to the mempool.",
       "created_at" : "2023-05-12T00:53:42Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27625#issuecomment-1544947585",
@@ -484,7 +484,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK\r\n\r\nThe original use of `mapRelay` was that if a tx wasn't in `mapRelay` it wouldn't be relayed at all. That resulted in problems with child transactions -- if we relay a recent child to a peer that doesn't have the parent, the parent may have expired from `mapRelay` and thus the peer wouldn't be able to accept the child at all.\r\n\r\nWe fixed that with #16851 so that we'd relay txs from the mempool if they'd been in the mempool long enough to expire from `mapRelay` (ie, 15 minutes). That got further tweaked in #18861 so that we'd skip txs that were in the to-be-announced queue, and then got tweaked further in #19109 so that the mempool would be used unconditionally for txs that had been announced recently, or that were older than 2 minutes, and `mapRelay` would only be used for txs that had left the mempool, had been announced recently (with the last 3500-5250 txs), and had entered the mempool within the last 15 minutes.\r\n\r\nThis resurrects #17303, and it's probably worth reviewing the comments there; most of the issues they raise have already been addressed, I think.\r\n\r\nI think I agree with [Suhas's comment](https://github.com/bitcoin/bitcoin/pull/27625#issuecomment-1544047433) that we should ensure we serve any txs in the most recent block before dropping `mapRelay` though, so only a concept ack here. Here's a test commit that adds that functionality https://github.com/bitcoin/bitcoin/pull/27675/commits/f26a85059fb4eaf29f9c1652b2b5e14060d79a36 I'm now running that with logging for both relayed-from-most-recent-block and relayed-from-mapRelay-only to see how relevant those cases are in practice.\r\n\r\nI think it would also be good to continue serving txs from `vExtraTxnForCompact` (and to use them for resolving orphans?) to help address the [privacy issue for rbf relay](https://github.com/bitcoin/bitcoin/pull/17303#issuecomment-550460346), but I don't think that needs to be a prerequisite for dropping `mapRelay`.",
       "created_at" : "2023-05-18T05:39:04Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27625#issuecomment-1552435967",
@@ -572,7 +572,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> How would you judge \"relevant\"? I presume you are looking for rbf'd transactions that were requested from mapRelay and ended up in a block, but the block was not yet available to you?\r\n\r\nI'm still tweaking the logging, but so far what I'm seeing seems like roughly:\r\n\r\n * 95% relay from the mempool\r\n * of the 5% that don't:\r\n   * 87% are recent txs included in the most recent block (so would also be available via mapRelay)\r\n   * 12% are recent txs not in the most recent block, so only via mapRelay (combination of rbf'ed txs and things from the 2nd most recent block by the looks; EDIT: also things that were at the bottom of the mempool as minfee gets raised)\r\n   * 1% txs in the most recent block but not in mapRelay\r\n\r\nWhen things gets broadcast and then quickly rbf'ed, our behaviour looks a little weird, eg:\r\n\r\n```\r\n2023-05-18T07:32:49Z [net] got inv: wtx 57232af955cc9a788118508f50bc4f4bd8f41769c9ffbc218c6fe964c431e6c7  new peer=40\r\n2023-05-18T07:32:51Z [net] Requesting wtx 57232af955cc9a788118508f50bc4f4bd8f41769c9ffbc218c6fe964c431e6c7 peer=40\r\n2023-05-18T07:33:13Z [mempool] replacing tx 8d291ba6d69303d2aec6147df7768726a44108bbbdfc4064dfdbbb2f7ce9f280 with {06a3c28af14f9ad196f4aa209bc32fe4c79c79c8e176dc63428d7db96418cb17} for 0.00003867 additional fees, 0 delta bytes\r\n2023-05-18T07:33:13Z [mempool] AcceptToMemoryPool: peer=40: accepted {06a3c28af14f9ad196f4aa209bc32fe4c79c79c8e176dc63428d7db96418cb17} (poolsz 19793 txn, 100120 kB) feerate=158.23\r\n2023-05-18T07:33:54Z [net] got inv: wtx 57232af955cc9a788118508f50bc4f4bd8f41769c9ffbc218c6fe964c431e6c7  have peer=30\r\n2023-05-18T07:33:56Z [net] got inv: wtx 57232af955cc9a788118508f50bc4f4bd8f41769c9ffbc218c6fe964c431e6c7  have peer=48\r\n2023-05-18T07:34:01Z [mempool] replacing tx {06a3c28af14f9ad196f4aa209bc32fe4c79c79c8e176dc63428d7db96418cb17} with ab6b9c2863bfbf2fd013f76ae010d52c378df7785a16dcb15d73077ab2406139 for 0.00010398 additional fees, 0 delta bytes\r\n2023-05-18T07:34:04Z [net] got inv: wtx 57232af955cc9a788118508f50bc4f4bd8f41769c9ffbc218c6fe964c431e6c7  new peer=46\r\n2023-05-18T07:34:04Z [net] Requesting wtx 57232af955cc9a788118508f50bc4f4bd8f41769c9ffbc218c6fe964c431e6c7 peer=46\r\n2023-05-18T07:34:05Z [mempoolrej] {06a3c28af14f9ad196f4aa209bc32fe4c79c79c8e176dc63428d7db96418cb17} from peer=46 was not accepted: insufficient fee, rejecting replacement {06a3c28af14f9ad196f4aa209bc32fe4c79c79c8e176dc63428d7db96418cb17}; new feerate 0.00158227 BTC/kvB <= old feerate 0.00287881 BTC/kvB\r\n2023-05-18T07:34:05Z [net]  XXX - +mr hey, relaying something from mapRelay {06a3c28af14f9ad196f4aa209bc32fe4c79c79c8e176dc63428d7db96418cb17} 57232af955cc9a788118508f50bc4f4bd8f41769c9ffbc218c6fe964c431e6c7\r\n2023-05-18T07:34:06Z [net] got inv: wtx 57232af955cc9a788118508f50bc4f4bd8f41769c9ffbc218c6fe964c431e6c7  have peer=8\r\n2023-05-18T07:34:09Z [net] got inv: wtx 57232af955cc9a788118508f50bc4f4bd8f41769c9ffbc218c6fe964c431e6c7  have peer=43\r\n```\r\n\r\n(ie, tx B arrives and replaces tx A; then we replace it with tx C; then B is announced by someone else so we request it again and run it through ATMP then we reject it; then someone else requests it and we relay it from mapRelay)",
       "created_at" : "2023-05-18T08:27:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27625#issuecomment-1552718608",
@@ -660,7 +660,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > I think it would also be good to continue serving txs from `vExtraTxnForCompact`\r\n> \r\n> I wasn't sure how to do this, given the planned removal of `m_recently_announced_invs` in #27675 . Otherwise we may relay invalid/non-standard transactions that were injected into us by a spy node.\r\n\r\nI guess a straightforward approach would be to have the mempool separately keep track of the last ~700 txs removed, as well as their entry time and removal time. Then they could be relayed to a node (under #27675's proposed logic) provided `entry <= last_inv < removal`. At 14tx/s, 700 txs is 50s, and the liklihood of not sending an inv to inbounds in that time seems like it's around once every 12 days (lowering to 40s would already reduce it to once a day).",
       "created_at" : "2023-05-18T11:31:25Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27625#issuecomment-1552923162",
@@ -880,7 +880,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Thanks. Did you want me to push it here (removing the logging), or did you want to open a fresh pull yourself?\r\n\r\nGo ahead and clean it up and push it here :) ",
       "created_at" : "2023-05-19T14:13:40Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27625#issuecomment-1554651019",

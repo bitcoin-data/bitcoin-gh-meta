@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> get_connected_peers_info would only work with Bitcoin Core peers, not mininode peers, so I'd prefer not to make it public\r\n\r\nGood point, I did not consider that. I've updated the diff (below) to keep it private. Also reduces the diff quite a bit. _(Note: `get_peer_ids()` would benefit from the same list comprehension imo, but not a required change for this to work)_\r\n\r\n> The only way I can see it would \"break\" is when you attempt to connect to the same peer twice. In which case the failure is probably wanted. I am not sure if your approach silently dismisses that failure.\r\n\r\nUpdated to only return `True` if we have exactly 1 connection to `b`, which I think addresses your concern. I don't have any specific ideas of how it would break otherwise, but since `connect_nodes()` doesn't own the nodes, I think it's not unreasonable to assume that the node _may_ update its peers in the background? If without additional complexity we can check that `a` is now connected to `b` and not just to any new node, that seems like a strict improvement to me?\r\n\r\n<details>\r\n<summary>git diff</summary>\r\n\r\n```diff\r\ndiff --git a/test/functional/test_framework/test_framework.py b/test/functional/test_framework/test_framework.py\r\nindex b1164b98f..fa3ddebe3 100755\r\n--- a/test/functional/test_framework/test_framework.py\r\n+++ b/test/functional/test_framework/test_framework.py\r\n@@ -581,8 +581,6 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):\r\n     def connect_nodes(self, a, b):\r\n         from_connection = self.nodes[a]\r\n         to_connection = self.nodes[b]\r\n-        from_num_peers = 1 + len(from_connection.getpeerinfo())\r\n-        to_num_peers = 1 + len(to_connection.getpeerinfo())\r\n         ip_port = \"127.0.0.1:\" + str(p2p_port(b))\r\n         from_connection.addnode(ip_port, \"onetry\")\r\n         # poll until version handshake complete to avoid race conditions\r\n@@ -590,10 +588,14 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):\r\n         # See comments in net_processing:\r\n         # * Must have a version message before anything else\r\n         # * Must have a verack message before anything else\r\n-        self.wait_until(lambda: sum(peer['version'] != 0 for peer in from_connection.getpeerinfo()) == from_num_peers)\r\n-        self.wait_until(lambda: sum(peer['version'] != 0 for peer in to_connection.getpeerinfo()) == to_num_peers)\r\n-        self.wait_until(lambda: sum(peer['bytesrecv_per_msg'].pop('verack', 0) == 24 for peer in from_connection.getpeerinfo()) == from_num_peers)\r\n-        self.wait_until(lambda: sum(peer['bytesrecv_per_msg'].pop('verack', 0) == 24 for peer in to_connection.getpeerinfo()) == to_num_peers)\r\n+        def is_connection_established(from_node: TestNode, to_node: TestNode) -> bool:\r\n+            connected = [peer for peer in from_connection.getpeerinfo() if f\"testnode{b}\" in peer[\"subver\"]]\r\n+            veracked = [peer for peer in connected if peer[\"bytesrecv_per_msg\"].pop('verack', 0) == 24]\r\n+            return len(veracked) == 1\r\n+\r\n+        self.wait_until(lambda: is_connection_established(from_connection, to_connection))\r\n+        self.wait_until(lambda: is_connection_established(to_connection, from_connection))\r\n+\r\n \r\n     def disconnect_nodes(self, a, b):\r\n         def disconnect_nodes_helper(node_a, node_b):\r\n\r\n```\r\n\r\n</details\r\n\r\n",
       "created_at" : "2022-09-22T10:41:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26138#issuecomment-1254847266",
@@ -143,7 +143,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/977504391"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: If you're touching, would use f-string instead:\r\n```python\r\n                self.log.warning(f\"disconnect_nodes: {node_a.index} and {node_b.index} were not connected\")\r\n```",
       "commit_id" : "faeea28753a94c45618c1b0ba83bb8700c53009a",
       "created_at" : "2022-09-22T10:51:06Z",
@@ -175,6 +175,7 @@
       "side" : "RIGHT",
       "start_line" : 610,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-09-22T10:58:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/977504391",
       "user" : {
@@ -210,7 +211,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/977505958"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: Since you're touching, I think adding type hints here would be helpful. Also, for consistency would prefer calling it `node` instead of `connection` and `index` instead of `num`?\r\n```suggestion\r\n    def disconnect_nodes(self, a: int, b: int) -> None:\r\n        def disconnect_nodes_helper(node_a: TestNode, node_b: TestNode) -> None:\r\n            def get_peer_ids(from_node: TestNode, to_node_index: int) -> List[int]:\r\n```",
       "commit_id" : "faeea28753a94c45618c1b0ba83bb8700c53009a",
       "created_at" : "2022-09-22T10:52:56Z",
@@ -242,6 +243,7 @@
       "side" : "RIGHT",
       "start_line" : 599,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-09-22T10:58:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/977505958",
       "user" : {
@@ -266,7 +268,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.",
       "created_at" : "2022-09-23T03:19:44Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26138#issuecomment-1255760944",
@@ -339,7 +341,7 @@
       "pull_request_review_id" : 1123898758,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26138",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -347,12 +349,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/982545001/reactions"
       },
       "side" : "RIGHT",
       "start_line" : 625,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-09-28T15:20:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/982545001",
       "user" : {
@@ -465,6 +468,7 @@
       "side" : "RIGHT",
       "start_line" : 599,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-09-28T19:03:22Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/982766989",
       "user" : {
@@ -533,6 +537,7 @@
       "side" : "RIGHT",
       "start_line" : 599,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-09-29T09:24:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/983297055",
       "user" : {

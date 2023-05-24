@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "The current interface description of `ChaCha20::SetKey` suggests that literally any key-length is supported (comment `set key with flexible keylength; 256bit recommended`), while passing in a key with a length less than 16 bytes would lead to a buffer overread:\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/5057adf22fc4c3593e1e633defeda96be508f198/src/crypto/chacha20.cpp#L30-L33\r\n\r\nThis PR adds an assert to only allowing sizes of 16 or 32 bytes (i.e. 128 and 256 bits, respectively) which seem what was intended originally, looking at the following piece of code:\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/5057adf22fc4c3593e1e633defeda96be508f198/src/crypto/chacha20.cpp#L34-L39\r\n\r\nThe fuzz tests are adopted accordingly to pick either 16 or 32 rather than a length in the range of 16 to 32. An alternative would be to just assert for the minimum size of 16 (and a maximum size of 32), if for some reason supporting keys with a length between 17 and 31 bytes is important; I guess it isn't though, it would also be confusing as the extra bytes wouldn't be used.",
    "closed_at" : "2022-10-02T22:33:41Z",
    "closed_by" : {

@@ -1,11 +1,12 @@
 {
+   "active_lock_reason" : "resolved",
    "assignee" : null,
    "assignees" : [],
    "author_association" : "CONTRIBUTOR",
    "body" : "This purports to be a simplified \"bumpfee\" RPC command.\n\nThis pull was motivated by the discussion in #7865, where at the end, the idea was floated of submitting a simplified version of the code. I put a little thought into how a simple \"bumpfee\" command should work and here is what I came up with:\n\n1) The user should specify which output to decrement in order to pay increased fee. This saves us from trying to figure out which address(es) are \"change\" addresses. This is preferable not only because it simplifies the code, but because as far as I can tell, the code that identifies change outputs is not particularly robust and may be modified in the future. If it's desirable to have user-friendly code that figures out which output to decrement, perhaps that logic could be placed in the GUI?\n\n2) The command should not add new inputs. In other words, if the user can't identify an output that can be decremented in an amount sufficient to bump the fee then the command should fail. It seems likely that the vast majority of the time, identifying such an output would not be a problem. Adding new inputs complicates the code because the size of the transaction increases, perhaps significantly, so then the user would have to pay more fee for that reason as well, as opposed to just bumping the fee on the tx as it currently exists.\n\n3) If the tx has descendant transactions, the bumped tx has to pay the fees for all of the descendants since they will get evicted from the mempool, and the rule as I understand it is that replacing a tx cannot cause the total fees in the mempool to go down.\n\nSo, the required inputs are the txid and the output index.\n\nThe optional inputs are:\n\n```\nconfirmTarget - perhaps the reason the user feels the need to bump the fee is because the original confirmTarget was too slow\ntotalFee - for full control, the user can simply specify how many satoshis to pay as a fee on the bumped transaction (this may be useful when the parent tx has children tx'es)\n```\n\nThis pull includes a python test.\n",
    "closed_at" : "2017-01-19T18:59:36Z",
    "closed_by" : {
-      "avatar_url" : "https://avatars0.githubusercontent.com/u/126646?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=4",
       "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
       "followers_url" : "https://api.github.com/users/laanwj/followers",
       "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
@@ -27,35 +28,38 @@
    "comments" : 40,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/8456/comments",
    "created_at" : "2016-08-04T13:52:22Z",
+   "draft" : false,
    "events_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/8456/events",
    "html_url" : "https://github.com/bitcoin/bitcoin/pull/8456",
    "id" : 169379527,
    "labels" : [
       {
-         "color" : "0052cc",
-         "default" : false,
-         "id" : 98279177,
-         "name" : "RPC/REST/ZMQ",
-         "node_id" : "MDU6TGFiZWw5ODI3OTE3Nw==",
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/RPC/REST/ZMQ"
-      },
-      {
          "color" : "08a781",
          "default" : false,
+         "description" : null,
          "id" : 149424,
          "name" : "Wallet",
          "node_id" : "MDU6TGFiZWwxNDk0MjQ=",
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/Wallet"
+      },
+      {
+         "color" : "0052cc",
+         "default" : false,
+         "description" : null,
+         "id" : 98279177,
+         "name" : "RPC/REST/ZMQ",
+         "node_id" : "MDU6TGFiZWw5ODI3OTE3Nw==",
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/RPC/REST/ZMQ"
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/8456/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : {
       "closed_at" : "2017-03-08T16:39:44Z",
       "closed_issues" : 156,
       "created_at" : "2016-06-13T14:18:51Z",
       "creator" : {
-         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
          "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
          "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
          "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
@@ -89,19 +93,35 @@
    },
    "node_id" : "MDExOlB1bGxSZXF1ZXN0ODAwODE4ODc=",
    "number" : 8456,
+   "performed_via_github_app" : null,
    "pull_request" : {
       "diff_url" : "https://github.com/bitcoin/bitcoin/pull/8456.diff",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/8456",
+      "merged_at" : "2017-01-19T18:59:36Z",
       "patch_url" : "https://github.com/bitcoin/bitcoin/pull/8456.patch",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/8456"
    },
+   "reactions" : {
+      "+1" : 0,
+      "-1" : 0,
+      "confused" : 0,
+      "eyes" : 0,
+      "heart" : 0,
+      "hooray" : 0,
+      "laugh" : 0,
+      "rocket" : 0,
+      "total_count" : 0,
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/8456/reactions"
+   },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
+   "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/8456/timeline",
    "title" : "[RPC] Simplified bumpfee command.",
-   "updated_at" : "2017-01-19T18:59:36Z",
+   "updated_at" : "2021-09-08T11:23:49Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/8456",
    "user" : {
-      "avatar_url" : "https://avatars2.githubusercontent.com/u/7504522?v=4",
+      "avatar_url" : "https://avatars.githubusercontent.com/u/7504522?v=4",
       "events_url" : "https://api.github.com/users/mrbandrews/events{/privacy}",
       "followers_url" : "https://api.github.com/users/mrbandrews/followers",
       "following_url" : "https://api.github.com/users/mrbandrews/following{/other_user}",

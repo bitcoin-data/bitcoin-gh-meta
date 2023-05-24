@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Concept ACK\r\n> \r\n> Is there an explanation why this race is only (or at least, much more likely, it seems) happening on Windows? If someone knows how to reproduce the fixed failure behaviour on a Linux/BSD system, would be nice to know.\r\n\r\nAgree, it would be nice to be sure :) My assumption is that the Windows build is just slower than everything else and that's why we have only seen it there so far. Looking at https://cirrus-ci.com/github/bitcoin/bitcoin it always seems the be the job that takes the longest time.",
       "created_at" : "2022-05-12T23:29:03Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25123#issuecomment-1125508050",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I was able to reproduce the issue as well with [this](https://github.com/bitcoin/bitcoin/issues/25031#issuecomment-1125827809), thanks @MarcoFalke !\r\n\r\n> why should addconnection be less racy than connect?\r\n\r\nFrom my understanding of the code `addconnection` only returns after the connection has been established (or failed). It doesn't seem to use threading and since it's only available for testing I thought something like this should be it's primary use-case. I confirmed it works with your hint mentioned above.\r\n\r\n> Why not use connect_nodes which has the wait_until built into? [#25031 (comment)](https://github.com/bitcoin/bitcoin/issues/25031#issuecomment-1125306199)\r\n\r\nRight, I can replace `addconnection` here with `connect_nodes`, I didn't remember `connect_nodes` has the wait built into it. It looks a little less efficient (calling more RPCs under the hood) but saves us another line for the ip+port in the test, so I am indifferent between the two. I just didn't like the one-liner in that link because it's harder to read and would require a comment to explain that this is a clunky way to protect against a potential race condition.",
       "created_at" : "2022-05-14T15:29:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25123#issuecomment-1126737259",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Updated to use `connect_nodes` helper instead of `addconnection` RPC.",
       "created_at" : "2022-05-14T15:38:06Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25123#issuecomment-1126738876",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> If `addconnection` is somehow better than the stuff in `connect_nodes`, it could make sense to use `addconnection` in the `connect_nodes` impl?\r\n\r\nYeah, I was thinking about that as well. I will give it a try and benchmark.",
       "created_at" : "2022-05-15T12:32:43Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25123#issuecomment-1126929244",

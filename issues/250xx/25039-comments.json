@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "@fanquake Sorry about that oversight. Fixed the issue and squashed. All checks pass now.\r\n",
       "created_at" : "2022-04-30T22:21:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25039#issuecomment-1114063480",
@@ -101,19 +101,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "`line.startswith(\"git-subtree-mainline:\")`? (also the one below)",
-      "commit_id" : "c09765e78e2299ab1accf9c045e98b2fa2dd2a86",
+      "commit_id" : "bb17f7233100d6660231d99fa5c2e2fc17a7747c",
       "created_at" : "2022-05-02T08:46:46Z",
       "diff_hunk" : "@@ -0,0 +1,99 @@\n+#!/usr/bin/env python3\n+#\n+# Copyright (c) 2017-2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+#\n+# Checks that a certain prefix is pure subtree, and optionally whether the\n+# referenced commit is present in any fetched remote.\n+\n+import argparse\n+import sys\n+import subprocess\n+\n+def parse_args():\n+    \"\"\"Parse command line arguments\"\"\"\n+    parser = argparse.ArgumentParser (\n+        description=\"\"\"\n+            Checks that a certain prefix is pure subtree, and optionally whether the\n+            referenced commit is present in any fetched remote.\n+        \"\"\"\n+    )\n+\n+    parser.add_argument('dir', help=\"The prefix within the repository to check.\")\n+    parser.add_argument('commit', nargs='?', default='HEAD', help=\"The commit to check, if it is not provided, HEAD will be used.\")\n+    parser.add_argument(\"--repository\", \"-r\", action='store_true', required=False, help=\"Check that subtree commit is present in repository. To do this check, fetch the subtreed remote first. (e.g. git fetch https://github.com/bitcoin-core/secp256k1.git\\ntest/lint/git-subtree-check.sh -r src/secp256k1)\")\n+\n+    return parser.parse_args()\n+\n+def find_latest_squash(dir, commit):\n+    sq = main = sub = None\n+    stdout = subprocess.check_output([\"git\", \"log\", \"--grep=^git-subtree-dir: \" + dir + \"/*$\", \"--pretty=format: START %H%n%s%n%n%b%nEND%n\", commit], universal_newlines=True, encoding=\"utf8\")\n+    for line in stdout.splitlines():\n+        if \"START\" in line:\n+            sq = line.lstrip().split(' ')[1]\n+        if \"git-subtree-mainline:\" in line:",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25039#discussion_r862685024",
       "id" : 862685024,
-      "line" : 35,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584za4dg",
       "original_commit_id" : "c09765e78e2299ab1accf9c045e98b2fa2dd2a86",
       "original_line" : 35,
       "original_position" : 35,
       "original_start_line" : null,
       "path" : "test/lint/git-subtree-check.py",
-      "position" : 35,
+      "position" : null,
       "pull_request_review_id" : 958844892,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25039",
       "reactions" : {
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-02T08:46:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/862685024",
       "user" : {
@@ -168,19 +169,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "`line.split(':', 2)[1].strip(' ')` maybe? (represents the intent of splitting header/value better, even if something is fudged with spaces, or there are more of them than expected)",
-      "commit_id" : "c09765e78e2299ab1accf9c045e98b2fa2dd2a86",
+      "commit_id" : "bb17f7233100d6660231d99fa5c2e2fc17a7747c",
       "created_at" : "2022-05-02T08:48:20Z",
       "diff_hunk" : "@@ -0,0 +1,99 @@\n+#!/usr/bin/env python3\n+#\n+# Copyright (c) 2017-2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+#\n+# Checks that a certain prefix is pure subtree, and optionally whether the\n+# referenced commit is present in any fetched remote.\n+\n+import argparse\n+import sys\n+import subprocess\n+\n+def parse_args():\n+    \"\"\"Parse command line arguments\"\"\"\n+    parser = argparse.ArgumentParser (\n+        description=\"\"\"\n+            Checks that a certain prefix is pure subtree, and optionally whether the\n+            referenced commit is present in any fetched remote.\n+        \"\"\"\n+    )\n+\n+    parser.add_argument('dir', help=\"The prefix within the repository to check.\")\n+    parser.add_argument('commit', nargs='?', default='HEAD', help=\"The commit to check, if it is not provided, HEAD will be used.\")\n+    parser.add_argument(\"--repository\", \"-r\", action='store_true', required=False, help=\"Check that subtree commit is present in repository. To do this check, fetch the subtreed remote first. (e.g. git fetch https://github.com/bitcoin-core/secp256k1.git\\ntest/lint/git-subtree-check.sh -r src/secp256k1)\")\n+\n+    return parser.parse_args()\n+\n+def find_latest_squash(dir, commit):\n+    sq = main = sub = None\n+    stdout = subprocess.check_output([\"git\", \"log\", \"--grep=^git-subtree-dir: \" + dir + \"/*$\", \"--pretty=format: START %H%n%s%n%n%b%nEND%n\", commit], universal_newlines=True, encoding=\"utf8\")\n+    for line in stdout.splitlines():\n+        if \"START\" in line:\n+            sq = line.lstrip().split(' ')[1]\n+        if \"git-subtree-mainline:\" in line:\n+            main = line.split(' ')[1]",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25039#discussion_r862685892",
       "id" : 862685892,
-      "line" : 36,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584za4rE",
       "original_commit_id" : "c09765e78e2299ab1accf9c045e98b2fa2dd2a86",
       "original_line" : 36,
       "original_position" : 36,
       "original_start_line" : null,
       "path" : "test/lint/git-subtree-check.py",
-      "position" : 36,
+      "position" : null,
       "pull_request_review_id" : 958846092,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25039",
       "reactions" : {
@@ -198,6 +199,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-02T08:50:05Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/862685892",
       "user" : {
@@ -235,19 +237,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "whoops: `| head -n 1` is not going to work here, please implement this in Python",
-      "commit_id" : "c09765e78e2299ab1accf9c045e98b2fa2dd2a86",
+      "commit_id" : "bb17f7233100d6660231d99fa5c2e2fc17a7747c",
       "created_at" : "2022-05-02T09:13:04Z",
       "diff_hunk" : "@@ -0,0 +1,99 @@\n+#!/usr/bin/env python3\n+#\n+# Copyright (c) 2017-2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+#\n+# Checks that a certain prefix is pure subtree, and optionally whether the\n+# referenced commit is present in any fetched remote.\n+\n+import argparse\n+import sys\n+import subprocess\n+\n+def parse_args():\n+    \"\"\"Parse command line arguments\"\"\"\n+    parser = argparse.ArgumentParser (\n+        description=\"\"\"\n+            Checks that a certain prefix is pure subtree, and optionally whether the\n+            referenced commit is present in any fetched remote.\n+        \"\"\"\n+    )\n+\n+    parser.add_argument('dir', help=\"The prefix within the repository to check.\")\n+    parser.add_argument('commit', nargs='?', default='HEAD', help=\"The commit to check, if it is not provided, HEAD will be used.\")\n+    parser.add_argument(\"--repository\", \"-r\", action='store_true', required=False, help=\"Check that subtree commit is present in repository. To do this check, fetch the subtreed remote first. (e.g. git fetch https://github.com/bitcoin-core/secp256k1.git\\ntest/lint/git-subtree-check.sh -r src/secp256k1)\")\n+\n+    return parser.parse_args()\n+\n+def find_latest_squash(dir, commit):\n+    sq = main = sub = None\n+    stdout = subprocess.check_output([\"git\", \"log\", \"--grep=^git-subtree-dir: \" + dir + \"/*$\", \"--pretty=format: START %H%n%s%n%n%b%nEND%n\", commit], universal_newlines=True, encoding=\"utf8\")\n+    for line in stdout.splitlines():\n+        if \"START\" in line:\n+            sq = line.lstrip().split(' ')[1]\n+        if \"git-subtree-mainline:\" in line:\n+            main = line.split(' ')[1]\n+        if \"git-subtree-split:\" in line:\n+            sub = line.split(' ')[1]\n+        if \"END\" in line:\n+            if sub:\n+                if main:\n+                    sq = sub\n+                return(f\"{sq} {sub}\")\n+            sq = main = sub = None\n+\n+def main():\n+    args = parse_args()\n+\n+    # find the latest subtree update\n+    latest_squash = find_latest_squash(args.dir.rstrip('/'), args.commit)\n+    if not latest_squash:\n+        print(f\"Error: {args.dir} is not a subtree\")\n+        sys.exit(2)\n+    else:\n+        old = latest_squash.split(' ')[0]\n+        rev = latest_squash.split(' ')[1]\n+\n+    # get the tree in the current commit\n+    tree_actual = subprocess.check_output([\"git\", \"ls-tree\", \"-d\", args.commit, args.dir, \"| head -n 1\"], universal_newlines=True, encoding=\"utf8\")",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25039#discussion_r862700466",
       "id" : 862700466,
-      "line" : 59,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584za8Oy",
       "original_commit_id" : "c09765e78e2299ab1accf9c045e98b2fa2dd2a86",
       "original_line" : 59,
       "original_position" : 59,
       "original_start_line" : null,
       "path" : "test/lint/git-subtree-check.py",
-      "position" : 59,
+      "position" : null,
       "pull_request_review_id" : 958865654,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25039",
       "reactions" : {
@@ -265,6 +267,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-02T09:13:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/862700466",
       "user" : {
@@ -300,9 +303,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/862805032"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "fixed by piping output to new subprocess",
-      "commit_id" : "2d1d27afaefb050196e92e584170b20641668c9b",
+      "commit_id" : "bb17f7233100d6660231d99fa5c2e2fc17a7747c",
       "created_at" : "2022-05-02T12:32:21Z",
       "diff_hunk" : "@@ -0,0 +1,99 @@\n+#!/usr/bin/env python3\n+#\n+# Copyright (c) 2017-2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+#\n+# Checks that a certain prefix is pure subtree, and optionally whether the\n+# referenced commit is present in any fetched remote.\n+\n+import argparse\n+import sys\n+import subprocess\n+\n+def parse_args():\n+    \"\"\"Parse command line arguments\"\"\"\n+    parser = argparse.ArgumentParser (\n+        description=\"\"\"\n+            Checks that a certain prefix is pure subtree, and optionally whether the\n+            referenced commit is present in any fetched remote.\n+        \"\"\"\n+    )\n+\n+    parser.add_argument('dir', help=\"The prefix within the repository to check.\")\n+    parser.add_argument('commit', nargs='?', default='HEAD', help=\"The commit to check, if it is not provided, HEAD will be used.\")\n+    parser.add_argument(\"--repository\", \"-r\", action='store_true', required=False, help=\"Check that subtree commit is present in repository. To do this check, fetch the subtreed remote first. (e.g. git fetch https://github.com/bitcoin-core/secp256k1.git\\ntest/lint/git-subtree-check.sh -r src/secp256k1)\")\n+\n+    return parser.parse_args()\n+\n+def find_latest_squash(dir, commit):\n+    sq = main = sub = None\n+    stdout = subprocess.check_output([\"git\", \"log\", \"--grep=^git-subtree-dir: \" + dir + \"/*$\", \"--pretty=format: START %H%n%s%n%n%b%nEND%n\", commit], universal_newlines=True, encoding=\"utf8\")\n+    for line in stdout.splitlines():\n+        if \"START\" in line:\n+            sq = line.lstrip().split(' ')[1]\n+        if \"git-subtree-mainline:\" in line:\n+            main = line.split(' ')[1]\n+        if \"git-subtree-split:\" in line:\n+            sub = line.split(' ')[1]\n+        if \"END\" in line:\n+            if sub:\n+                if main:\n+                    sq = sub\n+                return(f\"{sq} {sub}\")\n+            sq = main = sub = None\n+\n+def main():\n+    args = parse_args()\n+\n+    # find the latest subtree update\n+    latest_squash = find_latest_squash(args.dir.rstrip('/'), args.commit)\n+    if not latest_squash:\n+        print(f\"Error: {args.dir} is not a subtree\")\n+        sys.exit(2)\n+    else:\n+        old = latest_squash.split(' ')[0]\n+        rev = latest_squash.split(' ')[1]\n+\n+    # get the tree in the current commit\n+    tree_actual = subprocess.check_output([\"git\", \"ls-tree\", \"-d\", args.commit, args.dir, \"| head -n 1\"], universal_newlines=True, encoding=\"utf8\")",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25039#discussion_r862805032",
@@ -333,6 +336,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-02T12:32:21Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/862805032",
       "user" : {
@@ -368,21 +372,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/865979361"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "tiny nit: you can avoid putting `else` if you're exiting in the `if` branch:\r\n```\r\n    if not latest_squash:\r\n        print(f\"Error: {args.dir} is not a subtree\")\r\n        sys.exit(2)\r\n    old = latest_squash.split(' ')[0]\r\n    rev = latest_squash.split(' ')[1]\r\n```\r\nThis reduces indentation, but here it's basically irrelevant :) ",
-      "commit_id" : "2d1d27afaefb050196e92e584170b20641668c9b",
+      "commit_id" : "bb17f7233100d6660231d99fa5c2e2fc17a7747c",
       "created_at" : "2022-05-05T14:35:49Z",
       "diff_hunk" : "@@ -0,0 +1,100 @@\n+#!/usr/bin/env python3\n+#\n+# Copyright (c) 2017-2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+#\n+# Checks that a certain prefix is pure subtree, and optionally whether the\n+# referenced commit is present in any fetched remote.\n+\n+import argparse\n+import sys\n+import subprocess\n+\n+def parse_args():\n+    \"\"\"Parse command line arguments\"\"\"\n+    parser = argparse.ArgumentParser (\n+        description=\"\"\"\n+            Checks that a certain prefix is pure subtree, and optionally whether the\n+            referenced commit is present in any fetched remote.\n+        \"\"\"\n+    )\n+\n+    parser.add_argument('dir', help=\"The prefix within the repository to check.\")\n+    parser.add_argument('commit', nargs='?', default='HEAD', help=\"The commit to check, if it is not provided, HEAD will be used.\")\n+    parser.add_argument(\"--repository\", \"-r\", action='store_true', required=False, help=\"Check that subtree commit is present in repository. To do this check, fetch the subtreed remote first. (e.g. git fetch https://github.com/bitcoin-core/secp256k1.git\\ntest/lint/git-subtree-check.sh -r src/secp256k1)\")\n+\n+    return parser.parse_args()\n+\n+def find_latest_squash(dir, commit):\n+    sq = main = sub = None\n+    stdout = subprocess.check_output([\"git\", \"log\", \"--grep=^git-subtree-dir: \" + dir + \"/*$\", \"--pretty=format: START %H%n%s%n%n%b%nEND%n\", commit], universal_newlines=True, encoding=\"utf8\")\n+    for line in stdout.splitlines():\n+        if \"START\" in line:\n+            sq = line.lstrip().split(' ')[1]\n+        if line.startswith(\"git-subtree-mainline:\"):\n+            main = line.split(':', 2)[1].split(' ')\n+        if line.startswith(\"git-subtree-split:\"):\n+            sub = line.split(':', 2)[1].split(' ')\n+        if \"END\" in line:\n+            if sub:\n+                if main:\n+                    sq = sub\n+                return(f\"{sq} {sub}\")\n+            sq = main = sub = None\n+\n+def main():\n+    args = parse_args()\n+\n+    # find the latest subtree update\n+    latest_squash = find_latest_squash(args.dir.rstrip('/'), args.commit)\n+    if not latest_squash:\n+        print(f\"Error: {args.dir} is not a subtree\")\n+        sys.exit(2)\n+    else:\n+        old = latest_squash.split(' ')[0]\n+        rev = latest_squash.split(' ')[1]",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25039#discussion_r865979361",
       "id" : 865979361,
-      "line" : 56,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584zncvh",
       "original_commit_id" : "2d1d27afaefb050196e92e584170b20641668c9b",
       "original_line" : 56,
       "original_position" : 56,
       "original_start_line" : 51,
       "path" : "test/lint/git-subtree-check.py",
-      "position" : 56,
+      "position" : null,
       "pull_request_review_id" : 963469266,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25039",
       "reactions" : {
@@ -398,8 +402,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/865979361/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 51,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-05-05T14:47:36Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/865979361",
       "user" : {
@@ -435,22 +440,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/866032400"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "Very good point. I thought it helped with readability a bit but can easily go through and remove the else statements after exiting",
-      "commit_id" : "2d1d27afaefb050196e92e584170b20641668c9b",
+      "commit_id" : "bb17f7233100d6660231d99fa5c2e2fc17a7747c",
       "created_at" : "2022-05-05T15:23:06Z",
       "diff_hunk" : "@@ -0,0 +1,100 @@\n+#!/usr/bin/env python3\n+#\n+# Copyright (c) 2017-2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+#\n+# Checks that a certain prefix is pure subtree, and optionally whether the\n+# referenced commit is present in any fetched remote.\n+\n+import argparse\n+import sys\n+import subprocess\n+\n+def parse_args():\n+    \"\"\"Parse command line arguments\"\"\"\n+    parser = argparse.ArgumentParser (\n+        description=\"\"\"\n+            Checks that a certain prefix is pure subtree, and optionally whether the\n+            referenced commit is present in any fetched remote.\n+        \"\"\"\n+    )\n+\n+    parser.add_argument('dir', help=\"The prefix within the repository to check.\")\n+    parser.add_argument('commit', nargs='?', default='HEAD', help=\"The commit to check, if it is not provided, HEAD will be used.\")\n+    parser.add_argument(\"--repository\", \"-r\", action='store_true', required=False, help=\"Check that subtree commit is present in repository. To do this check, fetch the subtreed remote first. (e.g. git fetch https://github.com/bitcoin-core/secp256k1.git\\ntest/lint/git-subtree-check.sh -r src/secp256k1)\")\n+\n+    return parser.parse_args()\n+\n+def find_latest_squash(dir, commit):\n+    sq = main = sub = None\n+    stdout = subprocess.check_output([\"git\", \"log\", \"--grep=^git-subtree-dir: \" + dir + \"/*$\", \"--pretty=format: START %H%n%s%n%n%b%nEND%n\", commit], universal_newlines=True, encoding=\"utf8\")\n+    for line in stdout.splitlines():\n+        if \"START\" in line:\n+            sq = line.lstrip().split(' ')[1]\n+        if line.startswith(\"git-subtree-mainline:\"):\n+            main = line.split(':', 2)[1].split(' ')\n+        if line.startswith(\"git-subtree-split:\"):\n+            sub = line.split(':', 2)[1].split(' ')\n+        if \"END\" in line:\n+            if sub:\n+                if main:\n+                    sq = sub\n+                return(f\"{sq} {sub}\")\n+            sq = main = sub = None\n+\n+def main():\n+    args = parse_args()\n+\n+    # find the latest subtree update\n+    latest_squash = find_latest_squash(args.dir.rstrip('/'), args.commit)\n+    if not latest_squash:\n+        print(f\"Error: {args.dir} is not a subtree\")\n+        sys.exit(2)\n+    else:\n+        old = latest_squash.split(' ')[0]\n+        rev = latest_squash.split(' ')[1]",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25039#discussion_r866032400",
       "id" : 866032400,
       "in_reply_to_id" : 865979361,
-      "line" : 56,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584znpsQ",
       "original_commit_id" : "2d1d27afaefb050196e92e584170b20641668c9b",
       "original_line" : 56,
       "original_position" : 56,
       "original_start_line" : 51,
       "path" : "test/lint/git-subtree-check.py",
-      "position" : 56,
+      "position" : null,
       "pull_request_review_id" : 963546477,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25039",
       "reactions" : {
@@ -466,8 +471,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/866032400/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 51,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-05-05T15:23:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/866032400",
       "user" : {
@@ -503,22 +509,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/866034304"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "As you wish, if you prefer to leave it like that it's ok for me :) ",
-      "commit_id" : "2d1d27afaefb050196e92e584170b20641668c9b",
+      "commit_id" : "bb17f7233100d6660231d99fa5c2e2fc17a7747c",
       "created_at" : "2022-05-05T15:24:40Z",
       "diff_hunk" : "@@ -0,0 +1,100 @@\n+#!/usr/bin/env python3\n+#\n+# Copyright (c) 2017-2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+#\n+# Checks that a certain prefix is pure subtree, and optionally whether the\n+# referenced commit is present in any fetched remote.\n+\n+import argparse\n+import sys\n+import subprocess\n+\n+def parse_args():\n+    \"\"\"Parse command line arguments\"\"\"\n+    parser = argparse.ArgumentParser (\n+        description=\"\"\"\n+            Checks that a certain prefix is pure subtree, and optionally whether the\n+            referenced commit is present in any fetched remote.\n+        \"\"\"\n+    )\n+\n+    parser.add_argument('dir', help=\"The prefix within the repository to check.\")\n+    parser.add_argument('commit', nargs='?', default='HEAD', help=\"The commit to check, if it is not provided, HEAD will be used.\")\n+    parser.add_argument(\"--repository\", \"-r\", action='store_true', required=False, help=\"Check that subtree commit is present in repository. To do this check, fetch the subtreed remote first. (e.g. git fetch https://github.com/bitcoin-core/secp256k1.git\\ntest/lint/git-subtree-check.sh -r src/secp256k1)\")\n+\n+    return parser.parse_args()\n+\n+def find_latest_squash(dir, commit):\n+    sq = main = sub = None\n+    stdout = subprocess.check_output([\"git\", \"log\", \"--grep=^git-subtree-dir: \" + dir + \"/*$\", \"--pretty=format: START %H%n%s%n%n%b%nEND%n\", commit], universal_newlines=True, encoding=\"utf8\")\n+    for line in stdout.splitlines():\n+        if \"START\" in line:\n+            sq = line.lstrip().split(' ')[1]\n+        if line.startswith(\"git-subtree-mainline:\"):\n+            main = line.split(':', 2)[1].split(' ')\n+        if line.startswith(\"git-subtree-split:\"):\n+            sub = line.split(':', 2)[1].split(' ')\n+        if \"END\" in line:\n+            if sub:\n+                if main:\n+                    sq = sub\n+                return(f\"{sq} {sub}\")\n+            sq = main = sub = None\n+\n+def main():\n+    args = parse_args()\n+\n+    # find the latest subtree update\n+    latest_squash = find_latest_squash(args.dir.rstrip('/'), args.commit)\n+    if not latest_squash:\n+        print(f\"Error: {args.dir} is not a subtree\")\n+        sys.exit(2)\n+    else:\n+        old = latest_squash.split(' ')[0]\n+        rev = latest_squash.split(' ')[1]",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25039#discussion_r866034304",
       "id" : 866034304,
       "in_reply_to_id" : 865979361,
-      "line" : 56,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584znqKA",
       "original_commit_id" : "2d1d27afaefb050196e92e584170b20641668c9b",
       "original_line" : 56,
       "original_position" : 56,
       "original_start_line" : 51,
       "path" : "test/lint/git-subtree-check.py",
-      "position" : 56,
+      "position" : null,
       "pull_request_review_id" : 963548828,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25039",
       "reactions" : {
@@ -534,8 +540,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/866034304/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 51,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-05-05T15:24:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/866034304",
       "user" : {
@@ -571,9 +578,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/866084634"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "I decided to remove the else statements. Definitely cleans up the code a bit and should still be easy enough to read. Thanks for the feedback!",
-      "commit_id" : "a53d24779bae44fa96f0cd43c20f7c20c83244b5",
+      "commit_id" : "bb17f7233100d6660231d99fa5c2e2fc17a7747c",
       "created_at" : "2022-05-05T16:13:13Z",
       "diff_hunk" : "@@ -0,0 +1,100 @@\n+#!/usr/bin/env python3\n+#\n+# Copyright (c) 2017-2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+#\n+# Checks that a certain prefix is pure subtree, and optionally whether the\n+# referenced commit is present in any fetched remote.\n+\n+import argparse\n+import sys\n+import subprocess\n+\n+def parse_args():\n+    \"\"\"Parse command line arguments\"\"\"\n+    parser = argparse.ArgumentParser (\n+        description=\"\"\"\n+            Checks that a certain prefix is pure subtree, and optionally whether the\n+            referenced commit is present in any fetched remote.\n+        \"\"\"\n+    )\n+\n+    parser.add_argument('dir', help=\"The prefix within the repository to check.\")\n+    parser.add_argument('commit', nargs='?', default='HEAD', help=\"The commit to check, if it is not provided, HEAD will be used.\")\n+    parser.add_argument(\"--repository\", \"-r\", action='store_true', required=False, help=\"Check that subtree commit is present in repository. To do this check, fetch the subtreed remote first. (e.g. git fetch https://github.com/bitcoin-core/secp256k1.git\\ntest/lint/git-subtree-check.sh -r src/secp256k1)\")\n+\n+    return parser.parse_args()\n+\n+def find_latest_squash(dir, commit):\n+    sq = main = sub = None\n+    stdout = subprocess.check_output([\"git\", \"log\", \"--grep=^git-subtree-dir: \" + dir + \"/*$\", \"--pretty=format: START %H%n%s%n%n%b%nEND%n\", commit], universal_newlines=True, encoding=\"utf8\")\n+    for line in stdout.splitlines():\n+        if \"START\" in line:\n+            sq = line.lstrip().split(' ')[1]\n+        if line.startswith(\"git-subtree-mainline:\"):\n+            main = line.split(':', 2)[1].split(' ')\n+        if line.startswith(\"git-subtree-split:\"):\n+            sub = line.split(':', 2)[1].split(' ')\n+        if \"END\" in line:\n+            if sub:\n+                if main:\n+                    sq = sub\n+                return(f\"{sq} {sub}\")\n+            sq = main = sub = None\n+\n+def main():\n+    args = parse_args()\n+\n+    # find the latest subtree update\n+    latest_squash = find_latest_squash(args.dir.rstrip('/'), args.commit)\n+    if not latest_squash:\n+        print(f\"Error: {args.dir} is not a subtree\")\n+        sys.exit(2)\n+    else:\n+        old = latest_squash.split(' ')[0]\n+        rev = latest_squash.split(' ')[1]",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25039#discussion_r866084634",
@@ -604,6 +611,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-05-05T16:13:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/866084634",
       "user" : {
@@ -625,6 +633,74 @@
          "subscriptions_url" : "https://api.github.com/users/jacobpfickes/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/jacobpfickes"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25039#discussion_r866186383"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25039"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/866186383"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I don't think this is correct. What I suggested was `.strip(' ')` not `.split(' ')`\r\n(see https://github.com/bitcoin/bitcoin/pull/25039#discussion_r862685892)\r\nCurrently you end up with an array in `sub` which is likely not what you want.",
+      "commit_id" : "bb17f7233100d6660231d99fa5c2e2fc17a7747c",
+      "created_at" : "2022-05-05T18:13:21Z",
+      "diff_hunk" : "@@ -0,0 +1,101 @@\n+#!/usr/bin/env python3\n+#\n+# Copyright (c) 2017-2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+#\n+# Checks that a certain prefix is pure subtree, and optionally whether the\n+# referenced commit is present in any fetched remote.\n+\n+import argparse\n+import sys\n+import subprocess\n+\n+def parse_args():\n+    \"\"\"Parse command line arguments\"\"\"\n+    parser = argparse.ArgumentParser (\n+        description=\"\"\"\n+            Checks that a certain prefix is pure subtree, and optionally whether the\n+            referenced commit is present in any fetched remote.\n+        \"\"\"\n+    )\n+\n+    parser.add_argument('dir', help=\"The prefix within the repository to check.\")\n+    parser.add_argument('commit', nargs='?', default='HEAD', help=\"The commit to check, if it is not provided, HEAD will be used.\")\n+    parser.add_argument(\"--repository\", \"-r\", action='store_true', required=False, help=\"Check that subtree commit is present in repository. To do this check, fetch the subtreed remote first. (e.g. git fetch https://github.com/bitcoin-core/secp256k1.git\\ntest/lint/git-subtree-check.sh -r src/secp256k1)\")\n+\n+    return parser.parse_args()\n+\n+def find_latest_squash(dir, commit):\n+    sq = main = sub = None\n+    stdout = subprocess.check_output([\"git\", \"log\", \"--grep=^git-subtree-dir: \" + dir + \"/*$\", \"--pretty=format: START %H%n%s%n%n%b%nEND%n\", commit], universal_newlines=True, encoding=\"utf8\")\n+    for line in stdout.splitlines():\n+        if \"START\" in line:\n+            sq = line.lstrip().split(' ')[1]\n+        if line.startswith(\"git-subtree-mainline:\"):\n+            main = line.split(':', 2)[1].split(' ')",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25039#discussion_r866186383",
+      "id" : 866186383,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII584zoPSP",
+      "original_commit_id" : "a53d24779bae44fa96f0cd43c20f7c20c83244b5",
+      "original_line" : 36,
+      "original_position" : 36,
+      "original_start_line" : null,
+      "path" : "test/lint/git-subtree-check.py",
+      "position" : null,
+      "pull_request_review_id" : 963770522,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25039",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/866186383/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-05-05T18:13:22Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/866186383",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/126646?v=4",
+         "events_url" : "https://api.github.com/users/laanwj/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/laanwj/followers",
+         "following_url" : "https://api.github.com/users/laanwj/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/laanwj/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/laanwj",
+         "id" : 126646,
+         "login" : "laanwj",
+         "node_id" : "MDQ6VXNlcjEyNjY0Ng==",
+         "organizations_url" : "https://api.github.com/users/laanwj/orgs",
+         "received_events_url" : "https://api.github.com/users/laanwj/received_events",
+         "repos_url" : "https://api.github.com/users/laanwj/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/laanwj/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/laanwj/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/laanwj"
       }
    },
    {
@@ -672,7 +748,76 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25039#discussion_r866200296"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25039"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/866200296"
+         }
+      },
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Sorry about that. You're correct. I completely misread it and just pushed a fix",
+      "commit_id" : "bb17f7233100d6660231d99fa5c2e2fc17a7747c",
+      "created_at" : "2022-05-05T18:30:25Z",
+      "diff_hunk" : "@@ -0,0 +1,101 @@\n+#!/usr/bin/env python3\n+#\n+# Copyright (c) 2017-2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+#\n+# Checks that a certain prefix is pure subtree, and optionally whether the\n+# referenced commit is present in any fetched remote.\n+\n+import argparse\n+import sys\n+import subprocess\n+\n+def parse_args():\n+    \"\"\"Parse command line arguments\"\"\"\n+    parser = argparse.ArgumentParser (\n+        description=\"\"\"\n+            Checks that a certain prefix is pure subtree, and optionally whether the\n+            referenced commit is present in any fetched remote.\n+        \"\"\"\n+    )\n+\n+    parser.add_argument('dir', help=\"The prefix within the repository to check.\")\n+    parser.add_argument('commit', nargs='?', default='HEAD', help=\"The commit to check, if it is not provided, HEAD will be used.\")\n+    parser.add_argument(\"--repository\", \"-r\", action='store_true', required=False, help=\"Check that subtree commit is present in repository. To do this check, fetch the subtreed remote first. (e.g. git fetch https://github.com/bitcoin-core/secp256k1.git\\ntest/lint/git-subtree-check.sh -r src/secp256k1)\")\n+\n+    return parser.parse_args()\n+\n+def find_latest_squash(dir, commit):\n+    sq = main = sub = None\n+    stdout = subprocess.check_output([\"git\", \"log\", \"--grep=^git-subtree-dir: \" + dir + \"/*$\", \"--pretty=format: START %H%n%s%n%n%b%nEND%n\", commit], universal_newlines=True, encoding=\"utf8\")\n+    for line in stdout.splitlines():\n+        if \"START\" in line:\n+            sq = line.lstrip().split(' ')[1]\n+        if line.startswith(\"git-subtree-mainline:\"):\n+            main = line.split(':', 2)[1].split(' ')",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25039#discussion_r866200296",
+      "id" : 866200296,
+      "in_reply_to_id" : 866186383,
+      "line" : null,
+      "node_id" : "PRRC_kwDOABII584zoSro",
+      "original_commit_id" : "a53d24779bae44fa96f0cd43c20f7c20c83244b5",
+      "original_line" : 36,
+      "original_position" : 36,
+      "original_start_line" : null,
+      "path" : "test/lint/git-subtree-check.py",
+      "position" : null,
+      "pull_request_review_id" : 963790852,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25039",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/866200296/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-05-05T18:30:25Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/866200296",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/32376202?v=4",
+         "events_url" : "https://api.github.com/users/jacobpfickes/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jacobpfickes/followers",
+         "following_url" : "https://api.github.com/users/jacobpfickes/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jacobpfickes/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jacobpfickes",
+         "id" : 32376202,
+         "login" : "jacobpfickes",
+         "node_id" : "MDQ6VXNlcjMyMzc2MjAy",
+         "organizations_url" : "https://api.github.com/users/jacobpfickes/orgs",
+         "received_events_url" : "https://api.github.com/users/jacobpfickes/received_events",
+         "repos_url" : "https://api.github.com/users/jacobpfickes/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jacobpfickes/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jacobpfickes/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jacobpfickes"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
       "body" : " > I think the difficulty is properly testing this script. There's quite some logic in there that isn't exercised by the CI, and would require some different git aerobics to check.\r\n\r\nWould writing some sort of test script to hit all of the use cases be useful? and if so where is the best place to include something like that?",
       "created_at" : "2022-05-05T18:34:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25039#issuecomment-1118920721",
@@ -760,7 +905,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "Ok makes sense. I'll start putting together some of the commands used to hit all of the conditionals.",
       "created_at" : "2022-05-09T11:23:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25039#issuecomment-1120974292",
@@ -769,7 +914,7 @@
       "node_id" : "IC_kwDOABII585C0LXU",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -777,7 +922,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1120974292/reactions"
       },
       "updated_at" : "2022-05-09T11:23:39Z",
@@ -936,7 +1081,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25369](https://github.com/bitcoin/bitcoin/pull/25369) (Unsubtree Univalue by fanquake)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-06-15T10:07:46Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25039#issuecomment-1156271310",
@@ -980,7 +1125,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
       "created_at" : "2022-06-16T13:21:56Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25039#issuecomment-1157656051",
@@ -1134,6 +1279,50 @@
       },
       "updated_at" : "2022-10-12T19:19:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1276633606",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Closing this as it has not had any activity in a while. If you are interested in continuing work on this, please leave a comment so that it can be reopened.",
+      "created_at" : "2022-11-10T17:13:57Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25039#issuecomment-1310621571",
+      "id" : 1310621571,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25039",
+      "node_id" : "IC_kwDOABII585OHn-D",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1310621571/reactions"
+      },
+      "updated_at" : "2022-11-10T17:13:57Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1310621571",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/3782274?v=4",
          "events_url" : "https://api.github.com/users/achow101/events{/privacy}",

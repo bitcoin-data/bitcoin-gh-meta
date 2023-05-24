@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#22776](https://github.com/bitcoin/bitcoin/pull/22776) (rpc/wallet: add optional transaction(s) to getbalances by kallewoof)\n* [#22751](https://github.com/bitcoin/bitcoin/pull/22751) (rpc/wallet: add simulaterawtransaction RPC by kallewoof)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2021-11-17T04:29:31Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#issuecomment-971172063",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I've tried different valid commands with -startupnotify like: `echo` (common command for Unix system and Windows), tried a simple `ls` for Unix and `dir` for Windows and other ones, but the CI is failing for all of them. Any thoughts about it, @MarcoFalke?",
       "created_at" : "2021-11-17T11:22:45Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#issuecomment-971482512",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> You can find the error in the log:\r\n> \r\n> ```\r\n>  node0 stderr Error: The experimental syscall sandbox feature (-sandbox=<mode>) is incompatible with -startupnotify (which uses execve). \r\n> ```\r\n\r\nSorry, I read that but didn't notice this part of the log. Thanks.",
       "created_at" : "2021-11-17T11:53:11Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#issuecomment-971507892",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2021-11-17T13:28:53Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#issuecomment-971583716",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Force-pushed with a update on `expected_stderr` in `stop_node`. I just edited the description.",
       "created_at" : "2021-11-17T17:31:58Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#issuecomment-971801333",
@@ -308,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Win64 has failed:\r\n<img width=\"1060\" alt=\"Screen Shot 2021-11-18 at 10 23 47\" src=\"https://user-images.githubusercontent.com/19480819/142430123-5ed41a77-3173-4442-85ae-6f37654921b6.png\">\r\n\r\nI think the problem may be the breaklines. Going to work to fix it.\r\n",
       "created_at" : "2021-11-18T18:35:56Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#issuecomment-973148078",
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Force-pushed adding `os.linesep` into expected windows message.",
       "created_at" : "2021-11-19T10:51:08Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#issuecomment-973968108",
@@ -409,19 +409,19 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "In e9ebe3b, shouldn't it be this?\r\n\r\n```suggestion\r\n        f\"'{INVALID_COMMAND}' is not recognized as an internal or external command,{os.linesep}operable program or batch file.\"]\r\n```",
-      "commit_id" : "e9ebe3b96e645942640e888e73261e3f211d9254",
+      "commit_id" : "126853214a490ee840e83ca17c717c40cfbe6837",
       "created_at" : "2021-11-20T18:22:58Z",
       "diff_hunk" : "@@ -0,0 +1,37 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2020 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test -startupnotify.\"\"\"\n+\n+import platform\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+\n+INVALID_COMMAND = \"abc\"\n+\n+\n+class StartupNotifyTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.disable_syscall_sandbox = True\n+        if platform.system() == \"Windows\":\n+            self.extra_args = [[\"-startupnotify=dir\"]]\n+        else:\n+            self.extra_args = [[\"-startupnotify=ls\"]]\n+\n+    def run_test(self):\n+        self.log.info(\"Test the node starts with a valid command on -startupnotify\")\n+        self.stop_node(0)\n+        self.log.info(\"Test the node starts with an invalid command on -startupnotify\")\n+        self.start_node(0, extra_args=[f\"-startupnotify={INVALID_COMMAND}\"])\n+\n+        stderrs = [f\"sh: {INVALID_COMMAND}: command not found\", f\"sh: 1: {INVALID_COMMAND}: not found\",\n+        f\"AssertionError: Unexpected stderr '{INVALID_COMMAND}' is not recognized as an internal or external command,{os.linesep}operable program or batch file.\"]",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#discussion_r753700427",
       "id" : 753700427,
-      "line" : 31,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584s7I5L",
       "original_commit_id" : "e9ebe3b96e645942640e888e73261e3f211d9254",
       "original_line" : 31,
       "original_position" : 31,
       "original_start_line" : null,
       "path" : "test/functional/feature_startupnotify.py",
-      "position" : 31,
+      "position" : null,
       "pull_request_review_id" : 811849600,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23532",
       "reactions" : {
@@ -439,6 +439,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-11-20T18:24:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/753700427",
       "user" : {
@@ -476,19 +477,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Do we need tests for to check the operating systems exact response to an invalid command? This doesn't increase the test coverage of Bitcoin Core itself and it seems a bit painful to maintain.",
-      "commit_id" : "e9ebe3b96e645942640e888e73261e3f211d9254",
+      "commit_id" : "126853214a490ee840e83ca17c717c40cfbe6837",
       "created_at" : "2021-11-21T07:31:46Z",
       "diff_hunk" : "@@ -0,0 +1,37 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2020 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test -startupnotify.\"\"\"\n+\n+import platform\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+\n+INVALID_COMMAND = \"abc\"\n+\n+\n+class StartupNotifyTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.disable_syscall_sandbox = True\n+        if platform.system() == \"Windows\":\n+            self.extra_args = [[\"-startupnotify=dir\"]]\n+        else:\n+            self.extra_args = [[\"-startupnotify=ls\"]]\n+\n+    def run_test(self):\n+        self.log.info(\"Test the node starts with a valid command on -startupnotify\")\n+        self.stop_node(0)\n+        self.log.info(\"Test the node starts with an invalid command on -startupnotify\")\n+        self.start_node(0, extra_args=[f\"-startupnotify={INVALID_COMMAND}\"])\n+\n+        stderrs = [f\"sh: {INVALID_COMMAND}: command not found\", f\"sh: 1: {INVALID_COMMAND}: not found\",\n+        f\"AssertionError: Unexpected stderr '{INVALID_COMMAND}' is not recognized as an internal or external command,{os.linesep}operable program or batch file.\"]",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#discussion_r753759588",
       "id" : 753759588,
-      "line" : 31,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584s7XVk",
       "original_commit_id" : "e9ebe3b96e645942640e888e73261e3f211d9254",
       "original_line" : 31,
       "original_position" : 31,
       "original_start_line" : null,
       "path" : "test/functional/feature_startupnotify.py",
-      "position" : 31,
+      "position" : null,
       "pull_request_review_id" : 811887871,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23532",
       "reactions" : {
@@ -506,6 +507,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-11-21T07:31:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/753759588",
       "user" : {
@@ -541,9 +543,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/753784354"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I agree it seems a bit painful to maintain, but if we don't pass an expected error message the test will fail. I think the stop_node could have a boolean flag when expecting error without specifing the message it would be helpful. What do you think?",
-      "commit_id" : "dfdf8d329eef6acb9f38f3ea129d29742bafc698",
+      "commit_id" : "126853214a490ee840e83ca17c717c40cfbe6837",
       "created_at" : "2021-11-21T11:17:03Z",
       "diff_hunk" : "@@ -0,0 +1,37 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2020 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test -startupnotify.\"\"\"\n+\n+import platform\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+\n+INVALID_COMMAND = \"abc\"\n+\n+\n+class StartupNotifyTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.disable_syscall_sandbox = True\n+        if platform.system() == \"Windows\":\n+            self.extra_args = [[\"-startupnotify=dir\"]]\n+        else:\n+            self.extra_args = [[\"-startupnotify=ls\"]]\n+\n+    def run_test(self):\n+        self.log.info(\"Test the node starts with a valid command on -startupnotify\")\n+        self.stop_node(0)\n+        self.log.info(\"Test the node starts with an invalid command on -startupnotify\")\n+        self.start_node(0, extra_args=[f\"-startupnotify={INVALID_COMMAND}\"])\n+\n+        stderrs = [f\"sh: {INVALID_COMMAND}: command not found\", f\"sh: 1: {INVALID_COMMAND}: not found\",\n+        f\"AssertionError: Unexpected stderr '{INVALID_COMMAND}' is not recognized as an internal or external command,{os.linesep}operable program or batch file.\"]",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#discussion_r753784354",
@@ -574,6 +576,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-11-21T11:17:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/753784354",
       "user" : {
@@ -609,9 +612,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/753786664"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Not sure if the right is:  \r\n`f\"'{INVALID_COMMAND}' is not recognized as an internal or external command,{os.linesep}operable program or batch file.\"]` or `f\"Unexpected stderr '{INVALID_COMMAND}' is not recognized as an internal or external command,{os.linesep}operable program or batch file.\"`\r\n\r\nGoing to test it, thanks!",
-      "commit_id" : "dfdf8d329eef6acb9f38f3ea129d29742bafc698",
+      "commit_id" : "126853214a490ee840e83ca17c717c40cfbe6837",
       "created_at" : "2021-11-21T11:38:21Z",
       "diff_hunk" : "@@ -0,0 +1,37 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2020 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test -startupnotify.\"\"\"\n+\n+import platform\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+\n+INVALID_COMMAND = \"abc\"\n+\n+\n+class StartupNotifyTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.disable_syscall_sandbox = True\n+        if platform.system() == \"Windows\":\n+            self.extra_args = [[\"-startupnotify=dir\"]]\n+        else:\n+            self.extra_args = [[\"-startupnotify=ls\"]]\n+\n+    def run_test(self):\n+        self.log.info(\"Test the node starts with a valid command on -startupnotify\")\n+        self.stop_node(0)\n+        self.log.info(\"Test the node starts with an invalid command on -startupnotify\")\n+        self.start_node(0, extra_args=[f\"-startupnotify={INVALID_COMMAND}\"])\n+\n+        stderrs = [f\"sh: {INVALID_COMMAND}: command not found\", f\"sh: 1: {INVALID_COMMAND}: not found\",\n+        f\"AssertionError: Unexpected stderr '{INVALID_COMMAND}' is not recognized as an internal or external command,{os.linesep}operable program or batch file.\"]",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#discussion_r753786664",
@@ -642,6 +645,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-11-21T11:39:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/753786664",
       "user" : {
@@ -677,9 +681,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/754166197"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Both of them didn't work.",
-      "commit_id" : "7f462b1a95a48762186783fadf01ae8f3c6df56f",
+      "commit_id" : "126853214a490ee840e83ca17c717c40cfbe6837",
       "created_at" : "2021-11-22T11:06:38Z",
       "diff_hunk" : "@@ -0,0 +1,37 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2020 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test -startupnotify.\"\"\"\n+\n+import platform\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+\n+INVALID_COMMAND = \"abc\"\n+\n+\n+class StartupNotifyTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.disable_syscall_sandbox = True\n+        if platform.system() == \"Windows\":\n+            self.extra_args = [[\"-startupnotify=dir\"]]\n+        else:\n+            self.extra_args = [[\"-startupnotify=ls\"]]\n+\n+    def run_test(self):\n+        self.log.info(\"Test the node starts with a valid command on -startupnotify\")\n+        self.stop_node(0)\n+        self.log.info(\"Test the node starts with an invalid command on -startupnotify\")\n+        self.start_node(0, extra_args=[f\"-startupnotify={INVALID_COMMAND}\"])\n+\n+        stderrs = [f\"sh: {INVALID_COMMAND}: command not found\", f\"sh: 1: {INVALID_COMMAND}: not found\",\n+        f\"AssertionError: Unexpected stderr '{INVALID_COMMAND}' is not recognized as an internal or external command,{os.linesep}operable program or batch file.\"]",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#discussion_r754166197",
@@ -710,6 +714,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-11-22T11:06:38Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/754166197",
       "user" : {
@@ -747,7 +752,7 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "It should be the first option because \"AssertionError: Unexpected stderr\" comes from [L351](https://github.com/bitcoin/bitcoin/blob/7f462b1a95a48762186783fadf01ae8f3c6df56f/test/functional/test_framework/test_node.py#L351). There shouldn't be a space before `{os.linesep}` in  [L31](https://github.com/bitcoin/bitcoin/blob/7f462b1a95a48762186783fadf01ae8f3c6df56f/test/functional/feature_startupnotify.py#L31)?",
-      "commit_id" : "b0fc9f9e22ab0cbba9c3419f076b39c778744542",
+      "commit_id" : "126853214a490ee840e83ca17c717c40cfbe6837",
       "created_at" : "2021-11-24T12:49:09Z",
       "diff_hunk" : "@@ -0,0 +1,37 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2020 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test -startupnotify.\"\"\"\n+\n+import platform\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+\n+INVALID_COMMAND = \"abc\"\n+\n+\n+class StartupNotifyTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.disable_syscall_sandbox = True\n+        if platform.system() == \"Windows\":\n+            self.extra_args = [[\"-startupnotify=dir\"]]\n+        else:\n+            self.extra_args = [[\"-startupnotify=ls\"]]\n+\n+    def run_test(self):\n+        self.log.info(\"Test the node starts with a valid command on -startupnotify\")\n+        self.stop_node(0)\n+        self.log.info(\"Test the node starts with an invalid command on -startupnotify\")\n+        self.start_node(0, extra_args=[f\"-startupnotify={INVALID_COMMAND}\"])\n+\n+        stderrs = [f\"sh: {INVALID_COMMAND}: command not found\", f\"sh: 1: {INVALID_COMMAND}: not found\",\n+        f\"AssertionError: Unexpected stderr '{INVALID_COMMAND}' is not recognized as an internal or external command,{os.linesep}operable program or batch file.\"]",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#discussion_r756031610",
@@ -778,6 +783,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-11-24T12:49:09Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/756031610",
       "user" : {
@@ -813,9 +819,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/756045429"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "My bad, I hadn't notice this one on L351. Going to test again, thanks! ",
-      "commit_id" : "b0fc9f9e22ab0cbba9c3419f076b39c778744542",
+      "commit_id" : "126853214a490ee840e83ca17c717c40cfbe6837",
       "created_at" : "2021-11-24T13:01:50Z",
       "diff_hunk" : "@@ -0,0 +1,37 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2020 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test -startupnotify.\"\"\"\n+\n+import platform\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+\n+INVALID_COMMAND = \"abc\"\n+\n+\n+class StartupNotifyTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.disable_syscall_sandbox = True\n+        if platform.system() == \"Windows\":\n+            self.extra_args = [[\"-startupnotify=dir\"]]\n+        else:\n+            self.extra_args = [[\"-startupnotify=ls\"]]\n+\n+    def run_test(self):\n+        self.log.info(\"Test the node starts with a valid command on -startupnotify\")\n+        self.stop_node(0)\n+        self.log.info(\"Test the node starts with an invalid command on -startupnotify\")\n+        self.start_node(0, extra_args=[f\"-startupnotify={INVALID_COMMAND}\"])\n+\n+        stderrs = [f\"sh: {INVALID_COMMAND}: command not found\", f\"sh: 1: {INVALID_COMMAND}: not found\",\n+        f\"AssertionError: Unexpected stderr '{INVALID_COMMAND}' is not recognized as an internal or external command,{os.linesep}operable program or batch file.\"]",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#discussion_r756045429",
@@ -846,6 +852,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-11-24T13:01:51Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/756045429",
       "user" : {
@@ -883,19 +890,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "This seems shell-specific and not reliable for a test",
-      "commit_id" : "b0fc9f9e22ab0cbba9c3419f076b39c778744542",
+      "commit_id" : "126853214a490ee840e83ca17c717c40cfbe6837",
       "created_at" : "2021-11-30T19:57:43Z",
       "diff_hunk" : "@@ -0,0 +1,37 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2020 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test -startupnotify.\"\"\"\n+\n+import platform\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+\n+INVALID_COMMAND = \"abc\"\n+\n+\n+class StartupNotifyTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.disable_syscall_sandbox = True\n+        if platform.system() == \"Windows\":\n+            self.extra_args = [[\"-startupnotify=dir\"]]\n+        else:\n+            self.extra_args = [[\"-startupnotify=ls\"]]\n+\n+    def run_test(self):\n+        self.log.info(\"Test the node starts with a valid command on -startupnotify\")\n+        self.stop_node(0)\n+        self.log.info(\"Test the node starts with an invalid command on -startupnotify\")\n+        self.start_node(0, extra_args=[f\"-startupnotify={INVALID_COMMAND}\"])\n+\n+        stderrs = [f\"sh: {INVALID_COMMAND}: command not found\", f\"sh: 1: {INVALID_COMMAND}: not found\",\n+        f\"'{INVALID_COMMAND}' is not recognized as an internal or external command,{os.linesep}operable program or batch file.\"]",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#discussion_r759614946",
       "id" : 759614946,
-      "line" : 31,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584tRs3i",
       "original_commit_id" : "b0fc9f9e22ab0cbba9c3419f076b39c778744542",
       "original_line" : 31,
       "original_position" : 31,
       "original_start_line" : 30,
       "path" : "test/functional/feature_startupnotify.py",
-      "position" : 31,
+      "position" : null,
       "pull_request_review_id" : 819494826,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23532",
       "reactions" : {
@@ -911,8 +918,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/759614946/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 30,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2021-11-30T19:59:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/759614946",
       "user" : {
@@ -948,22 +956,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/760204261"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I am going to re-write this test to not considering this part. ",
-      "commit_id" : "b0fc9f9e22ab0cbba9c3419f076b39c778744542",
+      "commit_id" : "126853214a490ee840e83ca17c717c40cfbe6837",
       "created_at" : "2021-12-01T13:53:41Z",
       "diff_hunk" : "@@ -0,0 +1,37 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2020 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test -startupnotify.\"\"\"\n+\n+import platform\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+\n+INVALID_COMMAND = \"abc\"\n+\n+\n+class StartupNotifyTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.disable_syscall_sandbox = True\n+        if platform.system() == \"Windows\":\n+            self.extra_args = [[\"-startupnotify=dir\"]]\n+        else:\n+            self.extra_args = [[\"-startupnotify=ls\"]]\n+\n+    def run_test(self):\n+        self.log.info(\"Test the node starts with a valid command on -startupnotify\")\n+        self.stop_node(0)\n+        self.log.info(\"Test the node starts with an invalid command on -startupnotify\")\n+        self.start_node(0, extra_args=[f\"-startupnotify={INVALID_COMMAND}\"])\n+\n+        stderrs = [f\"sh: {INVALID_COMMAND}: command not found\", f\"sh: 1: {INVALID_COMMAND}: not found\",\n+        f\"'{INVALID_COMMAND}' is not recognized as an internal or external command,{os.linesep}operable program or batch file.\"]",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#discussion_r760204261",
       "id" : 760204261,
       "in_reply_to_id" : 759614946,
-      "line" : 31,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584tT8vl",
       "original_commit_id" : "b0fc9f9e22ab0cbba9c3419f076b39c778744542",
       "original_line" : 31,
       "original_position" : 31,
       "original_start_line" : 30,
       "path" : "test/functional/feature_startupnotify.py",
-      "position" : 31,
+      "position" : null,
       "pull_request_review_id" : 820284827,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23532",
       "reactions" : {
@@ -979,8 +987,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/760204261/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 30,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2021-12-01T13:53:41Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/760204261",
       "user" : {
@@ -1005,7 +1014,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Force-pushed addressing the reviews, thanks everyone for them. I just changed the approach for this test (updated the description).",
       "created_at" : "2021-12-03T12:50:02Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#issuecomment-985492928",
@@ -1062,19 +1071,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "```suggestion\r\n        self.log.info(\"Test -startupnotify command is run when node starts\")\r\n```",
-      "commit_id" : "31931a5ab009256bf583025939e6e3ca2f875d9a",
+      "commit_id" : "126853214a490ee840e83ca17c717c40cfbe6837",
       "created_at" : "2021-12-07T20:07:48Z",
       "diff_hunk" : "@@ -0,0 +1,26 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2020 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test -startupnotify.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+\n+\n+class StartupNotifyTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.disable_syscall_sandbox = True\n+        self.extra_args = [[\"-startupnotify=echo 'test' >> node0/test.txt\"]]\n+\n+    def run_test(self):\n+        tmpdir = os.path.join(self.options.tmpdir, \"node0\", \"test.txt\")\n+\n+        self.log.info(\"When node starts, check if test.txt exists\")",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#discussion_r764325807",
       "id" : 764325807,
-      "line" : 21,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584tjq-v",
       "original_commit_id" : "31931a5ab009256bf583025939e6e3ca2f875d9a",
       "original_line" : 21,
       "original_position" : 21,
       "original_start_line" : null,
       "path" : "test/functional/feature_startupnotify.py",
-      "position" : 21,
+      "position" : null,
       "pull_request_review_id" : 825728019,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23532",
       "reactions" : {
@@ -1092,6 +1101,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-07T20:12:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/764325807",
       "user" : {
@@ -1171,9 +1181,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/764371834"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thank you for the suggestions, they are very relevant, I am going to implement them. ",
-      "commit_id" : "3e2be6f07e7077947443317033cc629144dd13c7",
+      "commit_id" : "126853214a490ee840e83ca17c717c40cfbe6837",
       "created_at" : "2021-12-07T21:23:04Z",
       "diff_hunk" : "@@ -0,0 +1,26 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2020 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test -startupnotify.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+\n+\n+class StartupNotifyTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.disable_syscall_sandbox = True\n+        self.extra_args = [[\"-startupnotify=echo 'test' >> node0/test.txt\"]]\n+\n+    def run_test(self):\n+        tmpdir = os.path.join(self.options.tmpdir, \"node0\", \"test.txt\")\n+\n+        self.log.info(\"When node starts, check if test.txt exists\")",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#discussion_r764371834",
@@ -1204,6 +1214,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-07T21:23:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/764371834",
       "user" : {
@@ -1228,7 +1239,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Force-pushed addressing @luke-jr and @jonatack tips. Thanks for the reviews.",
       "created_at" : "2021-12-07T21:46:51Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#issuecomment-988285044",
@@ -1316,7 +1327,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> ACK, modulo unrelated code that appears to have crept into the last push?\r\n\r\nomg, didn't understand why it happened, going to check it.",
       "created_at" : "2021-12-10T15:57:27Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#issuecomment-991088709",
@@ -1360,7 +1371,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "fixed commits! @jonatack ",
       "created_at" : "2021-12-21T17:57:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#issuecomment-998982204",
@@ -1417,11 +1428,11 @@
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/999830636/reactions"
       },
       "updated_at" : "2021-12-22T20:03:04Z",
@@ -1461,19 +1472,19 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "Check should be added to not only existence of the file but also exact file contents, that will address @luke-jr comment about testing that `-startupnotify` command is executed only once.",
-      "commit_id" : "98014c5a88936019b04a115742ebf9da6630cc32",
+      "commit_id" : "126853214a490ee840e83ca17c717c40cfbe6837",
       "created_at" : "2021-12-22T22:59:14Z",
       "diff_hunk" : "@@ -0,0 +1,36 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2020 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test -startupnotify.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import (\n+    assert_equal,\n+)\n+\n+NODE_DIR = \"node0\"\n+FILE_NAME = \"test.txt\"\n+\n+\n+class StartupNotifyTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.disable_syscall_sandbox = True\n+\n+    def run_test(self):\n+        tmpdir = os.path.join(self.options.tmpdir, NODE_DIR, FILE_NAME)\n+        assert not os.path.exists(tmpdir)\n+\n+        self.log.info(\"Test -startupnotify command is run when node starts\")\n+        self.restart_node(0, extra_args=[f\"-startupnotify=echo '{FILE_NAME}' >> {NODE_DIR}/{FILE_NAME}\"])\n+        assert os.path.exists(tmpdir)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#discussion_r774222116",
       "id" : 774222116,
-      "line" : 29,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584uJbEk",
       "original_commit_id" : "98014c5a88936019b04a115742ebf9da6630cc32",
       "original_line" : 29,
       "original_position" : 29,
       "original_start_line" : null,
       "path" : "test/functional/feature_startupnotify.py",
-      "position" : 29,
+      "position" : null,
       "pull_request_review_id" : 838895187,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23532",
       "reactions" : {
@@ -1491,6 +1502,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-22T23:06:51Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/774222116",
       "user" : {
@@ -1528,19 +1540,19 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "Why the variable is called `tmpdir` if it's actually filename?",
-      "commit_id" : "98014c5a88936019b04a115742ebf9da6630cc32",
+      "commit_id" : "126853214a490ee840e83ca17c717c40cfbe6837",
       "created_at" : "2021-12-22T23:06:25Z",
       "diff_hunk" : "@@ -0,0 +1,36 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2020 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test -startupnotify.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import (\n+    assert_equal,\n+)\n+\n+NODE_DIR = \"node0\"\n+FILE_NAME = \"test.txt\"\n+\n+\n+class StartupNotifyTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.disable_syscall_sandbox = True\n+\n+    def run_test(self):\n+        tmpdir = os.path.join(self.options.tmpdir, NODE_DIR, FILE_NAME)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#discussion_r774224251",
       "id" : 774224251,
-      "line" : 24,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584uJbl7",
       "original_commit_id" : "98014c5a88936019b04a115742ebf9da6630cc32",
       "original_line" : 24,
       "original_position" : 24,
       "original_start_line" : null,
       "path" : "test/functional/feature_startupnotify.py",
-      "position" : 24,
+      "position" : null,
       "pull_request_review_id" : 838895187,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23532",
       "reactions" : {
@@ -1558,6 +1570,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-22T23:06:51Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/774224251",
       "user" : {
@@ -1593,22 +1606,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/774616596"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "this is the temporary directory where the file is...",
-      "commit_id" : "98014c5a88936019b04a115742ebf9da6630cc32",
+      "commit_id" : "126853214a490ee840e83ca17c717c40cfbe6837",
       "created_at" : "2021-12-23T14:47:46Z",
       "diff_hunk" : "@@ -0,0 +1,36 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2020 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test -startupnotify.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import (\n+    assert_equal,\n+)\n+\n+NODE_DIR = \"node0\"\n+FILE_NAME = \"test.txt\"\n+\n+\n+class StartupNotifyTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.disable_syscall_sandbox = True\n+\n+    def run_test(self):\n+        tmpdir = os.path.join(self.options.tmpdir, NODE_DIR, FILE_NAME)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#discussion_r774616596",
       "id" : 774616596,
       "in_reply_to_id" : 774224251,
-      "line" : 24,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584uK7YU",
       "original_commit_id" : "98014c5a88936019b04a115742ebf9da6630cc32",
       "original_line" : 24,
       "original_position" : 24,
       "original_start_line" : null,
       "path" : "test/functional/feature_startupnotify.py",
-      "position" : 24,
+      "position" : null,
       "pull_request_review_id" : 839407907,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23532",
       "reactions" : {
@@ -1626,6 +1639,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-23T14:47:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/774616596",
       "user" : {
@@ -1661,9 +1675,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/774696376"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Done, thanks!",
-      "commit_id" : "dbdcc783e39794d54c2f17040d248539b1ca46b0",
+      "commit_id" : "126853214a490ee840e83ca17c717c40cfbe6837",
       "created_at" : "2021-12-23T17:16:01Z",
       "diff_hunk" : "@@ -0,0 +1,36 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2020 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test -startupnotify.\"\"\"\n+\n+import os\n+\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import (\n+    assert_equal,\n+)\n+\n+NODE_DIR = \"node0\"\n+FILE_NAME = \"test.txt\"\n+\n+\n+class StartupNotifyTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.disable_syscall_sandbox = True\n+\n+    def run_test(self):\n+        tmpdir = os.path.join(self.options.tmpdir, NODE_DIR, FILE_NAME)\n+        assert not os.path.exists(tmpdir)\n+\n+        self.log.info(\"Test -startupnotify command is run when node starts\")\n+        self.restart_node(0, extra_args=[f\"-startupnotify=echo '{FILE_NAME}' >> {NODE_DIR}/{FILE_NAME}\"])\n+        assert os.path.exists(tmpdir)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#discussion_r774696376",
@@ -1694,6 +1708,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-23T17:16:02Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/774696376",
       "user" : {
@@ -1718,7 +1733,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "force-pushed addressing @luke-jr and @kristapsk reviews (check if the command is executed once). ",
       "created_at" : "2021-12-23T17:17:21Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#issuecomment-1000434313",
@@ -1806,7 +1821,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> ```\r\n> feature_startupnotify.py                           | â Failed  | 2 s\r\n> ```\r\n\r\nFixed!",
       "created_at" : "2021-12-24T13:57:57Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23532#issuecomment-1000848015",

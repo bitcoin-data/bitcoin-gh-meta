@@ -1,7 +1,7 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [Sjors](https://github.com/bitcoin/bitcoin/pull/27412#issuecomment-1497151925), [jamesob](https://github.com/bitcoin/bitcoin/pull/27412#issuecomment-1503832004) |\n| Concept ACK | [Ayush170-Future](https://github.com/bitcoin/bitcoin/pull/27412#issuecomment-1495685701) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#26621](https://github.com/bitcoin/bitcoin/pull/26621) (refactor: Continue moving application data from CNode to Peer by dergoegge)\n* [#25572](https://github.com/bitcoin/bitcoin/pull/25572) (refactor: Introduce EvictionManager and use it for the inbound eviction logic by dergoegge)\n* [#25268](https://github.com/bitcoin/bitcoin/pull/25268) (refactor: Introduce EvictionManager by dergoegge)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [Sjors](https://github.com/bitcoin/bitcoin/pull/27412#issuecomment-1497151925), [jamesob](https://github.com/bitcoin/bitcoin/pull/27412#issuecomment-1503832004), [achow101](https://github.com/bitcoin/bitcoin/pull/27412#issuecomment-1516954704) |\n| Concept ACK | [Ayush170-Future](https://github.com/bitcoin/bitcoin/pull/27412#issuecomment-1495685701) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#26621](https://github.com/bitcoin/bitcoin/pull/26621) (refactor: Continue moving application data from CNode to Peer by dergoegge)\n* [#25572](https://github.com/bitcoin/bitcoin/pull/25572) (refactor: Introduce EvictionManager and use it for the inbound eviction logic by dergoegge)\n* [#25268](https://github.com/bitcoin/bitcoin/pull/25268) (refactor: Introduce EvictionManager by dergoegge)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2023-04-03T20:33:01Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27412#issuecomment-1494944850",
       "id" : 1494944850,
@@ -20,7 +20,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1494944850/reactions"
       },
-      "updated_at" : "2023-04-12T15:23:07Z",
+      "updated_at" : "2023-04-20T21:12:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1494944850",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -55,9 +55,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1156464266"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK, but would there be any downside to not adding a config option and just logging the asmap if it is non-zero? Edit: this would also avoid the need for a release note.",
-      "commit_id" : "789cb79bafae66c128b1cb05356b5c67d6d88034",
+      "commit_id" : "0076bed45eb2b42111fa3f4c95181393c685a42e",
       "created_at" : "2023-04-03T21:15:15Z",
       "diff_hunk" : "@@ -3410,9 +3410,10 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type,\n         }\n \n         if (!pfrom.IsInboundConn()) {\n-            LogPrintf(\"New outbound peer connected: version: %d, blocks=%d, peer=%d%s (%s)\\n\",\n+            LogPrintf(\"New outbound peer connected: version: %d, blocks=%d, peer=%d%s%s (%s)\\n\",\n                       pfrom.nVersion.load(), peer->m_starting_height,\n                       pfrom.GetId(), (fLogIPs ? strprintf(\", peeraddr=%s\", pfrom.addr.ToStringAddrPort()) : \"\"),\n+                      (log_asmap ? strprintf(\", mapped_as=%d\", m_connman.GetMappedAS(pfrom.addr)) : \"\"),",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27412#discussion_r1156464266",
@@ -125,7 +125,7 @@
       },
       "author_association" : "NONE",
       "body" : "Yeah, that does make more sense. I don't see any harm in automatically logging the asmap information if the fLogIPs flag is true.",
-      "commit_id" : "789cb79bafae66c128b1cb05356b5c67d6d88034",
+      "commit_id" : "0076bed45eb2b42111fa3f4c95181393c685a42e",
       "created_at" : "2023-04-04T09:58:56Z",
       "diff_hunk" : "@@ -3410,9 +3410,10 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type,\n         }\n \n         if (!pfrom.IsInboundConn()) {\n-            LogPrintf(\"New outbound peer connected: version: %d, blocks=%d, peer=%d%s (%s)\\n\",\n+            LogPrintf(\"New outbound peer connected: version: %d, blocks=%d, peer=%d%s%s (%s)\\n\",\n                       pfrom.nVersion.load(), peer->m_starting_height,\n                       pfrom.GetId(), (fLogIPs ? strprintf(\", peeraddr=%s\", pfrom.addr.ToStringAddrPort()) : \"\"),\n+                      (log_asmap ? strprintf(\", mapped_as=%d\", m_connman.GetMappedAS(pfrom.addr)) : \"\"),",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27412#discussion_r1157016059",
@@ -236,9 +236,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1157342831"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Yeah, I think it would be simpler to remove the new flag I created and log it when using `-asmap`.",
-      "commit_id" : "789cb79bafae66c128b1cb05356b5c67d6d88034",
+      "commit_id" : "0076bed45eb2b42111fa3f4c95181393c685a42e",
       "created_at" : "2023-04-04T14:27:35Z",
       "diff_hunk" : "@@ -3410,9 +3410,10 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type,\n         }\n \n         if (!pfrom.IsInboundConn()) {\n-            LogPrintf(\"New outbound peer connected: version: %d, blocks=%d, peer=%d%s (%s)\\n\",\n+            LogPrintf(\"New outbound peer connected: version: %d, blocks=%d, peer=%d%s%s (%s)\\n\",\n                       pfrom.nVersion.load(), peer->m_starting_height,\n                       pfrom.GetId(), (fLogIPs ? strprintf(\", peeraddr=%s\", pfrom.addr.ToStringAddrPort()) : \"\"),\n+                      (log_asmap ? strprintf(\", mapped_as=%d\", m_connman.GetMappedAS(pfrom.addr)) : \"\"),",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27412#discussion_r1157342831",
@@ -294,7 +294,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Just updated the description and changed the approach to leave it simpler. Before I had created a flag `-logasmap` (similar to `-logips`), now I removed it and when using `-asmap` it will includes the peers' ASN in debug output.\r\n\r\nthanks @jonatack and @Ayush170-Future for your thoughts.",
       "created_at" : "2023-04-04T14:30:00Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27412#issuecomment-1496076469",
@@ -338,7 +338,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Before I had created a flag `-logasmap` (similar to `-logips`), now I removed it\r\n\r\nThanks! It looks like `logasmap` is still added in the last push, though.\r\n",
       "created_at" : "2023-04-04T15:33:27Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27412#issuecomment-1496190775",
@@ -382,7 +382,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : ">  It looks like logasmap is still added in the last push, though.\r\n\r\nSorry it was a leftover, fixed it.",
       "created_at" : "2023-04-04T17:12:21Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27412#issuecomment-1496323887",
@@ -470,7 +470,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Would be nice to log this for inbound connections too, I guess the receive version message: is most suitable for that?\r\n\r\nYes, it would be great to have this for both ones, just updated it! ",
       "created_at" : "2023-04-04T20:32:11Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27412#issuecomment-1496568490",
@@ -655,7 +655,7 @@
       "node_id" : "IC_kwDOABII585ZP7Yl",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -663,7 +663,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1497347621/reactions"
       },
       "updated_at" : "2023-04-05T11:43:10Z",
@@ -690,7 +690,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> We can clean up the documentation and/or behavior of -logips in another PR.\r\n\r\nFor sure, I can work on that after this one.",
       "created_at" : "2023-04-05T16:29:43Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27412#issuecomment-1497786231",
@@ -819,6 +819,50 @@
          "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/Sjors"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "ACK 0076bed45eb2b42111fa3f4c95181393c685a42e",
+      "created_at" : "2023-04-20T21:12:31Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/27412#issuecomment-1516954704",
+      "id" : 1516954704,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27412",
+      "node_id" : "IC_kwDOABII585aauRQ",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1516954704/reactions"
+      },
+      "updated_at" : "2023-04-20T21:12:31Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1516954704",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
       }
    }
 ]
