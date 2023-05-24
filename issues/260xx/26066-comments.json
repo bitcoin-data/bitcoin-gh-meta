@@ -44,8 +44,8 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| Concept ACK | [yancyribbens](https://github.com/bitcoin/bitcoin/pull/26066#issuecomment-1243750713) |\n| Stale ACK | [w0xlt](https://github.com/bitcoin/bitcoin/pull/26066#pullrequestreview-1104188448), [satsie](https://github.com/bitcoin/bitcoin/pull/26066#issuecomment-1249782339), [furszy](https://github.com/bitcoin/bitcoin/pull/26066#pullrequestreview-1111435093), [theStack](https://github.com/bitcoin/bitcoin/pull/26066#pullrequestreview-1265913329) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#26152](https://github.com/bitcoin/bitcoin/pull/26152) (Bump unconfirmed ancestor transactions to target feerate by Xekyo)\n* [#26032](https://github.com/bitcoin/bitcoin/pull/26032) (wallet: skip R-value signature grinding for external signers by Sjors)\n* [#25273](https://github.com/bitcoin/bitcoin/pull/25273) (wallet: Pass through transaction locktime and preset input sequences and scripts to CreateTransaction by achow101)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [Xekyo](https://github.com/bitcoin/bitcoin/pull/26066#pullrequestreview-1410939913), [achow101](https://github.com/bitcoin/bitcoin/pull/26066#issuecomment-1533214936) |\n| Concept ACK | [yancyribbens](https://github.com/bitcoin/bitcoin/pull/26066#issuecomment-1243750713) |\n| Stale ACK | [w0xlt](https://github.com/bitcoin/bitcoin/pull/26066#pullrequestreview-1104188448), [satsie](https://github.com/bitcoin/bitcoin/pull/26066#issuecomment-1249782339), [furszy](https://github.com/bitcoin/bitcoin/pull/26066#pullrequestreview-1111435093), [theStack](https://github.com/bitcoin/bitcoin/pull/26066#pullrequestreview-1265913329) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#26567](https://github.com/bitcoin/bitcoin/pull/26567) (Wallet: estimate the size of signed inputs using descriptors by darosior)\n* [#25273](https://github.com/bitcoin/bitcoin/pull/25273) (wallet: Pass through transaction locktime and preset input sequences and scripts to CreateTransaction by achow101)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2022-09-12T16:44:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#issuecomment-1244009851",
       "id" : 1244009851,
@@ -64,7 +64,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1244009851/reactions"
       },
-      "updated_at" : "2023-04-26T08:37:17Z",
+      "updated_at" : "2023-05-03T15:10:15Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1244009851",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@furszy I've slightly improved the docstring of `Select` and `SelectExternal` and rolled back to `IsSelected` and `HasSelected`.\r\nI kept the old `setSelected` as `m_preset_inputs` though.\r\n\r\nIs it better?",
       "created_at" : "2022-09-13T17:08:19Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#issuecomment-1245700695",
@@ -143,9 +143,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/972435852"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In 8aecc02e:\r\nnit: could inline the return statement as well.\r\n```c++\r\nif (!txout) return TxSize{-1, -1};\r\n```\r\n\r\n(same for the other one).",
-      "commit_id" : "9d4cfd6c5a40cafaeed31d0102b45a7e44dc0076",
+      "commit_id" : "daba95700b0b77a2e898299f218c47a69ed2c7d0",
       "created_at" : "2022-09-15T21:30:58Z",
       "diff_hunk" : "@@ -67,11 +67,11 @@ TxSize CalculateMaximumSignedTxSize(const CTransaction &tx, const CWallet *walle\n             assert(input.prevout.n < mi->second.tx->vout.size());\n             txouts.emplace_back(mi->second.tx->vout.at(input.prevout.n));\n         } else if (coin_control) {\n-            CTxOut txout;\n-            if (!coin_control->GetExternalOutput(input.prevout, txout)) {\n+            const auto& txout{coin_control->GetExternalOutput(input.prevout)};\n+            if (!txout) {\n                 return TxSize{-1, -1};\n             }\n-            txouts.emplace_back(txout);\n+            txouts.emplace_back(*txout);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#discussion_r972435852",
@@ -153,7 +153,7 @@
       "line" : null,
       "node_id" : "PRRC_kwDOABII58459jGM",
       "original_commit_id" : "8aecc02eca4fd0cb166155ce575ad62d5d062758",
-      "original_line" : 70,
+      "original_line" : 75,
       "original_position" : 11,
       "original_start_line" : 70,
       "path" : "src/wallet/spend.cpp",
@@ -175,6 +175,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-09-15T22:00:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/972435852",
       "user" : {
@@ -210,9 +211,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/972436813"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: now that we are here, could remove the extra ()\r\n\r\n(same for the other methods)",
-      "commit_id" : "9d4cfd6c5a40cafaeed31d0102b45a7e44dc0076",
+      "commit_id" : "daba95700b0b77a2e898299f218c47a69ed2c7d0",
       "created_at" : "2022-09-15T21:32:34Z",
       "diff_hunk" : "@@ -11,4 +11,72 @@ CCoinControl::CCoinControl()\n {\n     m_avoid_partial_spends = gArgs.GetBoolArg(\"-avoidpartialspends\", DEFAULT_AVOIDPARTIALSPENDS);\n }\n+\n+bool CCoinControl::HasSelected() const\n+{\n+    return !m_preset_inputs.empty();\n+}\n+\n+bool CCoinControl::IsSelected(const COutPoint& output) const\n+{\n+    return (m_preset_inputs.count(output) > 0);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#discussion_r972436813",
@@ -242,6 +243,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-15T22:00:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/972436813",
       "user" : {
@@ -266,7 +268,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "All cleaned-up @furszy!",
       "created_at" : "2022-09-15T22:22:17Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#issuecomment-1248695144",
@@ -321,21 +323,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973106664"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: would remove the \"pre-selects\" term and go directly with something like \"store the given outpoint.\"\r\n\r\nI don't think that the \"pre\" term here provides information to readers. (the second paragraph is great to express what the process will do with the selected outpoint)\r\n\r\n(same for the others methods as well).",
-      "commit_id" : "9d4cfd6c5a40cafaeed31d0102b45a7e44dc0076",
+      "commit_id" : "daba95700b0b77a2e898299f218c47a69ed2c7d0",
       "created_at" : "2022-09-16T14:48:27Z",
       "diff_hunk" : "@@ -63,73 +63,56 @@ class CCoinControl\n \n     CCoinControl();\n \n-    bool HasSelected() const\n-    {\n-        return !m_preset_inputs.empty();\n-    }\n-\n-    bool IsSelected(const COutPoint& output) const\n-    {\n-        return m_preset_inputs.count(output) > 0;\n-    }\n-\n-    bool IsExternalSelected(const COutPoint& output) const\n-    {\n-        return m_external_txouts.count(output) > 0;\n-    }\n-\n-    std::optional<CTxOut> GetExternalOutput(const COutPoint& outpoint) const\n-    {\n-        const auto ext_it = m_external_txouts.find(outpoint);\n-        if (ext_it == m_external_txouts.end()) {\n-            return std::nullopt;\n-        }\n-\n-        return std::make_optional(ext_it->second);\n-    }\n-\n-    void Select(const COutPoint& output)\n-    {\n-        m_preset_inputs.insert(output);\n-    }\n-\n-    void SelectExternal(const COutPoint& outpoint, const CTxOut& txout)\n-    {\n-        m_preset_inputs.insert(outpoint);\n-        m_external_txouts.emplace(outpoint, txout);\n-    }\n-\n-    void UnSelect(const COutPoint& output)\n-    {\n-        m_preset_inputs.erase(output);\n-    }\n-\n-    void UnSelectAll()\n-    {\n-        m_preset_inputs.clear();\n-    }\n-\n-    void ListSelected(std::vector<COutPoint>& vOutpoints) const\n-    {\n-        vOutpoints.assign(m_preset_inputs.begin(), m_preset_inputs.end());\n-    }\n-\n-    void SetInputWeight(const COutPoint& outpoint, int64_t weight)\n-    {\n-        m_input_weights[outpoint] = weight;\n-    }\n-\n-    bool HasInputWeight(const COutPoint& outpoint) const\n-    {\n-        return m_input_weights.count(outpoint) > 0;\n-    }\n-\n-    int64_t GetInputWeight(const COutPoint& outpoint) const\n-    {\n-        auto it = m_input_weights.find(outpoint);\n-        assert(it != m_input_weights.end());\n-        return it->second;\n-    }\n+    /**\n+     * Returns true if there are pre-selected inputs.\n+     */\n+    bool HasSelected() const;\n+    /**\n+     * Returns true if the given output is pre-selected.\n+     */\n+    bool IsSelected(const COutPoint& output) const;\n+    /**\n+     * Returns true if the given output is selected as an external input.\n+     */\n+    bool IsExternalSelected(const COutPoint& output) const;\n+    /**\n+     * Returns the external output for the given outpoint if it exists.\n+     */\n+    std::optional<CTxOut> GetExternalOutput(const COutPoint& outpoint) const;\n+    /**\n+     * Pre-selects the given output.\n+     * The output will be included in the transaction even if it's not the most optimal choice.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#discussion_r973106664",
       "id" : 973106664,
-      "line" : 84,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5846AG3o",
       "original_commit_id" : "9d4cfd6c5a40cafaeed31d0102b45a7e44dc0076",
       "original_line" : 84,
       "original_position" : 89,
       "original_start_line" : 83,
       "path" : "src/wallet/coincontrol.h",
-      "position" : 89,
+      "position" : null,
       "pull_request_review_id" : 1110809138,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26066",
       "reactions" : {
@@ -351,8 +353,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973106664/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 83,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-09-16T14:52:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973106664",
       "user" : {
@@ -388,26 +391,26 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973133808"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "How about this?\r\n```suggestion\r\n     * Lock-in the selected output for spending.\r\n     * The output will be included in the transaction even if it's not the most optimal choice.\r\n```",
-      "commit_id" : "9d4cfd6c5a40cafaeed31d0102b45a7e44dc0076",
+      "commit_id" : "daba95700b0b77a2e898299f218c47a69ed2c7d0",
       "created_at" : "2022-09-16T15:12:48Z",
       "diff_hunk" : "@@ -63,73 +63,56 @@ class CCoinControl\n \n     CCoinControl();\n \n-    bool HasSelected() const\n-    {\n-        return !m_preset_inputs.empty();\n-    }\n-\n-    bool IsSelected(const COutPoint& output) const\n-    {\n-        return m_preset_inputs.count(output) > 0;\n-    }\n-\n-    bool IsExternalSelected(const COutPoint& output) const\n-    {\n-        return m_external_txouts.count(output) > 0;\n-    }\n-\n-    std::optional<CTxOut> GetExternalOutput(const COutPoint& outpoint) const\n-    {\n-        const auto ext_it = m_external_txouts.find(outpoint);\n-        if (ext_it == m_external_txouts.end()) {\n-            return std::nullopt;\n-        }\n-\n-        return std::make_optional(ext_it->second);\n-    }\n-\n-    void Select(const COutPoint& output)\n-    {\n-        m_preset_inputs.insert(output);\n-    }\n-\n-    void SelectExternal(const COutPoint& outpoint, const CTxOut& txout)\n-    {\n-        m_preset_inputs.insert(outpoint);\n-        m_external_txouts.emplace(outpoint, txout);\n-    }\n-\n-    void UnSelect(const COutPoint& output)\n-    {\n-        m_preset_inputs.erase(output);\n-    }\n-\n-    void UnSelectAll()\n-    {\n-        m_preset_inputs.clear();\n-    }\n-\n-    void ListSelected(std::vector<COutPoint>& vOutpoints) const\n-    {\n-        vOutpoints.assign(m_preset_inputs.begin(), m_preset_inputs.end());\n-    }\n-\n-    void SetInputWeight(const COutPoint& outpoint, int64_t weight)\n-    {\n-        m_input_weights[outpoint] = weight;\n-    }\n-\n-    bool HasInputWeight(const COutPoint& outpoint) const\n-    {\n-        return m_input_weights.count(outpoint) > 0;\n-    }\n-\n-    int64_t GetInputWeight(const COutPoint& outpoint) const\n-    {\n-        auto it = m_input_weights.find(outpoint);\n-        assert(it != m_input_weights.end());\n-        return it->second;\n-    }\n+    /**\n+     * Returns true if there are pre-selected inputs.\n+     */\n+    bool HasSelected() const;\n+    /**\n+     * Returns true if the given output is pre-selected.\n+     */\n+    bool IsSelected(const COutPoint& output) const;\n+    /**\n+     * Returns true if the given output is selected as an external input.\n+     */\n+    bool IsExternalSelected(const COutPoint& output) const;\n+    /**\n+     * Returns the external output for the given outpoint if it exists.\n+     */\n+    std::optional<CTxOut> GetExternalOutput(const COutPoint& outpoint) const;\n+    /**\n+     * Pre-selects the given output.\n+     * The output will be included in the transaction even if it's not the most optimal choice.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#discussion_r973133808",
       "id" : 973133808,
       "in_reply_to_id" : 973106664,
-      "line" : 84,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5846ANfw",
       "original_commit_id" : "9d4cfd6c5a40cafaeed31d0102b45a7e44dc0076",
       "original_line" : 84,
       "original_position" : 89,
       "original_start_line" : 83,
       "path" : "src/wallet/coincontrol.h",
-      "position" : 89,
+      "position" : null,
       "pull_request_review_id" : 1110849058,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26066",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -415,12 +418,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973133808/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 83,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-09-16T15:12:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973133808",
       "user" : {
@@ -458,7 +462,7 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "nit: you've done such a fabulous job documenting the header methods (no good deed goes unpunished!) that I think I understand an external input is one that does not belong to the wallet. \r\n\r\nIf you find yourself in the code again, is there any chance to get a comment on this data structure describing what it is? Something like `//! Map of inputs that do not belong to the wallet` (if that is indeed the correct definition). Actually... just for my own learning, is that the correct definition?",
-      "commit_id" : "5db911a369df3977c79e6d8f06ccc38551db9efb",
+      "commit_id" : "daba95700b0b77a2e898299f218c47a69ed2c7d0",
       "created_at" : "2022-09-16T16:40:57Z",
       "diff_hunk" : "@@ -63,76 +63,59 @@ class CCoinControl\n \n     CCoinControl();\n \n-    bool HasSelected() const\n-    {\n-        return (setSelected.size() > 0);\n-    }\n-\n-    bool IsSelected(const COutPoint& output) const\n-    {\n-        return (setSelected.count(output) > 0);\n-    }\n-\n-    bool IsExternalSelected(const COutPoint& output) const\n-    {\n-        return (m_external_txouts.count(output) > 0);\n-    }\n-\n-    bool GetExternalOutput(const COutPoint& outpoint, CTxOut& txout) const\n-    {\n-        const auto ext_it = m_external_txouts.find(outpoint);\n-        if (ext_it == m_external_txouts.end()) {\n-            return false;\n-        }\n-        txout = ext_it->second;\n-        return true;\n-    }\n-\n-    void Select(const COutPoint& output)\n-    {\n-        setSelected.insert(output);\n-    }\n-\n-    void SelectExternal(const COutPoint& outpoint, const CTxOut& txout)\n-    {\n-        setSelected.insert(outpoint);\n-        m_external_txouts.emplace(outpoint, txout);\n-    }\n-\n-    void UnSelect(const COutPoint& output)\n-    {\n-        setSelected.erase(output);\n-    }\n-\n-    void UnSelectAll()\n-    {\n-        setSelected.clear();\n-    }\n-\n-    void ListSelected(std::vector<COutPoint>& vOutpoints) const\n-    {\n-        vOutpoints.assign(setSelected.begin(), setSelected.end());\n-    }\n-\n-    void SetInputWeight(const COutPoint& outpoint, int64_t weight)\n-    {\n-        m_input_weights[outpoint] = weight;\n-    }\n-\n-    bool HasInputWeight(const COutPoint& outpoint) const\n-    {\n-        return m_input_weights.count(outpoint) > 0;\n-    }\n-\n-    int64_t GetInputWeight(const COutPoint& outpoint) const\n-    {\n-        auto it = m_input_weights.find(outpoint);\n-        assert(it != m_input_weights.end());\n-        return it->second;\n-    }\n+    /**\n+     * Returns true if there are pre-selected inputs.\n+     */\n+    bool HasSelected() const;\n+    /**\n+     * Returns true if the given output is pre-selected.\n+     */\n+    bool IsSelected(const COutPoint& output) const;\n+    /**\n+     * Returns true if the given output is selected as an external input.\n+     */\n+    bool IsExternalSelected(const COutPoint& output) const;\n+    /**\n+     * Returns the external output for the given outpoint if it exists.\n+     */\n+    std::optional<CTxOut> GetExternalOutput(const COutPoint& outpoint) const;\n+    /**\n+     * Pre-selects the given output.\n+     * The output will be included in the transaction even if it's not the most optimal choice.\n+     */\n+    void Select(const COutPoint& output);\n+    /**\n+     * Pre-selects the given output as an external input because it is not in the wallet.\n+     * The output will be included in the transaction even if it's not the most optimal choice.\n+     */\n+    void SelectExternal(const COutPoint& outpoint, const CTxOut& txout);\n+    /**\n+     * Unselects the given output.\n+     */\n+    void UnSelect(const COutPoint& output);\n+    /**\n+     * Unselects all outputs.\n+     */\n+    void UnSelectAll();\n+    /**\n+     * List the selected inputs.\n+     */\n+    void ListSelected(std::vector<COutPoint>& vOutpoints) const;\n+    /**\n+     * Set an input's weight.\n+     */\n+    void SetInputWeight(const COutPoint& outpoint, int64_t weight);\n+    /**\n+     * Returns true if the input weight is set.\n+     */\n+    bool HasInputWeight(const COutPoint& outpoint) const;\n+    /**\n+     * Returns the input weight.\n+     */\n+    int64_t GetInputWeight(const COutPoint& outpoint) const;\n \n private:\n-    std::set<COutPoint> setSelected;\n+    std::set<COutPoint> m_preset_inputs;\n     std::map<COutPoint, CTxOut> m_external_txouts;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#discussion_r973207227",
@@ -488,6 +492,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-16T16:40:57Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973207227",
       "user" : {
@@ -523,9 +528,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973222785"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "yeah, sounds good ðð¼ .",
-      "commit_id" : "5db911a369df3977c79e6d8f06ccc38551db9efb",
+      "commit_id" : "daba95700b0b77a2e898299f218c47a69ed2c7d0",
       "created_at" : "2022-09-16T17:02:08Z",
       "diff_hunk" : "@@ -63,73 +63,56 @@ class CCoinControl\n \n     CCoinControl();\n \n-    bool HasSelected() const\n-    {\n-        return !m_preset_inputs.empty();\n-    }\n-\n-    bool IsSelected(const COutPoint& output) const\n-    {\n-        return m_preset_inputs.count(output) > 0;\n-    }\n-\n-    bool IsExternalSelected(const COutPoint& output) const\n-    {\n-        return m_external_txouts.count(output) > 0;\n-    }\n-\n-    std::optional<CTxOut> GetExternalOutput(const COutPoint& outpoint) const\n-    {\n-        const auto ext_it = m_external_txouts.find(outpoint);\n-        if (ext_it == m_external_txouts.end()) {\n-            return std::nullopt;\n-        }\n-\n-        return std::make_optional(ext_it->second);\n-    }\n-\n-    void Select(const COutPoint& output)\n-    {\n-        m_preset_inputs.insert(output);\n-    }\n-\n-    void SelectExternal(const COutPoint& outpoint, const CTxOut& txout)\n-    {\n-        m_preset_inputs.insert(outpoint);\n-        m_external_txouts.emplace(outpoint, txout);\n-    }\n-\n-    void UnSelect(const COutPoint& output)\n-    {\n-        m_preset_inputs.erase(output);\n-    }\n-\n-    void UnSelectAll()\n-    {\n-        m_preset_inputs.clear();\n-    }\n-\n-    void ListSelected(std::vector<COutPoint>& vOutpoints) const\n-    {\n-        vOutpoints.assign(m_preset_inputs.begin(), m_preset_inputs.end());\n-    }\n-\n-    void SetInputWeight(const COutPoint& outpoint, int64_t weight)\n-    {\n-        m_input_weights[outpoint] = weight;\n-    }\n-\n-    bool HasInputWeight(const COutPoint& outpoint) const\n-    {\n-        return m_input_weights.count(outpoint) > 0;\n-    }\n-\n-    int64_t GetInputWeight(const COutPoint& outpoint) const\n-    {\n-        auto it = m_input_weights.find(outpoint);\n-        assert(it != m_input_weights.end());\n-        return it->second;\n-    }\n+    /**\n+     * Returns true if there are pre-selected inputs.\n+     */\n+    bool HasSelected() const;\n+    /**\n+     * Returns true if the given output is pre-selected.\n+     */\n+    bool IsSelected(const COutPoint& output) const;\n+    /**\n+     * Returns true if the given output is selected as an external input.\n+     */\n+    bool IsExternalSelected(const COutPoint& output) const;\n+    /**\n+     * Returns the external output for the given outpoint if it exists.\n+     */\n+    std::optional<CTxOut> GetExternalOutput(const COutPoint& outpoint) const;\n+    /**\n+     * Pre-selects the given output.\n+     * The output will be included in the transaction even if it's not the most optimal choice.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#discussion_r973222785",
@@ -556,6 +561,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-09-16T17:02:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973222785",
       "user" : {
@@ -635,9 +641,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973226684"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Done!\r\nAnd yes you are correct :) The wallet would not know how to sign these inputs but they are in the utxo set.",
-      "commit_id" : "5db911a369df3977c79e6d8f06ccc38551db9efb",
+      "commit_id" : "daba95700b0b77a2e898299f218c47a69ed2c7d0",
       "created_at" : "2022-09-16T17:07:40Z",
       "diff_hunk" : "@@ -63,76 +63,59 @@ class CCoinControl\n \n     CCoinControl();\n \n-    bool HasSelected() const\n-    {\n-        return (setSelected.size() > 0);\n-    }\n-\n-    bool IsSelected(const COutPoint& output) const\n-    {\n-        return (setSelected.count(output) > 0);\n-    }\n-\n-    bool IsExternalSelected(const COutPoint& output) const\n-    {\n-        return (m_external_txouts.count(output) > 0);\n-    }\n-\n-    bool GetExternalOutput(const COutPoint& outpoint, CTxOut& txout) const\n-    {\n-        const auto ext_it = m_external_txouts.find(outpoint);\n-        if (ext_it == m_external_txouts.end()) {\n-            return false;\n-        }\n-        txout = ext_it->second;\n-        return true;\n-    }\n-\n-    void Select(const COutPoint& output)\n-    {\n-        setSelected.insert(output);\n-    }\n-\n-    void SelectExternal(const COutPoint& outpoint, const CTxOut& txout)\n-    {\n-        setSelected.insert(outpoint);\n-        m_external_txouts.emplace(outpoint, txout);\n-    }\n-\n-    void UnSelect(const COutPoint& output)\n-    {\n-        setSelected.erase(output);\n-    }\n-\n-    void UnSelectAll()\n-    {\n-        setSelected.clear();\n-    }\n-\n-    void ListSelected(std::vector<COutPoint>& vOutpoints) const\n-    {\n-        vOutpoints.assign(setSelected.begin(), setSelected.end());\n-    }\n-\n-    void SetInputWeight(const COutPoint& outpoint, int64_t weight)\n-    {\n-        m_input_weights[outpoint] = weight;\n-    }\n-\n-    bool HasInputWeight(const COutPoint& outpoint) const\n-    {\n-        return m_input_weights.count(outpoint) > 0;\n-    }\n-\n-    int64_t GetInputWeight(const COutPoint& outpoint) const\n-    {\n-        auto it = m_input_weights.find(outpoint);\n-        assert(it != m_input_weights.end());\n-        return it->second;\n-    }\n+    /**\n+     * Returns true if there are pre-selected inputs.\n+     */\n+    bool HasSelected() const;\n+    /**\n+     * Returns true if the given output is pre-selected.\n+     */\n+    bool IsSelected(const COutPoint& output) const;\n+    /**\n+     * Returns true if the given output is selected as an external input.\n+     */\n+    bool IsExternalSelected(const COutPoint& output) const;\n+    /**\n+     * Returns the external output for the given outpoint if it exists.\n+     */\n+    std::optional<CTxOut> GetExternalOutput(const COutPoint& outpoint) const;\n+    /**\n+     * Pre-selects the given output.\n+     * The output will be included in the transaction even if it's not the most optimal choice.\n+     */\n+    void Select(const COutPoint& output);\n+    /**\n+     * Pre-selects the given output as an external input because it is not in the wallet.\n+     * The output will be included in the transaction even if it's not the most optimal choice.\n+     */\n+    void SelectExternal(const COutPoint& outpoint, const CTxOut& txout);\n+    /**\n+     * Unselects the given output.\n+     */\n+    void UnSelect(const COutPoint& output);\n+    /**\n+     * Unselects all outputs.\n+     */\n+    void UnSelectAll();\n+    /**\n+     * List the selected inputs.\n+     */\n+    void ListSelected(std::vector<COutPoint>& vOutpoints) const;\n+    /**\n+     * Set an input's weight.\n+     */\n+    void SetInputWeight(const COutPoint& outpoint, int64_t weight);\n+    /**\n+     * Returns true if the input weight is set.\n+     */\n+    bool HasInputWeight(const COutPoint& outpoint) const;\n+    /**\n+     * Returns the input weight.\n+     */\n+    int64_t GetInputWeight(const COutPoint& outpoint) const;\n \n private:\n-    std::set<COutPoint> setSelected;\n+    std::set<COutPoint> m_preset_inputs;\n     std::map<COutPoint, CTxOut> m_external_txouts;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#discussion_r973226684",
@@ -668,6 +674,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-16T17:07:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/973226684",
       "user" : {
@@ -692,7 +699,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks for the reviews, I addressed your comments @satsie @furszy.",
       "created_at" : "2022-09-16T17:09:01Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#issuecomment-1249594127",
@@ -705,11 +712,11 @@
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1249594127/reactions"
       },
       "updated_at" : "2022-09-16T17:09:01Z",
@@ -736,7 +743,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "sorry I failed my rebase @furszy",
       "created_at" : "2022-09-16T17:11:48Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#issuecomment-1249596378",
@@ -780,7 +787,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "or well, not ACK :p.\r\nYou forgot to change the `m_preset_inputs` inside `CCoinControl`",
       "created_at" : "2022-09-16T17:12:09Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#issuecomment-1249596651",
@@ -824,7 +831,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Should be all good now, I've actually renamed `setSelected` to `m_selected_inputs` instead of `m_preset_inputs`.\r\nEdit: also fixed typo `Lock-in the selected coins for spending.` to `Lock-in the given output for spending.`",
       "created_at" : "2022-09-16T17:14:40Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#issuecomment-1249598809",
@@ -881,11 +888,11 @@
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1249782339/reactions"
       },
       "updated_at" : "2022-09-16T20:27:28Z",
@@ -953,50 +960,6 @@
          "subscriptions_url" : "https://api.github.com/users/aureleoules/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/aureleoules"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-10-27T22:56:10Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#issuecomment-1294211091",
-      "id" : 1294211091,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26066",
-      "node_id" : "IC_kwDOABII585NJBgT",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1294211091/reactions"
-      },
-      "updated_at" : "2022-10-27T22:56:10Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1294211091",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
       }
    },
    {
@@ -1305,6 +1268,186 @@
          "subscriptions_url" : "https://api.github.com/users/aureleoules/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/aureleoules"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/26066#discussion_r1183713583"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26066"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1183713583"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Nit: If itâs not too much of a bother, and if you have to touch the code again, I would consider it an improvement to change `UnSelect` to `Unselect`. The first time I scanned that passage, the capitalized âSâ in the middle of the word made me think that it was actually just âSelectâ.  Even more nitty, Iâd use the adjective âunselectedâ to refer to things that were not picked in the first place, I would prefer âto deselectâ to refer to removing things from a selection.\r\n\r\n```suggestion\r\nvoid CCoinControl::Deselect(const COutPoint& output)\r\n```",
+      "commit_id" : "daba95700b0b77a2e898299f218c47a69ed2c7d0",
+      "created_at" : "2023-05-03T13:47:27Z",
+      "diff_hunk" : "@@ -11,4 +11,72 @@ CCoinControl::CCoinControl()\n {\n     m_avoid_partial_spends = gArgs.GetBoolArg(\"-avoidpartialspends\", DEFAULT_AVOIDPARTIALSPENDS);\n }\n+\n+bool CCoinControl::HasSelected() const\n+{\n+    return !m_selected_inputs.empty();\n+}\n+\n+bool CCoinControl::IsSelected(const COutPoint& output) const\n+{\n+    return m_selected_inputs.count(output) > 0;\n+}\n+\n+bool CCoinControl::IsExternalSelected(const COutPoint& output) const\n+{\n+    return m_external_txouts.count(output) > 0;\n+}\n+\n+std::optional<CTxOut> CCoinControl::GetExternalOutput(const COutPoint& outpoint) const\n+{\n+    const auto ext_it = m_external_txouts.find(outpoint);\n+    if (ext_it == m_external_txouts.end()) {\n+        return std::nullopt;\n+    }\n+\n+    return std::make_optional(ext_it->second);\n+}\n+\n+void CCoinControl::Select(const COutPoint& output)\n+{\n+    m_selected_inputs.insert(output);\n+}\n+\n+void CCoinControl::SelectExternal(const COutPoint& outpoint, const CTxOut& txout)\n+{\n+    m_selected_inputs.insert(outpoint);\n+    m_external_txouts.emplace(outpoint, txout);\n+}\n+\n+void CCoinControl::UnSelect(const COutPoint& output)",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#discussion_r1183713583",
+      "id" : 1183713583,
+      "line" : 51,
+      "node_id" : "PRRC_kwDOABII585Gjgkv",
+      "original_commit_id" : "94776621ba6a79f3197ec71250bc48e974ad5e4a",
+      "original_line" : 51,
+      "original_position" : 41,
+      "original_start_line" : null,
+      "path" : "src/wallet/coincontrol.cpp",
+      "position" : 41,
+      "pull_request_review_id" : 1410939913,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26066",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1183713583/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2023-05-03T14:03:19Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1183713583",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/4060799?v=4",
+         "events_url" : "https://api.github.com/users/Xekyo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Xekyo/followers",
+         "following_url" : "https://api.github.com/users/Xekyo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Xekyo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Xekyo",
+         "id" : 4060799,
+         "login" : "Xekyo",
+         "node_id" : "MDQ6VXNlcjQwNjA3OTk=",
+         "organizations_url" : "https://api.github.com/users/Xekyo/orgs",
+         "received_events_url" : "https://api.github.com/users/Xekyo/received_events",
+         "repos_url" : "https://api.github.com/users/Xekyo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Xekyo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Xekyo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Xekyo"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/26066#discussion_r1183714494"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26066"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1183714494"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Nit with the same reasoning as above:\r\n```suggestion\r\nvoid CCoinControl::DeselectAll()\r\n```",
+      "commit_id" : "daba95700b0b77a2e898299f218c47a69ed2c7d0",
+      "created_at" : "2023-05-03T13:48:06Z",
+      "diff_hunk" : "@@ -11,4 +11,72 @@ CCoinControl::CCoinControl()\n {\n     m_avoid_partial_spends = gArgs.GetBoolArg(\"-avoidpartialspends\", DEFAULT_AVOIDPARTIALSPENDS);\n }\n+\n+bool CCoinControl::HasSelected() const\n+{\n+    return !m_selected_inputs.empty();\n+}\n+\n+bool CCoinControl::IsSelected(const COutPoint& output) const\n+{\n+    return m_selected_inputs.count(output) > 0;\n+}\n+\n+bool CCoinControl::IsExternalSelected(const COutPoint& output) const\n+{\n+    return m_external_txouts.count(output) > 0;\n+}\n+\n+std::optional<CTxOut> CCoinControl::GetExternalOutput(const COutPoint& outpoint) const\n+{\n+    const auto ext_it = m_external_txouts.find(outpoint);\n+    if (ext_it == m_external_txouts.end()) {\n+        return std::nullopt;\n+    }\n+\n+    return std::make_optional(ext_it->second);\n+}\n+\n+void CCoinControl::Select(const COutPoint& output)\n+{\n+    m_selected_inputs.insert(output);\n+}\n+\n+void CCoinControl::SelectExternal(const COutPoint& outpoint, const CTxOut& txout)\n+{\n+    m_selected_inputs.insert(outpoint);\n+    m_external_txouts.emplace(outpoint, txout);\n+}\n+\n+void CCoinControl::UnSelect(const COutPoint& output)\n+{\n+    m_selected_inputs.erase(output);\n+}\n+\n+void CCoinControl::UnSelectAll()",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#discussion_r1183714494",
+      "id" : 1183714494,
+      "line" : 56,
+      "node_id" : "PRRC_kwDOABII585Gjgy-",
+      "original_commit_id" : "94776621ba6a79f3197ec71250bc48e974ad5e4a",
+      "original_line" : 56,
+      "original_position" : 46,
+      "original_start_line" : null,
+      "path" : "src/wallet/coincontrol.cpp",
+      "position" : 46,
+      "pull_request_review_id" : 1410939913,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26066",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1183714494/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2023-05-03T14:03:19Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1183714494",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/4060799?v=4",
+         "events_url" : "https://api.github.com/users/Xekyo/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Xekyo/followers",
+         "following_url" : "https://api.github.com/users/Xekyo/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Xekyo/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Xekyo",
+         "id" : 4060799,
+         "login" : "Xekyo",
+         "node_id" : "MDQ6VXNlcjQwNjA3OTk=",
+         "organizations_url" : "https://api.github.com/users/Xekyo/orgs",
+         "received_events_url" : "https://api.github.com/users/Xekyo/received_events",
+         "repos_url" : "https://api.github.com/users/Xekyo/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Xekyo/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Xekyo/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Xekyo"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "ACK daba95700b0b77a2e898299f218c47a69ed2c7d0",
+      "created_at" : "2023-05-03T15:10:12Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26066#issuecomment-1533214936",
+      "id" : 1533214936,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26066",
+      "node_id" : "IC_kwDOABII585bYwDY",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1533214936/reactions"
+      },
+      "updated_at" : "2023-05-03T15:10:12Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1533214936",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
       }
    }
 ]

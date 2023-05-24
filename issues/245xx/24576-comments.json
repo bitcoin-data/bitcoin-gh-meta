@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#21279](https://github.com/bitcoin/bitcoin/pull/21279) (scripted-diff: Regenerate key_io data deterministically by MarcoFalke)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-03-16T23:13:24Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24576#issuecomment-1069731482",
@@ -101,19 +101,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Nit: could update this to the normal copyright header.",
-      "commit_id" : "94c25d47539cf09b6dcb9e5211e5abb7c103725a",
+      "commit_id" : "65c49ac750ba39801b349d0a59c27471dfa9868e",
       "created_at" : "2022-04-04T10:39:41Z",
       "diff_hunk" : "@@ -6,16 +6,21 @@\n Generate valid and invalid base58/bech32(m) address and private key test vectors.\n \n Usage:\n-    PYTHONPATH=../../test/functional/test_framework ./gen_key_io_test_vectors.py valid 70 > ../../src/test/data/key_io_valid.json\n-    PYTHONPATH=../../test/functional/test_framework ./gen_key_io_test_vectors.py invalid 70 > ../../src/test/data/key_io_invalid.json\n+    ./gen_key_io_test_vectors.py valid 70 > ../../src/test/data/key_io_valid.json\n+    ./gen_key_io_test_vectors.py invalid 70 > ../../src/test/data/key_io_invalid.json\n '''\n # 2012 Wladimir J. van der Laan",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24576#discussion_r841597823",
       "id" : 841597823,
-      "line" : 12,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584yKcN_",
       "original_commit_id" : "94c25d47539cf09b6dcb9e5211e5abb7c103725a",
       "original_line" : 12,
       "original_position" : 9,
       "original_start_line" : null,
       "path" : "contrib/testgen/gen_key_io_test_vectors.py",
-      "position" : 9,
+      "position" : null,
       "pull_request_review_id" : 930161994,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24576",
       "reactions" : {
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-04T10:39:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/841597823",
       "user" : {
@@ -168,19 +169,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Catching an AssertionError for expected error handling is a bit strange. Normally one'd use `ValueError` or such for invalid values.",
-      "commit_id" : "94c25d47539cf09b6dcb9e5211e5abb7c103725a",
+      "commit_id" : "65c49ac750ba39801b349d0a59c27471dfa9868e",
       "created_at" : "2022-04-05T11:48:42Z",
       "diff_hunk" : "@@ -114,8 +109,10 @@ def is_valid(v):\n     '''Check vector v for validity'''\n     if len(set(v) - set(b58chars)) > 0:\n         return is_valid_bech32(v)\n-    result = b58decode_chk(v)\n-    if result is None:\n+    try:\n+        payload, version = base58_to_byte(v)\n+        result = bytes([version]) + payload\n+    except AssertionError:  # thrown if checksum doesn't match",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24576#discussion_r842691805",
       "id" : 842691805,
-      "line" : 115,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584yOnTd",
       "original_commit_id" : "94c25d47539cf09b6dcb9e5211e5abb7c103725a",
       "original_line" : 115,
       "original_position" : 53,
       "original_start_line" : null,
       "path" : "contrib/testgen/gen_key_io_test_vectors.py",
-      "position" : 53,
+      "position" : null,
       "pull_request_review_id" : 931725438,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24576",
       "reactions" : {
@@ -198,6 +199,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-05T11:48:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/842691805",
       "user" : {
@@ -233,7 +235,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/843123437"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks, removed this line as well as the redundant MIT license information in the next line and updated the year in the header on top.",
       "commit_id" : "65c49ac750ba39801b349d0a59c27471dfa9868e",
       "created_at" : "2022-04-05T18:09:16Z",
@@ -266,6 +268,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-05T18:09:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/843123437",
       "user" : {
@@ -301,7 +304,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/843124155"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Agreed that AssertionError is too generic for this case, I added a commit which changes this to `ValueError`, as suggested.",
       "commit_id" : "65c49ac750ba39801b349d0a59c27471dfa9868e",
       "created_at" : "2022-04-05T18:10:11Z",
@@ -334,6 +337,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-05T18:10:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/843124155",
       "user" : {

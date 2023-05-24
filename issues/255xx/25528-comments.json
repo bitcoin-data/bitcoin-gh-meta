@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> With the only change being to switch to debian:bookworm, see [MarcoFalke/bitcoin-core-with-ci@803f365#diff-b37d362747ecdb36dbfcbe2b8aab779f06404eee471ad835b58355e353d4fe79R9](https://github.com/MarcoFalke/bitcoin-core-with-ci/commit/803f365f47d2f40a88d8969f0e84a6779dc5a5cb#diff-b37d362747ecdb36dbfcbe2b8aab779f06404eee471ad835b58355e353d4fe79R9)\r\n> \r\n> Any ideas?\r\n\r\nInteresting. This seems to be unrelated to the tests. More the tracepoint macros in general. Probably a problem with the Systemtap package (`systemtap-sdt-dev`) in bookworm? Per https://packages.debian.org/bookworm/systemtap-sdt-dev it's version 4.7, which is also what we use in depends since https://github.com/bitcoin/bitcoin/pull/25360. Does a depends build on bookworm fail too?\r\n\r\nI'll also do some poking.\r\n\r\nedit: the variadic marco arg was indeed not present in 4.5 (which we used previously): https://sourceware.org/git/?p=systemtap.git;a=commitdiff;h=ecab2afea46099b4e7dfd551462689224afdbe3a. I think it also has something to do with clang, `-pedantic` and C++20. See https://stackoverflow.com/questions/67912343/how-to-resolve-must-specify-at-least-one-argument-for-parameter-of-variad",
       "created_at" : "2022-07-04T15:28:18Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25528#issuecomment-1173939722",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Tried running a depends build on bookworm - but no success so far: https://cirrus-ci.com/task/5255417889554432?logs=ci#L570\r\n\r\nhttps://github.com/0xB10C/bitcoin/commit/5641883b3a148f01e1ef910705fd82a4b5132dde",
       "created_at" : "2022-07-04T20:51:19Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25528#issuecomment-1174331708",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "One way to get the hosts kernel headers into the docker container is to mount them. I've mounted `/lib/modules/5.15.0-1010-gcp/build` however, there are quite a few relative symlinks which cause problems with mounts. To make them available, I've mounted `/usr/src/linux-gcp-headers-5.15.0-1010` and `/usr/src/linux-headers-5.15.0-1010-gcp` but this doesn't seem to be enough. Not sure if it's worth the effort. See https://github.com/0xB10C/bitcoin/commit/6ac8e7effc8d01c34c83ab8f2ce70cd9e0712ef8 and https://cirrus-ci.com/task/6730748215427072?logs=ci#L2762. \r\n\r\n```\r\n<built-in>:1:10: fatal error: './include/linux/kconfig.h' file not found\r\n#include \"./include/linux/kconfig.h\"\r\n         ^~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n1 error generated.\r\n```\r\nwhich is in `/lib/modules/5.15.0-1010-gcp/build/include/linux/kconfig.h`.\r\n\r\n\r\n<!--\r\nbuild -> /usr/src/linux-headers-5.15.0-1010-gcp/\r\ninclude/linux -> ../../linux-gcp-headers-5.15.0-1010/include/linux/\r\ninclude/linux/kconfig.h then includes include/generated/autoconf.h \r\n-->",
       "created_at" : "2022-07-07T12:19:10Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25528#issuecomment-1177520310",
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "As discussed offline with MarcoFake, we're using the `[ASan + LSan + UBSan + integer, no depends, USDT] [jammy]` task to run the USDT tests. The i686 didn't work - probably because the tracing isn't really supported on 32bit.  ",
       "created_at" : "2022-07-09T09:06:26Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25528#issuecomment-1179509525",
@@ -483,6 +483,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-11T14:38:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918013975",
       "user" : {
@@ -507,7 +508,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2022-07-21T08:46:01Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25528#issuecomment-1191215347",
@@ -580,7 +581,7 @@
       "pull_request_review_id" : 1194149516,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25528",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -588,12 +589,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1032239630/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-25T10:15:56Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1032239630",
       "user" : {
@@ -661,6 +663,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-29T11:47:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1058906785",
       "user" : {
@@ -729,6 +732,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-29T11:55:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1058910164",
       "user" : {
@@ -797,6 +801,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-29T12:38:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1058929501",
       "user" : {
@@ -865,6 +870,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-29T13:32:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1058955188",
       "user" : {
@@ -933,6 +939,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-29T18:51:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1059104580",
       "user" : {

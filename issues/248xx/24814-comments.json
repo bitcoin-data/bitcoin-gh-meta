@@ -13,19 +13,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "suggested diff per clang-format and guidelines in doc/developer-notes.md\r\n```diff\r\n-    if(coin_control.HasSelected()){\r\n+    if (coin_control.HasSelected()) {\r\n         std::vector<COutput> vCoins_filtered;\r\n-        for (std::vector<COutput>::iterator it = vCoins.begin(); it != vCoins.end(); it++)\r\n-        {\r\n-            if (!preset_coins.count(it->outpoint))\r\n+        for (std::vector<COutput>::iterator it = vCoins.begin(); it != vCoins.end(); ++it) {\r\n+            if (!preset_coins.count(it->outpoint)) {\r\n                 vCoins_filtered.push_back(*it);\r\n+            }\r\n```\r\nedit: unsure if `std::swap(vCoins_filtered, vCoins)` or `vCoins_filtered.swap(vCoins)` would be preferred to `swap(vCoins_filtered, vCoins)` here.",
-      "commit_id" : "986b35565560c15bbf44a381e817ec7d032a1594",
+      "commit_id" : "236011bec172b2c0308c931d8f710251a7ad34ab",
       "created_at" : "2022-04-09T14:55:08Z",
       "diff_hunk" : "@@ -490,12 +490,14 @@ std::optional<SelectionResult> SelectCoins(const CWallet& wallet, const std::vec\n     }\n \n     // remove preset inputs from vCoins so that Coin Selection doesn't pick them.\n-    for (std::vector<COutput>::iterator it = vCoins.begin(); it != vCoins.end() && coin_control.HasSelected();)\n-    {\n-        if (preset_coins.count(it->outpoint))\n-            it = vCoins.erase(it);\n-        else\n-            ++it;\n+    if(coin_control.HasSelected()){\n+        std::vector<COutput> vCoins_filtered;\n+        for (std::vector<COutput>::iterator it = vCoins.begin(); it != vCoins.end(); it++)\n+        {\n+            if (!preset_coins.count(it->outpoint))\n+                vCoins_filtered.push_back(*it);\n+        }\n+        swap(vCoins_filtered, vCoins);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24814#discussion_r846643746",
       "id" : 846643746,
-      "line" : 500,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584ydsIi",
       "original_commit_id" : "986b35565560c15bbf44a381e817ec7d032a1594",
       "original_line" : 500,
       "original_position" : 17,
       "original_start_line" : null,
       "path" : "src/wallet/spend.cpp",
-      "position" : 17,
+      "position" : null,
       "pull_request_review_id" : 937146448,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24814",
       "reactions" : {
@@ -43,6 +43,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-09T15:07:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/846643746",
       "user" : {
@@ -76,7 +77,7 @@
       "node_id" : "IC_kwDOABII585BNytQ",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -84,7 +85,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1094134608/reactions"
       },
       "updated_at" : "2022-04-09T22:29:31Z",
@@ -111,7 +112,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2022-04-10T03:22:51Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24814#issuecomment-1094167014",
@@ -199,6 +200,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-10T16:43:51Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/846805575",
       "user" : {
@@ -267,7 +269,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25729](https://github.com/bitcoin/bitcoin/pull/25729) (wallet: Check max transaction weight in CoinSelection by aureleoules)\n* [#25685](https://github.com/bitcoin/bitcoin/pull/25685) (wallet: Faster transaction creation by removing pre-set-inputs fetching responsibility from Coin Selection by furszy)\n* [#25183](https://github.com/bitcoin/bitcoin/pull/25183) (rpc: Segwit-only inputs option for fundrawtransaction by aureleoules)\n* [#24584](https://github.com/bitcoin/bitcoin/pull/24584) (wallet: avoid mixing different `OutputTypes` during coin selection by josibake)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-04-11T01:42:17Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24814#issuecomment-1094458971",
@@ -487,7 +489,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I am not sure if the remove-erase idiom is better, it saves memory but is harder to read as well. I prefer the current push_back and swap approach.\r\n\r\nJust FYI, I think it could be quite short like \r\n```\r\nif(coin_control.HasSelected()){\r\n    auto in_preset = [&preset_coins](COutput& x) { return preset_coins.count(x.outpoint); };\r\n    vCoins.erase(std::remove_if(vCoins.begin(), vCoins.end(), in_preset), vCoins.end());\r\n}\r\n``` \r\n(didn't test this though) \r\nI guess whether that is easier to read depends on whether one is accustomed to the remove-erase idiom / lambdas or not. ",
       "created_at" : "2022-04-13T11:48:00Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24814#issuecomment-1097956790",
@@ -496,7 +498,7 @@
       "node_id" : "IC_kwDOABII585BcX22",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -504,7 +506,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1097956790/reactions"
       },
       "updated_at" : "2022-04-13T11:48:00Z",
@@ -531,7 +533,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "> I am not sure if the remove-erase idiom is better, it saves memory but is harder to read as well. I prefer the current push_back and swap approach.  \r\n   \r\nAs @jonatack suggested, another option is to wait until C++20. It does both: saves memory and is easier to read.",
       "created_at" : "2022-04-13T22:31:32Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24814#issuecomment-1098543732",
@@ -584,7 +586,7 @@
       "node_id" : "IC_kwDOABII585Bhk95",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -592,7 +594,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1099321209/reactions"
       },
       "updated_at" : "2022-04-14T15:47:30Z",
@@ -663,7 +665,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
       "created_at" : "2022-07-28T23:01:29Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24814#issuecomment-1198707629",
@@ -707,7 +709,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Looks like this can be closed, #24584 changed this spot to use the remove-erase idiom.",
       "created_at" : "2022-07-29T13:52:43Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24814#issuecomment-1199312816",
@@ -751,7 +753,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Worth to mention that #25685 completely removes the need to erase the pre-selected coins from the available coins vector by not including them there in the first place.",
       "created_at" : "2022-07-29T14:22:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24814#issuecomment-1199379856",

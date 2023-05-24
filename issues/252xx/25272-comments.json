@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Update:\r\nAdded test coverage for it in the first commit. Showing how the wallet can end up in the invalid state. The second commit corrects it with the proposed solution.",
       "created_at" : "2022-06-03T15:53:26Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25272#issuecomment-1146098556",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25297](https://github.com/bitcoin/bitcoin/pull/25297) (wallet: speedup transactions sync, rescan and load by grouping all independent db writes on a single batched db transaction by furszy)\n* [#24897](https://github.com/bitcoin/bitcoin/pull/24897) ([Draft / POC] Silent Payments by w0xlt)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-06-04T15:58:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25272#issuecomment-1146640263",
@@ -143,21 +143,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/890320253"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"test: add case for wallet invalid state where the inputs (prev-txs) of a new arriving transaction are not marked dirty, while the transaction that spends them exist inside the in-memory wallet tx map (not stored on db due a db write failure).\" (742cd0b4898b06798d9cbac0f272d7aed0fb2d3f)\r\n\r\nThink you just want a static_cast here if you already know the type. (dynamic_cast is for when you are unsure what the type will be at runtime)",
-      "commit_id" : "d15e9f7fc0ca3b8ab775ca218e146b3238578484",
+      "commit_id" : "9e04cfaa76cf9dda27f10359dd43e78dd3268e09",
       "created_at" : "2022-06-06T16:23:15Z",
       "diff_hunk" : "@@ -856,5 +856,111 @@ BOOST_FIXTURE_TEST_CASE(ZapSelectTx, TestChain100Setup)\n     TestUnloadWallet(std::move(wallet));\n }\n \n+/** RAII class that provides access to a FailDatabase. Which fails if needed. */\n+class FailBatch : public DatabaseBatch\n+{\n+private:\n+    bool m_pass{false};\n+    bool ReadKey(CDataStream&& key, CDataStream& value) override { return m_pass; }\n+    bool WriteKey(CDataStream&& key, CDataStream&& value, bool overwrite=true) override { return m_pass; }\n+    bool EraseKey(CDataStream&& key) override { return m_pass; }\n+    bool HasKey(CDataStream&& key) override { return m_pass; }\n+\n+public:\n+    explicit FailBatch(bool pass) : m_pass(pass) {}\n+    void Flush() override {}\n+    void Close() override {}\n+\n+    bool StartCursor() override { return true; }\n+    bool ReadAtCursor(CDataStream& ssKey, CDataStream& ssValue, bool& complete) override { return false; }\n+    void CloseCursor() override {}\n+    bool TxnBegin() override { return false; }\n+    bool TxnCommit() override { return false; }\n+    bool TxnAbort() override { return false; }\n+};\n+\n+/** A dummy WalletDatabase that does nothing, only fails if needed.**/\n+class FailDatabase : public WalletDatabase\n+{\n+public:\n+    bool m_pass{true}; // false when this db should fail\n+\n+    void Open() override {};\n+    void AddRef() override {}\n+    void RemoveRef() override {}\n+    bool Rewrite(const char* pszSkip=nullptr) override { return true; }\n+    bool Backup(const std::string& strDest) const override { return true; }\n+    void Close() override {}\n+    void Flush() override {}\n+    bool PeriodicFlush() override { return true; }\n+    void IncrementUpdateCounter() override { ++nUpdateCounter; }\n+    void ReloadDbEnv() override {}\n+    std::string Filename() override { return \"faildb\"; }\n+    std::string Format() override { return \"faildb\"; }\n+    std::unique_ptr<DatabaseBatch> MakeBatch(bool flush_on_close = true) override { return std::make_unique<FailBatch>(m_pass); }\n+};\n+\n+/**\n+ * Checks a wallet invalid state where the inputs (prev-txs) of a new arriving transaction are not marked dirty,\n+ * while the transaction that spends them exist inside the in-memory wallet tx map (not stored on db due a db write failure).\n+ */\n+BOOST_FIXTURE_TEST_CASE(wallet_sync_tx_invalid_state_test, TestingSetup)\n+{\n+    CWallet wallet(m_node.chain.get(), \"\", m_args, std::make_unique<FailDatabase>());\n+    {\n+        LOCK(wallet.cs_wallet);\n+        wallet.SetWalletFlag(WALLET_FLAG_DESCRIPTORS);\n+        wallet.SetupDescriptorScriptPubKeyMans();\n+    }\n+\n+    // Add tx to wallet\n+    CTxDestination dest;\n+    bilingual_str error;\n+    BOOST_ASSERT(wallet.GetNewDestination(OutputType::BECH32M, \"\", dest, error));\n+\n+    CMutableTransaction mtx;\n+    mtx.vout.push_back({COIN, GetScriptForDestination(dest)});\n+    mtx.vin.push_back(CTxIn(g_insecure_rand_ctx.rand256(), 0));\n+    const auto& tx_id_to_spend = wallet.AddToWallet(MakeTransactionRef(mtx), TxStateInMempool{})->GetHash();\n+\n+    {\n+        // Cache and verify available balance for the wtx\n+        LOCK(wallet.cs_wallet);\n+        const CWalletTx* wtx_to_spend = wallet.GetWalletTx(tx_id_to_spend);\n+        BOOST_CHECK_EQUAL(CachedTxGetAvailableCredit(wallet, *wtx_to_spend), 1 * COIN);\n+    }\n+\n+    // Now the good case:\n+    // 1) Add a transaction that spends the previously created transaction\n+    // 2) Verify that the available balance of this new tx and the old one is updated (prev tx is marked dirty)\n+\n+    mtx.vin.clear();\n+    mtx.vin.push_back(CTxIn(tx_id_to_spend, 0));\n+    wallet.transactionAddedToMempool(MakeTransactionRef(mtx), 0);\n+    const uint256& good_tx_id = mtx.GetHash();\n+\n+    {\n+        // Verify balance update for the new tx and the old one\n+        LOCK(wallet.cs_wallet);\n+        const CWalletTx* new_wtx = wallet.GetWalletTx(good_tx_id);\n+        BOOST_CHECK_EQUAL(CachedTxGetAvailableCredit(wallet, *new_wtx), 1 * COIN);\n+\n+        // Now the old wtx\n+        const CWalletTx* wtx_to_spend = wallet.GetWalletTx(tx_id_to_spend);\n+        BOOST_CHECK_EQUAL(CachedTxGetAvailableCredit(wallet, *wtx_to_spend), 0 * COIN);\n+    }\n+\n+    // Now the bad case:\n+    // 1) Make db always fail\n+    // 2) Try to add a transaction that spends the previously created transaction and\n+    //    verify that we are not moving forward if the wallet cannot store it\n+    dynamic_cast<FailDatabase&>(wallet.GetDatabase()).m_pass = false;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25272#discussion_r890320253",
       "id" : 890320253,
-      "line" : 957,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5841ETV9",
       "original_commit_id" : "d15e9f7fc0ca3b8ab775ca218e146b3238578484",
       "original_line" : 957,
       "original_position" : 102,
       "original_start_line" : null,
       "path" : "src/wallet/test/wallet_tests.cpp",
-      "position" : 102,
+      "position" : null,
       "pull_request_review_id" : 996863007,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25272",
       "reactions" : {
@@ -175,6 +175,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-06T17:33:37Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/890320253",
       "user" : {
@@ -210,17 +211,17 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/890365213"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"test: add case for wallet invalid state where the inputs (prev-txs) of a new arriving transaction are not marked dirty, while the transaction that spends them exist inside the in-memory wallet tx map (not stored on db due a db write failure).\" (742cd0b4898b06798d9cbac0f272d7aed0fb2d3f)\r\n\r\nDefault is true here, but false in the other class. Would suggest sticking choosing one default just to avoid confusion and having to remember which class has which default.\r\n\r\n(Also maybe use a shorter commit subject, https://cbea.ms/git-commit/ has nice guidelines)",
-      "commit_id" : "d15e9f7fc0ca3b8ab775ca218e146b3238578484",
+      "commit_id" : "9e04cfaa76cf9dda27f10359dd43e78dd3268e09",
       "created_at" : "2022-06-06T17:19:46Z",
       "diff_hunk" : "@@ -856,5 +856,111 @@ BOOST_FIXTURE_TEST_CASE(ZapSelectTx, TestChain100Setup)\n     TestUnloadWallet(std::move(wallet));\n }\n \n+/** RAII class that provides access to a FailDatabase. Which fails if needed. */\n+class FailBatch : public DatabaseBatch\n+{\n+private:\n+    bool m_pass{false};\n+    bool ReadKey(CDataStream&& key, CDataStream& value) override { return m_pass; }\n+    bool WriteKey(CDataStream&& key, CDataStream&& value, bool overwrite=true) override { return m_pass; }\n+    bool EraseKey(CDataStream&& key) override { return m_pass; }\n+    bool HasKey(CDataStream&& key) override { return m_pass; }\n+\n+public:\n+    explicit FailBatch(bool pass) : m_pass(pass) {}\n+    void Flush() override {}\n+    void Close() override {}\n+\n+    bool StartCursor() override { return true; }\n+    bool ReadAtCursor(CDataStream& ssKey, CDataStream& ssValue, bool& complete) override { return false; }\n+    void CloseCursor() override {}\n+    bool TxnBegin() override { return false; }\n+    bool TxnCommit() override { return false; }\n+    bool TxnAbort() override { return false; }\n+};\n+\n+/** A dummy WalletDatabase that does nothing, only fails if needed.**/\n+class FailDatabase : public WalletDatabase\n+{\n+public:\n+    bool m_pass{true}; // false when this db should fail",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25272#discussion_r890365213",
       "id" : 890365213,
-      "line" : 886,
+      "line" : 889,
       "node_id" : "PRRC_kwDOABII5841EeUd",
       "original_commit_id" : "d15e9f7fc0ca3b8ab775ca218e146b3238578484",
-      "original_line" : 886,
+      "original_line" : 889,
       "original_position" : 31,
       "original_start_line" : null,
       "path" : "src/wallet/test/wallet_tests.cpp",
@@ -242,6 +243,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-06T17:35:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/890365213",
       "user" : {
@@ -277,9 +279,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/890455670"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "yeah ðð¼ .",
-      "commit_id" : "4bd0d0140e2a27e604ca0febcd485f468705c0ed",
+      "commit_id" : "9e04cfaa76cf9dda27f10359dd43e78dd3268e09",
       "created_at" : "2022-06-06T19:07:31Z",
       "diff_hunk" : "@@ -856,5 +856,111 @@ BOOST_FIXTURE_TEST_CASE(ZapSelectTx, TestChain100Setup)\n     TestUnloadWallet(std::move(wallet));\n }\n \n+/** RAII class that provides access to a FailDatabase. Which fails if needed. */\n+class FailBatch : public DatabaseBatch\n+{\n+private:\n+    bool m_pass{false};\n+    bool ReadKey(CDataStream&& key, CDataStream& value) override { return m_pass; }\n+    bool WriteKey(CDataStream&& key, CDataStream&& value, bool overwrite=true) override { return m_pass; }\n+    bool EraseKey(CDataStream&& key) override { return m_pass; }\n+    bool HasKey(CDataStream&& key) override { return m_pass; }\n+\n+public:\n+    explicit FailBatch(bool pass) : m_pass(pass) {}\n+    void Flush() override {}\n+    void Close() override {}\n+\n+    bool StartCursor() override { return true; }\n+    bool ReadAtCursor(CDataStream& ssKey, CDataStream& ssValue, bool& complete) override { return false; }\n+    void CloseCursor() override {}\n+    bool TxnBegin() override { return false; }\n+    bool TxnCommit() override { return false; }\n+    bool TxnAbort() override { return false; }\n+};\n+\n+/** A dummy WalletDatabase that does nothing, only fails if needed.**/\n+class FailDatabase : public WalletDatabase\n+{\n+public:\n+    bool m_pass{true}; // false when this db should fail\n+\n+    void Open() override {};\n+    void AddRef() override {}\n+    void RemoveRef() override {}\n+    bool Rewrite(const char* pszSkip=nullptr) override { return true; }\n+    bool Backup(const std::string& strDest) const override { return true; }\n+    void Close() override {}\n+    void Flush() override {}\n+    bool PeriodicFlush() override { return true; }\n+    void IncrementUpdateCounter() override { ++nUpdateCounter; }\n+    void ReloadDbEnv() override {}\n+    std::string Filename() override { return \"faildb\"; }\n+    std::string Format() override { return \"faildb\"; }\n+    std::unique_ptr<DatabaseBatch> MakeBatch(bool flush_on_close = true) override { return std::make_unique<FailBatch>(m_pass); }\n+};\n+\n+/**\n+ * Checks a wallet invalid state where the inputs (prev-txs) of a new arriving transaction are not marked dirty,\n+ * while the transaction that spends them exist inside the in-memory wallet tx map (not stored on db due a db write failure).\n+ */\n+BOOST_FIXTURE_TEST_CASE(wallet_sync_tx_invalid_state_test, TestingSetup)\n+{\n+    CWallet wallet(m_node.chain.get(), \"\", m_args, std::make_unique<FailDatabase>());\n+    {\n+        LOCK(wallet.cs_wallet);\n+        wallet.SetWalletFlag(WALLET_FLAG_DESCRIPTORS);\n+        wallet.SetupDescriptorScriptPubKeyMans();\n+    }\n+\n+    // Add tx to wallet\n+    CTxDestination dest;\n+    bilingual_str error;\n+    BOOST_ASSERT(wallet.GetNewDestination(OutputType::BECH32M, \"\", dest, error));\n+\n+    CMutableTransaction mtx;\n+    mtx.vout.push_back({COIN, GetScriptForDestination(dest)});\n+    mtx.vin.push_back(CTxIn(g_insecure_rand_ctx.rand256(), 0));\n+    const auto& tx_id_to_spend = wallet.AddToWallet(MakeTransactionRef(mtx), TxStateInMempool{})->GetHash();\n+\n+    {\n+        // Cache and verify available balance for the wtx\n+        LOCK(wallet.cs_wallet);\n+        const CWalletTx* wtx_to_spend = wallet.GetWalletTx(tx_id_to_spend);\n+        BOOST_CHECK_EQUAL(CachedTxGetAvailableCredit(wallet, *wtx_to_spend), 1 * COIN);\n+    }\n+\n+    // Now the good case:\n+    // 1) Add a transaction that spends the previously created transaction\n+    // 2) Verify that the available balance of this new tx and the old one is updated (prev tx is marked dirty)\n+\n+    mtx.vin.clear();\n+    mtx.vin.push_back(CTxIn(tx_id_to_spend, 0));\n+    wallet.transactionAddedToMempool(MakeTransactionRef(mtx), 0);\n+    const uint256& good_tx_id = mtx.GetHash();\n+\n+    {\n+        // Verify balance update for the new tx and the old one\n+        LOCK(wallet.cs_wallet);\n+        const CWalletTx* new_wtx = wallet.GetWalletTx(good_tx_id);\n+        BOOST_CHECK_EQUAL(CachedTxGetAvailableCredit(wallet, *new_wtx), 1 * COIN);\n+\n+        // Now the old wtx\n+        const CWalletTx* wtx_to_spend = wallet.GetWalletTx(tx_id_to_spend);\n+        BOOST_CHECK_EQUAL(CachedTxGetAvailableCredit(wallet, *wtx_to_spend), 0 * COIN);\n+    }\n+\n+    // Now the bad case:\n+    // 1) Make db always fail\n+    // 2) Try to add a transaction that spends the previously created transaction and\n+    //    verify that we are not moving forward if the wallet cannot store it\n+    dynamic_cast<FailDatabase&>(wallet.GetDatabase()).m_pass = false;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25272#discussion_r890455670",
@@ -310,6 +312,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-06T19:07:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/890455670",
       "user" : {
@@ -345,18 +348,18 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/890463244"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Default is true here, but false in the other class. Would suggest sticking choosing one default just to avoid confusion and having to remember which class has which default.\r\n\r\nyeah, good catch. I wrote the test differently first, this is a remnant of the first approach.\r\n\r\n> (Also maybe use a shorter commit subject, https://cbea.ms/git-commit/ has nice guidelines)\r\n\r\nawesome reading :), thanks!",
-      "commit_id" : "4bd0d0140e2a27e604ca0febcd485f468705c0ed",
+      "commit_id" : "9e04cfaa76cf9dda27f10359dd43e78dd3268e09",
       "created_at" : "2022-06-06T19:11:53Z",
       "diff_hunk" : "@@ -856,5 +856,111 @@ BOOST_FIXTURE_TEST_CASE(ZapSelectTx, TestChain100Setup)\n     TestUnloadWallet(std::move(wallet));\n }\n \n+/** RAII class that provides access to a FailDatabase. Which fails if needed. */\n+class FailBatch : public DatabaseBatch\n+{\n+private:\n+    bool m_pass{false};\n+    bool ReadKey(CDataStream&& key, CDataStream& value) override { return m_pass; }\n+    bool WriteKey(CDataStream&& key, CDataStream&& value, bool overwrite=true) override { return m_pass; }\n+    bool EraseKey(CDataStream&& key) override { return m_pass; }\n+    bool HasKey(CDataStream&& key) override { return m_pass; }\n+\n+public:\n+    explicit FailBatch(bool pass) : m_pass(pass) {}\n+    void Flush() override {}\n+    void Close() override {}\n+\n+    bool StartCursor() override { return true; }\n+    bool ReadAtCursor(CDataStream& ssKey, CDataStream& ssValue, bool& complete) override { return false; }\n+    void CloseCursor() override {}\n+    bool TxnBegin() override { return false; }\n+    bool TxnCommit() override { return false; }\n+    bool TxnAbort() override { return false; }\n+};\n+\n+/** A dummy WalletDatabase that does nothing, only fails if needed.**/\n+class FailDatabase : public WalletDatabase\n+{\n+public:\n+    bool m_pass{true}; // false when this db should fail",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25272#discussion_r890463244",
       "id" : 890463244,
       "in_reply_to_id" : 890365213,
-      "line" : 886,
+      "line" : 889,
       "node_id" : "PRRC_kwDOABII5841E2QM",
       "original_commit_id" : "d15e9f7fc0ca3b8ab775ca218e146b3238578484",
-      "original_line" : 886,
+      "original_line" : 889,
       "original_position" : 31,
       "original_start_line" : null,
       "path" : "src/wallet/test/wallet_tests.cpp",
@@ -378,6 +381,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-06T19:11:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/890463244",
       "user" : {
@@ -402,7 +406,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks for the feedback!\r\n\r\nApplied the following changes:\r\n\r\n1) Moved `dynamic_cast` to `static_cast`.\r\n2) Set same default value for \"m_pass\" field in both classes `FailDatabase` and `FailBatch`.\r\n3) Shorted the commit subject.",
       "created_at" : "2022-06-06T19:31:29Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25272#issuecomment-1147824717",
@@ -459,15 +463,15 @@
       },
       "author_association" : "MEMBER",
       "body" : "In 4bd0d0140e2a27e604ca0febcd485f468705c0ed \"wallet: guard and alert about a wallet invalid state during chain sync\"\r\n\r\n`static_cast` change should be in the previous commit.",
-      "commit_id" : "7027e94801686064eef806b10df141ebca3ea2b8",
+      "commit_id" : "9e04cfaa76cf9dda27f10359dd43e78dd3268e09",
       "created_at" : "2022-06-13T21:01:10Z",
       "diff_hunk" : "@@ -952,29 +952,14 @@ BOOST_FIXTURE_TEST_CASE(wallet_sync_tx_invalid_state_test, TestingSetup)\n \n     // Now the bad case:\n     // 1) Make db always fail\n-    // 2) Add transaction that spends the previously created transaction\n-    // 3) Check what happen now that the db failed to write the tx. Verifying\n-    //    the available balance of this new tx and the old one (which, as the\n-    //    output is spent, should at least, be marked dirty)\n-\n-    dynamic_cast<FailDatabase&>(wallet.GetDatabase()).m_pass = false;\n+    // 2) Try to add a transaction that spends the previously created transaction and\n+    //    verify that we are not moving forward if the wallet cannot store it\n+    static_cast<FailDatabase&>(wallet.GetDatabase()).m_pass = false;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25272#discussion_r896132326",
       "id" : 896132326,
-      "line" : 957,
+      "line" : 960,
       "node_id" : "PRRC_kwDOABII5841aeTm",
       "original_commit_id" : "4bd0d0140e2a27e604ca0febcd485f468705c0ed",
-      "original_line" : 957,
+      "original_line" : 960,
       "original_position" : 12,
       "original_start_line" : null,
       "path" : "src/wallet/test/wallet_tests.cpp",
@@ -489,6 +493,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-13T21:03:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/896132326",
       "user" : {
@@ -513,7 +518,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> It's preferable that each commit passes the test suite. Currently the first commit fails as the code currently fails the test that you have added. So it would be preferable if that test were added after the fix is implemented.\r\n\r\nOk. I actually did that on purpose so it was easier for reviewers to replicate/understand the problem (I wrote it in the PR description); just compiling the first commit, see/verify the failure, then compile the fix and see it passing (Test Driven Approach).\r\n\r\nAt least for me, it make more sense (and feels more natural) than have tests always passing when we actually have problems in the sources.\r\n\r\nBut.. that is probably not a discussion for this PR, will just re-order the commits :).",
       "created_at" : "2022-06-14T12:36:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25272#issuecomment-1155127945",
@@ -557,7 +562,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Updated per achow101 feedback:\r\n\r\n- Re-ordered the commits, so test suite always passes.\r\n   Note about this change: now we only have the final version of the test. The one that fails due a `runtime_error` and not the intermediary one that was showing the wallet invalid state error (which, for reviewers, can still be found at https://github.com/furszy/bitcoin-core/commit/c9c9466dd0ab77bcce52ebe4b4d5f89787bd6542).",
       "created_at" : "2022-06-14T12:56:44Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25272#issuecomment-1155150200",
@@ -614,15 +619,15 @@
       },
       "author_association" : "MEMBER",
       "body" : "Where is the exception handler?",
-      "commit_id" : "7027e94801686064eef806b10df141ebca3ea2b8",
+      "commit_id" : "9e04cfaa76cf9dda27f10359dd43e78dd3268e09",
       "created_at" : "2022-06-23T19:25:13Z",
       "diff_hunk" : "@@ -1139,7 +1139,13 @@ bool CWallet::AddToWalletIfInvolvingMe(const CTransactionRef& ptx, const SyncTxS\n             // Block disconnection override an abandoned tx as unconfirmed\n             // which means user may have to call abandontransaction again\n             TxState tx_state = std::visit([](auto&& s) -> TxState { return s; }, state);\n-            return AddToWallet(MakeTransactionRef(tx), tx_state, /*update_wtx=*/nullptr, /*fFlushOnClose=*/false, rescanning_old_block);\n+            CWalletTx* wtx = AddToWallet(MakeTransactionRef(tx), tx_state, /*update_wtx=*/nullptr, /*fFlushOnClose=*/false, rescanning_old_block);\n+            if (!wtx) {\n+                // Can only be nullptr if there was a db write error (missing db, read-only db or a db engine internal writing error).\n+                // As we only store arriving transaction in this process, and we don't want an inconsistent state, let's throw an error.\n+                throw std::runtime_error(\"DB error adding transaction to wallet, write failed\");",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25272#discussion_r905382073",
       "id" : 905382073,
-      "line" : 1146,
+      "line" : 1137,
       "node_id" : "PRRC_kwDOABII58419wi5",
       "original_commit_id" : "7027e94801686064eef806b10df141ebca3ea2b8",
-      "original_line" : 1146,
+      "original_line" : 1137,
       "original_position" : 9,
       "original_start_line" : null,
       "path" : "src/wallet/wallet.cpp",
@@ -644,6 +649,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-23T19:25:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/905382073",
       "user" : {
@@ -679,7 +685,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906240021"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This runs on the scheduler thread, it's caught by the try/catch inside `serviceQueue()`.\r\n\r\nIt's a direct node/wallet abortion cause, because the wallet cannot recover alone from this invalid state. If it continues running is only for worst.",
       "commit_id" : "9e04cfaa76cf9dda27f10359dd43e78dd3268e09",
       "created_at" : "2022-06-24T16:54:33Z",
@@ -712,6 +718,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-30T23:58:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906240021",
       "user" : {
@@ -780,7 +787,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Sadly had to rebase it on master, got a silent merge conflict with the `GetNewDestination` changes.\r\n\r\nReady to go again.",
       "created_at" : "2022-07-18T15:10:28Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25272#issuecomment-1187621471",
@@ -911,6 +918,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-19T11:34:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/924384046",
       "user" : {
@@ -979,7 +987,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Hey, thanks for the review.\r\n\r\nabout your point @jonatack:\r\n\r\n> Would it make sense to follow this existing error message format in `src/wallet/wallet.cpp:2157`, e.g. provide the function name?\r\n\r\nProbably would make more sense to go into the opposite direction and change line 2157 to describe the context where the runtime error occurred properly. Something like `\"DB error committing transaction to wallet, write failed\"`.\r\n\r\nSo if this edge case happens, and the runtime error string gets presented to the user before shutdown, the text is more descriptive than having the function name on it (which, looking it at the user's perspective, provides zero information).\r\n\r\nStill, we could probably merge this PR as is now and tackle it in a short follow-up PR.",
       "created_at" : "2022-07-25T15:23:40Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25272#issuecomment-1194196071",

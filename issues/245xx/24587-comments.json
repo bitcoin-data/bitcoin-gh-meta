@@ -13,7 +13,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "nit: add trailing comma\r\n```suggestion\r\n    getnewdestination,\r\n```",
-      "commit_id" : "33560b1d2a214bb00a1b9b06edf9d44bd2d800cc",
+      "commit_id" : "2726b60a3ac098b44f2970bed21147b70e12a1c2",
       "created_at" : "2022-03-16T17:15:54Z",
       "diff_hunk" : "@@ -18,15 +18,23 @@\n     assert_equal,\n )\n from test_framework.wallet_util import bytes_to_wif\n+from test_framework.wallet import (\n+    MiniWallet,\n+    address_to_scriptpubkey,\n+    getnewdestination",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24587#discussion_r828263631",
@@ -43,6 +43,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-16T17:25:02Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828263631",
       "user" : {
@@ -80,7 +81,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "I think descriptor wallets don't support `addmultisigaddress`, so shouldn't this check for bdb?",
-      "commit_id" : "33560b1d2a214bb00a1b9b06edf9d44bd2d800cc",
+      "commit_id" : "2726b60a3ac098b44f2970bed21147b70e12a1c2",
       "created_at" : "2022-03-16T17:24:22Z",
       "diff_hunk" : "@@ -37,57 +45,61 @@ def get_keys(self):\n             k.generate()\n             self.pub.append(k.get_pubkey().get_bytes().hex())\n             self.priv.append(bytes_to_wif(k.get_bytes(), k.is_compressed))\n-        self.final = node2.getnewaddress()\n+        self.final = getnewdestination()[2]\n \n     def run_test(self):\n         node0, node1, node2 = self.nodes\n+        self.wallet=MiniWallet(test_node=node0)\n \n-        self.check_addmultisigaddress_errors()\n+        if self.is_wallet_compiled():",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24587#discussion_r828271861",
@@ -110,6 +111,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-16T17:25:02Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828271861",
       "user" : {
@@ -147,7 +149,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Is this check still needed if you adjust the checks below to check for bdb instead?",
-      "commit_id" : "33560b1d2a214bb00a1b9b06edf9d44bd2d800cc",
+      "commit_id" : "2726b60a3ac098b44f2970bed21147b70e12a1c2",
       "created_at" : "2022-03-16T17:24:48Z",
       "diff_hunk" : "@@ -18,15 +18,23 @@\n     assert_equal,\n )\n from test_framework.wallet_util import bytes_to_wif\n+from test_framework.wallet import (\n+    MiniWallet,\n+    address_to_scriptpubkey,\n+    getnewdestination\n+)\n \n class RpcCreateMultiSigTest(BitcoinTestFramework):\n     def set_test_params(self):\n         self.setup_clean_chain = True\n         self.num_nodes = 3\n         self.supports_cli = False\n+        if self.is_wallet_compiled():\n+            self.requires_wallet = True\n \n     def skip_test_if_missing_module(self):\n-        self.skip_if_no_wallet()\n+        if self.is_wallet_compiled() and not self.options.descriptors:\n+            self.skip_if_no_bdb()",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24587#discussion_r828272277",
@@ -177,6 +179,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-16T17:25:02Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828272277",
       "user" : {
@@ -212,9 +215,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828311306"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "done",
-      "commit_id" : "33560b1d2a214bb00a1b9b06edf9d44bd2d800cc",
+      "commit_id" : "2726b60a3ac098b44f2970bed21147b70e12a1c2",
       "created_at" : "2022-03-16T18:11:41Z",
       "diff_hunk" : "@@ -18,15 +18,23 @@\n     assert_equal,\n )\n from test_framework.wallet_util import bytes_to_wif\n+from test_framework.wallet import (\n+    MiniWallet,\n+    address_to_scriptpubkey,\n+    getnewdestination",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24587#discussion_r828311306",
@@ -245,6 +248,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-16T18:11:41Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828311306",
       "user" : {
@@ -280,9 +284,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828312521"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "Changed the checks to check for bdb instead. Removed this check.",
-      "commit_id" : "33560b1d2a214bb00a1b9b06edf9d44bd2d800cc",
+      "commit_id" : "2726b60a3ac098b44f2970bed21147b70e12a1c2",
       "created_at" : "2022-03-16T18:13:19Z",
       "diff_hunk" : "@@ -18,15 +18,23 @@\n     assert_equal,\n )\n from test_framework.wallet_util import bytes_to_wif\n+from test_framework.wallet import (\n+    MiniWallet,\n+    address_to_scriptpubkey,\n+    getnewdestination\n+)\n \n class RpcCreateMultiSigTest(BitcoinTestFramework):\n     def set_test_params(self):\n         self.setup_clean_chain = True\n         self.num_nodes = 3\n         self.supports_cli = False\n+        if self.is_wallet_compiled():\n+            self.requires_wallet = True\n \n     def skip_test_if_missing_module(self):\n-        self.skip_if_no_wallet()\n+        if self.is_wallet_compiled() and not self.options.descriptors:\n+            self.skip_if_no_bdb()",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24587#discussion_r828312521",
@@ -313,6 +317,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-16T18:13:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828312521",
       "user" : {
@@ -348,9 +353,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828313551"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "Changed to check for bdb instead.",
-      "commit_id" : "33560b1d2a214bb00a1b9b06edf9d44bd2d800cc",
+      "commit_id" : "2726b60a3ac098b44f2970bed21147b70e12a1c2",
       "created_at" : "2022-03-16T18:14:39Z",
       "diff_hunk" : "@@ -37,57 +45,61 @@ def get_keys(self):\n             k.generate()\n             self.pub.append(k.get_pubkey().get_bytes().hex())\n             self.priv.append(bytes_to_wif(k.get_bytes(), k.is_compressed))\n-        self.final = node2.getnewaddress()\n+        self.final = getnewdestination()[2]\n \n     def run_test(self):\n         node0, node1, node2 = self.nodes\n+        self.wallet=MiniWallet(test_node=node0)\n \n-        self.check_addmultisigaddress_errors()\n+        if self.is_wallet_compiled():",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24587#discussion_r828313551",
@@ -381,6 +386,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-16T18:14:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828313551",
       "user" : {
@@ -418,19 +424,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Why is this needed? IIRC this will only import the coinbase keys, but they aren't needed?",
-      "commit_id" : "33560b1d2a214bb00a1b9b06edf9d44bd2d800cc",
+      "commit_id" : "2726b60a3ac098b44f2970bed21147b70e12a1c2",
       "created_at" : "2022-03-16T18:36:26Z",
       "diff_hunk" : "@@ -18,15 +18,19 @@\n     assert_equal,\n )\n from test_framework.wallet_util import bytes_to_wif\n+from test_framework.wallet import (\n+    MiniWallet,\n+    address_to_scriptpubkey,\n+    getnewdestination,\n+)\n \n class RpcCreateMultiSigTest(BitcoinTestFramework):\n     def set_test_params(self):\n         self.setup_clean_chain = True\n         self.num_nodes = 3\n         self.supports_cli = False\n-\n-    def skip_test_if_missing_module(self):\n-        self.skip_if_no_wallet()\n+        if self.is_bdb_compiled():\n+            self.requires_wallet = True",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24587#discussion_r828330931",
       "id" : 828330931,
-      "line" : 33,
+      "line" : 32,
       "node_id" : "PRRC_kwDOABII584xX1Oz",
       "original_commit_id" : "33560b1d2a214bb00a1b9b06edf9d44bd2d800cc",
-      "original_line" : 33,
+      "original_line" : 32,
       "original_position" : 19,
       "original_start_line" : null,
       "path" : "test/functional/rpc_createmultisig.py",
-      "position" : 19,
+      "position" : 18,
       "pull_request_review_id" : 912099033,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24587",
       "reactions" : {
@@ -448,6 +454,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-16T18:48:37Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828330931",
       "user" : {
@@ -485,23 +492,23 @@
       },
       "author_association" : "MEMBER",
       "body" : "I think you can remove the if-else and just unconditionally use `validateaddress` for simplicity. ",
-      "commit_id" : "33560b1d2a214bb00a1b9b06edf9d44bd2d800cc",
+      "commit_id" : "2726b60a3ac098b44f2970bed21147b70e12a1c2",
       "created_at" : "2022-03-16T18:47:05Z",
       "diff_hunk" : "@@ -164,17 +160,23 @@ def do_multisig(self):\n         if self.output_type == 'bech32':\n             assert madd[0:4] == \"bcrt\"  # actually a bech32 address\n \n-        # compare against addmultisigaddress\n-        msigw = wmulti.addmultisigaddress(self.nsigs, self.pub, None, self.output_type)\n-        maddw = msigw[\"address\"]\n-        mredeemw = msigw[\"redeemScript\"]\n-        assert_equal(desc, drop_origins(msigw['descriptor']))\n-        # addmultisigiaddress and createmultisig work the same\n-        assert maddw == madd\n-        assert mredeemw == mredeem\n-\n-        txid = node0.sendtoaddress(madd, 40)\n-\n+        if self.is_bdb_compiled():\n+            # compare against addmultisigaddress\n+            msigw = wmulti.addmultisigaddress(self.nsigs, self.pub, None, self.output_type)\n+            maddw = msigw[\"address\"]\n+            mredeemw = msigw[\"redeemScript\"]\n+            assert_equal(desc, drop_origins(msigw['descriptor']))\n+            # addmultisigiaddress and createmultisig work the same\n+            assert maddw == madd\n+            assert mredeemw == mredeem\n+            wmulti.unloadwallet()\n+\n+        if self.output_type == \"bech32\":\n+            spk = bytes.fromhex(node0.validateaddress(madd)[\"scriptPubKey\"])",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24587#discussion_r828339687",
       "id" : 828339687,
-      "line" : 175,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584xX3Xn",
       "original_commit_id" : "33560b1d2a214bb00a1b9b06edf9d44bd2d800cc",
       "original_line" : 175,
       "original_position" : 177,
       "original_start_line" : null,
       "path" : "test/functional/rpc_createmultisig.py",
-      "position" : 177,
+      "position" : null,
       "pull_request_review_id" : 912099033,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24587",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -509,12 +516,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828339687/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-16T18:48:37Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828339687",
       "user" : {
@@ -552,7 +560,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Is there a reason why this check fails? IIUC the multisig addresses are still added to the bdb wallets as watch-only, so the watchonly balance should still match up (considering also the MiniWallet balance)",
-      "commit_id" : "33560b1d2a214bb00a1b9b06edf9d44bd2d800cc",
+      "commit_id" : "2726b60a3ac098b44f2970bed21147b70e12a1c2",
       "created_at" : "2022-03-16T18:48:32Z",
       "diff_hunk" : "@@ -119,33 +127,21 @@ def check_addmultisigaddress_errors(self):\n         pubs = [self.nodes[1].getaddressinfo(addr)[\"pubkey\"] for addr in addresses]\n         assert_raises_rpc_error(-5, \"Bech32m multisig addresses cannot be created with legacy wallets\", self.nodes[0].addmultisigaddress, 2, pubs, \"\", \"bech32m\")\n \n-    def checkbalances(self):\n-        node0, node1, node2 = self.nodes\n-        self.generate(node0, COINBASE_MATURITY)\n-\n-        bal0 = node0.getbalance()\n-        bal1 = node1.getbalance()\n-        bal2 = node2.getbalance()\n-\n-        height = node0.getblockchaininfo()[\"blocks\"]\n-        assert 150 < height < 350\n-        total = 149 * 50 + (height - 149 - 100) * 25\n-        assert bal1 == 0\n-        assert bal2 == self.moved\n-        assert bal0 + bal1 + bal2 == total",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24587#discussion_r828340885",
@@ -564,7 +572,7 @@
       "original_position" : 121,
       "original_start_line" : null,
       "path" : "test/functional/rpc_createmultisig.py",
-      "position" : 121,
+      "position" : 117,
       "pull_request_review_id" : 912099033,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24587",
       "reactions" : {
@@ -582,6 +590,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-16T18:48:37Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828340885",
       "user" : {
@@ -617,22 +626,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828352369"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "This is actually needed to create default wallets. Without this `check_addmultisigaddress_errors()` fails.",
-      "commit_id" : "137ac50429b4c9a354ce8d9dc6611df9b69ac36e",
+      "commit_id" : "2726b60a3ac098b44f2970bed21147b70e12a1c2",
       "created_at" : "2022-03-16T19:02:39Z",
       "diff_hunk" : "@@ -18,15 +18,19 @@\n     assert_equal,\n )\n from test_framework.wallet_util import bytes_to_wif\n+from test_framework.wallet import (\n+    MiniWallet,\n+    address_to_scriptpubkey,\n+    getnewdestination,\n+)\n \n class RpcCreateMultiSigTest(BitcoinTestFramework):\n     def set_test_params(self):\n         self.setup_clean_chain = True\n         self.num_nodes = 3\n         self.supports_cli = False\n-\n-    def skip_test_if_missing_module(self):\n-        self.skip_if_no_wallet()\n+        if self.is_bdb_compiled():\n+            self.requires_wallet = True",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24587#discussion_r828352369",
       "id" : 828352369,
       "in_reply_to_id" : 828330931,
-      "line" : 31,
+      "line" : 32,
       "node_id" : "PRRC_kwDOABII584xX6dx",
       "original_commit_id" : "33560b1d2a214bb00a1b9b06edf9d44bd2d800cc",
-      "original_line" : 33,
+      "original_line" : 32,
       "original_position" : 19,
       "original_start_line" : null,
       "path" : "test/functional/rpc_createmultisig.py",
-      "position" : 26,
+      "position" : 18,
       "pull_request_review_id" : 912128583,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24587",
       "reactions" : {
@@ -650,6 +659,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-16T19:02:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828352369",
       "user" : {
@@ -685,9 +695,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828359270"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "Sorry but I have been stuck here for quite some time and not able to figure out why this fails.",
-      "commit_id" : "137ac50429b4c9a354ce8d9dc6611df9b69ac36e",
+      "commit_id" : "2726b60a3ac098b44f2970bed21147b70e12a1c2",
       "created_at" : "2022-03-16T19:11:23Z",
       "diff_hunk" : "@@ -119,33 +127,21 @@ def check_addmultisigaddress_errors(self):\n         pubs = [self.nodes[1].getaddressinfo(addr)[\"pubkey\"] for addr in addresses]\n         assert_raises_rpc_error(-5, \"Bech32m multisig addresses cannot be created with legacy wallets\", self.nodes[0].addmultisigaddress, 2, pubs, \"\", \"bech32m\")\n \n-    def checkbalances(self):\n-        node0, node1, node2 = self.nodes\n-        self.generate(node0, COINBASE_MATURITY)\n-\n-        bal0 = node0.getbalance()\n-        bal1 = node1.getbalance()\n-        bal2 = node2.getbalance()\n-\n-        height = node0.getblockchaininfo()[\"blocks\"]\n-        assert 150 < height < 350\n-        total = 149 * 50 + (height - 149 - 100) * 25\n-        assert bal1 == 0\n-        assert bal2 == self.moved\n-        assert bal0 + bal1 + bal2 == total",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24587#discussion_r828359270",
@@ -700,7 +710,7 @@
       "original_position" : 121,
       "original_start_line" : null,
       "path" : "test/functional/rpc_createmultisig.py",
-      "position" : 126,
+      "position" : 117,
       "pull_request_review_id" : 912139206,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24587",
       "reactions" : {
@@ -718,6 +728,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-16T19:11:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828359270",
       "user" : {
@@ -755,7 +766,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Ok, I can take a look later.",
-      "commit_id" : "137ac50429b4c9a354ce8d9dc6611df9b69ac36e",
+      "commit_id" : "2726b60a3ac098b44f2970bed21147b70e12a1c2",
       "created_at" : "2022-03-16T19:17:47Z",
       "diff_hunk" : "@@ -119,33 +127,21 @@ def check_addmultisigaddress_errors(self):\n         pubs = [self.nodes[1].getaddressinfo(addr)[\"pubkey\"] for addr in addresses]\n         assert_raises_rpc_error(-5, \"Bech32m multisig addresses cannot be created with legacy wallets\", self.nodes[0].addmultisigaddress, 2, pubs, \"\", \"bech32m\")\n \n-    def checkbalances(self):\n-        node0, node1, node2 = self.nodes\n-        self.generate(node0, COINBASE_MATURITY)\n-\n-        bal0 = node0.getbalance()\n-        bal1 = node1.getbalance()\n-        bal2 = node2.getbalance()\n-\n-        height = node0.getblockchaininfo()[\"blocks\"]\n-        assert 150 < height < 350\n-        total = 149 * 50 + (height - 149 - 100) * 25\n-        assert bal1 == 0\n-        assert bal2 == self.moved\n-        assert bal0 + bal1 + bal2 == total",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24587#discussion_r828364124",
@@ -768,7 +779,7 @@
       "original_position" : 121,
       "original_start_line" : null,
       "path" : "test/functional/rpc_createmultisig.py",
-      "position" : 126,
+      "position" : 117,
       "pull_request_review_id" : 912146060,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24587",
       "reactions" : {
@@ -786,6 +797,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-16T19:17:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/828364124",
       "user" : {
@@ -810,7 +822,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK.\r\n\r\nYou should squash the commits, see: https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#squashing-commits",
       "created_at" : "2022-03-17T12:31:03Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24587#issuecomment-1070863910",
@@ -819,7 +831,7 @@
       "node_id" : "IC_kwDOABII584_1BYm",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -827,7 +839,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1070863910/reactions"
       },
       "updated_at" : "2022-03-17T12:31:03Z",
@@ -867,7 +879,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "This works for me locally:\r\n\r\n\r\n```diff\r\ndiff --git a/test/functional/rpc_createmultisig.py b/test/functional/rpc_createmultisig.py\r\nindex 4cf49fbcd3..9106fb1366 100755\r\n--- a/test/functional/rpc_createmultisig.py\r\n+++ b/test/functional/rpc_createmultisig.py\r\n@@ -39,7 +39,10 @@ class RpcCreateMultiSigTest(BitcoinTestFramework):\r\n             k.generate()\r\n             self.pub.append(k.get_pubkey().get_bytes().hex())\r\n             self.priv.append(bytes_to_wif(k.get_bytes(), k.is_compressed))\r\n-        self.final = getnewdestination()[2]\r\n+        if self.is_bdb_compiled():\r\n+         self.final = node2.getnewaddress()\r\n+        else:\r\n+         self.final = getnewdestination()[2]\r\n \r\n     def run_test(self):\r\n         node0, node1, node2 = self.nodes\r\n@@ -51,11 +54,13 @@ class RpcCreateMultiSigTest(BitcoinTestFramework):\r\n         self.log.info('Generating blocks ...')\r\n         self.generate(self.wallet, 149)\r\n \r\n+        self.moved=0\r\n         for self.nkeys in [3, 5]:\r\n             for self.nsigs in [2, 3]:\r\n                 for self.output_type in [\"bech32\", \"p2sh-segwit\", \"legacy\"]:\r\n                     self.get_keys()\r\n                     self.do_multisig()\r\n+        self.checkbalances()\r\n \r\n \r\n         # Test mixed compressed and uncompressed pubkeys\r\n@@ -125,6 +130,21 @@ class RpcCreateMultiSigTest(BitcoinTestFramework):\r\n         pubs = [self.nodes[1].getaddressinfo(addr)[\"pubkey\"] for addr in addresses]\r\n         assert_raises_rpc_error(-5, \"Bech32m multisig addresses cannot be created with legacy wallets\", self.nodes[0].addmultisigaddress, 2, pubs, \"\", \"bech32m\")\r\n \r\n+    def checkbalances(self):\r\n+        node0, node1, node2 = self.nodes\r\n+        self.generate(node0, 100)#COINBASE_MATURITY)\r\n+\r\n+        bal0 = node0.getbalance()\r\n+        bal1 = node1.getbalance()\r\n+        bal2 = node2.getbalance()\r\n+        balw=self.wallet.get_balance()\r\n+\r\n+        height = node0.getblockchaininfo()[\"blocks\"]\r\n+        assert 150 < height < 350\r\n+        total = 149 * 50 + (height - 149 - 100) * 25\r\n+        assert bal1 == 0\r\n+        assert bal2 == self.moved\r\n+        assert_equal (bal0 + bal1 + bal2 + balw ,total) \r\n \r\n     def do_multisig(self):\r\n         node0, node1, node2 = self.nodes\r\n@@ -213,6 +233,7 @@ class RpcCreateMultiSigTest(BitcoinTestFramework):\r\n         rawtx2 = node2.signrawtransactionwithkey(rawtx, self.priv[0:self.nsigs - 1], prevtxs)\r\n         rawtx3 = node2.signrawtransactionwithkey(rawtx2[\"hex\"], [self.priv[-1]], prevtxs)\r\n \r\n+        self.moved += outval\r\n         tx = node0.sendrawtransaction(rawtx3[\"hex\"], 0)\r\n         blk = self.generate(node0, 1)[0]\r\n         assert tx in node0.getblock(blk)[\"tx\"]\r\ndiff --git a/test/functional/test_framework/wallet.py b/test/functional/test_framework/wallet.py\r\nindex dd41a740ae..979858e2ee 100644\r\n--- a/test/functional/test_framework/wallet.py\r\n+++ b/test/functional/test_framework/wallet.py\r\n@@ -93,6 +93,9 @@ class MiniWallet:\r\n             self._address, self._internal_key = create_deterministic_address_bcrt1_p2tr_op_true()\r\n             self._scriptPubKey = bytes.fromhex(self._test_node.validateaddress(self._address)['scriptPubKey'])\r\n \r\n+    def get_balance(self):\r\n+        return sum(u['value'] for u in self._utxos)\r\n+\r\n     def rescan_utxos(self):\r\n         \"\"\"Drop all utxos and rescan the utxo set\"\"\"\r\n         self._utxos = []\r\n",
-      "commit_id" : "137ac50429b4c9a354ce8d9dc6611df9b69ac36e",
+      "commit_id" : "2726b60a3ac098b44f2970bed21147b70e12a1c2",
       "created_at" : "2022-03-17T14:27:46Z",
       "diff_hunk" : "@@ -119,33 +127,21 @@ def check_addmultisigaddress_errors(self):\n         pubs = [self.nodes[1].getaddressinfo(addr)[\"pubkey\"] for addr in addresses]\n         assert_raises_rpc_error(-5, \"Bech32m multisig addresses cannot be created with legacy wallets\", self.nodes[0].addmultisigaddress, 2, pubs, \"\", \"bech32m\")\n \n-    def checkbalances(self):\n-        node0, node1, node2 = self.nodes\n-        self.generate(node0, COINBASE_MATURITY)\n-\n-        bal0 = node0.getbalance()\n-        bal1 = node1.getbalance()\n-        bal2 = node2.getbalance()\n-\n-        height = node0.getblockchaininfo()[\"blocks\"]\n-        assert 150 < height < 350\n-        total = 149 * 50 + (height - 149 - 100) * 25\n-        assert bal1 == 0\n-        assert bal2 == self.moved\n-        assert bal0 + bal1 + bal2 == total",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24587#discussion_r829162782",
@@ -880,7 +892,7 @@
       "original_position" : 121,
       "original_start_line" : null,
       "path" : "test/functional/rpc_createmultisig.py",
-      "position" : 126,
+      "position" : 117,
       "pull_request_review_id" : 913206230,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24587",
       "reactions" : {
@@ -898,6 +910,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-17T14:27:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/829162782",
       "user" : {
@@ -933,7 +946,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/829520584"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "Made the necessary changes and squashed commits.",
       "commit_id" : "2726b60a3ac098b44f2970bed21147b70e12a1c2",
       "created_at" : "2022-03-17T21:19:01Z",
@@ -966,6 +979,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-17T21:19:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/829520584",
       "user" : {
@@ -990,7 +1004,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2022-03-19T18:51:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24587#issuecomment-1073062189",
@@ -1077,6 +1091,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-22T12:23:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/832107848",
       "user" : {
@@ -1112,7 +1127,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/832207269"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "In this particular test, the wallet, when compiled is used for `addmultisigaddress` which descriptor wallet doesn't support, so I don't think there is any difference in running with or without the flag.\r\nThe legacy wallet when compiled is actually used even without the flag so there is no need to run the test twice.",
       "commit_id" : "2726b60a3ac098b44f2970bed21147b70e12a1c2",
       "created_at" : "2022-03-22T13:51:17Z",
@@ -1145,6 +1160,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-22T13:51:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/832207269",
       "user" : {
@@ -1257,7 +1273,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "re-ACK 2726b60a3ac098b44f2970bed21147b70e12a1c2",
       "created_at" : "2022-03-23T10:46:48Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24587#issuecomment-1076220953",

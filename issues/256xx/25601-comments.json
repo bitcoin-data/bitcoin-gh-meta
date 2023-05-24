@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "The current `BResult` class is definitely very crippled, and needs to be improved to return real error handling information, not just an error reporting string.\r\n\r\nIronically the original implementation #25218 that had `T m_result;` and `std::optional<bilingual_str> m_error` members was not crippled, and was perfectly capable of returning rich error handling information. But after that (against all rationality!) the implementation was changed to use a `std::variant` so no information about the error could be returned other than the reporting string.\r\n\r\nThis PR (as of 09b796a7c7f62e1d24f7b173825b7dd4409e91b4) adds back the ability to return structured error handling information, but it loses the ability to return standard error reporting information. So it is one step forward, one step backwards, IMO.\r\n\r\nI think a better solution is possible that:\r\n- adds back ability to return arbitrary data for error handling (like this PR)\r\n- doesn't drop the standard error reporting format, which I think we can expand and build more utilities around for more complete reporting and less boilerplate (unlike this PR)\r\n- doesn't require changing existing BResult usages (unlike this PR)\r\n\r\nI had started writing up a version of this today built on #25308. Will try to post in the next few days and we can compare notes.",
       "created_at" : "2022-07-13T03:11:17Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25601#issuecomment-1182714764",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Would add I don't think iterations on the `BResult` class should hold up either PR #25594 or #25308. I think both PR's are in a good state and would be good to merge when they have enough review.",
       "created_at" : "2022-07-13T03:20:04Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25601#issuecomment-1182719292",
@@ -88,8 +88,8 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25297](https://github.com/bitcoin/bitcoin/pull/25297) (WIP, wallet: speedup transactions sync, rescan and load not flushing to db constantly by furszy)\n* [#25273](https://github.com/bitcoin/bitcoin/pull/25273) (wallet: Pass through transaction locktime and preset input sequences and scripts to CreateTransaction by achow101)\n* [#19602](https://github.com/bitcoin/bitcoin/pull/19602) (wallet: Migrate legacy wallets to descriptor wallets by achow101)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25722](https://github.com/bitcoin/bitcoin/pull/25722) (refactor: Use util::Result class for wallet loading by ryanofsky)\n* [#25721](https://github.com/bitcoin/bitcoin/pull/25721) (refactor: Replace BResult with util::Result by ryanofsky)\n* [#25665](https://github.com/bitcoin/bitcoin/pull/25665) (refactor: Add util::Result class and use it in LoadChainstate by ryanofsky)\n* [#25616](https://github.com/bitcoin/bitcoin/pull/25616) (refactor: Return `BResult` from WalletLoader methods by w0xlt)\n* [#25297](https://github.com/bitcoin/bitcoin/pull/25297) (wallet: speedup transactions sync, rescan and load by grouping all independent db writes on a single batched db transaction by furszy)\n* [#25273](https://github.com/bitcoin/bitcoin/pull/25273) (wallet: Pass through transaction locktime and preset input sequences and scripts to CreateTransaction by achow101)\n* [#24897](https://github.com/bitcoin/bitcoin/pull/24897) ([Draft / POC] Silent Payments by w0xlt)\n* [#19602](https://github.com/bitcoin/bitcoin/pull/19602) (wallet: Migrate legacy wallets to descriptor wallets by achow101)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-07-13T06:02:01Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25601#issuecomment-1182800183",
       "id" : 1182800183,
@@ -108,7 +108,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1182800183/reactions"
       },
-      "updated_at" : "2022-07-13T06:02:01Z",
+      "updated_at" : "2022-07-27T22:45:37Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1182800183",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -129,6 +129,138 @@
          "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "@ryanofsky in https://github.com/bitcoin/bitcoin/pull/25601/commits/28c81d7317b248c7a0b6ee1b4cef4b822a5e4286, I added the `class SingeErrorResult` which meets all the all the requirements you mentioned:\r\n\r\n* adds back ability to return arbitrary data for error handling (it is a class derived from `StructuredResult`).\r\n* doesn't drop the standard error reporting format (`SingeErrorResult() : StructuredResult<T, bilingual_str>(Untranslated(\"\")) {}`).\r\n* doesn't require changing existing BResult usages (except for the name change, this keeps the same `BResult` usage).\r\n",
+      "created_at" : "2022-07-13T17:30:44Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25601#issuecomment-1183494128",
+      "id" : 1183494128,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25601",
+      "node_id" : "IC_kwDOABII585Giq_w",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1183494128/reactions"
+      },
+      "updated_at" : "2022-07-13T17:31:04Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1183494128",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/94266259?v=4",
+         "events_url" : "https://api.github.com/users/w0xlt/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/w0xlt/followers",
+         "following_url" : "https://api.github.com/users/w0xlt/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/w0xlt/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/w0xlt",
+         "id" : 94266259,
+         "login" : "w0xlt",
+         "node_id" : "U_kgDOBZ5jkw",
+         "organizations_url" : "https://api.github.com/users/w0xlt/orgs",
+         "received_events_url" : "https://api.github.com/users/w0xlt/received_events",
+         "repos_url" : "https://api.github.com/users/w0xlt/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/w0xlt/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/w0xlt/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/w0xlt"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Thanks! Glad to see this (as of 696f9536556f78698cc82c64515fa8b1e0b01ef5) adding back a standard type for error reporting.\r\n\r\nI do think there are still some issues here. The main one is that I don't see a point to the `StructuredResult<S, E>` class. The class doesn't have any functionality, and is just a nonstandard wrapper around a `std::variant<std::monostate, E, S>` field. I can't imagine code that could use `StructuredResult<S, E>` that wouldn't be better off using `std::optional<E>` or `std::variant<S, E1, E2, ...>` avoiding the need to nest multiple error types in single error type, or call nonstandard `HasRes` `GetObj` methods, or deal with impossible null states.\r\n\r\nAlso think it would be better to standardize on an error reporting class that can return multiple errors and warnings (and optionally format the result as a single error) than a class that can only return one error. Draft PR #25608 is a little rough but starts to go in this direction.",
+      "created_at" : "2022-07-13T19:14:43Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25601#issuecomment-1183584865",
+      "id" : 1183584865,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25601",
+      "node_id" : "IC_kwDOABII585GjBJh",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1183584865/reactions"
+      },
+      "updated_at" : "2022-07-13T19:14:43Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1183584865",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
+      }
+   },
+   {
+      "author_association" : "CONTRIBUTOR",
+      "body" : "Closing this in favor of https://github.com/bitcoin/bitcoin/pull/25721.",
+      "created_at" : "2022-08-03T04:15:11Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25601#issuecomment-1203462876",
+      "id" : 1203462876,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25601",
+      "node_id" : "IC_kwDOABII585Hu2Lc",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1203462876/reactions"
+      },
+      "updated_at" : "2022-08-03T04:15:11Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1203462876",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/94266259?v=4",
+         "events_url" : "https://api.github.com/users/w0xlt/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/w0xlt/followers",
+         "following_url" : "https://api.github.com/users/w0xlt/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/w0xlt/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/w0xlt",
+         "id" : 94266259,
+         "login" : "w0xlt",
+         "node_id" : "U_kgDOBZ5jkw",
+         "organizations_url" : "https://api.github.com/users/w0xlt/orgs",
+         "received_events_url" : "https://api.github.com/users/w0xlt/received_events",
+         "repos_url" : "https://api.github.com/users/w0xlt/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/w0xlt/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/w0xlt/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/w0xlt"
       }
    }
 ]

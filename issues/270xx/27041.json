@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "This PR triages some behavior around Makefile recipe echoing suppression. \r\n\r\nWhen generating new files as part of the Makefile the recipe is sometimes suppressed with $(AM_V_GEN) and sometimes with `@`. We should prefer $(AM_V_GEN), since this also prints the lines in silent mode. This is arguably more in style with the current recipe echoing.\r\n\r\nBefore:\r\n`Generated test/data/script_tests.json.h`\r\nNow:\r\n`  GEN      test/data/script_tests.json.h`\r\n\r\nA side effect of this change is that the recipe for generating build.h is now echoed on each make run. Arguably this makes its generation more transparent.\r\n\r\nSometimes the error emitted by `test -f` is currently thrown without any logging. This makes it a bit harder to debug. Instead, print a helpful log message to point the developer in the right direction.\r\n\r\nAlternatively this could have been implemented by just removing the recipe echo suppression (@), but the subsequent make output became too noisy.",
    "closed_at" : "2023-05-16T10:13:24Z",
    "closed_by" : {

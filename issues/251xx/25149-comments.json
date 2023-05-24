@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Moving the code that's in the constructor into a separate function, so that the constructor is just `{ LoadBanlist(); DumpBanlist(); }` causes the compiler to give errors about the missing locks in `LoadBanlist()`.",
       "created_at" : "2022-05-17T03:21:37Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25149#issuecomment-1128364948",
@@ -97,7 +97,7 @@
       "node_id" : "IC_kwDOABII585DQtqy",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -105,7 +105,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1128454834/reactions"
       },
       "updated_at" : "2022-05-17T06:13:44Z",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Doing:\r\n\r\n```c++\r\nBanMan::BanMan(fs::path ban_file, CClientUIInterface* client_interface, int64_t default_ban_time)\r\n    : m_client_interface(client_interface), m_ban_db(std::move(ban_file)), m_default_ban_time(default_ban_time)\r\n{\r\n    LoadBanlist();\r\n    DumpBanlist();\r\n}\r\n\r\nvoid BanMan::LoadBanlist()\r\n{\r\n    LOCK(m_cs_banned);\r\n\r\n    if (m_client_interface) m_client_interface->InitMessage(_(\"Loading banlistâ¦\").translated);\r\n\r\n    int64_t n_start = GetTimeMillis();\r\n    if (m_ban_db.Read(m_banned)) {\r\n        SweepBanned(); // sweep out unused entries\r\n\r\n        LogPrint(BCLog::NET, \"Loaded %d banned node addresses/subnets  %dms\\n\", m_banned.size(),\r\n                 GetTimeMillis() - n_start);\r\n    } else {\r\n        LogPrintf(\"Recreating the banlist database\\n\");\r\n        m_banned = {};\r\n        m_is_dirty = true;\r\n    }\r\n}\r\n```\r\n\r\nlooks cleaner to me, fwiw. Just explicitly taking the lock in the constructor seems simpler than delegating to `SweepBanMan()` which takes the lock then calls `SweepBanMan_()` too...",
       "created_at" : "2022-05-17T14:53:10Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25149#issuecomment-1128972447",
@@ -185,7 +185,7 @@
       "node_id" : "IC_kwDOABII585DSsCf",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -193,7 +193,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1128972447/reactions"
       },
       "updated_at" : "2022-05-17T14:53:10Z",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24097](https://github.com/bitcoin/bitcoin/pull/24097) (Replace RecursiveMutex m_cs_banned with Mutex, and rename it by hebasto)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-05-18T05:35:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25149#issuecomment-1129586137",
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK ab7538832043a6c15e45a178fb6bb6298a00108f",
       "created_at" : "2022-05-20T15:52:00Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25149#issuecomment-1133061765",

@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Some of the previously proposed USDTs by @jb55 from #19866:\r\n\r\n#### `net:push_message`\r\n  - traces all sent P2P messages as TRACE5:\r\n    - `int node_id`\r\n    - `char* node_addr`\r\n    - `char* msg_type`\r\n    - `size_t msg_size`\r\n    - `uint8_t* msg_data`\r\n\r\n \r\n https://github.com/bitcoin/bitcoin/blob/7d8a10a6f4d61df1f4afb138e379149565afa02d/src/net.cpp#L3001\r\n \r\n ---\r\n\r\n#### `net:process_message`\r\nTraces all received P2P messages as TRACE5:\r\n  - `int node_id`\r\n  - `char* node_addr`\r\n  - `char* msg_type`\r\n  - `size_t msg_size`\r\n  - `uint8_t* msg_data`\r\n    \r\nhttps://github.com/bitcoin/bitcoin/blob/7d8a10a6f4d61df1f4afb138e379149565afa02d/src/net_processing.cpp#L3812\r\n\r\nhttps://github.com/bitcoin/bitcoin/pull/19866 has an example bpftrace script using  `net:process_message` and `net:push_message`.\r\n\r\n---\r\n\r\n#### `validation:connect_block`\r\nTraces all blocks for which ConnectBlock() is called as TRACE4:\r\n  - `uint32 height`\r\n  - `int tx_count`\r\n  - `uint8_t[32] hash`\r\n  - `uint8_t[32] prevhash`\r\n  - (more header fields?)\r\n\r\nPassing the full serialized block is not possible as this could be bigger than both the bcc and bftrace stack (the kernel VM crashes gracefully, no stack overflow). While the serialized block header would not be bigger than the stack size, header serialization would need to happen even when no USDTs are attached. This has an performance impact and should not be done.  \r\n\r\n@jb55 used an earlier version of `validation:connect_block` to measure IBD performance.  \r\n\r\nDepending on placement in `ConnectBlock()`, this could either trace to-be-connected blocks or connected blocks (no error while connecting). In either way, the documentation should make it clear for which blocks the data is passed. \r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/7d8a10a6f4d61df1f4afb138e379149565afa02d/src/validation.cpp#L1946",
       "created_at" : "2021-01-23T15:03:31Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/20981#issuecomment-766092705",
@@ -8,6 +8,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20981",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc2NjA5MjcwNQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 2,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 2,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/766092705/reactions"
+      },
       "updated_at" : "2021-01-23T15:06:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/766092705",
       "user" : {
@@ -32,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@laanwj [mentioned](https://github.com/bitcoin/bitcoin/pull/19866#issuecomment-687336319) that traces for dis- and connections of peers would be useful too. I'll have a look where these could be placed. I guess there are some places where there is already `net` debug logging which can be used for orientation. @jlopp's statoshi diff could be helpful to look at too. \r\n\r\nAlso interesting:\r\n- function timings, like [statoshi.info/function-timings](https://statoshi.info/dashboard/db/function-timings) for block and transaction validation functions\r\n- tracing fee estimation\r\n\r\n\r\n\r\n  ",
       "created_at" : "2021-01-23T15:27:37Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/20981#issuecomment-766096054",
@@ -40,6 +52,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20981",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc2NjA5NjA1NA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/766096054/reactions"
+      },
       "updated_at" : "2021-01-23T15:27:37Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/766096054",
       "user" : {
@@ -72,6 +96,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20981",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc2NjQxOTY4Nw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/766419687/reactions"
+      },
       "updated_at" : "2021-01-24T19:42:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/766419687",
       "user" : {
@@ -96,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "\n\"Wladimir J. van der Laan\" <notifications@github.com> writes:\n>>  @jlopp's statoshi diff could be helpful to look at too.\n>\n> FWIW the statoshi diff can be found here: https://github.com/jlopp/statoshi/compare/1b90a7b61a37d450bbe5b485dcc9b8c591567e0d..28b88353a78ae19e3c5379bbda6b72f4fef65a8c\n\nI was looking at this a long time ago. In theory you could get the same\nfunctionality as statoshi (stats gathering via prometheus) with \nhttps://github.com/cloudflare/ebpf_exporter\n\nWould be an interesting project.\n",
       "created_at" : "2021-01-25T23:07:29Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/20981#issuecomment-767170859",
@@ -104,6 +140,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20981",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc2NzE3MDg1OQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/767170859/reactions"
+      },
       "updated_at" : "2021-01-25T23:07:29Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/767170859",
       "user" : {
@@ -136,6 +184,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20981",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc2NzQ5Mzg4OQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/767493889/reactions"
+      },
       "updated_at" : "2021-01-26T11:54:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/767493889",
       "user" : {
@@ -168,6 +228,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20981",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgwMjY4ODgwOQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 5,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 5,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/802688809/reactions"
+      },
       "updated_at" : "2021-03-19T09:34:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/802688809",
       "user" : {
@@ -192,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "On Fri, Mar 19, 2021 at 02:34:27AM -0700, W. J. van der Laan wrote:\n>Besides networking, one major thing that would be interesting to monitor through tracepoints is dbcache usage. This is useful to get metrics for hardware optimization of validation (e.g. to find where bottlenecks are). A few things come to mind:\n>\n>  - how much memory is used of how much\n\nI've been using heaptrack[1] for memory tracing, it hooks into malloc calls which saves us from putting allocation traces everywhere.\n\n>- Gross statistics on changes (this is in the log but it's good to have a well defined interface for it)\n>  - how many UTXOs are cached\n>- Before/afters for timing:\n>  - Insertions and deletions of UTXOs in the CoinsCache with associated information\n>  - Queries: hits and misses\n>  - Flushes\n\nð¯ð\n\n[1] https://github.com/KDE/heaptrack\n",
       "created_at" : "2021-04-12T17:21:15Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/20981#issuecomment-817987016",
@@ -200,6 +272,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20981",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgxNzk4NzAxNg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 2,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 2,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/817987016/reactions"
+      },
       "updated_at" : "2021-04-12T17:21:15Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/817987016",
       "user" : {
@@ -232,6 +316,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20981",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgxODA1OTM3Ng==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/818059376/reactions"
+      },
       "updated_at" : "2021-04-12T19:02:51Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/818059376",
       "user" : {
@@ -256,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "On Mon, Apr 12, 2021 at 12:03:09PM -0700, W. J. van der Laan wrote:\n>> I've been using heaptrack[1] for memory tracing, it hooks into malloc calls which saves us from putting allocation traces everywhere.\n>\n>That sounds useful, however I think it would show gross malloc usage, not specifically that of the utxo set? Or can it drill down to more specific things as well?\n\nIt shows memory usage from specific data structures over time, like the cacheCoins map. You can also drill down by which function is doing the allocation. \n\nSee: https://github.com/bitcoin/bitcoin/pull/18849#issuecomment-623531668\n",
       "created_at" : "2021-04-12T19:19:45Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/20981#issuecomment-818069624",
@@ -264,6 +360,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20981",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgxODA2OTYyNA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/818069624/reactions"
+      },
       "updated_at" : "2021-04-12T19:19:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/818069624",
       "user" : {
@@ -288,7 +396,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I've started working on a patch that adds tracing documentation (based on laanwj's work) and the `net:push_message` + `net:process_message` + more (based on jb55's work) together with both `bpftrace` and `bcc` examples. Goal is to have some initial and easy to work with examples of how USDT in Core could look like. There will be Bitcoin Core Review Club on USDTs later this month. ",
       "created_at" : "2021-05-05T08:40:57Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/20981#issuecomment-832518476",
@@ -296,6 +404,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20981",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgzMjUxODQ3Ng==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/832518476/reactions"
+      },
       "updated_at" : "2021-05-05T08:40:57Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/832518476",
       "user" : {
@@ -320,7 +440,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "On Wed, May 05, 2021 at 01:41:18AM -0700, 0xB10C wrote:\n>I've started working on a patch that adds tracing documentation (based on laanwj's work) and the `net:push_message` + `net:process_message` + more (based on jb55's work) together with both `bpftrace` and `bcc` examples. Goal is to have some initial and easy to work with examples of how USDT in Core could look like.\n\nGreat! Looking forward to it. Thanks for moving this along.\n\n> There will be Bitcoin Core Review Club on USDTs later this month.\n\nI'll be there\n",
       "created_at" : "2021-05-05T17:43:45Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/20981#issuecomment-832883926",
@@ -328,6 +448,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20981",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDgzMjg4MzkyNg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/832883926/reactions"
+      },
       "updated_at" : "2021-05-05T17:43:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/832883926",
       "user" : {
@@ -352,7 +484,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> laanwj [mentioned](https://github.com/bitcoin/bitcoin/pull/19866#issuecomment-687336319) that traces for dis- and connections of peers would be useful too. I'll have a look where these could be placed. I guess there are some places where there is already `net` debug logging which can be used for orientation. \r\n\r\n@jonatack added that next to normal disconnects, tracepoints for peer evictions would be useful too. He [provided input](https://github.com/bitcoin/bitcoin/pull/22006#discussion_r636775863) on what tracepoint arguments he'd find useful:\r\n\r\n- message\r\n- connection direction and type,\r\n- peer id\r\n- address\r\n",
       "created_at" : "2021-05-21T09:54:16Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/20981#issuecomment-845833323",
@@ -360,6 +492,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20981",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg0NTgzMzMyMw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/845833323/reactions"
+      },
       "updated_at" : "2021-05-21T09:54:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/845833323",
       "user" : {
@@ -392,6 +536,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20981",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDg0NTg0MDUxNA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/845840514/reactions"
+      },
       "updated_at" : "2021-05-21T10:08:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/845840514",
       "user" : {
@@ -416,7 +572,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > I was looking at this a long time ago. In theory you could get the same functionality as statoshi (stats gathering via prometheus) with https://github.com/cloudflare/ebpf_exporter Would be an interesting project.\r\n> \r\n> \r\n> I agree! This would be my preferred way to do this kind of reporting, to be honest. It'd flexible and built into the operating system. It has low impact on the code and low impact on performance. It could potentially work for all software.\r\n> \r\n> One reason Statoshi never got merged is because it's just too much hassle to integrate and maintain a Bitcoin Core specific framework for this. Not because it's not a great thing to have.\r\n\r\nI have a demo for Prometheus metrics via eBPF based on the tracepoints added in #22006 in [0xB10C/bitcoind-observer](https://github.com/0xB10C/bitcoind-observer). It's written in Rust and uses the [bcc](https://crates.io/crates/bcc) crate under the hood which recently added USDT support.\r\n\r\nA live demo can be fund on [bitcoind.observer](https://bitcoind.observer). Currently showing [block validation] during IBD and per message type [P2P traffic] stats. I was surprised who well it works. Might be a real alternative to statoshi once we add more tracepoints about e.g. UTXO set, peer dis/connections, and so on.\r\n\r\n[block validation]: https://bitcoind.observer/d/V5pGXBW7k/block-validation-during-idb?orgId=1&from=1627333200000&to=1627390800000\r\n[P2P traffic]: https://bitcoind.observer/d/Z3_pFfZnz/p2p-network-traffic?orgId=1&refresh=30s&from=now-24h&to=now",
       "created_at" : "2021-07-27T12:02:45Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/20981#issuecomment-887453677",
@@ -424,6 +580,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20981",
       "node_id" : "IC_kwDOABII58405Xft",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 1,
+         "heart" : 0,
+         "hooray" : 3,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 4,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/887453677/reactions"
+      },
       "updated_at" : "2021-07-27T12:02:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/887453677",
       "user" : {
@@ -448,7 +616,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Tracepoints for Bitcoin Core startup and shutdown could be useful too. IDB latching to true/false too. ",
       "created_at" : "2021-08-10T14:20:02Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/20981#issuecomment-896071188",
@@ -456,6 +624,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20981",
       "node_id" : "IC_kwDOABII5841aPYU",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 1,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 1,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/896071188/reactions"
+      },
       "updated_at" : "2021-08-10T14:20:02Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/896071188",
       "user" : {
@@ -480,7 +660,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Banman tracepoints should be interesting too.",
       "created_at" : "2021-08-13T13:48:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/20981#issuecomment-898470100",
@@ -488,6 +668,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20981",
       "node_id" : "IC_kwDOABII5841jZDU",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/898470100/reactions"
+      },
       "updated_at" : "2021-08-13T13:48:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/898470100",
       "user" : {
@@ -512,7 +704,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "NYDIG has a $4500 bounty for mempool tracepoints.\n\nhttps://nydig.com/bounties/add-bpf-tracepoints-for-the-mempool\n",
       "created_at" : "2022-04-07T06:59:58Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/20981#issuecomment-1091149891",
@@ -521,7 +713,7 @@
       "node_id" : "IC_kwDOABII585BCaBD",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -529,7 +721,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1091149891/reactions"
       },
       "updated_at" : "2022-04-07T06:59:58Z",
@@ -565,15 +757,15 @@
       "node_id" : "IC_kwDOABII585B-G8j",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1106800419/reactions"
       },
       "updated_at" : "2022-04-22T19:38:48Z",
@@ -600,7 +792,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "@glozow those would be some awesome use cases for ebpf tracepoints. Quite technical in their scope. I would like to take to working on a few of these points if desired. Number 1 has most of my interest.\r\n\r\n### In regards to https://github.com/bitcoin/bitcoin/pull/24935\r\nIn regards to my existing PR for mempool tracepoints should I remove mempool additions/eviction tracepoints as something to even pursue? Even if the NYDIG bounty no longer qualifies I want to contribute. Learning about the power of ebpf,usdt, and bcc has been a great addition to my skillset and has captured my interest.\r\n\r\n### Existing logging/tracing solutions in the mempool _(adds & evictions)_\r\nThe current in-mempool implementation seems to be using the ZMQ interface but doesn't currently provide a complete solution to trace all adds/removals from the pool.\r\n\r\nThere are 2 functions for broadcasting mempool events referenced in `txmempool.cpp` and one of them is not even used.  These are `CValidationInterface::TransactionAddedToMempool` and `CZMQNotificationInterface::TransactionRemovedFromMempool` \r\n\r\n - Currently `CValidationInterface::TransactionAddedToMempool` is not called anywhere in this repo\r\n - `CZMQNotificationInterface::TransactionRemovedFromMempool` is only called if the tx was not removed for the reason of 'BLOCK'. The current implementation instead leaves a multiline comment stating that to find the evicted txs from a block, look at the latest txs in the mined block. A valid solution but why not leverage a trace to to a sandboxed kernel program with extremely little overhead. Even if the user doesn't need this functionality it can even be compiled out into a nop instruction if built without tracing support. \r\n \r\nOn the topics of block evictions, they seem to be one hardest events to trace/log if the 256 bit txid is included since the volume of data being streamed is quite high with up to thousands of evictions in a very short time. Using a ringbuffer and a bpffs queue in tandem all mempool evictions can be logged in completeness and I am pretty sure they maintain the order eviction was requested in. \r\n \r\n### https://github.com/bitcoin/bitcoin/pull/24935 eBPF solution to logging mempool additions/evictions\r\n\r\nFirstly by using eBPF tracepoints the overhead of tracing an event is minimal and isolated. bpftrace, python, and bcc scripts can be written in any manner desired to accommodate the collection of performance stats, testing, and custom user metrics. These custom scripts have no impact on the underlying functionality of the users current bitcoind build as all data is being passed though the kernel sandbox and the bitcoin core traces are a unidirectional event including a trace of all the txs being passed in and out of the mempool. \r\n\r\nThe example .py script implemented to trace mempool events in https://github.com/bitcoin/bitcoin/pull/24935 logs each request for a tx addition/removal from the mempool and the relevant information to validate/compare the current mempool with it's output. These logs are complete without erroneous data. The whole extended test suite was ran and It is possible to log all 328416 function calls to add or evict txs from the mempool. As a note even if these traces are determined to not be a candidate using some of the methods included in log_mempool_activity.py would be very useful in fixing some of the existing scripts that display incomplete data and/or have dropped events. \r\n\r\nThanks\r\n\r\n_Edit: a word...phrases_",
       "created_at" : "2022-04-23T10:41:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/20981#issuecomment-1107450289",
@@ -644,7 +836,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ref: https://github.com/bitcoin/bitcoin/pull/26531 which is adds mempool tracepoints too (https://github.com/bitcoin/bitcoin/pull/24935 has been closed)",
       "created_at" : "2022-12-01T14:13:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/20981#issuecomment-1333830841",

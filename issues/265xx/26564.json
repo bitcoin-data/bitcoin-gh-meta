@@ -3,10 +3,10 @@
    "assignee" : null,
    "assignees" : [],
    "author_association" : "CONTRIBUTOR",
-   "body" : "This backward-compatible change would help with code review and testing. This small patch does three things:\r\n\r\n- If the environment variable `TEST_BITCOIN_PATH` is set, use its value as the test's working directory, rather than a randomly-named path in `/tmp/test_common_Bitcoin\\ Core/`\r\n- When the test starts, remove the working directory if it exists\r\n- Don't delete the working directory at the end of the test if `TEST_BITCOIN_PATH` is set\r\n\r\nThis change affects\r\n- test/test_bitcoin\r\n- bench/bench_bitcoin\r\n- qt/test/test_bitcoin-qt\r\n- test/fuzz/fuzz\r\n\r\nbut it's mainly intended for `test_bitcoin`, which I often run using the debugger. When doing so, it's often useful to watch `debug.log` as the test runs, and inspect some of the other files. Currently, that requires figuring out where the test's working directory is since it changes on every test run. Tests can be run with `-printtoconsole=1` shows debug logging, but it's nice to have access to a fixed `debug.log` file using an editor, for example.\r\n\r\nEven if not using a debugger, it's often helpful to see `debug.log` and other artifacts after the test completes.\r\n\r\nThis functionality is already possible with the functional tests using the `--tmpdir=` and `--nocleanup` arguments.\r\n\r\nThe reason this patch uses an environment variable instead of command-line arguments is that the boost test framework gets in the way so it doesn't seem to be possible. I noticed a few of the other tests already use environment variables.",
+   "body" : "This backward-compatible change would help with code review and testing. When the unit test executables run, they create a working or data directory within `/tmp/test_common_Bitcoin\\ Core/`, named as a long random (hex) string.\r\n\r\nThis small patch does three things:\r\n\r\n- If the environment variable `BITCOIN_TEST_PATH` is set, replace the random string path component with this environment variable's value as the test's working directory\r\n- When the test starts, remove the working directory if it exists from an earlier run (currently, it's presumed not to exist due to the long random string)\r\n- Don't delete the working directory at the end of the test if `BITCOIN_TEST_PATH` is set\r\n\r\nNote that the data directory is constrained to always be within `/tmp/test_common_Bitcoin\\ Core/`. This change affects\r\n- test/test_bitcoin\r\n- bench/bench_bitcoin\r\n- qt/test/test_bitcoin-qt\r\n- test/fuzz/fuzz\r\n\r\nbut it's mainly intended for `test_bitcoin`, which I sometimes run using the debugger. When doing so, it's often useful to watch `debug.log` as the test runs, and inspect some of the other files (I've looked at some of the generated `blknnnn.dat` files for example). Currently, that requires figuring out where the test's working directory is since it changes on every test run. Tests can be run with `-printtoconsole=1` to show debug logging to the terminal, but it's nice to have access to a fixed-named `debug.log` file using an editor, for example.\r\n\r\nEven if not using a debugger, it's often helpful to see `debug.log` and other artifacts after the test completes.\r\n\r\nThis functionality is already possible with the functional tests using the `--tmpdir=` and `--nocleanup` arguments.\r\n\r\nThe reason this patch uses an environment variable instead of command-line arguments is that the boost test framework gets in the way so it doesn't seem to be possible. A few of the other tests already use environment variables.",
    "closed_at" : null,
    "closed_by" : null,
-   "comments" : 1,
+   "comments" : 10,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26564/comments",
    "created_at" : "2022-11-24T02:13:25Z",
    "draft" : false,
@@ -22,6 +22,15 @@
          "name" : "Tests",
          "node_id" : "MDU6TGFiZWw2Mjk2MzUxNg==",
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/Tests"
+      },
+      {
+         "color" : "cccccc",
+         "default" : false,
+         "description" : "",
+         "id" : 955867938,
+         "name" : "Needs rebase",
+         "node_id" : "MDU6TGFiZWw5NTU4Njc5Mzg=",
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/Needs%20rebase"
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26564/labels{/name}",
@@ -53,8 +62,8 @@
    "state" : "open",
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26564/timeline",
-   "title" : "test: allow TEST_BITCOIN_PATH to specify working dir",
-   "updated_at" : "2022-11-24T02:13:29Z",
+   "title" : "test: allow BITCOIN_TEST_PATH to specify working dir",
+   "updated_at" : "2023-05-09T16:32:07Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26564",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/8321330?v=4",

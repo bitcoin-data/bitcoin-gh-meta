@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Force-pushed a different variant of the first commit (extending the PSBT ctor), avoiding mutable objects as default parameters due to the following linter complaint:\r\n```\r\nA mutable list or dict seems to be used as default parameter value:\r\n\r\ntest/functional/test_framework/psbt.py:    def __init__(self, g=PSBTMap(), i=[], o=[]):\r\n\r\nThis is how mutable list and dict default parameter values behave:\r\n\r\n>>> def f(i, j=[], k={}):\r\n...     j.append(i)\r\n...     k[i] = True\r\n...     return j, k\r\n...\r\n>>> f(1)\r\n([1], {1: True})\r\n>>> f(1)\r\n([1, 1], {1: True})\r\n>>> f(2)\r\n([1, 1, 2], {1: True, 2: True})\r\n\r\nThe intended behaviour was likely:\r\n\r\n>>> def f(i, j=None, k=None):\r\n...     if j is None:\r\n...         j = []\r\n...     if k is None:\r\n...         k = {}\r\n...     j.append(i)\r\n...     k[i] = True\r\n...     return j, k\r\n...\r\n>>> f(1)\r\n([1], {1: True})\r\n>>> f(1)\r\n([1], {1: True})\r\n>>> f(2)\r\n([2], {2: True})\r\n```",
       "created_at" : "2022-07-21T20:30:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25670#issuecomment-1191904112",
@@ -57,7 +57,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Might as well check the naive `[psbt1, psbt1]` case to make sure that works",
-      "commit_id" : "b4f332275c593d5c8f454f3e2b7f5d491ef4f520",
+      "commit_id" : "4e616d20c9e92b5118a07d4a4b8562fffc66e767",
       "created_at" : "2022-07-22T18:45:29Z",
       "diff_hunk" : "@@ -820,6 +820,15 @@ def test_psbt_input_keys(psbt_input, keys):\n             assert hash.hex() in res_input[preimage_key]\n             assert_equal(res_input[preimage_key][hash.hex()], preimage.hex())\n \n+        self.log.info(\"Test that combining PSBTs with different transactions fails\")\n+        tx = CTransaction()\n+        tx.vin = [CTxIn(outpoint=COutPoint(hash=int('aa' * 32, 16), n=0), scriptSig=b\"\")]\n+        tx.vout = [CTxOut(nValue=0, scriptPubKey=b\"\")]\n+        psbt1 = PSBT(PSBTMap({PSBT_GLOBAL_UNSIGNED_TX: tx.serialize()}), [PSBTMap()], [PSBTMap()]).to_base64()\n+        tx.vout[0].nValue += 1  # slightly modify tx\n+        psbt2 = PSBT(PSBTMap({PSBT_GLOBAL_UNSIGNED_TX: tx.serialize()}), [PSBTMap()], [PSBTMap()]).to_base64()\n+        assert_raises_rpc_error(-8, \"PSBTs not compatible (different transactions)\", self.nodes[0].combinepsbt, [psbt1, psbt2])",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25670#discussion_r927909517",
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-22T18:46:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/927909517",
       "user" : {
@@ -124,19 +125,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "could use named args here ",
-      "commit_id" : "b4f332275c593d5c8f454f3e2b7f5d491ef4f520",
+      "commit_id" : "4e616d20c9e92b5118a07d4a4b8562fffc66e767",
       "created_at" : "2022-07-22T18:46:34Z",
       "diff_hunk" : "@@ -820,6 +820,15 @@ def test_psbt_input_keys(psbt_input, keys):\n             assert hash.hex() in res_input[preimage_key]\n             assert_equal(res_input[preimage_key][hash.hex()], preimage.hex())\n \n+        self.log.info(\"Test that combining PSBTs with different transactions fails\")\n+        tx = CTransaction()\n+        tx.vin = [CTxIn(outpoint=COutPoint(hash=int('aa' * 32, 16), n=0), scriptSig=b\"\")]\n+        tx.vout = [CTxOut(nValue=0, scriptPubKey=b\"\")]\n+        psbt1 = PSBT(PSBTMap({PSBT_GLOBAL_UNSIGNED_TX: tx.serialize()}), [PSBTMap()], [PSBTMap()]).to_base64()",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25670#discussion_r927910174",
       "id" : 927910174,
-      "line" : 827,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5843Tske",
       "original_commit_id" : "b4f332275c593d5c8f454f3e2b7f5d491ef4f520",
       "original_line" : 827,
       "original_position" : 8,
       "original_start_line" : null,
       "path" : "test/functional/rpc_psbt.py",
-      "position" : 8,
+      "position" : null,
       "pull_request_review_id" : 1048277804,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25670",
       "reactions" : {
@@ -154,6 +155,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-22T18:46:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/927910174",
       "user" : {
@@ -191,19 +193,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "could use named args here ",
-      "commit_id" : "b4f332275c593d5c8f454f3e2b7f5d491ef4f520",
+      "commit_id" : "4e616d20c9e92b5118a07d4a4b8562fffc66e767",
       "created_at" : "2022-07-22T18:46:39Z",
       "diff_hunk" : "@@ -820,6 +820,15 @@ def test_psbt_input_keys(psbt_input, keys):\n             assert hash.hex() in res_input[preimage_key]\n             assert_equal(res_input[preimage_key][hash.hex()], preimage.hex())\n \n+        self.log.info(\"Test that combining PSBTs with different transactions fails\")\n+        tx = CTransaction()\n+        tx.vin = [CTxIn(outpoint=COutPoint(hash=int('aa' * 32, 16), n=0), scriptSig=b\"\")]\n+        tx.vout = [CTxOut(nValue=0, scriptPubKey=b\"\")]\n+        psbt1 = PSBT(PSBTMap({PSBT_GLOBAL_UNSIGNED_TX: tx.serialize()}), [PSBTMap()], [PSBTMap()]).to_base64()\n+        tx.vout[0].nValue += 1  # slightly modify tx\n+        psbt2 = PSBT(PSBTMap({PSBT_GLOBAL_UNSIGNED_TX: tx.serialize()}), [PSBTMap()], [PSBTMap()]).to_base64()",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25670#discussion_r927910234",
       "id" : 927910234,
-      "line" : 829,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5843Tsla",
       "original_commit_id" : "b4f332275c593d5c8f454f3e2b7f5d491ef4f520",
       "original_line" : 829,
       "original_position" : 10,
       "original_start_line" : null,
       "path" : "test/functional/rpc_psbt.py",
-      "position" : 10,
+      "position" : null,
       "pull_request_review_id" : 1048277804,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25670",
       "reactions" : {
@@ -221,6 +223,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-22T18:46:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/927910234",
       "user" : {
@@ -256,7 +259,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/928088995"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Good idea, done.",
       "commit_id" : "4e616d20c9e92b5118a07d4a4b8562fffc66e767",
       "created_at" : "2022-07-23T07:02:19Z",
@@ -289,6 +292,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-23T07:02:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/928088995",
       "user" : {
@@ -324,7 +328,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/928089108"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks, done, also changed the PSBT ctor to enforce named arguments.",
       "commit_id" : "4e616d20c9e92b5118a07d4a4b8562fffc66e767",
       "created_at" : "2022-07-23T07:03:36Z",
@@ -357,6 +361,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-23T07:03:36Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/928089108",
       "user" : {
@@ -381,7 +386,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Force-pushed with changes as suggested by @instagibbs (named arguments for PSBT ctor, adding call for success case of combining two identical PSBTs).",
       "created_at" : "2022-07-23T07:05:16Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25670#issuecomment-1193075337",

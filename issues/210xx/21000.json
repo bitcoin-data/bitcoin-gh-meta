@@ -1,8 +1,8 @@
 {
-   "active_lock_reason" : null,
+   "active_lock_reason" : "resolved",
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "MEMBER",
+   "author_association" : "CONTRIBUTOR",
    "body" : "Add UBSan suppressions needed for fuzz tests to not warn under `-fsanitize=integer`.\r\n\r\nAvoid `-fsanitize=integer` warnings in fuzzing harnesses.\r\n\r\nSuppressed warnings (excluding warnings from `src/crypto/` and `src/test/`):\r\n\r\n```\r\naddrman.cpp:306:24: runtime error: implicit conversion from type 'long' of value 5190149478 (64-bit, signed) to type 'uint32_t' (aka 'unsigned int') changed the value to 895182182 (32-bit, unsigned)\r\naddrman.h:446:43: runtime error: implicit conversion from type 'int' of value -22 (32-bit, signed) to type 'const uint8_t' (aka 'const unsigned char') changed the value to 234 (8-bit, unsigned)\r\narith_uint256.cpp:32:35: runtime error: left shift of 1712128 by 24 places cannot be represented in type 'uint32_t' (aka 'unsigned int')\r\narith_uint256.cpp:47:39: runtime error: left shift of 4294966784 by 31 places cannot be represented in type 'uint32_t' (aka 'unsigned int')\r\nchain.cpp:151:12: runtime error: implicit conversion from type 'int' of value -1 (32-bit, signed) to type 'unsigned long' changed the value to 18446744073709551615 (64-bit, unsigned)\r\ncoins.cpp:114:22: runtime error: unsigned integer overflow: 0 - 96 cannot be represented in type 'unsigned long'\r\ncompressor.cpp:162:33: runtime error: unsigned integer overflow: 15617702637291228364 * 10 cannot be represented in type 'unsigned long'\r\ncompressor.cpp:188:11: runtime error: unsigned integer overflow: 2265760372865400000 * 10 cannot be represented in type 'unsigned long'\r\nhash.cpp:13:15: runtime error: left shift of 1692305888 by 15 places cannot be represented in type 'uint32_t' (aka 'unsigned int')\r\npubkey.h:152:23: runtime error: unsigned integer overflow: 0 - 1 cannot be represented in type 'unsigned int'\r\nstreams.h:570:31: runtime error: left shift of 350879 by 52 places cannot be represented in type 'uint64_t' (aka 'unsigned long')\r\nutil/bip32.cpp:57:36: runtime error: left shift of 3241096244 by 1 places cannot be represented in type 'unsigned int'\r\nutil/strencodings.cpp:562:38: runtime error: implicit conversion from type 'unsigned char' of value 255 (8-bit, unsigned) to type 'char' changed the value to -1 (8-bit, signed)\r\nutil/strencodings.h:164:24: runtime error: implicit conversion from type 'int' of value -74 (32-bit, signed) to type 'unsigned long' changed the value to 18446744073709551542 (64-bit, unsigned)\r\n```\r\n\r\nThe warnings above happen here:\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/32b191fb66e644c690c94cbfdae6ddbc754769d7/src/addrman.cpp#L306\r\nhttps://github.com/bitcoin/bitcoin/blob/32b191fb66e644c690c94cbfdae6ddbc754769d7/src/addrman.h#L446\r\nhttps://github.com/bitcoin/bitcoin/blob/32b191fb66e644c690c94cbfdae6ddbc754769d7/src/arith_uint256.cpp#L32\r\nhttps://github.com/bitcoin/bitcoin/blob/32b191fb66e644c690c94cbfdae6ddbc754769d7/src/arith_uint256.cpp#L47\r\nhttps://github.com/bitcoin/bitcoin/blob/32b191fb66e644c690c94cbfdae6ddbc754769d7/src/chain.cpp#L151\r\nhttps://github.com/bitcoin/bitcoin/blob/32b191fb66e644c690c94cbfdae6ddbc754769d7/src/coins.cpp#L114\r\nhttps://github.com/bitcoin/bitcoin/blob/32b191fb66e644c690c94cbfdae6ddbc754769d7/src/compressor.cpp#L162\r\nhttps://github.com/bitcoin/bitcoin/blob/32b191fb66e644c690c94cbfdae6ddbc754769d7/src/compressor.cpp#L188\r\nhttps://github.com/bitcoin/bitcoin/blob/32b191fb66e644c690c94cbfdae6ddbc754769d7/src/hash.cpp#L13\r\nhttps://github.com/bitcoin/bitcoin/blob/32b191fb66e644c690c94cbfdae6ddbc754769d7/src/pubkey.h#L152\r\nhttps://github.com/bitcoin/bitcoin/blob/32b191fb66e644c690c94cbfdae6ddbc754769d7/src/streams.h#L570\r\nhttps://github.com/bitcoin/bitcoin/blob/32b191fb66e644c690c94cbfdae6ddbc754769d7/src/util/bip32.cpp#L57\r\nhttps://github.com/bitcoin/bitcoin/blob/32b191fb66e644c690c94cbfdae6ddbc754769d7/src/util/strencodings.cpp#L562\r\nhttps://github.com/bitcoin/bitcoin/blob/32b191fb66e644c690c94cbfdae6ddbc754769d7/src/util/strencodings.h#L164",
    "closed_at" : "2021-01-26T09:02:15Z",
    "closed_by" : {
@@ -28,6 +28,7 @@
    "comments" : 10,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21000/comments",
    "created_at" : "2021-01-24T20:31:26Z",
+   "draft" : false,
    "events_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21000/events",
    "html_url" : "https://github.com/bitcoin/bitcoin/pull/21000",
    "id" : 792885882,
@@ -43,7 +44,7 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21000/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "MDExOlB1bGxSZXF1ZXN0NTYwNjY4OTQ0",
    "number" : 21000,
@@ -51,13 +52,28 @@
    "pull_request" : {
       "diff_url" : "https://github.com/bitcoin/bitcoin/pull/21000.diff",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21000",
+      "merged_at" : "2021-01-26T09:02:12Z",
       "patch_url" : "https://github.com/bitcoin/bitcoin/pull/21000.patch",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21000"
    },
+   "reactions" : {
+      "+1" : 0,
+      "-1" : 0,
+      "confused" : 0,
+      "eyes" : 0,
+      "heart" : 0,
+      "hooray" : 0,
+      "laugh" : 0,
+      "rocket" : 0,
+      "total_count" : 0,
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21000/reactions"
+   },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
+   "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21000/timeline",
    "title" : "fuzz: Add UBSan suppressions needed for fuzz tests to not warn under -fsanitize=integer",
-   "updated_at" : "2021-01-26T09:02:16Z",
+   "updated_at" : "2022-08-16T17:20:10Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21000",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/7826565?v=4",

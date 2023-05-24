@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I guess I have a mild preference for making everything public, but this change seems fine.\r\n\r\nBy design everything in ChainImpl NodeImpl WalletImpl has been public since the classes were written because the classes themselves are private. IMO it is only meaningful to distinguish between overridden and non-overridden members and private/public seems like noise in this context.\r\n\r\nWhatever style you land on though I do think would be good to consistently apply it to all the `*Impl` classes in `src/node/interfaces.cpp` and `src/wallet/interfaces.cpp`",
       "created_at" : "2022-07-20T17:41:42Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25651#issuecomment-1190570030",
@@ -308,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25673](https://github.com/bitcoin/bitcoin/pull/25673) (refactor: make member functions const when applicable by aureleoules)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-07-27T22:16:59Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25651#issuecomment-1197429821",
@@ -363,7 +363,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932518567"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"refactor: make all NodeImpl and ChainImpl members public\" (b9a715ea03506bc6aa647d3df1cd177221d30dd0)\r\n\r\nWould encourage putting class member variables all together and not interspersing them with methods. If I'm trying to understand what a class does and what its role is in the application, knowing what data it contains is maybe the single most important piece of information I could have, and it's harder to see if the data fields aren't declared in a single place.\r\n\r\n#21525 messed up the style a bit but the original style and style I'd recommend would be:\r\n\r\n```c++\r\nclass NodeImpl : public Node\r\n{\r\npublic:\r\n  // ... virtual methods first ...\r\n  // ... nonvirtual helper methods next ...\r\n  // ... data fields last ...\r\n};\r\n```",
       "commit_id" : "4bedfd702ad878645c51bea6ee8ce40d8c0bd3da",
       "created_at" : "2022-07-28T17:47:51Z",
@@ -395,6 +395,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-29T17:47:59Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932518567",
       "user" : {
@@ -430,9 +431,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932522595"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"refactor: remove unneeded temporaries in node/interfaces, simplify code\" (d742ebbc91e5ca40389a3923bffba3e24911cc6f)\r\n\r\nNice simplification!",
-      "commit_id" : "d742ebbc91e5ca40389a3923bffba3e24911cc6f",
+      "commit_id" : "4bedfd702ad878645c51bea6ee8ce40d8c0bd3da",
       "created_at" : "2022-07-28T17:52:51Z",
       "diff_hunk" : "@@ -505,34 +500,24 @@ class ChainImpl : public Chain\n     explicit ChainImpl(NodeContext& node) : m_node(node) {}\n     std::optional<int> getHeight() override\n     {\n-        LOCK(::cs_main);\n-        const CChain& active = chainman().ActiveChain();\n-        int height = active.Height();\n-        if (height >= 0) {\n-            return height;\n-        }\n-        return std::nullopt;\n+        const int height{WITH_LOCK(::cs_main, return chainman().ActiveChain().Height())};\n+        return height >= 0 ? std::optional{height} : std::nullopt;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25651#discussion_r932522595",
@@ -444,7 +445,7 @@
       "original_position" : 26,
       "original_start_line" : 503,
       "path" : "src/node/interfaces.cpp",
-      "position" : 26,
+      "position" : 65,
       "pull_request_review_id" : 1054522533,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25651",
       "reactions" : {
@@ -452,16 +453,17 @@
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932522595/reactions"
       },
       "side" : "RIGHT",
       "start_line" : 503,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-07-28T17:55:24Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932522595",
       "user" : {
@@ -530,6 +532,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-29T17:25:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/933478958",
       "user" : {

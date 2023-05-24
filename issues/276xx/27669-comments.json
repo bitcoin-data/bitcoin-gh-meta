@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Had similar thoughts that using muhash instead would be nice in order to avoid the chain rollback for AssumeUTXO hash reviewers. Not sure if this is a huge problem, but one funny side-effect of this would be that for a chainstate with _n_ coins, there are in theory _n!_ different serializations possible that all would pass as valid (compared to just one for `hash_serialized_2`), since the order of coins doesn't matter for muhash. \r\n\r\n> For good measure we should also modify `gettxoutsetinfo` so it can calculate the muhash for the current UTXO set without relying on the index. This would help users with pruned nodes (and without the index) to verify a newly proposed snapshot (if they haven't pruned beyond it).\r\n\r\nI think calculating the muhash of the current chainstate without relying on coinstatsindex is already possible today by omitting the `hash_or_height` parameter, i.e. simply `gettxoutsetinfo muhash`? (If you want to try it out, I recommend passing `-rpcclienttimeout=0`, as the calculation takes quite long and could RPC-timeout with the default setting).",
       "created_at" : "2023-05-17T00:30:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/27669#issuecomment-1550522541",
@@ -173,6 +173,50 @@
          "subscriptions_url" : "https://api.github.com/users/jamesob/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/jamesob"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> However, a rolling UTXO set hash is incompatible with assumeutxo commitment schemes that involve chunking snapshots (discussed below) and so the resulting assumeutxo value might have to be a tuple consisting of `(rolling_set_hash, split_snapshot_chunks_merkle_root)`.\r\n\r\nThis is what I was getting at above. You just need a second hash that _is_ order dependent, which could be the sha256 hash of the `.dat` file, a torrent hash or the `split_snapshot_chunks_merkle_root`. I don't think that needs to live in the consensus code. It's more of networking detail (potatos, potatos since it's still an extra thing to set and review for each release).",
+      "created_at" : "2023-05-17T20:07:28Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/issues/27669#issuecomment-1551982585",
+      "id" : 1551982585,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27669",
+      "node_id" : "IC_kwDOABII585cgV_5",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1551982585/reactions"
+      },
+      "updated_at" : "2023-05-17T20:07:28Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1551982585",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10217?v=4",
+         "events_url" : "https://api.github.com/users/Sjors/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Sjors/followers",
+         "following_url" : "https://api.github.com/users/Sjors/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Sjors/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Sjors",
+         "id" : 10217,
+         "login" : "Sjors",
+         "node_id" : "MDQ6VXNlcjEwMjE3",
+         "organizations_url" : "https://api.github.com/users/Sjors/orgs",
+         "received_events_url" : "https://api.github.com/users/Sjors/received_events",
+         "repos_url" : "https://api.github.com/users/Sjors/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Sjors/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Sjors"
       }
    }
 ]

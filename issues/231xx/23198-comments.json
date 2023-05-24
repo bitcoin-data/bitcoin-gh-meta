@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "Sorry for the second pull request, I tried to squash the commits but something went wrong and it ended up with a lot of other commits. This is the fixed version now, hope this works.",
       "created_at" : "2021-10-05T20:43:45Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23198#issuecomment-934803431",
@@ -97,7 +97,7 @@
       "node_id" : "IC_kwDOABII5843xV1h",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -105,7 +105,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/935681377/reactions"
       },
       "updated_at" : "2021-10-06T07:49:55Z",
@@ -141,7 +141,7 @@
       "node_id" : "IC_kwDOABII5843xw0X",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -149,7 +149,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/935791895/reactions"
       },
       "updated_at" : "2021-10-06T09:01:37Z",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "> In future, please don't open new Pull Requests for the same change. You should be able to recover your branch.\r\n\r\nGot it\r\n\r\n>Please combine the change from #23195 into this PR. You'll also need to sqaush your commits here, and write a more cohesive commit message. See the update PR description for an example.\r\n\r\nDone\r\n\r\n",
       "created_at" : "2021-10-06T10:23:45Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23198#issuecomment-935920109",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "Did it work ?",
       "created_at" : "2021-10-06T10:39:02Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23198#issuecomment-935942639",
@@ -585,19 +585,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "- Might want to remove the current values from `build_msvc/bitcoin_config.h` to make it clear that this script needs to be run (and to pre-empt people from filing PRs to update the stale info).\r\n- Instead of changing this file in-place I'd prefer renaming it to `build_msvc/bitcoin_config.h.in` (or such) in the build system, then making a copy to `build_msvc/bitcoin_config.h` here. This avoids the generated state from being checked in accidentally.",
-      "commit_id" : "8be91af6315b1d8b09a80fa35154ff453fbc9595",
+      "commit_id" : "410f99faed47e27fca77531a864383b6119e7b0b",
       "created_at" : "2021-10-27T13:28:41Z",
       "diff_hunk" : "@@ -57,6 +58,37 @@ def set_common_properties(toolset):\n     with open(os.path.join(SOURCE_DIR, '../build_msvc/common.init.vcxproj'), 'w', encoding='utf-8',newline='\\n') as wfile:\n         wfile.write(s)\n \n+def parse_config_into_btc_config():\n+    def find_between( s, first, last ):\n+        try:\n+            start = s.index( first ) + len( first )\n+            end = s.index( last, start )\n+            return s[start:end]\n+        except ValueError:\n+            return \"\"\n+\n+    config_info = []\n+    with open(os.path.join(SOURCE_DIR,'../configure.ac'), encoding=\"utf8\") as f:\n+        for line in f:\n+            if line.startswith(\"define\"):\n+                config_info.append(find_between(line, \"(_\", \")\"))\n+\n+    config_info = [c for c in config_info if not c.startswith(\"COPYRIGHT_HOLDERS\")]\n+\n+    config_dict = dict(item.split(\", \") for item in config_info)\n+    config_dict[\"PACKAGE_VERSION\"] = f\"\\\"{config_dict['CLIENT_VERSION_MAJOR']}.{config_dict['CLIENT_VERSION_MINOR']}.{config_dict['CLIENT_VERSION_BUILD']}\\\"\"\n+    version = config_dict[\"PACKAGE_VERSION\"].strip('\"')\n+    config_dict[\"PACKAGE_STRING\"] = f\"\\\"Bitcoin Core {version}\\\"\"\n+\n+    for line in fileinput.input(os.path.join(SOURCE_DIR,'../build_msvc/bitcoin_config.h', ), inplace=True):",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23198#discussion_r737467106",
       "id" : 737467106,
-      "line" : 83,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584r9Nri",
       "original_commit_id" : "8be91af6315b1d8b09a80fa35154ff453fbc9595",
       "original_line" : 83,
       "original_position" : 34,
       "original_start_line" : null,
       "path" : "build_msvc/msvc-autogen.py",
-      "position" : 34,
+      "position" : null,
       "pull_request_review_id" : 790640113,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23198",
       "reactions" : {
@@ -615,6 +615,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-10-27T13:29:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/737467106",
       "user" : {
@@ -650,22 +651,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/742822479"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "Hi @laanwj, \r\ndid I understand this correctly ? \r\n`build_msvc/bitcoin_config.h.in` is basically a empty template and everytime \r\n`build_msvc/msvc-autogen.py` is executed it generates `build_msvc/bitcoin_config.h` using `build_msvc/bitcoin_config.h.in` and the values from `configure.ac`.",
-      "commit_id" : "8be91af6315b1d8b09a80fa35154ff453fbc9595",
+      "commit_id" : "410f99faed47e27fca77531a864383b6119e7b0b",
       "created_at" : "2021-11-04T13:15:41Z",
       "diff_hunk" : "@@ -57,6 +58,37 @@ def set_common_properties(toolset):\n     with open(os.path.join(SOURCE_DIR, '../build_msvc/common.init.vcxproj'), 'w', encoding='utf-8',newline='\\n') as wfile:\n         wfile.write(s)\n \n+def parse_config_into_btc_config():\n+    def find_between( s, first, last ):\n+        try:\n+            start = s.index( first ) + len( first )\n+            end = s.index( last, start )\n+            return s[start:end]\n+        except ValueError:\n+            return \"\"\n+\n+    config_info = []\n+    with open(os.path.join(SOURCE_DIR,'../configure.ac'), encoding=\"utf8\") as f:\n+        for line in f:\n+            if line.startswith(\"define\"):\n+                config_info.append(find_between(line, \"(_\", \")\"))\n+\n+    config_info = [c for c in config_info if not c.startswith(\"COPYRIGHT_HOLDERS\")]\n+\n+    config_dict = dict(item.split(\", \") for item in config_info)\n+    config_dict[\"PACKAGE_VERSION\"] = f\"\\\"{config_dict['CLIENT_VERSION_MAJOR']}.{config_dict['CLIENT_VERSION_MINOR']}.{config_dict['CLIENT_VERSION_BUILD']}\\\"\"\n+    version = config_dict[\"PACKAGE_VERSION\"].strip('\"')\n+    config_dict[\"PACKAGE_STRING\"] = f\"\\\"Bitcoin Core {version}\\\"\"\n+\n+    for line in fileinput.input(os.path.join(SOURCE_DIR,'../build_msvc/bitcoin_config.h', ), inplace=True):",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23198#discussion_r742822479",
       "id" : 742822479,
       "in_reply_to_id" : 737467106,
-      "line" : 83,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584sRpJP",
       "original_commit_id" : "8be91af6315b1d8b09a80fa35154ff453fbc9595",
       "original_line" : 83,
       "original_position" : 34,
       "original_start_line" : null,
       "path" : "build_msvc/msvc-autogen.py",
-      "position" : 34,
+      "position" : null,
       "pull_request_review_id" : 797722813,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23198",
       "reactions" : {
@@ -683,6 +684,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-11-04T13:15:41Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/742822479",
       "user" : {
@@ -720,20 +722,20 @@
       },
       "author_association" : "MEMBER",
       "body" : "Yes, that sounds good to me. `build_msvc/bitcoin_config.h.in` would be the (read-only) template, with substitution strings that will be filled in by the script and written to `build_msvc/bitcoin_config.h`.",
-      "commit_id" : "8be91af6315b1d8b09a80fa35154ff453fbc9595",
+      "commit_id" : "410f99faed47e27fca77531a864383b6119e7b0b",
       "created_at" : "2021-11-10T15:35:04Z",
       "diff_hunk" : "@@ -57,6 +58,37 @@ def set_common_properties(toolset):\n     with open(os.path.join(SOURCE_DIR, '../build_msvc/common.init.vcxproj'), 'w', encoding='utf-8',newline='\\n') as wfile:\n         wfile.write(s)\n \n+def parse_config_into_btc_config():\n+    def find_between( s, first, last ):\n+        try:\n+            start = s.index( first ) + len( first )\n+            end = s.index( last, start )\n+            return s[start:end]\n+        except ValueError:\n+            return \"\"\n+\n+    config_info = []\n+    with open(os.path.join(SOURCE_DIR,'../configure.ac'), encoding=\"utf8\") as f:\n+        for line in f:\n+            if line.startswith(\"define\"):\n+                config_info.append(find_between(line, \"(_\", \")\"))\n+\n+    config_info = [c for c in config_info if not c.startswith(\"COPYRIGHT_HOLDERS\")]\n+\n+    config_dict = dict(item.split(\", \") for item in config_info)\n+    config_dict[\"PACKAGE_VERSION\"] = f\"\\\"{config_dict['CLIENT_VERSION_MAJOR']}.{config_dict['CLIENT_VERSION_MINOR']}.{config_dict['CLIENT_VERSION_BUILD']}\\\"\"\n+    version = config_dict[\"PACKAGE_VERSION\"].strip('\"')\n+    config_dict[\"PACKAGE_STRING\"] = f\"\\\"Bitcoin Core {version}\\\"\"\n+\n+    for line in fileinput.input(os.path.join(SOURCE_DIR,'../build_msvc/bitcoin_config.h', ), inplace=True):",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23198#discussion_r746708356",
       "id" : 746708356,
       "in_reply_to_id" : 737467106,
-      "line" : 83,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584sgd2E",
       "original_commit_id" : "8be91af6315b1d8b09a80fa35154ff453fbc9595",
       "original_line" : 83,
       "original_position" : 34,
       "original_start_line" : null,
       "path" : "build_msvc/msvc-autogen.py",
-      "position" : 34,
+      "position" : null,
       "pull_request_review_id" : 802760985,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23198",
       "reactions" : {
@@ -751,6 +753,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-11-10T15:35:05Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746708356",
       "user" : {
@@ -786,7 +789,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/748862085"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "> Yes, that sounds good to me. `build_msvc/bitcoin_config.h.in` would be the (read-only) template, with substitution strings > that will be filled in by the script and written to `build_msvc/bitcoin_config.h`.\r\n\r\nOk, I changed the code. It should work the way you mentioned now.\r\n\r\n",
       "commit_id" : "410f99faed47e27fca77531a864383b6119e7b0b",
       "created_at" : "2021-11-14T14:25:59Z",
@@ -819,6 +822,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-11-14T14:59:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/748862085",
       "user" : {

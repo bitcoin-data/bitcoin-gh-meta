@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> [tor] Get SOCKS port command yielded [::]:9050\r\n> [tor] Configuring onion proxy for 127.0.0.1:9050\r\n\r\nA bit unrelated, but how come `[::]:9050` got converted to `127.0.0.1:9050`? This means that here:\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/9dce30194bc07463d634072251a8bf83e1b10ff9/src/torcontrol.cpp#L361-L383\r\n\r\n`LookupNumeric(\"[::]:9050\")` must have returned an invalid result, but it should not and there is a test for that:\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/9dce30194bc07463d634072251a8bf83e1b10ff9/src/test/netbase_tests.cpp#L143\r\n\r\nAnyway, if you have more than one `SocksPort` in `torrc` does the tor daemon deterministically return always the first or the last one? If yes, then maybe a workaround is to use something like:\r\n\r\n```\r\nSOCKSPort 0.0.0.0:9050\r\nSOCKSPort 10.0.0.1:9050\r\n```",
       "created_at" : "2022-11-10T18:19:59Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/26478#issuecomment-1310708927",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Yes, listing both `0.0.0.0` and `10.0.0.1` is too naive :( looks like the only option is to list all addresses explicitly instead of `0.0.0.0` and figure out if it deterministically returns e.g. the first one.\r\n\r\nI see now how `[::]:9050` gets flipped to `127.0.0.1` - on line 377 above, `[::]` is considered an invalid address by `IsValid()`, so `// Fallback to old behaviour` happens. This is actually ok, because we wouldn't be able to connect to `[::]:9050`. Tor shouldn't really be returning that.",
       "created_at" : "2022-11-11T10:13:25Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/26478#issuecomment-1311498389",

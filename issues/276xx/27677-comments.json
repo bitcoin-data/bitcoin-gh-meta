@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks for sharing all those details, this is great!\r\nI can only comment as someone who relies a lot on mempool/transaction relay for lightning: my opinion may thus be biased.\r\nI believe that lightning's security will *always* depend on the ability to get specific transactions confirmed before a given block, so anything that can help transaction propagation is important for us (and I believe this will be true for most L2 contracts).\r\n\r\n> Philosophically, is it problematic for RBF rules to be even more of a \"black box\" than the BIP 125 algorithm?\r\n\r\nIt isn't for me, as long as we can *somehow* RBF once we're ready to pay the price.\r\nThe way lightning implementations currently RBF is via trial-and-error, not by trying to abide by the BIP 125 rules.\r\nWe simply lower the change output of the transaction we're trying to RBF and/or add another input, try broadcasting, and try again with more fees if `bitcoind` rejects it (or if we still don't see our transaction confirming).\r\nSo we're already treating RBF as a black box, and don't care about making it \"more\" of a black box.\r\n\r\n> Are there usage patterns for wallets or other protocols that would be fundamentally harmed by cluster size limits? Do we know what values would be acceptable or what values would be insufficient?\r\n\r\nMost L2 contracts will only start once the \"contract transaction\" (channel funding transaction in the lightning case) is confirmed.\r\nIn the lightning case, the cluster we generate currently consists of:\r\n\r\n- a commitment transaction (no unconfirmed ancestors)\r\n- a CPFP child for that commitment transaction (which may bring its set of unconfirmed ancestors)\r\n\r\nThe commitment transaction may be as large as `MAX_STANDARD_TX_WEIGHT`, so we want the cluster size to allow that (but it's obvious that the limit needs to be higher than that anyway). Since L2 contracts generate trees of transactions, I believe they should always be able to get away with confirming each level of that tree independently, which means they only ever need one transaction and one CPFP child, nothing more (but we can probably make those contracts more fee-efficient if the cluster size allows more than that). @instagibbs does that fundamentally change with Eltoo? I guess not.\r\n\r\nThe CPFP child brings its own cluster with it, so the larger the cluster size limit is, the more of our utxos we're able to use to create our CPFP transaction. The limits chosen here will have to be arbitrary, and wallets will simply have to make sure their utxos confirm to be able to use them for CPFP. This is already the case because of the descendant limits, so it shouldn't be fundamentally more harmful?\r\n",
       "created_at" : "2023-05-17T15:34:36Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/27677#issuecomment-1551620933",
@@ -97,7 +97,7 @@
       "node_id" : "IC_kwDOABII585cfjqZ",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -105,7 +105,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1551776409/reactions"
       },
       "updated_at" : "2023-05-17T17:10:18Z",
@@ -273,7 +273,7 @@
       "node_id" : "IC_kwDOABII585cmYh9",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -281,7 +281,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1553565821/reactions"
       },
       "updated_at" : "2023-05-18T19:57:43Z",

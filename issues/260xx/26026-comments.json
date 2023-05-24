@@ -13,19 +13,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "At the very least, we shouldn't do any background coloring. This can easily degrade visibility of the information depending on what theme the user has set. This change shouldn't make any information harder to see.\r\n\r\n| master | pr |\r\n| --------- | --- |\r\n| <img width=\"402\" alt=\"Screen Shot 2022-09-06 at 9 07 52 PM\" src=\"https://user-images.githubusercontent.com/23396902/188767603-dda50390-960a-4989-872e-5aeda6f5e1e8.png\"> | <img width=\"335\" alt=\"Screen Shot 2022-09-06 at 9 16 18 PM\" src=\"https://user-images.githubusercontent.com/23396902/188767629-032ce879-4d8f-4ce7-8a83-6e46df69ae52.png\"> |\r\n\r\n",
-      "commit_id" : "4f8349a429c3e470b3b0c6a4f9a2d8e0bcc40275",
+      "commit_id" : "019d06f73dbc71e85c674e32f060f42d1f749bb7",
       "created_at" : "2022-09-07T01:19:20Z",
       "diff_hunk" : "@@ -404,16 +428,26 @@ void BCLog::Logger::LogPrintStr(const std::string& str, const std::string& loggi\n         }\n \n         s += \"] \";\n-        str_prefixed.insert(0, s);\n+        static auto c{m_colorman({Color::Attribute::FgBlue})};\n+        str_prefixed.insert(0, c(s));\n     }\n \n     if (m_log_sourcelocations && m_started_new_line) {\n-        str_prefixed.insert(0, \"[\" + RemovePrefix(source_file, \"./\") + \":\" + ToString(source_line) + \"] [\" + logging_function + \"] \");\n+        static auto loc_file_color{m_colorman({Color::Attribute::Faint})};\n+        const auto source_loc_file{\"[\" + RemovePrefix(source_file, \"./\") + \":\" + ToString(source_line) + \"] \"};\n+\n+        static auto loc_func_color{m_colorman({Color::Attribute::FgGreen, Color::Attribute::Faint})};\n+        const auto source_loc_func{\"[\" + logging_function + \"] \"};\n+\n+        str_prefixed.insert(0, loc_file_color(source_loc_file) + loc_func_color(source_loc_func));\n     }\n \n     if (m_log_threadnames && m_started_new_line) {\n         const auto& threadname = util::ThreadGetInternalName();\n-        str_prefixed.insert(0, \"[\" + (threadname.empty() ? \"unknown\" : threadname) + \"] \");\n+        static auto c{m_colorman({Color::Attribute::FgBlack, Color::Attribute::BgBlue})};",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26026#discussion_r964297456",
       "id" : 964297456,
-      "line" : 447,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5845egLw",
       "original_commit_id" : "4f8349a429c3e470b3b0c6a4f9a2d8e0bcc40275",
       "original_line" : 447,
       "original_position" : 79,
       "original_start_line" : null,
       "path" : "src/logging.cpp",
-      "position" : 79,
+      "position" : null,
       "pull_request_review_id" : 1098411477,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26026",
       "reactions" : {
@@ -43,6 +43,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-07T01:21:27Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/964297456",
       "user" : {
@@ -78,9 +79,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/964498322"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks for the feedback, I had not thought of this.\r\nI've just pushed a change, the thread name is now red without background.\r\n\r\n![image](https://user-images.githubusercontent.com/22493292/188819265-4f438619-7589-4950-90d8-f7ee6f5eb36e.png)\r\n\r\nI'm open to suggestions for the colors.\r\n\r\nAlso, if there are issues with the colors, the user can disable them with the env variable shown in the PR description. Maybe adding a bitcoind parameter may be more intuitive for the user though.",
-      "commit_id" : "fc294ed2efe3e817b5f47185b5876c4d02c1e530",
+      "commit_id" : "019d06f73dbc71e85c674e32f060f42d1f749bb7",
       "created_at" : "2022-09-07T07:44:58Z",
       "diff_hunk" : "@@ -404,16 +428,26 @@ void BCLog::Logger::LogPrintStr(const std::string& str, const std::string& loggi\n         }\n \n         s += \"] \";\n-        str_prefixed.insert(0, s);\n+        static auto c{m_colorman({Color::Attribute::FgBlue})};\n+        str_prefixed.insert(0, c(s));\n     }\n \n     if (m_log_sourcelocations && m_started_new_line) {\n-        str_prefixed.insert(0, \"[\" + RemovePrefix(source_file, \"./\") + \":\" + ToString(source_line) + \"] [\" + logging_function + \"] \");\n+        static auto loc_file_color{m_colorman({Color::Attribute::Faint})};\n+        const auto source_loc_file{\"[\" + RemovePrefix(source_file, \"./\") + \":\" + ToString(source_line) + \"] \"};\n+\n+        static auto loc_func_color{m_colorman({Color::Attribute::FgGreen, Color::Attribute::Faint})};\n+        const auto source_loc_func{\"[\" + logging_function + \"] \"};\n+\n+        str_prefixed.insert(0, loc_file_color(source_loc_file) + loc_func_color(source_loc_func));\n     }\n \n     if (m_log_threadnames && m_started_new_line) {\n         const auto& threadname = util::ThreadGetInternalName();\n-        str_prefixed.insert(0, \"[\" + (threadname.empty() ? \"unknown\" : threadname) + \"] \");\n+        static auto c{m_colorman({Color::Attribute::FgBlack, Color::Attribute::BgBlue})};",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26026#discussion_r964498322",
@@ -111,6 +112,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-07T07:44:59Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/964498322",
       "user" : {
@@ -135,7 +137,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "Concept ACK ð¨",
       "created_at" : "2022-09-07T15:38:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26026#issuecomment-1239557631",
@@ -158,24 +160,24 @@
       "updated_at" : "2022-09-07T15:38:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1239557631",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
@@ -192,7 +194,7 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "It might be ok to have colours on terminal by default, but not ok to have ANSI escape sequences written to debug.log by default. So at least `isatty()` check for stdout should be added. Or changed that colouring is always disabled by default and can be enabled manually.",
-      "commit_id" : "192aaaa9b38a345e0e75a7757d7eb971b2cc4ee0",
+      "commit_id" : "019d06f73dbc71e85c674e32f060f42d1f749bb7",
       "created_at" : "2022-09-07T17:19:18Z",
       "diff_hunk" : "@@ -68,6 +69,106 @@ namespace BCLog {\n         BLOCKSTORE  = (1 << 26),\n         ALL         = ~(uint32_t)0,\n     };\n+\n+\n+    constexpr auto escape_sequence{\"\\033[\"};\n+\n+    class Color\n+    {\n+    public:\n+        enum class Attribute {\n+            /* Base attributes */\n+            Reset = 0,\n+            Bold = 1,\n+            Faint = 2,\n+            Italic = 3,\n+            Underline = 4,\n+            BlinkSlow = 5,\n+            BlinkRapid = 6,\n+            ReverseVideo = 7,\n+            Concealed = 8,\n+            CrossedOut = 9,\n+\n+            /* Foreground colors */\n+            FgBlack = 30,\n+            FgRed = 31,\n+            FgGreen = 32,\n+            FgYellow = 33,\n+            FgBlue = 34,\n+            FgMagenta = 35,\n+            FgCyan = 36,\n+            FgWhite = 37,\n+\n+            /* Foreground bright colors */\n+            FgHiBlack = 90,\n+            FgHiRed = 91,\n+            FgHiGreen = 92,\n+            FgHiYellow = 93,\n+            FgHiBlue = 94,\n+            FgHiMagenta = 95,\n+            FgHiCyan = 96,\n+            FgHiWhite = 97,\n+\n+            /* Background colors */\n+            BgBlack = 40,\n+            BgRed = 41,\n+            BgGreen = 42,\n+            BgYellow = 43,\n+            BgBlue = 44,\n+            BgMagenta = 45,\n+            BgCyan = 46,\n+            BgWhite = 47,\n+\n+            /* Background bright colors */\n+            BgHiBlack = 100,\n+            BgHiRed = 101,\n+            BgHiGreen = 102,\n+            BgHiYellow = 103,\n+            BgHiBlue = 104,\n+            BgHiMagenta = 105,\n+            BgHiCyan = 106,\n+            BgHiWhite = 107,\n+        };\n+\n+        std::set<Attribute> attributes{};\n+\n+        Color() = delete;\n+        Color(std::initializer_list<Attribute> attributes, const bool& enabled) : enabled(enabled)\n+        {\n+            for (auto attribute : attributes) {\n+                this->attributes.insert(attribute);\n+            }\n+\n+            m_sequence = this->ComputeSequence();\n+        }\n+\n+        std::string Wrap(const std::string& str) const;\n+        std::string operator()(const std::string& str) const { return Wrap(str); }\n+\n+        std::string m_sequence;\n+        const bool& enabled;\n+\n+    private:\n+        std::string ComputeSequence() const;\n+    };\n+\n+    class ColorMan\n+    {\n+    public:\n+        ColorMan()\n+        {\n+            m_enable_colors = getenv(\"TERM\") != nullptr && getenv(\"TERM\") != std::string(\"dumb\") && (getenv(\"ANSI_COLORS_DISABLED\") == nullptr || getenv(\"ANSI_COLORS_DISABLED\") == std::string(\"0\"));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26026#discussion_r965100674",
@@ -222,6 +224,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-07T17:19:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/965100674",
       "user" : {
@@ -257,7 +260,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/965139747"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I just pushed a function that strips colors before writing to the debug file, is this right?",
       "commit_id" : "019d06f73dbc71e85c674e32f060f42d1f749bb7",
       "created_at" : "2022-09-07T18:09:23Z",
@@ -290,6 +293,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-07T18:09:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/965139747",
       "user" : {
@@ -411,7 +415,7 @@
       "node_id" : "IC_kwDOABII585KABP2",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -419,7 +423,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1241519094/reactions"
       },
       "updated_at" : "2022-09-09T05:38:11Z",
@@ -490,7 +494,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> What about an external script that colors the logs? Something like ./src/bitcoind -printtoconsole=1 | ./color.py\r\n\r\nIMO that might be more difficult to achieve the same result as this PR because this require parsing the logs and identifying each part of the string (date, thread name, file, function, etc.), also they can be enabled/disabled with `-logthreadnames` `-logsourcelocations` which imo doesn't help either.\r\n\r\nHow about an opt-in bitcoind parameter instead?\r\nAnother solution would be to allow users to define their own colors if the default ones don't work. But this seems like too much work for what it is.",
       "created_at" : "2022-09-09T09:14:37Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26026#issuecomment-1241718165",
@@ -534,7 +538,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> The Bitcoin Core logging code almost warrants being it's own externally maintained library at this point, and I don't think we should be adding to it/expanding scope by introducing more nice-to-have functionality.\r\n\r\nIn this case, should we discuss a logging library to use?\r\n\r\nIf colors are not welcome, it would be nice to have at least indented logs to make logs more readable, such as:\r\n\r\n```\r\n2022-09-09T09:24:18Z [init] [init/common.cpp:149]   [LogPackageVersion]  Bitcoin Core version v23.99.0-19585eeb778a-dirty\r\n2022-09-09T09:24:18Z [init] [kernel/context.cpp:21] [Context]            Using the 'sse4(1way),sse41(4way),avx2(8way)' SHA256 implementation\r\n2022-09-09T09:24:18Z [init] [random.cpp:100]        [ReportHardwareRand] Using RdSeed as an additional entropy source\r\n2022-09-09T09:24:18Z [init] [random.cpp:103]        [ReportHardwareRand] Using RdRand as an additional entropy source\r\n2022-09-09T09:24:18Z [init] [init/common.cpp:120]   [StartLogging]       Default data directory /home/aureleoules/.bitcoin\r\n2022-09-09T09:24:18Z [init] [init/common.cpp:121]   [StartLogging]       Using data directory /home/aureleoules/.bitcoin/testnet3\r\n```\r\ninstead of\r\n```\r\n2022-09-09T09:24:18Z [init] [init/common.cpp:149] [LogPackageVersion] Bitcoin Core version v23.99.0-19585eeb778a-dirty (release build)\r\n2022-09-09T09:24:18Z [init] [kernel/context.cpp:21] [Context] Using the 'sse4(1way),sse41(4way),avx2(8way)' SHA256 implementation\r\n2022-09-09T09:24:18Z [init] [random.cpp:100] [ReportHardwareRand] Using RdSeed as an additional entropy source\r\n2022-09-09T09:24:18Z [init] [random.cpp:103] [ReportHardwareRand] Using RdRand as an additional entropy source\r\n2022-09-09T09:24:18Z [init] [init/common.cpp:120] [StartLogging] Default data directory /home/aureleoules/.bitcoin\r\n2022-09-09T09:24:18Z [init] [init/common.cpp:121] [StartLogging] Using data directory /home/aureleoules/.bitcoin/testnet3\r\n```",
       "created_at" : "2022-09-09T09:28:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26026#issuecomment-1241733860",
@@ -675,7 +679,7 @@
       "node_id" : "IC_kwDOABII585KA4sh",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -683,7 +687,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1241746209/reactions"
       },
       "updated_at" : "2022-09-09T09:40:17Z",
@@ -753,6 +757,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-09T10:28:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/966869707",
       "user" : {
@@ -777,7 +782,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Is it important that each [...] type is coloured the same? You could just define 5 colors and then color each [...] in order, regardless of their type.\r\n\r\nI'll try to draft a script.\r\n\r\n> Adding colours to logs is not a problem we need to solve\r\n\r\nSure, but it's a means to make the logs more readable.\r\n\r\n> If colors are not welcome...\r\n>> Rather maintenance costs they come with.\r\n\r\nYes I understand, I meant this as well. (didn't mean it in an aggressive way)",
       "created_at" : "2022-09-09T10:23:08Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26026#issuecomment-1241790283",
@@ -832,7 +837,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/966891793"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I will change this but considering there are some Concept NACKS on this PR I'm not sure I should work on this yet.",
       "commit_id" : "019d06f73dbc71e85c674e32f060f42d1f749bb7",
       "created_at" : "2022-09-09T10:26:46Z",
@@ -865,6 +870,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-09T10:26:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/966891793",
       "user" : {
@@ -933,6 +939,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-09T10:37:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/966899819",
       "user" : {
@@ -957,7 +964,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I've drafted an alternative with a python script in #26052.",
       "created_at" : "2022-09-09T15:41:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26026#issuecomment-1242138453",
@@ -966,7 +973,7 @@
       "node_id" : "IC_kwDOABII585KCYdV",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -974,7 +981,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1242138453/reactions"
       },
       "updated_at" : "2022-09-09T15:41:47Z",
@@ -1014,11 +1021,11 @@
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
-         "heart" : 0,
+         "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1242776458/reactions"
       },
       "updated_at" : "2022-09-10T17:52:17Z",
@@ -1045,7 +1052,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Closing in favor of #26052.",
       "created_at" : "2022-09-12T07:27:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26026#issuecomment-1243325374",

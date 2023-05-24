@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Further motivation:\r\n\r\n(1) The restriction of only allowing confirmed UTXOs for funding a fee-bump doesn't necessarily help our mempool validation logic, but hurts users trying to fee-bump their transactions. If the original transaction's output value isn't sufficient to fund a fee-bump and/or all of the user's other UTXOs are unconfirmed, they might not be able to fee bump. Wallet developers also need to treat self-owned unconfirmed UTXOs as unusable for fee-bumping, which is an unnecessary complication.\r\n\r\n(2) BIP125#2 can also be bypassed: @jnewbery recently pointed out to me that an attacker can simply split a 1-input 1-output transaction off from the replacement transaction, then broadcast the transaction as is. This can always be done, and quite cheaply.\r\n\r\nTo illustrate, Example L shows how BIP125#2 can be bypassed in all cases where the replacement transaction has enough fees to be split into multiple transactions. Example L1 is blocked by BIP125#2 because C is not allowed to spend an output of B. The owner of transaction C can bypass BIP125#2 as shown in example L2. Simply create a 1-input 1-output transaction, C*, that spends the output from B, and replace it with C.\r\n\r\n![image](https://user-images.githubusercontent.com/25183001/135102103-8fc3e943-2a05-48ba-840c-66c05007d5d3.png)\r\n\r\nThis might be a good hack for people who need to RBF transactions and only have unconfirmed UTXOs available, like scenario M, where we want to replace A (a 100vB transaction paying 1000sats), but our only UTXOs are in unconfirmed transactions B and C. We can simply create D*, an intermediary transaction spending the outputs we want from B and C, and then replace that with D. This just means that D needs to pay some additional fees for replacing D* (which can be at the mempool minimum feerate).\r\n\r\n![image](https://user-images.githubusercontent.com/25183001/135105526-0c384e20-a52d-4aa3-8fb5-f14bc2f79df1.png)\r\n\r\nHowever, Example N shows how this strategy can cause us to accept an replacement transaction that is actually less economical to mine than the original. Assume all transactions have a vsize of 100vB. A user wants to replace A, which has an ancestor score of 10sat/vB, with transaction C. Suppose they want to spend an unconfirmed output from transaction B, which has an ancestor score of 1sat/vB (maybe their wallet doesn't have enough funds to provide a higher fee using only confirmed inputs). BIP125#2 prevents scenario N1, where the inclusion of another unconfirmed input means C has an ancestor score of 8sat/vB and thus less economical to mine than A. However, it does not prevent scenario M2, where the user splits off a 1-input 1-output transaction, C*, in order to be able to include the output from B. This causes us to incorrectly accept C (7.5sat/vB including its parent B) in favor of A (10sat/vB).\r\n\r\n![image](https://user-images.githubusercontent.com/25183001/135104603-9e775062-5c8d-4d55-9bc9-6e9db92cfe6d.png)\r\n\r\nAgain, credit to @jnewbery for this discovery.\r\n\r\n(3) I believe package RBF requires removal of BIP125#2, (explained [here](https://gist.github.com/glozow/dc4e9d5c5b14ade7cdfac40f43adb18a#new-unconfirmed-inputs-rule-2) if you're interested). I know this is not a super robust argument, but it would be a much better interface if the two sets of RBF rules are the same.",
       "created_at" : "2021-09-28T17:33:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23121#issuecomment-929475999",
@@ -8,6 +8,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/23121",
       "node_id" : "IC_kwDOABII5843Zq2f",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 3,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 3,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/929475999/reactions"
+      },
       "updated_at" : "2021-09-28T17:49:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/929475999",
       "user" : {
@@ -32,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#23711](https://github.com/bitcoin/bitcoin/pull/23711) (docs: RBF policy and mempool limit exemptions by glozow)\n* [#22867](https://github.com/bitcoin/bitcoin/pull/22867) (test: Extend test coverage of BIP125 and document confusing/inconsistent behavior by mjdietzx)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2021-09-28T18:05:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23121#issuecomment-929498773",
@@ -84,6 +96,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/23121",
       "node_id" : "IC_kwDOABII5843akYd",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/929711645/reactions"
+      },
       "updated_at" : "2021-09-29T00:08:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/929711645",
       "user" : {
@@ -108,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> If you think this discovery has safety implications, have you done a responsible disclosure of this defect not only to the maintainers of this project but also potentially affected ecosystem stakeholders e.g maintainers of other full-nodes implementations ?\r\n\r\n@ariard I didn't think this is a safety issue for Bitcoin nodes, just a limitation that we no longer have. The \"trick\" isn't completely cost-free and the replacement transaction still needs to be higher fees due to the other BIP125 rules, it's just lower priority for mining than the mempool code thinks it is. Worst case scenario is if the original transaction was going to be in the next block and the replacement transaction isn't. That's unfortunate for the miner of _this_ block since they _might_ lose a bit on fees depending on the next-highest feerate packages, and not incentive-compatible behavior, so I think we should fix this.\r\n\r\n> The disclosed fee decrease (good catch) is a breach against the fee-bumping protocol for Revault and really any other protocol that broadcasts ANYONECANPAY-signed inputs. Sure you can always re-RBF it but in the end we can't assume honest node to engage in (and win) a race for fee-bumping.\r\n\r\n@darosior Attempting to summarize, please correct me if I'm misunderstanding: when a transaction has all inputs signed `ANYONECANPAY` and RBF opt-in, any attacker can create a replacement transaction by adding any input they want. Coupled with the strategy mentioned above, they can reduce the ancestor score of this transaction, thereby pinning it. You can re-RBF it, but might need to pay more fees. :scream:",
       "created_at" : "2021-09-29T14:16:43Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23121#issuecomment-930220389",
@@ -160,6 +184,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/23121",
       "node_id" : "IC_kwDOABII5843ci_J",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/930230217/reactions"
+      },
       "updated_at" : "2021-09-29T14:27:22Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/930230217",
       "user" : {
@@ -184,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I don't suppose it's reasonable to recommend opting out of RBF for now? In any case, I think we need to add this ancestor score checking before we try to do full RBF, since it would leave all `ANYONECANPAY`-signed transactions vulnerable to this pinning attack.",
       "created_at" : "2021-09-29T14:51:30Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23121#issuecomment-930252121",
@@ -192,6 +228,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/23121",
       "node_id" : "IC_kwDOABII5843coVZ",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/930252121/reactions"
+      },
       "updated_at" : "2021-09-29T14:51:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/930252121",
       "user" : {
@@ -216,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2021-09-30T07:12:53Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23121#issuecomment-930901338",
@@ -224,6 +272,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/23121",
       "node_id" : "IC_kwDOABII5843fG1a",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/930901338/reactions"
+      },
       "updated_at" : "2021-09-30T07:12:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/930901338",
       "user" : {
@@ -248,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "> @glozow @jnewbery If you think this discovery has safety implications, have you done a responsible disclosure of this defect not only to the maintainers of this project but also potentially affected ecosystem stakeholders e.g maintainers of other full-nodes implementations ?\r\n\r\n> @ariard I didn't think this is a safety issue for Bitcoin nodes, just slightly incentive-incompatible behavior. The trick isn't completely cost-free and the replacement transaction still needs to be higher fees due to the other BIP125 rules, it's just lower priority for mining than the mempool code thinks it is. Worst case scenario is if the original transaction was going to be in the next block and the replacement transaction isn't. That's unfortunate for the miner of this block since they might lose a bit on fees, and definitely incentive-incompatible mempool behavior, so I think we should fix this.\r\n\r\n@glozow @ariard even if this doesn't involve any security issues we should inform others who are not following each pull request in this repository every day. This looks like an important bug which needs a fix. Although I am still trying to understand everything involved.\r\n\r\nAnd thanks for the diagrams, they are helpful.\r\n",
       "created_at" : "2021-09-30T10:14:01Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23121#issuecomment-931186706",
@@ -271,24 +331,24 @@
       "updated_at" : "2021-09-30T10:14:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/931186706",
       "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/13405205?v=4",
-         "events_url" : "https://api.github.com/users/prayank23/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/prayank23/followers",
-         "following_url" : "https://api.github.com/users/prayank23/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/prayank23/gists{/gist_id}",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10137?v=4",
+         "events_url" : "https://api.github.com/users/ghost/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ghost/followers",
+         "following_url" : "https://api.github.com/users/ghost/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ghost/gists{/gist_id}",
          "gravatar_id" : "",
-         "html_url" : "https://github.com/prayank23",
-         "id" : 13405205,
-         "login" : "prayank23",
-         "node_id" : "MDQ6VXNlcjEzNDA1MjA1",
-         "organizations_url" : "https://api.github.com/users/prayank23/orgs",
-         "received_events_url" : "https://api.github.com/users/prayank23/received_events",
-         "repos_url" : "https://api.github.com/users/prayank23/repos",
+         "html_url" : "https://github.com/ghost",
+         "id" : 10137,
+         "login" : "ghost",
+         "node_id" : "MDQ6VXNlcjEwMTM3",
+         "organizations_url" : "https://api.github.com/users/ghost/orgs",
+         "received_events_url" : "https://api.github.com/users/ghost/received_events",
+         "repos_url" : "https://api.github.com/users/ghost/repos",
          "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/prayank23/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/prayank23/subscriptions",
+         "starred_url" : "https://api.github.com/users/ghost/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ghost/subscriptions",
          "type" : "User",
-         "url" : "https://api.github.com/users/prayank23"
+         "url" : "https://api.github.com/users/ghost"
       }
    },
    {
@@ -380,7 +440,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> @glozow For public records, before to open this PR, have you informed Bitcoin Core maintainers of your discovery yes or no ?\r\n\r\nNo, because this is not a security vulnerability or even a bug in Bitcoin Core. A disclosure that boils down to \"if your transaction is signed with ANYONECANPAY and opts in to RBF, anyone can pay to RBF it. Our mempool evaluates its fees according to the rules specified in BIP125\" is unnecessary.\r\n\r\nThank you for the education on disclosing security issues delicately. If I find an issue that could cause mempool resource exhaustion, deviation from p2p protocol or consensus, or acceptance of uneconomical replacements, I'll keep it in mind.\r\n\r\nAs described in the OP, this PR implements a TODO item documented in the code. Code review and testing is welcome.",
       "created_at" : "2021-10-04T13:33:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23121#issuecomment-933491274",
@@ -389,7 +449,7 @@
       "node_id" : "IC_kwDOABII5843o_JK",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 3,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -397,7 +457,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/933491274/reactions"
       },
       "updated_at" : "2021-10-04T13:33:14Z",
@@ -468,7 +528,7 @@
       }
    },
    {
-      "author_association" : "MEMBER",
+      "author_association" : "CONTRIBUTOR",
       "body" : "User @prayank23 is having difficulty commenting on this PR for some reason, so I am relaying his comments/questions from IRC:\r\n\r\n> Two questions for PR author:\r\n> 1. Unconfirmed UTXO are discouraged in Core. Does this PR change default behaviour? Context: https://github.com/bitcoin-core/gui/issues/242\r\n> 2. Why do you think it's not a bug if attacker can confirm a tx with less fee rate by replacing? It can be exploited if we had on chain DeFi but I am not sure what all projects are currently impacted",
       "created_at" : "2021-10-05T07:47:11Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23121#issuecomment-934154169",
@@ -512,51 +572,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2021-10-22T11:29:43Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/23121#issuecomment-949543686",
-      "id" : 949543686,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/23121",
-      "node_id" : "IC_kwDOABII5844mOMG",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/949543686/reactions"
-      },
-      "updated_at" : "2021-10-22T11:29:43Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/949543686",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "rebased and added documentation for our RBF policy + difference with BIP125",
       "created_at" : "2021-10-22T13:50:17Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23121#issuecomment-949650522",
@@ -600,51 +616,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2021-11-09T17:05:24Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/23121#issuecomment-964351324",
-      "id" : 964351324,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/23121",
-      "node_id" : "IC_kwDOABII5845etVc",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/964351324/reactions"
-      },
-      "updated_at" : "2021-11-09T17:05:24Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/964351324",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Rebased",
       "created_at" : "2021-11-09T20:37:04Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23121#issuecomment-964522620",
@@ -699,7 +671,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746469903"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit:\r\n\r\n```suggestion\r\n        tx.vin[i].prevout.n = input_indices[i];\r\n```\r\n\r\nI'm not sure it's worth having this mechanism of fallback to `0` but only for the last inputs, it's a bit confusing.\r\nMaybe just making `input_indices` completely optional (in which case you'd use `0` for all inputs) is better?\r\nAnd if it's provided then it should be provided for all inputs.\r\nIn that case it would be:\r\n\r\n```suggestion\r\n        tx.vin[i].prevout.n = input_indices.size() > 0 ? input_indices[i] : 0;\r\n```\r\n\r\nFeel free to ignore though if you disagree.",
       "commit_id" : "3847e4178676ebf041f3bda6ff9e9b8c5733cb48",
       "created_at" : "2021-11-10T10:49:00Z",
@@ -731,6 +703,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-11-10T10:55:43Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746469903",
       "user" : {
@@ -766,7 +739,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746474581"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Would it be worth documenting the CPFP carve-out rule (in the `doc` folder, similarly to RBF)?\r\nEspecially now that it does require no new unconfirmed inputs which RBF doesn't?\r\nIt can be done in a separate PR though.",
       "commit_id" : "3847e4178676ebf041f3bda6ff9e9b8c5733cb48",
       "created_at" : "2021-11-10T10:55:10Z",
@@ -784,7 +757,7 @@
       "pull_request_review_id" : 802421550,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23121",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -792,12 +765,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746474581/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-11-10T10:55:43Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/746474581",
       "user" : {
@@ -852,7 +826,7 @@
       "pull_request_review_id" : 827374002,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23121",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -860,12 +834,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/765561187/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-09T08:56:24Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/765561187",
       "user" : {
@@ -890,7 +865,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
       "created_at" : "2021-12-20T09:43:06Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23121#issuecomment-997759943",
@@ -977,6 +952,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-01T19:27:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/777130812",
       "user" : {
@@ -1044,6 +1020,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-01T19:28:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/777131366",
       "user" : {
@@ -1069,7 +1046,7 @@
    },
    {
       "author_association" : "MEMBER",
-      "body" : "Thanks for the review @sdaftuar!\r\n\r\n> If we want to fix the issue where a replacement transaction might have a worse mining score than some transactions it replaces, then I think the conservative thing to do would be to compare the ancestor score of the replacement transaction with the actual feerates of the conflicted transactions themselves (ie not the ancestor feerate of the conflicted transactions).\r\n\r\n> The rationale is that you never know if some sibling transaction might exist in the mempool that would cause the ancestors of a target transaction to be mined, allowing the target transaction to be considered using its own feerate (rather than being weighed down by low feerate parents).\r\n\r\nMy understanding is:  When a _future_ block template is built, a transaction's mining score may include none, some, or all of its *current* mempool ancestors, e.g. because of a high feerate sibling.\r\nTo ensure that our replacement transaction is not a worse mining candidate than the conflicting transactions in a *conservative* manner, we'll require `worst-case replacement tx feerate` >= `best-case conflicting tx feerate` for every conflicting tx (best-case meaning highest feerate, and worst-case meaning lowest feerate).\r\n\r\nSince `individual feerate` always >= `ancestor feerate` for any tx, this means we require\r\n`replacement tx ancestor feerate` >= `conflicting tx individual feerate` for every conflicting transaction.\r\n\r\nTo clarify, we would need to do this comparison with every conflicting transaction and all their descendants (not just direct conflicts), since they may have high-feerate descendants? Or do we only consider directly conflicting transactions, and perhaps the other RBF rules are sufficient to ensure we are being incentive-compatible (based on this [comment](https://github.com/bitcoin/bitcoin/blob/2211fe712d2d3d7669b083752f1a8facb8bc4a29/src/policy/rbf.cpp#L137-L139))?\r\n\r\nIf we compare with all conflicts, this could be too conservative, at least for package RBF. For example:\r\n\r\nAlice (adversary) and Bob (honest) have a LN channel, where Alice has commitment tx A1, Bob has commitment tx B1.\r\n\r\nAlice broadcasts A1 <- A2 <- A3, where A2 is a very large child of A1, and A3 is a very small child of A2.\r\nA2 has a low feerate and A3 has an extremely high feerate. This package, as a whole, has a low ancestor feerate.\r\n\r\nBob broadcasts a package, B1 <- B2, where B2 is a fee-bumping child of B1.\r\nPerhaps Bob's package is higher feerate than Alice's package, but since B2's ancestor feerate must be higher than A3's individual feerate, Bob's package is rejected.\r\n\r\n===\r\n\r\n> I think the real question that we're trying to answer with the feerate checks is something like \"are the fees expected to be paid in the next (N?) blocks higher or lower if we process this transaction\", which is not very easy to answer with the tools we have at our disposal.\r\n\r\nI suppose if N=1, we can just compare ancestor feerates? Only when N>1, the transaction's future mining score may be different from its current ancestor feerate.",
+      "body" : "Thanks for the review @sdaftuar!\r\n\r\n> If we want to fix the issue where a replacement transaction might have a worse mining score than some transactions it replaces, then I think the conservative thing to do would be to compare the ancestor score of the replacement transaction with the actual feerates of the conflicted transactions themselves (ie not the ancestor feerate of the conflicted transactions).\r\n\r\n> The rationale is that you never know if some sibling transaction might exist in the mempool that would cause the ancestors of a target transaction to be mined, allowing the target transaction to be considered using its own feerate (rather than being weighed down by low feerate parents).\r\n\r\nMy understanding is:  When a _future_ block template is built, a transaction's mining score may include none, some, or all of its *current* mempool ancestors, e.g. because of a high feerate sibling.\r\nTo ensure that our replacement transaction is not a worse mining candidate than the conflicting transactions in a *conservative* manner, we'll require `worst-case replacement tx feerate` >= `best-case conflicting tx feerate` for every conflicting tx (best-case meaning highest feerate, and worst-case meaning lowest feerate).\r\n\r\n~Since `individual feerate` always >= `ancestor feerate` for any tx, this means we require\r\n`replacement tx ancestor feerate` >= `conflicting tx individual feerate` for every conflicting transaction.~\r\n\r\nEdit: It's not true that `individual feerate` always >= `ancestor feerate`. We'd require\r\nreplacement tx `min(ancestor feerate, individual feerate)` > conflicting tx `max(ancestor feerate, individual feerate)`\r\n\r\nTo clarify, we would need to do this comparison with every conflicting transaction and all their descendants (not just direct conflicts), since they may have high-feerate descendants? Or do we only consider directly conflicting transactions, and perhaps the other RBF rules are sufficient to ensure we are being incentive-compatible (based on this [comment](https://github.com/bitcoin/bitcoin/blob/2211fe712d2d3d7669b083752f1a8facb8bc4a29/src/policy/rbf.cpp#L137-L139))?\r\n\r\nIf we compare with all conflicts, this could be too conservative, at least for package RBF. For example:\r\n\r\nAlice (adversary) and Bob (honest) have a LN channel, where Alice has commitment tx A1, Bob has commitment tx B1.\r\n\r\nAlice broadcasts A1 <- A2 <- A3, where A2 is a very large child of A1, and A3 is a very small child of A2.\r\nA2 has a low feerate and A3 has an extremely high feerate. This package, as a whole, has a low ancestor feerate.\r\n\r\nBob broadcasts a package, B1 <- B2, where B2 is a fee-bumping child of B1.\r\nPerhaps Bob's package is higher feerate than Alice's package, but since B2's ancestor feerate must be higher than A3's individual feerate, Bob's package is rejected.\r\n\r\n===\r\n\r\n> I think the real question that we're trying to answer with the feerate checks is something like \"are the fees expected to be paid in the next (N?) blocks higher or lower if we process this transaction\", which is not very easy to answer with the tools we have at our disposal.\r\n\r\nI suppose if N=1, we can just compare ancestor feerates? Only when N>1, the transaction's future mining score may be different from its current ancestor feerate.",
       "created_at" : "2022-01-04T12:38:59Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23121#issuecomment-1004774370",
       "id" : 1004774370,
@@ -1088,7 +1065,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1004774370/reactions"
       },
-      "updated_at" : "2022-01-04T13:02:02Z",
+      "updated_at" : "2022-01-11T10:45:21Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1004774370",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/25183001?v=4",
@@ -1153,6 +1130,50 @@
          "subscriptions_url" : "https://api.github.com/users/sdaftuar/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/sdaftuar"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "> From a practical perspective, it seems to me like we could \"solve\" the issues around incentive compatibility with our current RBF rules (along the lines of what I described above of requiring ancestor feerates to be greater than actual feerates of all transactions which would be replaced), and then later address the pinning problems. However, I don't know if this is actually good for the ecosystem as a whole, since other Bitcoin transaction creators might care a lot about the precise relay behavior here, so making multiple changes -- and particularly, making transaction replacement worse somehow in the interim by becoming more conservative -- might be pretty unwelcome. So maybe it would be better to craft a new proposal that addresses both problems, try to solicit feedback about whether it would solve the issues people are running into, and then fix both?\r\n\r\nI agree it's not good to try to think about the multiple fee/feerate rules in isolation. I've also heard about issues with the current absolute fee rule, and definitely don't want to make things worse. Thanks a lot for your feedback! I'll come back with a new RBF proposal to address both issues.",
+      "created_at" : "2022-01-07T11:23:22Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/23121#issuecomment-1007333357",
+      "id" : 1007333357,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/23121",
+      "node_id" : "IC_kwDOABII5848Cq_t",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1007333357/reactions"
+      },
+      "updated_at" : "2022-01-07T11:23:22Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1007333357",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/25183001?v=4",
+         "events_url" : "https://api.github.com/users/glozow/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/glozow/followers",
+         "following_url" : "https://api.github.com/users/glozow/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/glozow/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/glozow",
+         "id" : 25183001,
+         "login" : "glozow",
+         "node_id" : "MDQ6VXNlcjI1MTgzMDAx",
+         "organizations_url" : "https://api.github.com/users/glozow/orgs",
+         "received_events_url" : "https://api.github.com/users/glozow/received_events",
+         "repos_url" : "https://api.github.com/users/glozow/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/glozow/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/glozow/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/glozow"
       }
    }
 ]

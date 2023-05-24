@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\nA summary of reviews will appear here.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#26720](https://github.com/bitcoin/bitcoin/pull/26720) (wallet: coin selection, don't return results that exceed the max allowed weight by furszy)\n* [#25806](https://github.com/bitcoin/bitcoin/pull/25806) (wallet: group outputs only once, decouple it from Coin Selection by furszy)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2022-09-23T04:21:30Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25982#issuecomment-1255785800",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> @fanquake thanks. I've had some trouble getting the fuzzer to run locally on my machine (FreeBSD) so it's difficult for me to debug this. Waiting to hear feedback if others think it's worth while.\r\n\r\nTo fix the fuzzer, you could change \r\n`const CAmount cost_of_change{ConsumeMoney(fuzzed_data_provider, /*max=*/COIN)};` [(code)](https://github.com/bitcoin/bitcoin/blob/f59e91511a3aa8b2770eeec7034ddc1a9dec918b/src/wallet/test/fuzz/coinselection.cpp#L52)\r\nto\r\n`const CAmount cost_of_change{fuzzed_data_provider.ConsumeIntegralInRange<CAmount>(1, MAX_MONEY)};`\r\nThe first one draws a random number between 0 and MAX_MONEY (which will crash with the added assert), the second one between 1 and MAX_MONEY.",
       "created_at" : "2022-09-30T20:10:21Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25982#issuecomment-1263977268",
@@ -363,7 +363,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/986036313"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Weak concept ACK. I think it's a good practice to explicitly communicate assumptions, but it also feels a bit far-fetched that we'd manage to screw up our internal call stack that the asserts would actually get triggered except in unit tests.\r\n\r\nBoth `selection_target` and `cost_of_change` necessarily are always greater than 0. Yet, both these values are set by our own internal functions and initialized to non-zero values. Also, they appear in every coin selection algorithm, not just BnB. So, perhaps if we wanted to assert that they are in the proper range, the assert should be placed at the `SelectCoins` level rather than in `SelectCoinsBnB`?\r\n\r\n> @mzumsande thanks, this should fix the test. Although, ideally the fuzz data would also include values larger than 0 but less than 1 `[0, MAX_MONEY)`. I didn't know if it was worth spending a lot of time on this PR since I haven't had any type of ack though.\r\n\r\nfrom `src/consensus/.amount.h`:\r\n```\r\n/** Amount in satoshis (Can be negative) */\r\ntypedef int64_t CAmount;\r\n```\r\n\r\nCAmount is an integer satoshi count. The smallest CAmount greater than 0 is 1.",
       "commit_id" : "496d5c5874b05594e65fbff576da7800eb17e635",
       "created_at" : "2022-10-03T17:12:09Z",
@@ -395,6 +395,7 @@
       "side" : "RIGHT",
       "start_line" : 67,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-10-03T17:13:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/986036313",
       "user" : {
@@ -463,6 +464,7 @@
       "side" : "RIGHT",
       "start_line" : 67,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-10-04T02:25:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/986379268",
       "user" : {
@@ -498,7 +500,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/987247791"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "You could add the same asserts to the other coin selection algorithms, they all depend on these two values. Would you mind elaborating what gave you the idea to add the asserts?",
       "commit_id" : "496d5c5874b05594e65fbff576da7800eb17e635",
       "created_at" : "2022-10-04T19:17:42Z",
@@ -531,6 +533,7 @@
       "side" : "RIGHT",
       "start_line" : 67,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-10-04T19:17:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/987247791",
       "user" : {
@@ -599,6 +602,7 @@
       "side" : "RIGHT",
       "start_line" : 67,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-10-05T09:22:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/987712727",
       "user" : {
@@ -667,6 +671,7 @@
       "side" : "RIGHT",
       "start_line" : 67,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-10-05T09:45:59Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/987735208",
       "user" : {
@@ -702,7 +707,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/988194319"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Since it would be the same two values getting checked in all of the algorithms for the same reason, it would be better to add them all in a single commit.",
       "commit_id" : "496d5c5874b05594e65fbff576da7800eb17e635",
       "created_at" : "2022-10-05T17:54:28Z",
@@ -735,6 +740,7 @@
       "side" : "RIGHT",
       "start_line" : 67,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-10-05T17:54:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/988194319",
       "user" : {
@@ -803,6 +809,7 @@
       "side" : "RIGHT",
       "start_line" : 67,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-10-06T10:02:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/988840557",
       "user" : {
@@ -871,6 +878,7 @@
       "side" : "RIGHT",
       "start_line" : 67,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-10-06T10:39:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/988873530",
       "user" : {
@@ -1027,7 +1035,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n",
       "created_at" : "2023-03-07T01:03:43Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25982#issuecomment-1457305349",
@@ -1068,6 +1076,50 @@
          "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Closing this as it has not had any activity in a while. If you are interested in continuing work on this, please leave a comment so that it can be reopened.",
+      "created_at" : "2023-04-25T16:25:35Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25982#issuecomment-1522082927",
+      "id" : 1522082927,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25982",
+      "node_id" : "IC_kwDOABII585auSRv",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1522082927/reactions"
+      },
+      "updated_at" : "2023-04-25T16:25:35Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1522082927",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/3782274?v=4",
+         "events_url" : "https://api.github.com/users/achow101/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/achow101/followers",
+         "following_url" : "https://api.github.com/users/achow101/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/achow101/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/achow101",
+         "id" : 3782274,
+         "login" : "achow101",
+         "node_id" : "MDQ6VXNlcjM3ODIyNzQ=",
+         "organizations_url" : "https://api.github.com/users/achow101/orgs",
+         "received_events_url" : "https://api.github.com/users/achow101/received_events",
+         "repos_url" : "https://api.github.com/users/achow101/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/achow101/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/achow101"
       }
    }
 ]

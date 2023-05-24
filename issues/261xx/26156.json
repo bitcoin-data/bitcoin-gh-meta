@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "This small PR adds a test for the change introduced in PR #25931 (\"rpc: sort listdescriptors result\", commit 50996241f2b0eefeaab4fcd11b9730fa2dc107ae). The correctness of the test can easily be verified by commenting out the `std::sort` call in the `listdescriptors` RPC implementation:\r\n```diff\r\ndiff --git a/src/wallet/rpc/backup.cpp b/src/wallet/rpc/backup.cpp\r\nindex 09c74ea2da..3ed1a69b26 100644\r\n--- a/src/wallet/rpc/backup.cpp\r\n+++ b/src/wallet/rpc/backup.cpp\r\n@@ -1829,9 +1829,11 @@ RPCHelpMan listdescriptors()\r\n         });\r\n     }\r\n\r\n+    /*\r\n     std::sort(wallet_descriptors.begin(), wallet_descriptors.end(), [](const auto& a, const auto& b) {\r\n         return a.descriptor < b.descriptor;\r\n     });\r\n+    */\r\n\r\n     UniValue descriptors(UniValue::VARR);\r\n     for (const WalletDescInfo& info : wallet_descriptors) {\r\n\r\n```\r\nleading to a fail of the functional test `wallet_listdescriptors.py`.",
    "closed_at" : "2022-09-27T09:29:23Z",
    "closed_by" : {

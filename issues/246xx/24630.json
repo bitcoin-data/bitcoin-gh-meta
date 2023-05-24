@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "This resets the index dbs when running `-reindex-chainstate` as was previously done only for `-reindex`.\r\n\r\nIt fixes two bugs with `-reindex-chainstate` in conjunction with the indices:\r\n1. `coinstatsindex` gets corrupted:\r\n`reindex-chainstate`  leads to `BlockConnected()` signals to the index for each block that is reprocessed:\r\nIf the index db is not reset, the running hash `DB_MUHASH` is not reset either and it will include data from each block twice after the reindexing, so the MuHash will be incorrect. I added a test for this that fails on master.\r\n\r\n2. `blockfilterindex` duplicates the flatfile data:\r\nIt has a variable `DB_FILTER_POS` for the current position which would not get reset. As a result, the filterdata would be written twice to disk in succession.\r\n\r\n`txindex` has no running variable like the other two indexes, but I think that conceptually it makes sense to reset the index db here as well.",
    "closed_at" : "2022-04-21T14:16:37Z",
    "closed_by" : {
@@ -44,7 +44,7 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24630/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "PR_kwDOABII5840wxLl",
    "number" : 24630,
@@ -70,9 +70,10 @@
    },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24630/timeline",
    "title" : "index: reset indexes when running reindex-chainstate",
-   "updated_at" : "2022-04-21T14:16:37Z",
+   "updated_at" : "2023-04-21T14:44:52Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24630",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/48763452?v=4",

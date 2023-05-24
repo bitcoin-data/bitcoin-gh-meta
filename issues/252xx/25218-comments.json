@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2022-05-26T00:46:49Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1138021445",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25526](https://github.com/bitcoin/bitcoin/pull/25526) (wallet: avoid double keypool TopUp() calls on descriptor wallets by furszy)\n* [#25297](https://github.com/bitcoin/bitcoin/pull/25297) (WIP, wallet: speedup transactions sync, rescan and load not flushing to db constantly by furszy)\n* [#25273](https://github.com/bitcoin/bitcoin/pull/25273) (wallet: Pass through transaction locktime and preset input sequences and scripts to CreateTransaction by achow101)\n* [#25269](https://github.com/bitcoin/bitcoin/pull/25269) (wallet: re-activate the not triggered  \"AmountWithFeeExceedsBalance\" error by furszy)\n* [#25234](https://github.com/bitcoin/bitcoin/pull/25234) (bench: add benchmark for wallet 'AvailableCoins' function. by furszy)\n* [#24897](https://github.com/bitcoin/bitcoin/pull/24897) ([Draft / POC] Silent Payments by w0xlt)\n* [#23444](https://github.com/bitcoin/bitcoin/pull/23444) (fuzz: Add regression test for wallet crash by MarcoFalke)\n* [#19602](https://github.com/bitcoin/bitcoin/pull/19602) (wallet: Migrate legacy wallets to descriptor wallets by achow101)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-05-26T09:02:32Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1138321489",
@@ -88,51 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-05-26T19:48:43Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1138948586",
-      "id" : 1138948586,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25218",
-      "node_id" : "IC_kwDOABII585D4vnq",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1138948586/reactions"
-      },
-      "updated_at" : "2022-05-26T19:48:43Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1138948586",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "rebased, conflicts solved.",
       "created_at" : "2022-05-27T12:57:43Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1139594490",
@@ -176,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This basically seems like a good design.\r\n\r\nIn the simple case, you call a function and it can either succeed or fail, and if it fails it will provide an error string. In this case, the function returns `OperationResult` which contains the information packaged up in a standard format.\r\n\r\nIn the slightly more complicated case, the function has a return value. Maybe it's an informational return value, or maybe it's a return value with details about errors if the caller needs to handle different errors in different ways. Either way, `CallResult<T>` can package up the result type with the error string, and return the information a standard format.\r\n\r\nSome design questions / things I'm not sure about:\r\n\r\n- Can `OperationResult` `bool m_res` member be dropped? It seems like just having a single `std::optional<bilingual_str> m_error` member without the `bool` would provide a more minimal and unambiguous version of that class. Treating nullopt case as success, and non-nullopt case as error would avoid the need for the `bool`.\r\n\r\n- Maybe `OperationResult` type should be replaced with `CallResult<void>`, just have one result class instead of two classes\r\n\r\n- Maybe result classes should provide a standard way to chain errors. If some inner function returns an error string, the caller might want to add its own error string placing the error in context. I think we also have some wallet code that returns lists of warnings and lists of errors, so it's not clear if this result classes here would want to expand to handle this kind of thing, or they should just focus on simple cases.\r\n\r\nNo need to resolve these questions to merge the PR, I think. Can add result classes now, and experiment with using them, and add/remove features as needed.",
       "created_at" : "2022-06-16T19:37:15Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1158062263",
@@ -217,50 +173,6 @@
          "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/ryanofsky"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-06-16T19:42:19Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1158065992",
-      "id" : 1158065992,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25218",
-      "node_id" : "IC_kwDOABII585FBq9I",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1158065992/reactions"
-      },
-      "updated_at" : "2022-06-16T19:42:19Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1158065992",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
       }
    },
    {
@@ -440,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "hmm, @MarcoFalke I just rebased it locally and didn't have any merge conflict.",
       "created_at" : "2022-06-21T12:38:40Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1161693314",
@@ -528,7 +440,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "k np, thanks for re-opening it.\r\nI actually have been working on your `std::variant` comment the past days (great point), wanted to finish wrapping up the idea properly before rebase this branch.",
       "created_at" : "2022-06-21T12:57:45Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1161712996",
@@ -572,7 +484,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "FWIW, I do not think the std::variant / rust comments are a good idea. I see the main benefit of this PR *not* as providing a way of returning structured results and errors, but as a way of returning displayable and loggable error strings in a convenient way, and a way of replacing ad-hoc `bilingual_str& error` and `std::vector<bilingual_str>& warnings` output parameters with a more consistent and streamlined return mechanism.\r\n\r\nI don't think it is a good idea for the internal `bilingual_str` error type to be customizable, or for it to be directly exposed to callers. I think the internal `bilingual_str` error field that is private and has convenient constructors and accessors in 9ba14ec845a364396b2a364c02dd17043bf5a678 is a good starting design. In the future, the internal type could become more complex if we decide to add support for chaining errors, or passing warnings along with errors.\r\n\r\nRust-style `std::variant` style result types that allow returning different success and error states with data attached are great, but they are already compatible with this PR in its current form. If you want a `std::variant` return type, you can use `CallResult<std::variant<...>>`. There should be no need or benefit to making `CallResult` into a `std::variant`",
       "created_at" : "2022-06-21T14:43:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1161843649",
@@ -660,7 +572,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I don't think this result class is helpful (or hurtful) for low level level functions that compute sums and need to return structured result data to callers. I think this result class is more useful for high level functions that load wallets and create transactions and refill keypools and need to return human readable results and diagnostics to end-users.\r\n\r\n> > In the future, the internal type could become more complex if we decide to add support for chaining errors, or passing warnings along with errors.\r\n> \r\n> How would you achieve this without providing the option to `<template>` on the error type. Currently in code, some places use an error string only, some use error+warnings. If the class here only accommodates one type, it can not be used in the other place.\r\n\r\nThe type can change in the future and the API can degrade gracefully. Version 1 of this class in this PR just lets function return simple error strings and lets callers display or log them or use them in RPC results. Version 2 of this class in a future PR might add support for multiple errors or chained errors. Callers of version 2 result class could update their code to handle multiple errors in separate strings, or they could continue asking for a single error and get multiple errors in a single string. Version 3 of this class in a future-future PR might add support for warnings. Callers of version 3 result class could ask for the warning separately, or they could keep just asking for errors, and get the warnings returned as errors.\r\n\r\nThe class just gets rid of `bilingual_str& error` output parameters for now, but can grow and become more full featured in the future.\r\n\r\n> > Rust-style std::variant style result types that allow returning different success and error states with data attached are great, but they are already compatible with this PR in its current form. If you want a std::variant return type, you can use CallResult<std::variant<...>>. There should be no need or benefit to making CallResult into a std::variant\r\n> \r\n> Not sure how this would work if I wanted to write a method that calculates the sum, unless it is not possible, in which case it should provide the reason.\r\n\r\nI don't think you would use this result class in a method that calculates a sum, unless you want that method to return loggable and displayable error strings as well as sums.\r\n\r\n> Currently I could write:\r\n> \r\n> ```c++\r\n> enum class ArithError{ OVERFLOW, UNDERFLOW};\r\n> std::variant<int, ArithErr> sum(int, int);\r\n> ```\r\n> \r\n> However, the downside is that the calling code would need to unwrap the variant verbosely.\r\n\r\nRight. I don't think think there will be a good solution to verbosity until pattern matching features are added to c++. I just think this is orthogonal to anything in this PR. It is certainly orthogonal to anything in 9ba14ec845a364396b2a364c02dd17043bf5a678. If you want your sum function to return overflow/underflow/int, std::variant is your best bet probably, and I don't think this PR or another PR is going to give you something better.",
       "created_at" : "2022-06-21T15:23:13Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1161910489",
@@ -748,7 +660,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "There might be some tricks that give a limited form of pattern matching. For example could replace enum in previous example with:\r\n\r\n```c++\r\nstruct OverflowError {};\r\nstruct UnderflowError {};\r\nstd::variant<int, OverflowError, UnderflowError> sum(int, int);\r\n```\r\n\r\nand use [`std::visit` + `util::Overloaded`lambdas trick](https://github.com/bitcoin/bitcoin/blob/34869114a72435b9d8364385abaefed70d703fa8/src/wallet/transaction.h#L89-L95) to handle the different cases.\r\n",
       "created_at" : "2022-06-21T15:46:11Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1161936770",
@@ -836,7 +748,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Yeah, but that's ugly because the lambdas must have the same return type\r\n\r\nYes probably the lambdas would return void and just execute code and modify local variables, like a `switch` statement. But like you said this is overkill for two cases. `std::variant` would be useful when there are more cases that need to be handled in many different ways.",
       "created_at" : "2022-06-21T16:20:42Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1161975272",
@@ -880,7 +792,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "A bit late but here.\r\n\r\n> and use [std::visit + util::Overloadedlambdas trick](https://github.com/bitcoin/bitcoin/blob/34869114a72435b9d8364385abaefed70d703fa8/src/wallet/transaction.h#L89-L95) to handle the different cases.\r\n\r\nI was actually experimenting with that (and few more things). Essentially, was making a generic wrapper class for std::variant to eliminate the extra verbosity that comes with it + adding the ability to catch, at compile-time, any not handled function outcome/s.\r\n\r\nBut.. haven't finished the experiment yet (been jumping across other findings).\r\n\r\nFrom my side, if you guys are happy with the current PR state, we could move forward with it. At the end, it cleans up a lot of boilerplate code, can easily be used in a lot of places right away, and encapsulates the result object mechanics into its own class (which, while the class interface is good, as ryanofsky said, it can be upgraded/changed in the future without any trouble).\r\nNote: decision will not stop me from continuing with the experiment.",
       "created_at" : "2022-06-24T18:17:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1165820370",
@@ -924,7 +836,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "My main suggestions for improvement are here: https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1158062263. I think  `bool m_res` member should be dropped and `m_error`member  being non-empty should be the only condition that determines whether the result is an error. Also just IMO but I think naming could be improved. I'd change `CallResult<T>` to `util::Result<T>` and `OperationResult` to `util::Result<void>`. I think a short name for the class is better so code is concise is and easy to read. Also I don't think when you are writing code you should need to think about vocabulary and whether a function that returns a value is considered an \"operation\" or an \"call\".",
       "created_at" : "2022-06-24T18:53:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1165846070",
@@ -968,7 +880,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> My main suggestions for improvement are here: https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1158062263. I think bool m_res member should be dropped and m_error member being non-empty should be the only condition that determines whether the result is an error.\r\n\r\nYeah ok ðð¼ .\r\n\r\nWouldn't be bad to think further about the \"result code\" notion there (where any <=0 value means \"failed\") to not make the optional string value a requirement (depends on where the function that uses the `Result` class is located, layer's wise, we might don't want to involve strings in the result and just error codes so then the upper layers can translate the error accordantly to a more informational string). --> Note: and I'm not targeting to low-level arithmetic functions, I'm thinking about middleware functions that are called from different places and mean a slightly different thing depending from where they are called.\r\n\r\nBut.. I'm just thinking out loud.. this could be implemented in the future using a generic error type as well (if needed).\r\n\r\n> Also just IMO but I think naming could be improved. I'd change CallResult<T> to util::Result<T> and OperationResult to util::Result<void>. I think a short name for the class is better so code is concise is and easy to read. Also I don't think when you are writing code you should need to think about vocabulary and whether a function that returns a value is considered an \"operation\" or an \"call\".\r\n\r\nYeah agree, I didn't use the \"Result\" term before because it's being used in other places and didn't want to clash with them: `feebumper.h` has a `Result` enum and `nanobench.h` has a `Result` class.\r\nBut.. just saw that those are under different namespaces, so all good.\r\nStill, I personally don't like much having the `util::` namespace prefix at the beginning of every function signature.",
       "created_at" : "2022-06-24T20:00:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1165894089",
@@ -1012,7 +924,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Based on all the great feedback, pushed the following changes:\r\n\r\n1. Removed the `OperationResult` class. It wasnât being used here (can be introduced in a follow-up PR when we connect it to some process).â¨\r\n\r\n2. Internally, the result class now uses an `std::variant` instead of two optional values. This is mainly because the result object behaves as an OR operation, not as an AND (it contains one value or the other, not both).â¨\r\n    Which let us gain the `std::variant` benefits without introducing the ugly `get_if` and `holds_alternative` by type, or by index, verbosity that comes with it. Quick example:\r\n\r\n    a) Using a plain `std::variant`:\r\n    ```c++\r\n    std::variant<CreatedTransactionResult, bilingual_str> result = createTx(arg1, arg2, arg3);\r\n    if (std::holds_alternative<bilingual_str>(result)) {\r\n        const auto& error = std::get<bilingual_str>(result);\r\n        // error out..\r\n    }\r\n    const auto& txr = std::get<CreatedTransactionResult>(result);\r\n    // continue doing something..\r\n    ```\r\n\r\n    b) Using the introduced `BResult` class:\r\n    ```c++\r\n    BResult<CreatedTransactionResult> result = createTx(arg1, arg2, arg3);\r\n    if (!result) {\r\n        const auto& error = result.GetError();\r\n        // error out..\r\n    }\r\n    const auto& txr = result.GetObj();\r\n    // continue doing something..\r\n    ```\r\n\r\n3. Renamed `CallResult` to `BResult`.\r\n    Some rationale for selecting this name and not the suggested `util::Result`:â¨\r\n    \r\n    a) I think that defining it as âResultâ alone will, sooner or later, cause issues with other library/module class. Itâs a pretty common name.â¨\r\n    b) Function signatures readability wise, I donât think that declare it under the `util` namespace helps much. At least for me, the `util::` prefix usage in a return object looks odd.",
       "created_at" : "2022-06-26T00:40:17Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1166387618",
@@ -1021,7 +933,7 @@
       "node_id" : "IC_kwDOABII585Fhami",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1029,7 +941,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1166387618/reactions"
       },
       "updated_at" : "2022-06-26T00:40:17Z",
@@ -1069,19 +981,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Any reason to not call this just \"get\", like https://en.cppreference.com/w/cpp/memory/unique_ptr/get",
-      "commit_id" : "89207d52a87c151539d42a63063c51db8f9c1dec",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-26T06:48:16Z",
       "diff_hunk" : "@@ -0,0 +1,39 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or https://www.opensource.org/licenses/mit-license.php.\n+\n+#ifndef BITCOIN_RESULT_H\n+#define BITCOIN_RESULT_H\n+\n+#include <optional>\n+#include <util/translation.h>\n+#include <variant>\n+\n+/*\n+ * 'BResult' is a generic class useful for wrapping a return object\n+ * (in case of success) or propagating the error cause.\n+*/\n+template<class T>\n+class BResult {\n+private:\n+    std::variant<bilingual_str, T> m_variant;\n+\n+public:\n+    BResult() : m_variant(Untranslated(\"\")) {}\n+    BResult(const T& _obj) : m_variant(_obj) {}\n+    BResult(const bilingual_str& error) : m_variant(error) {}\n+\n+    /* In case of success, the result object */\n+    const T* GetObj() const { return std::get_if<T>(&m_variant); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r906765270",
       "id" : 906765270,
-      "line" : 27,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5842DCPW",
       "original_commit_id" : "89207d52a87c151539d42a63063c51db8f9c1dec",
       "original_line" : 27,
       "original_position" : 27,
       "original_start_line" : null,
       "path" : "src/result.h",
-      "position" : 27,
+      "position" : null,
       "pull_request_review_id" : 1019380937,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25218",
       "reactions" : {
@@ -1099,6 +1011,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-26T07:26:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906765270",
       "user" : {
@@ -1136,19 +1049,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "maybe get -> has , like https://en.cppreference.com/w/cpp/utility/optional/operator_bool\r\n\r\nand `!std::holds_alternative<bilingual_str>` -> `std::holds_alternative<T>`?",
-      "commit_id" : "89207d52a87c151539d42a63063c51db8f9c1dec",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-26T06:52:04Z",
       "diff_hunk" : "@@ -0,0 +1,39 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or https://www.opensource.org/licenses/mit-license.php.\n+\n+#ifndef BITCOIN_RESULT_H\n+#define BITCOIN_RESULT_H\n+\n+#include <optional>\n+#include <util/translation.h>\n+#include <variant>\n+\n+/*\n+ * 'BResult' is a generic class useful for wrapping a return object\n+ * (in case of success) or propagating the error cause.\n+*/\n+template<class T>\n+class BResult {\n+private:\n+    std::variant<bilingual_str, T> m_variant;\n+\n+public:\n+    BResult() : m_variant(Untranslated(\"\")) {}\n+    BResult(const T& _obj) : m_variant(_obj) {}\n+    BResult(const bilingual_str& error) : m_variant(error) {}\n+\n+    /* In case of success, the result object */\n+    const T* GetObj() const { return std::get_if<T>(&m_variant); }\n+    /* Whether the function succeeded or not */\n+    bool GetRes() const { return !std::holds_alternative<bilingual_str>(m_variant); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r906765645",
       "id" : 906765645,
-      "line" : 29,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5842DCVN",
       "original_commit_id" : "89207d52a87c151539d42a63063c51db8f9c1dec",
       "original_line" : 29,
       "original_position" : 29,
       "original_start_line" : null,
       "path" : "src/result.h",
-      "position" : 29,
+      "position" : null,
       "pull_request_review_id" : 1019380937,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25218",
       "reactions" : {
@@ -1166,6 +1079,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-26T07:26:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906765645",
       "user" : {
@@ -1203,19 +1117,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "unused?",
-      "commit_id" : "89207d52a87c151539d42a63063c51db8f9c1dec",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-26T07:24:55Z",
       "diff_hunk" : "@@ -0,0 +1,39 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or https://www.opensource.org/licenses/mit-license.php.\n+\n+#ifndef BITCOIN_RESULT_H\n+#define BITCOIN_RESULT_H\n+\n+#include <optional>",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r906769575",
       "id" : 906769575,
-      "line" : 8,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5842DDSn",
       "original_commit_id" : "89207d52a87c151539d42a63063c51db8f9c1dec",
       "original_line" : 8,
       "original_position" : 8,
       "original_start_line" : null,
       "path" : "src/result.h",
-      "position" : 8,
+      "position" : null,
       "pull_request_review_id" : 1019380937,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25218",
       "reactions" : {
@@ -1233,6 +1147,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-26T07:26:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906769575",
       "user" : {
@@ -1270,19 +1185,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "I think regardless of the namespace, this should be placed in the `util` folder",
-      "commit_id" : "89207d52a87c151539d42a63063c51db8f9c1dec",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-26T07:25:17Z",
       "diff_hunk" : "@@ -0,0 +1,39 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or https://www.opensource.org/licenses/mit-license.php.\n+\n+#ifndef BITCOIN_RESULT_H\n+#define BITCOIN_RESULT_H",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r906769619",
       "id" : 906769619,
-      "line" : 6,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5842DDTT",
       "original_commit_id" : "89207d52a87c151539d42a63063c51db8f9c1dec",
       "original_line" : 6,
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "src/result.h",
-      "position" : 6,
+      "position" : null,
       "pull_request_review_id" : 1019380937,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25218",
       "reactions" : {
@@ -1300,6 +1215,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-26T07:26:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906769619",
       "user" : {
@@ -1337,19 +1253,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "I wonder if `operator*` should be added, like https://en.cppreference.com/w/cpp/memory/unique_ptr/operator*\r\n\r\nbut instead of UB, it runs into an assertion failure?",
-      "commit_id" : "89207d52a87c151539d42a63063c51db8f9c1dec",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-26T07:26:30Z",
       "diff_hunk" : "@@ -0,0 +1,39 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or https://www.opensource.org/licenses/mit-license.php.\n+\n+#ifndef BITCOIN_RESULT_H\n+#define BITCOIN_RESULT_H\n+\n+#include <optional>\n+#include <util/translation.h>\n+#include <variant>\n+\n+/*\n+ * 'BResult' is a generic class useful for wrapping a return object\n+ * (in case of success) or propagating the error cause.\n+*/\n+template<class T>\n+class BResult {\n+private:\n+    std::variant<bilingual_str, T> m_variant;\n+\n+public:\n+    BResult() : m_variant(Untranslated(\"\")) {}\n+    BResult(const T& _obj) : m_variant(_obj) {}\n+    BResult(const bilingual_str& error) : m_variant(error) {}\n+\n+    /* In case of success, the result object */\n+    const T* GetObj() const { return std::get_if<T>(&m_variant); }\n+    /* Whether the function succeeded or not */\n+    bool GetRes() const { return !std::holds_alternative<bilingual_str>(m_variant); }\n+    /* In case of failure, the error cause */\n+    bilingual_str GetError() const {\n+        auto error = std::get_if<bilingual_str>(&m_variant);\n+        return (error ? *error : bilingual_str());\n+    }\n+\n+    explicit operator bool() const { return GetRes(); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r906769777",
       "id" : 906769777,
-      "line" : 36,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5842DDVx",
       "original_commit_id" : "89207d52a87c151539d42a63063c51db8f9c1dec",
       "original_line" : 36,
       "original_position" : 36,
       "original_start_line" : null,
       "path" : "src/result.h",
-      "position" : 36,
+      "position" : null,
       "pull_request_review_id" : 1019380937,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25218",
       "reactions" : {
@@ -1367,6 +1283,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-26T07:26:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906769777",
       "user" : {
@@ -1446,9 +1363,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906837086"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`std::get` on a variant throws [std::bad_variant_access](https://en.cppreference.com/w/cpp/utility/variant/bad_variant_access) on errors (if the variant isn't storing the type) --> https://en.cppreference.com/w/cpp/utility/variant/get. `std::get_if` just return a nullptr.\r\n\r\nIdeally, I think that an assertion here would be good, so we can directly return the const reference instead of the pointer (which will force the callers to always check if the result succeeded or not before getting the type). But.. I didn't add it here to not make this PR too broad, it was needing further restructuring in some of the function's callers (add a new plug-and-play result class is one thing, restructure how each of the callers treats the result is another one).\r\n\r\n",
-      "commit_id" : "efbeafaa1d537db171016a785da4647fde7db5cb",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-26T15:42:32Z",
       "diff_hunk" : "@@ -0,0 +1,39 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or https://www.opensource.org/licenses/mit-license.php.\n+\n+#ifndef BITCOIN_RESULT_H\n+#define BITCOIN_RESULT_H\n+\n+#include <optional>\n+#include <util/translation.h>\n+#include <variant>\n+\n+/*\n+ * 'BResult' is a generic class useful for wrapping a return object\n+ * (in case of success) or propagating the error cause.\n+*/\n+template<class T>\n+class BResult {\n+private:\n+    std::variant<bilingual_str, T> m_variant;\n+\n+public:\n+    BResult() : m_variant(Untranslated(\"\")) {}\n+    BResult(const T& _obj) : m_variant(_obj) {}\n+    BResult(const bilingual_str& error) : m_variant(error) {}\n+\n+    /* In case of success, the result object */\n+    const T* GetObj() const { return std::get_if<T>(&m_variant); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r906837086",
@@ -1479,6 +1396,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-26T15:42:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906837086",
       "user" : {
@@ -1514,9 +1432,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906837162"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done",
-      "commit_id" : "efbeafaa1d537db171016a785da4647fde7db5cb",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-26T15:43:10Z",
       "diff_hunk" : "@@ -0,0 +1,39 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or https://www.opensource.org/licenses/mit-license.php.\n+\n+#ifndef BITCOIN_RESULT_H\n+#define BITCOIN_RESULT_H\n+\n+#include <optional>\n+#include <util/translation.h>\n+#include <variant>\n+\n+/*\n+ * 'BResult' is a generic class useful for wrapping a return object\n+ * (in case of success) or propagating the error cause.\n+*/\n+template<class T>\n+class BResult {\n+private:\n+    std::variant<bilingual_str, T> m_variant;\n+\n+public:\n+    BResult() : m_variant(Untranslated(\"\")) {}\n+    BResult(const T& _obj) : m_variant(_obj) {}\n+    BResult(const bilingual_str& error) : m_variant(error) {}\n+\n+    /* In case of success, the result object */\n+    const T* GetObj() const { return std::get_if<T>(&m_variant); }\n+    /* Whether the function succeeded or not */\n+    bool GetRes() const { return !std::holds_alternative<bilingual_str>(m_variant); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r906837162",
@@ -1547,6 +1465,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-26T15:43:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906837162",
       "user" : {
@@ -1582,9 +1501,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906837206"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ðð¼ removed.",
-      "commit_id" : "efbeafaa1d537db171016a785da4647fde7db5cb",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-26T15:43:26Z",
       "diff_hunk" : "@@ -0,0 +1,39 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or https://www.opensource.org/licenses/mit-license.php.\n+\n+#ifndef BITCOIN_RESULT_H\n+#define BITCOIN_RESULT_H\n+\n+#include <optional>",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r906837206",
@@ -1615,6 +1534,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-26T15:43:26Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906837206",
       "user" : {
@@ -1650,9 +1570,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906837218"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "moved ðð¼",
-      "commit_id" : "efbeafaa1d537db171016a785da4647fde7db5cb",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-26T15:43:38Z",
       "diff_hunk" : "@@ -0,0 +1,39 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or https://www.opensource.org/licenses/mit-license.php.\n+\n+#ifndef BITCOIN_RESULT_H\n+#define BITCOIN_RESULT_H",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r906837218",
@@ -1683,6 +1603,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-26T15:43:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906837218",
       "user" : {
@@ -1707,7 +1628,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks for the feedback Marco!\r\n\r\nPR description updated + applied the following changes:\r\n\r\n1) result.h file moved to util directory.\r\n2) Renamed `GetRes` for `HasRes`.\r\n3) Removed unused <optional> include.\r\n\r\n",
       "created_at" : "2022-06-26T15:52:08Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1166570663",
@@ -1764,7 +1685,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "I meant renaming the function name from `GetObj` to `Get`",
-      "commit_id" : "efbeafaa1d537db171016a785da4647fde7db5cb",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-26T17:34:25Z",
       "diff_hunk" : "@@ -0,0 +1,39 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or https://www.opensource.org/licenses/mit-license.php.\n+\n+#ifndef BITCOIN_RESULT_H\n+#define BITCOIN_RESULT_H\n+\n+#include <optional>\n+#include <util/translation.h>\n+#include <variant>\n+\n+/*\n+ * 'BResult' is a generic class useful for wrapping a return object\n+ * (in case of success) or propagating the error cause.\n+*/\n+template<class T>\n+class BResult {\n+private:\n+    std::variant<bilingual_str, T> m_variant;\n+\n+public:\n+    BResult() : m_variant(Untranslated(\"\")) {}\n+    BResult(const T& _obj) : m_variant(_obj) {}\n+    BResult(const bilingual_str& error) : m_variant(error) {}\n+\n+    /* In case of success, the result object */\n+    const T* GetObj() const { return std::get_if<T>(&m_variant); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r906850137",
@@ -1795,6 +1716,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-26T17:34:25Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906850137",
       "user" : {
@@ -1830,9 +1752,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906864570"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Ah ok, I tried to distinguish clearly at the interface level the two possible outcomes `GetError()`/`GetObj()` (It could had been `GetRes()` as well). Mainly to prevent this class from be blindly used as a smart pointer, forgetting the error existence.\r\nBut if you have a strong predilection for the `Get` wording, could change it. Nothing is set on stone hehe.",
-      "commit_id" : "efbeafaa1d537db171016a785da4647fde7db5cb",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-26T20:01:40Z",
       "diff_hunk" : "@@ -0,0 +1,39 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or https://www.opensource.org/licenses/mit-license.php.\n+\n+#ifndef BITCOIN_RESULT_H\n+#define BITCOIN_RESULT_H\n+\n+#include <optional>\n+#include <util/translation.h>\n+#include <variant>\n+\n+/*\n+ * 'BResult' is a generic class useful for wrapping a return object\n+ * (in case of success) or propagating the error cause.\n+*/\n+template<class T>\n+class BResult {\n+private:\n+    std::variant<bilingual_str, T> m_variant;\n+\n+public:\n+    BResult() : m_variant(Untranslated(\"\")) {}\n+    BResult(const T& _obj) : m_variant(_obj) {}\n+    BResult(const bilingual_str& error) : m_variant(error) {}\n+\n+    /* In case of success, the result object */\n+    const T* GetObj() const { return std::get_if<T>(&m_variant); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r906864570",
@@ -1863,6 +1785,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-26T20:02:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906864570",
       "user" : {
@@ -1898,9 +1821,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906872770"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Hmm, it could be handy but might end up with users trying to access the object without checking the result existence first (which, as not every error path is covered by tests, could end up badly).\r\n\r\nI would rather walk into adding a generic `std::visit` direction, so users are always forced to provide handlers for both outcomes. Which would avoid the pointers need at all and make the code less error prone.",
-      "commit_id" : "efbeafaa1d537db171016a785da4647fde7db5cb",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-26T21:26:56Z",
       "diff_hunk" : "@@ -0,0 +1,39 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or https://www.opensource.org/licenses/mit-license.php.\n+\n+#ifndef BITCOIN_RESULT_H\n+#define BITCOIN_RESULT_H\n+\n+#include <optional>\n+#include <util/translation.h>\n+#include <variant>\n+\n+/*\n+ * 'BResult' is a generic class useful for wrapping a return object\n+ * (in case of success) or propagating the error cause.\n+*/\n+template<class T>\n+class BResult {\n+private:\n+    std::variant<bilingual_str, T> m_variant;\n+\n+public:\n+    BResult() : m_variant(Untranslated(\"\")) {}\n+    BResult(const T& _obj) : m_variant(_obj) {}\n+    BResult(const bilingual_str& error) : m_variant(error) {}\n+\n+    /* In case of success, the result object */\n+    const T* GetObj() const { return std::get_if<T>(&m_variant); }\n+    /* Whether the function succeeded or not */\n+    bool GetRes() const { return !std::holds_alternative<bilingual_str>(m_variant); }\n+    /* In case of failure, the error cause */\n+    bilingual_str GetError() const {\n+        auto error = std::get_if<bilingual_str>(&m_variant);\n+        return (error ? *error : bilingual_str());\n+    }\n+\n+    explicit operator bool() const { return GetRes(); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r906872770",
@@ -1931,6 +1854,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-26T21:26:57Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/906872770",
       "user" : {
@@ -1966,9 +1890,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907436166"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "spacing nit:\r\n```suggestion\r\n            if (!ctx.isValid()) {\r\n```",
-      "commit_id" : "9a0a4024f0fdd2ec598613fa8ea55683115a88f5",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T14:11:09Z",
       "diff_hunk" : "@@ -370,23 +370,21 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con\n     else if(type == Receive)\n     {\n         // Generate a new address to associate with given label\n-        CTxDestination dest;\n-        if(!walletModel->wallet().getNewDestination(address_type, strLabel, dest))\n-        {\n+        auto op_dest = walletModel->wallet().getNewDestination(address_type, strLabel);\n+        if (!op_dest) {\n             WalletModel::UnlockContext ctx(walletModel->requestUnlock());\n-            if(!ctx.isValid())\n-            {\n+            if(!ctx.isValid()) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907436166",
@@ -1998,6 +1922,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T14:26:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907436166",
       "user" : {
@@ -2033,9 +1958,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907438516"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "redundant nit:\r\n```suggestion\r\n        return _(\"Error: Keypool ran out, please call keypoolrefill first\");\r\n```",
-      "commit_id" : "9a0a4024f0fdd2ec598613fa8ea55683115a88f5",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T14:13:19Z",
       "diff_hunk" : "@@ -21,26 +21,22 @@ namespace wallet {\n //! Value for the first BIP 32 hardened derivation. Can be used as a bit mask and as a value. See BIP 32 for more details.\n const uint32_t BIP32_HARDENED_KEY_LIMIT = 0x80000000;\n \n-bool LegacyScriptPubKeyMan::GetNewDestination(const OutputType type, CTxDestination& dest, bilingual_str& error)\n+BResult<CTxDestination> LegacyScriptPubKeyMan::GetNewDestination(const OutputType type)\n {\n     if (LEGACY_OUTPUT_TYPES.count(type) == 0) {\n-        error = _(\"Error: Legacy wallets only support the \\\"legacy\\\", \\\"p2sh-segwit\\\", and \\\"bech32\\\" address types\");\n-        return false;\n+        return _(\"Error: Legacy wallets only support the \\\"legacy\\\", \\\"p2sh-segwit\\\", and \\\"bech32\\\" address types\");;\n     }\n     assert(type != OutputType::BECH32M);\n \n     LOCK(cs_KeyStore);\n-    error.clear();\n \n     // Generate a new key that is added to wallet\n     CPubKey new_key;\n     if (!GetKeyFromPool(new_key, type)) {\n-        error = _(\"Error: Keypool ran out, please call keypoolrefill first\");\n-        return false;\n+        return _(\"Error: Keypool ran out, please call keypoolrefill first\");;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907438516",
@@ -2065,6 +1990,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T14:26:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907438516",
       "user" : {
@@ -2100,9 +2026,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907448364"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: probably be explicit here, same as in the fuzz test?\r\n```suggestion\r\n        assert(op_dest.HasRes());\r\n```",
-      "commit_id" : "9a0a4024f0fdd2ec598613fa8ea55683115a88f5",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T14:22:16Z",
       "diff_hunk" : "@@ -74,11 +74,9 @@ static void add_coin(std::vector<COutput>& coins, CWallet& wallet, const CAmount\n     tx.vout.resize(nInput + 1);\n     tx.vout[nInput].nValue = nValue;\n     if (spendable) {\n-        CTxDestination dest;\n-        bilingual_str error;\n-        const bool destination_ok = wallet.GetNewDestination(OutputType::BECH32, \"\", dest, error);\n-        assert(destination_ok);\n-        tx.vout[nInput].scriptPubKey = GetScriptForDestination(dest);\n+        auto op_dest = wallet.GetNewDestination(OutputType::BECH32, \"\");\n+        assert(op_dest);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907448364",
@@ -2132,6 +2058,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T14:26:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907448364",
       "user" : {
@@ -2167,9 +2094,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907511455"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done",
-      "commit_id" : "9a0a4024f0fdd2ec598613fa8ea55683115a88f5",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T15:23:32Z",
       "diff_hunk" : "@@ -74,11 +74,9 @@ static void add_coin(std::vector<COutput>& coins, CWallet& wallet, const CAmount\n     tx.vout.resize(nInput + 1);\n     tx.vout[nInput].nValue = nValue;\n     if (spendable) {\n-        CTxDestination dest;\n-        bilingual_str error;\n-        const bool destination_ok = wallet.GetNewDestination(OutputType::BECH32, \"\", dest, error);\n-        assert(destination_ok);\n-        tx.vout[nInput].scriptPubKey = GetScriptForDestination(dest);\n+        auto op_dest = wallet.GetNewDestination(OutputType::BECH32, \"\");\n+        assert(op_dest);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907511455",
@@ -2200,6 +2127,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T15:23:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907511455",
       "user" : {
@@ -2235,9 +2163,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907511560"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done",
-      "commit_id" : "9a0a4024f0fdd2ec598613fa8ea55683115a88f5",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T15:23:38Z",
       "diff_hunk" : "@@ -21,26 +21,22 @@ namespace wallet {\n //! Value for the first BIP 32 hardened derivation. Can be used as a bit mask and as a value. See BIP 32 for more details.\n const uint32_t BIP32_HARDENED_KEY_LIMIT = 0x80000000;\n \n-bool LegacyScriptPubKeyMan::GetNewDestination(const OutputType type, CTxDestination& dest, bilingual_str& error)\n+BResult<CTxDestination> LegacyScriptPubKeyMan::GetNewDestination(const OutputType type)\n {\n     if (LEGACY_OUTPUT_TYPES.count(type) == 0) {\n-        error = _(\"Error: Legacy wallets only support the \\\"legacy\\\", \\\"p2sh-segwit\\\", and \\\"bech32\\\" address types\");\n-        return false;\n+        return _(\"Error: Legacy wallets only support the \\\"legacy\\\", \\\"p2sh-segwit\\\", and \\\"bech32\\\" address types\");;\n     }\n     assert(type != OutputType::BECH32M);\n \n     LOCK(cs_KeyStore);\n-    error.clear();\n \n     // Generate a new key that is added to wallet\n     CPubKey new_key;\n     if (!GetKeyFromPool(new_key, type)) {\n-        error = _(\"Error: Keypool ran out, please call keypoolrefill first\");\n-        return false;\n+        return _(\"Error: Keypool ran out, please call keypoolrefill first\");;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907511560",
@@ -2268,6 +2196,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T15:23:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907511560",
       "user" : {
@@ -2303,9 +2232,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907511636"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done",
-      "commit_id" : "9a0a4024f0fdd2ec598613fa8ea55683115a88f5",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T15:23:43Z",
       "diff_hunk" : "@@ -370,23 +370,21 @@ QString AddressTableModel::addRow(const QString &type, const QString &label, con\n     else if(type == Receive)\n     {\n         // Generate a new address to associate with given label\n-        CTxDestination dest;\n-        if(!walletModel->wallet().getNewDestination(address_type, strLabel, dest))\n-        {\n+        auto op_dest = walletModel->wallet().getNewDestination(address_type, strLabel);\n+        if (!op_dest) {\n             WalletModel::UnlockContext ctx(walletModel->requestUnlock());\n-            if(!ctx.isValid())\n-            {\n+            if(!ctx.isValid()) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907511636",
@@ -2336,6 +2265,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T15:23:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907511636",
       "user" : {
@@ -2360,7 +2290,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks for the review theStack!\r\n\r\nPushed the three nits.\r\n\r\n> Back then on PR https://github.com/bitcoin/bitcoin/pull/20640, which was the first step of getting rid of out parameters for the functions CreateTransaction{Internal}, the over-use of the auto keyword was questioned (see https://github.com/bitcoin/bitcoin/pull/20640#discussion_r549173268) due to obscuring the data type and hence lower readability, as it's not immediately visible what the return type is. Probably at some places explicitly using the BResult<T> would also be better\r\n\r\nI think that at least on this, non-consensus, code is \"ok\" to use the `auto` keyword on the result. Mainly because in order to get the returned value you still have to call `GetObj()` (where, probably, we could clarify the type there).\r\n\r\nAnd I think that something like the following example is a bit too much for a single line of code:\r\n```c++\r\nconst BResult<CreatedTransactionResult>& create_tx_result = CreateTransactionInternal(wallet, vecSend, change_pos, coin_control, sign);\r\n```\r\n\r\nBut.. open for comments. If more want it, will make the changes. (might be good to add a section into the developer-notes talking about this)",
       "created_at" : "2022-06-27T15:46:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1167519405",
@@ -2417,7 +2347,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "In 755cb5606de0b63e0027ab11840bb5e4c3f000aa \"Introduce generic 'Result' class\"\r\n\r\nI would prefer if we used `std::get` instead of `get_if` so that the callers don't have to deal with pointers. This could `assert(HasRes())` to avoid the exception. Then the return value would be `T&`.\r\n\r\nSame for `GetError` below.",
-      "commit_id" : "26288acf5c8e5cb55cf6b1829ead883289fce633",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T18:36:57Z",
       "diff_hunk" : "@@ -0,0 +1,38 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or https://www.opensource.org/licenses/mit-license.php.\n+\n+#ifndef BITCOIN_UTIL_RESULT_H\n+#define BITCOIN_UTIL_RESULT_H\n+\n+#include <util/translation.h>\n+#include <variant>\n+\n+/*\n+ * 'BResult' is a generic class useful for wrapping a return object\n+ * (in case of success) or propagating the error cause.\n+*/\n+template<class T>\n+class BResult {\n+private:\n+    std::variant<bilingual_str, T> m_variant;\n+\n+public:\n+    BResult() : m_variant(Untranslated(\"\")) {}\n+    BResult(const T& _obj) : m_variant(_obj) {}\n+    BResult(const bilingual_str& error) : m_variant(error) {}\n+\n+    /* In case of success, the result object */\n+    const T* GetObj() const { return std::get_if<T>(&m_variant); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907685907",
@@ -2447,6 +2377,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T19:22:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907685907",
       "user" : {
@@ -2484,7 +2415,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "In 755cb5606de0b63e0027ab11840bb5e4c3f000aa \"Introduce generic 'Result' class\"\r\n\r\n```suggestion\r\n    const bilingual_str& GetError() const {\r\n```",
-      "commit_id" : "26288acf5c8e5cb55cf6b1829ead883289fce633",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T18:41:28Z",
       "diff_hunk" : "@@ -0,0 +1,38 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or https://www.opensource.org/licenses/mit-license.php.\n+\n+#ifndef BITCOIN_UTIL_RESULT_H\n+#define BITCOIN_UTIL_RESULT_H\n+\n+#include <util/translation.h>\n+#include <variant>\n+\n+/*\n+ * 'BResult' is a generic class useful for wrapping a return object\n+ * (in case of success) or propagating the error cause.\n+*/\n+template<class T>\n+class BResult {\n+private:\n+    std::variant<bilingual_str, T> m_variant;\n+\n+public:\n+    BResult() : m_variant(Untranslated(\"\")) {}\n+    BResult(const T& _obj) : m_variant(_obj) {}\n+    BResult(const bilingual_str& error) : m_variant(error) {}\n+\n+    /* In case of success, the result object */\n+    const T* GetObj() const { return std::get_if<T>(&m_variant); }\n+    /* Whether the function succeeded or not */\n+    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n+    /* In case of failure, the error cause */\n+    bilingual_str GetError() const {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907689776",
@@ -2514,6 +2445,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T19:22:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907689776",
       "user" : {
@@ -2551,7 +2483,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "In 4e1353016dabcf645b22fb7c196f62d8f465df39 \"send: refactor CreateTransaction flow to return a BResult<CTransactionRef>\"\r\n\r\nThe `if` above could just return the error strings directly as you have done elsewhere, there's no need to be returning error after setting those strings.",
-      "commit_id" : "26288acf5c8e5cb55cf6b1829ead883289fce633",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T18:56:41Z",
       "diff_hunk" : "@@ -904,7 +895,7 @@ static std::optional<CreatedTransactionResult> CreateTransactionInternal(\n                     } else {\n                         error = _(\"The transaction amount is too small to send after the fee has been deducted\");\n                     }\n-                    return std::nullopt;\n+                    return error;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907702773",
@@ -2581,6 +2513,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T19:22:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907702773",
       "user" : {
@@ -2618,7 +2551,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "In 9a0a4024f0fdd2ec598613fa8ea55683115a88f5 \"wallet: refactor GetNewDestination, use BResult\"\r\n\r\n```suggestion\r\n    assert(op_dest.HasRes());\r\n```",
-      "commit_id" : "26288acf5c8e5cb55cf6b1829ead883289fce633",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T19:02:29Z",
       "diff_hunk" : "@@ -20,11 +20,10 @@ const std::string ADDRESS_BCRT1_UNSPENDABLE = \"bcrt1qqqqqqqqqqqqqqqqqqqqqqqqqqqq\n std::string getnewaddress(CWallet& w)\n {\n     constexpr auto output_type = OutputType::BECH32;\n-    CTxDestination dest;\n-    bilingual_str error;\n-    if (!w.GetNewDestination(output_type, \"\", dest, error)) assert(false);\n+    auto op_dest = w.GetNewDestination(output_type, \"\");\n+    if (!op_dest) assert(false);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907707351",
@@ -2648,6 +2581,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T19:22:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907707351",
       "user" : {
@@ -2685,7 +2619,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "In 9a0a4024f0fdd2ec598613fa8ea55683115a88f5 \"wallet: refactor GetNewDestination, use BResult\"\r\n\r\nIt would be nice if this function got the same treatment too. But that can also be done in a followup to avoid expanding the scope of this PR too far.",
-      "commit_id" : "26288acf5c8e5cb55cf6b1829ead883289fce633",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T19:06:13Z",
       "diff_hunk" : "@@ -1769,9 +1763,13 @@ bool DescriptorScriptPubKeyMan::Encrypt(const CKeyingMaterial& master_key, Walle\n bool DescriptorScriptPubKeyMan::GetReservedDestination(const OutputType type, bool internal, CTxDestination& address, int64_t& index, CKeyPool& keypool, bilingual_str& error)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907710067",
@@ -2715,6 +2649,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T19:22:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907710067",
       "user" : {
@@ -2752,7 +2687,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "In 4e1353016dabcf645b22fb7c196f62d8f465df39 \"send: refactor CreateTransaction flow to return a BResult<CTransactionRef>\"\r\n\r\n`res` is not being evaluated as a `bool` here, so the tracepoint does not work as expected.\r\n\r\n```suggestion\r\n    TRACE4(coin_selection, normal_create_tx_internal, wallet.GetName().c_str(), res.HasRes(),\r\n```",
-      "commit_id" : "26288acf5c8e5cb55cf6b1829ead883289fce633",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T19:20:53Z",
       "diff_hunk" : "@@ -961,48 +948,46 @@ static std::optional<CreatedTransactionResult> CreateTransactionInternal(\n     return CreatedTransactionResult(tx, nFeeRet, nChangePosInOut, feeCalc);\n }\n \n-std::optional<CreatedTransactionResult> CreateTransaction(\n+BResult<CreatedTransactionResult> CreateTransaction(\n         CWallet& wallet,\n         const std::vector<CRecipient>& vecSend,\n         int change_pos,\n-        bilingual_str& error,\n         const CCoinControl& coin_control,\n         bool sign)\n {\n     if (vecSend.empty()) {\n-        error = _(\"Transaction must have at least one recipient\");\n-        return std::nullopt;\n+        return _(\"Transaction must have at least one recipient\");\n     }\n \n     if (std::any_of(vecSend.cbegin(), vecSend.cend(), [](const auto& recipient){ return recipient.nAmount < 0; })) {\n-        error = _(\"Transaction amounts must not be negative\");\n-        return std::nullopt;\n+        return _(\"Transaction amounts must not be negative\");\n     }\n \n     LOCK(wallet.cs_wallet);\n \n-    std::optional<CreatedTransactionResult> txr_ungrouped = CreateTransactionInternal(wallet, vecSend, change_pos, error, coin_control, sign);\n-    TRACE4(coin_selection, normal_create_tx_internal, wallet.GetName().c_str(), txr_ungrouped.has_value(),\n-           txr_ungrouped.has_value() ? txr_ungrouped->fee : 0, txr_ungrouped.has_value() ? txr_ungrouped->change_pos : 0);\n-    if (!txr_ungrouped) return std::nullopt;\n+    auto res = CreateTransactionInternal(wallet, vecSend, change_pos, coin_control, sign);\n+    TRACE4(coin_selection, normal_create_tx_internal, wallet.GetName().c_str(), res,",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907721005",
@@ -2782,6 +2717,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T19:22:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907721005",
       "user" : {
@@ -2817,7 +2753,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907778660"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I would prefer it too but.. the rationale to not implement it was https://github.com/bitcoin/bitcoin/pull/25218#discussion_r906837086.\r\n\r\nLet me see how large the changes to make this happen are. Probably the only refactoring will be inside `CreateTransaction` for all the tracepoints.",
       "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T20:39:38Z",
@@ -2850,6 +2786,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-30T18:30:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907778660",
       "user" : {
@@ -2885,9 +2822,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907781983"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "yeah, better to leave it for a follow-up PR. Once we get this one merged, other PRs will be able to use the new class in different workflows independently.",
-      "commit_id" : "26288acf5c8e5cb55cf6b1829ead883289fce633",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T20:44:13Z",
       "diff_hunk" : "@@ -1769,9 +1763,13 @@ bool DescriptorScriptPubKeyMan::Encrypt(const CKeyingMaterial& master_key, Walle\n bool DescriptorScriptPubKeyMan::GetReservedDestination(const OutputType type, bool internal, CTxDestination& address, int64_t& index, CKeyPool& keypool, bilingual_str& error)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907781983",
@@ -2918,6 +2855,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T20:44:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907781983",
       "user" : {
@@ -2953,9 +2891,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907814337"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done",
-      "commit_id" : "26288acf5c8e5cb55cf6b1829ead883289fce633",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T21:30:26Z",
       "diff_hunk" : "@@ -20,11 +20,10 @@ const std::string ADDRESS_BCRT1_UNSPENDABLE = \"bcrt1qqqqqqqqqqqqqqqqqqqqqqqqqqqq\n std::string getnewaddress(CWallet& w)\n {\n     constexpr auto output_type = OutputType::BECH32;\n-    CTxDestination dest;\n-    bilingual_str error;\n-    if (!w.GetNewDestination(output_type, \"\", dest, error)) assert(false);\n+    auto op_dest = w.GetNewDestination(output_type, \"\");\n+    if (!op_dest) assert(false);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907814337",
@@ -2986,6 +2924,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T21:30:26Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907814337",
       "user" : {
@@ -3021,9 +2960,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907814403"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done",
-      "commit_id" : "26288acf5c8e5cb55cf6b1829ead883289fce633",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T21:30:33Z",
       "diff_hunk" : "@@ -904,7 +895,7 @@ static std::optional<CreatedTransactionResult> CreateTransactionInternal(\n                     } else {\n                         error = _(\"The transaction amount is too small to send after the fee has been deducted\");\n                     }\n-                    return std::nullopt;\n+                    return error;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907814403",
@@ -3054,6 +2993,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T21:30:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907814403",
       "user" : {
@@ -3089,9 +3029,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907814465"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done",
-      "commit_id" : "26288acf5c8e5cb55cf6b1829ead883289fce633",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T21:30:39Z",
       "diff_hunk" : "@@ -0,0 +1,38 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or https://www.opensource.org/licenses/mit-license.php.\n+\n+#ifndef BITCOIN_UTIL_RESULT_H\n+#define BITCOIN_UTIL_RESULT_H\n+\n+#include <util/translation.h>\n+#include <variant>\n+\n+/*\n+ * 'BResult' is a generic class useful for wrapping a return object\n+ * (in case of success) or propagating the error cause.\n+*/\n+template<class T>\n+class BResult {\n+private:\n+    std::variant<bilingual_str, T> m_variant;\n+\n+public:\n+    BResult() : m_variant(Untranslated(\"\")) {}\n+    BResult(const T& _obj) : m_variant(_obj) {}\n+    BResult(const bilingual_str& error) : m_variant(error) {}\n+\n+    /* In case of success, the result object */\n+    const T* GetObj() const { return std::get_if<T>(&m_variant); }\n+    /* Whether the function succeeded or not */\n+    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n+    /* In case of failure, the error cause */\n+    bilingual_str GetError() const {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907814465",
@@ -3122,6 +3062,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T21:30:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907814465",
       "user" : {
@@ -3157,9 +3098,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907814540"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done",
-      "commit_id" : "26288acf5c8e5cb55cf6b1829ead883289fce633",
+      "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-06-27T21:30:48Z",
       "diff_hunk" : "@@ -961,48 +948,46 @@ static std::optional<CreatedTransactionResult> CreateTransactionInternal(\n     return CreatedTransactionResult(tx, nFeeRet, nChangePosInOut, feeCalc);\n }\n \n-std::optional<CreatedTransactionResult> CreateTransaction(\n+BResult<CreatedTransactionResult> CreateTransaction(\n         CWallet& wallet,\n         const std::vector<CRecipient>& vecSend,\n         int change_pos,\n-        bilingual_str& error,\n         const CCoinControl& coin_control,\n         bool sign)\n {\n     if (vecSend.empty()) {\n-        error = _(\"Transaction must have at least one recipient\");\n-        return std::nullopt;\n+        return _(\"Transaction must have at least one recipient\");\n     }\n \n     if (std::any_of(vecSend.cbegin(), vecSend.cend(), [](const auto& recipient){ return recipient.nAmount < 0; })) {\n-        error = _(\"Transaction amounts must not be negative\");\n-        return std::nullopt;\n+        return _(\"Transaction amounts must not be negative\");\n     }\n \n     LOCK(wallet.cs_wallet);\n \n-    std::optional<CreatedTransactionResult> txr_ungrouped = CreateTransactionInternal(wallet, vecSend, change_pos, error, coin_control, sign);\n-    TRACE4(coin_selection, normal_create_tx_internal, wallet.GetName().c_str(), txr_ungrouped.has_value(),\n-           txr_ungrouped.has_value() ? txr_ungrouped->fee : 0, txr_ungrouped.has_value() ? txr_ungrouped->change_pos : 0);\n-    if (!txr_ungrouped) return std::nullopt;\n+    auto res = CreateTransactionInternal(wallet, vecSend, change_pos, coin_control, sign);\n+    TRACE4(coin_selection, normal_create_tx_internal, wallet.GetName().c_str(), res,",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#discussion_r907814540",
@@ -3190,6 +3131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-27T21:30:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/907814540",
       "user" : {
@@ -3214,7 +3156,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Updated per achow101's feedback.\r\n\r\nMain modification was around the result `getObj` and `GetError` methods, which now return const references instead of pointers.\r\nThis will force users to check whether the result succeeded or not before attempt to access the value.",
       "created_at" : "2022-06-27T21:42:48Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1167939817",
@@ -3302,7 +3244,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks @w0xlt for the review!\r\n\r\n> The CI has an error, but the error message does not match the current PR code.\r\nwallet.GetNewDestination(OutputType::BECH32, \"\", destination, error); was replaced in https://github.com/bitcoin/bitcoin/commit/26288acf5c8e5cb55cf6b1829ead883289fce633\r\n\r\nGood eye. Seems that it's a silent conflict with master due #24924 merge. Going to rebase it once more.",
       "created_at" : "2022-07-08T12:27:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1178931392",
@@ -3346,7 +3288,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "All green now, ready to go.",
       "created_at" : "2022-07-08T13:56:15Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1179018985",
@@ -3390,7 +3332,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Rebased once more to include the recently merged #25337 here as well.",
       "created_at" : "2022-07-08T14:24:23Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1179048871",
@@ -3521,6 +3463,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T11:56:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918826967",
       "user" : {
@@ -3588,6 +3531,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T11:56:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918828784",
       "user" : {
@@ -3655,6 +3599,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T16:46:51Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918836620",
       "user" : {
@@ -3722,6 +3667,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T11:56:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918837404",
       "user" : {
@@ -3790,6 +3736,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T11:56:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918838756",
       "user" : {
@@ -3857,6 +3804,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T11:56:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918840872",
       "user" : {
@@ -3924,6 +3872,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T11:56:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918843290",
       "user" : {
@@ -3991,6 +3940,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T11:56:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918847542",
       "user" : {
@@ -4058,6 +4008,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T11:56:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918863838",
       "user" : {
@@ -4125,6 +4076,7 @@
       "side" : "RIGHT",
       "start_line" : 50,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T11:56:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918867327",
       "user" : {
@@ -4193,6 +4145,7 @@
       "side" : "RIGHT",
       "start_line" : 50,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T11:56:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918868560",
       "user" : {
@@ -4261,6 +4214,7 @@
       "side" : "RIGHT",
       "start_line" : 50,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T11:56:14Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918870433",
       "user" : {
@@ -4329,6 +4283,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T12:47:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918926778",
       "user" : {
@@ -4383,7 +4338,7 @@
       "pull_request_review_id" : 1035829419,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25218",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -4391,12 +4346,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918985474/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T13:40:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918985474",
       "user" : {
@@ -4451,7 +4407,7 @@
       "pull_request_review_id" : 1035829584,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25218",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -4459,12 +4415,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918985584/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-12T13:40:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/918985584",
       "user" : {
@@ -4500,7 +4457,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/921376131"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "What does that `B` means at the beginning of class name?",
       "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-07-14T17:02:13Z",
@@ -4532,6 +4489,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-14T20:08:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/921376131",
       "user" : {
@@ -4567,7 +4525,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/921449805"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "@MarcoFalke Use `{}` where? You mean `CreatedTransactionResult{tx, nFeeRet, nChangePosInOut, feeCalc}` instead of current version? ",
       "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-07-14T18:20:41Z",
@@ -4600,6 +4558,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-14T20:08:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/921449805",
       "user" : {
@@ -4624,7 +4583,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "I think this PR can have `Good first review` label. For someone like me which is very new to the project, understanding the concept and implementation of this PR was easy (relative to other PRs).",
       "created_at" : "2022-07-15T11:37:01Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1185459469",
@@ -4679,7 +4638,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/922116692"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Comes from \"Bilingual\". The story behind it is in the last paragraph of this comment: https://github.com/bitcoin/bitcoin/pull/25218#issuecomment-1166387618",
       "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-07-15T12:26:23Z",
@@ -4712,6 +4671,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-15T12:26:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/922116692",
       "user" : {
@@ -4747,7 +4707,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/922116940"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "k, got it. Thanks.",
       "commit_id" : "111ea3ab711414236f8678566a7884d48619b2d8",
       "created_at" : "2022-07-15T12:26:43Z",
@@ -4780,6 +4740,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-15T12:26:43Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/922116940",
       "user" : {

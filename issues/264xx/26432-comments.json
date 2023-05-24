@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Whilst it might be debug information only, it does appear to me also that `IsInitialBlockDownload()` should be returning as `True` during reindexing:\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/5668ccec1d3785632caf4b74c1701019ecc88f41/src/rpc/blockchain.cpp#L1255\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/5668ccec1d3785632caf4b74c1701019ecc88f41/src/validation.cpp#L1528-L1538\r\n\r\nSo perhaps what is happening here is that the node finishes importing before it has made a connection and receives new headers, so leaves IBD, then learns of a new header tip and starts processing those blocks as normal? Due to the `DEFAULT_MAX_TIP_AGE` check this should only be able to happen if the tip is less than 24h old.\r\n\r\n@sander2 If you are going to be turning the node on and off for <24h and need this check then perhaps you want to consider a different approach, such as comparing your tip/height to the tip served by some public block explorers' APIs?",
       "created_at" : "2022-11-01T12:25:46Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/26432#issuecomment-1298436987",

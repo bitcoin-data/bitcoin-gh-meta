@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This hopefully avoids bugs like https://github.com/bitcoin/bitcoin/pull/24157#discussion_r849698742 and gets most of the benefits of `-Wthread-safety-negative` without introducing massive amounts of unhelpful warnings about `cs_main` and the like as per #20272. See also #21598.",
       "created_at" : "2022-04-20T09:30:22Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#issuecomment-1103698546",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25152](https://github.com/bitcoin/bitcoin/pull/25152) (refactor: Split util/system into exception, shell, and fs-specific files by Empact)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-04-20T15:03:03Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#issuecomment-1104038902",
@@ -233,23 +233,23 @@
       },
       "author_association" : "MEMBER",
       "body" : "Should each of the annotations added in the first commit also have `AssertLockNotHeld`?\r\n",
-      "commit_id" : "b6914e600709bd886e16aa61b6aef88805a40a1b",
+      "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-04-20T18:52:25Z",
       "diff_hunk" : "@@ -188,7 +188,7 @@ class CCheckQueue\n     }\n \n     //! Stop all of the worker threads.\n-    void StopWorkerThreads()\n+    void StopWorkerThreads() EXCLUSIVE_LOCKS_REQUIRED(!m_mutex)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#discussion_r854455079",
       "id" : 854455079,
-      "line" : 191,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584y7fMn",
       "original_commit_id" : "b6914e600709bd886e16aa61b6aef88805a40a1b",
       "original_line" : 191,
       "original_position" : 39,
       "original_start_line" : null,
       "path" : "src/checkqueue.h",
-      "position" : 39,
+      "position" : null,
       "pull_request_review_id" : 947621170,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24931",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -257,12 +257,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/854455079/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-20T19:00:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/854455079",
       "user" : {
@@ -300,7 +301,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "nit, \"mutexes\" here is correct, but s/Mutex's/Mutexes/ on line 130 and s/mutex's/mutexes/ on line 134",
-      "commit_id" : "b6914e600709bd886e16aa61b6aef88805a40a1b",
+      "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-04-20T18:55:01Z",
       "diff_hunk" : "@@ -129,7 +127,25 @@ class LOCKABLE AnnotatedMixin : public PARENT\n using RecursiveMutex = AnnotatedMixin<std::recursive_mutex>;\n \n /** Wrapped mutex: supports waiting but not recursive locking */\n-typedef AnnotatedMixin<std::mutex> Mutex;\n+using Mutex = AnnotatedMixin<std::mutex>;\n+\n+/** Different type to mark Mutex's outside of a class\n+ *\n+ * Thread safety analysis can't handle negative assertions about mutex's\n+ * with global scope well, so mark them with a separate type, and\n+ * eventually move all the mutexes into classes so they are not globally",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#discussion_r854457071",
@@ -312,7 +313,7 @@
       "original_position" : 20,
       "original_start_line" : null,
       "path" : "src/sync.h",
-      "position" : 20,
+      "position" : 8,
       "pull_request_review_id" : 947621170,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24931",
       "reactions" : {
@@ -330,6 +331,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-20T19:00:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/854457071",
       "user" : {
@@ -365,22 +367,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/854692193"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "That feels like overkill, but I'm not sure where to draw the line.",
-      "commit_id" : "b6914e600709bd886e16aa61b6aef88805a40a1b",
+      "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-04-21T01:12:19Z",
       "diff_hunk" : "@@ -188,7 +188,7 @@ class CCheckQueue\n     }\n \n     //! Stop all of the worker threads.\n-    void StopWorkerThreads()\n+    void StopWorkerThreads() EXCLUSIVE_LOCKS_REQUIRED(!m_mutex)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#discussion_r854692193",
       "id" : 854692193,
       "in_reply_to_id" : 854455079,
-      "line" : 191,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584y8ZFh",
       "original_commit_id" : "b6914e600709bd886e16aa61b6aef88805a40a1b",
       "original_line" : 191,
       "original_position" : 39,
       "original_start_line" : null,
       "path" : "src/checkqueue.h",
-      "position" : 39,
+      "position" : null,
       "pull_request_review_id" : 947939182,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24931",
       "reactions" : {
@@ -398,6 +400,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-21T01:12:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/854692193",
       "user" : {
@@ -422,7 +425,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Is the goal of this change to allow building with `-Wthread-safety-negative`?\r\n\r\nNo; as far as I can see that option prevents you from holding a `RecursiveMutex` when reacquiring the same `RecursiveMutex`, so is pointless until we don't have any of those left.\r\n\r\n",
       "created_at" : "2022-04-21T01:25:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#issuecomment-1104614614",
@@ -510,7 +513,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Rebased past #24157, fixed bad apostrophes",
       "created_at" : "2022-04-26T09:37:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#issuecomment-1109577317",
@@ -565,21 +568,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858717674"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`!m_addr_fetches_mutex` and `!m_nodes_mutex` seem to be unnecessary here.\r\n\r\n```suggestion\r\n    void ThreadOpenAddedConnections() EXCLUSIVE_LOCKS_REQUIRED(!m_added_nodes_mutex);\r\n```",
-      "commit_id" : "e735d93ce456eb37898ae11e623702e46970b80f",
+      "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-04-26T13:31:24Z",
       "diff_hunk" : "@@ -954,11 +955,11 @@ class CConnman\n     bool Bind(const CService& addr, unsigned int flags, NetPermissionFlags permissions);\n     bool InitBinds(const Options& options);\n \n-    void ThreadOpenAddedConnections();\n-    void AddAddrFetch(const std::string& strDest);\n-    void ProcessAddrFetch();\n-    void ThreadOpenConnections(std::vector<std::string> connect);\n-    void ThreadMessageHandler();\n+    void ThreadOpenAddedConnections() EXCLUSIVE_LOCKS_REQUIRED(!m_addr_fetches_mutex, !m_added_nodes_mutex, !m_nodes_mutex);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#discussion_r858717674",
       "id" : 858717674,
-      "line" : 958,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584zLv3q",
       "original_commit_id" : "e735d93ce456eb37898ae11e623702e46970b80f",
       "original_line" : 958,
       "original_position" : 101,
       "original_start_line" : null,
       "path" : "src/net.h",
-      "position" : 101,
+      "position" : null,
       "pull_request_review_id" : 953385102,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24931",
       "reactions" : {
@@ -597,6 +600,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-26T14:54:43Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858717674",
       "user" : {
@@ -632,21 +636,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858729399"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`ThreadOpenConnections()` acquires `m_nodes_mutex` directly.\r\n\r\n```suggestion\r\n    void ThreadOpenConnections(std::vector<std::string> connect) EXCLUSIVE_LOCKS_REQUIRED(!m_addr_fetches_mutex, !m_added_nodes_mutex, !m_nodes_mutex);\r\n```\r\n",
-      "commit_id" : "e735d93ce456eb37898ae11e623702e46970b80f",
+      "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-04-26T13:41:37Z",
       "diff_hunk" : "@@ -954,11 +955,11 @@ class CConnman\n     bool Bind(const CService& addr, unsigned int flags, NetPermissionFlags permissions);\n     bool InitBinds(const Options& options);\n \n-    void ThreadOpenAddedConnections();\n-    void AddAddrFetch(const std::string& strDest);\n-    void ProcessAddrFetch();\n-    void ThreadOpenConnections(std::vector<std::string> connect);\n-    void ThreadMessageHandler();\n+    void ThreadOpenAddedConnections() EXCLUSIVE_LOCKS_REQUIRED(!m_addr_fetches_mutex, !m_added_nodes_mutex, !m_nodes_mutex);\n+    void AddAddrFetch(const std::string& strDest) EXCLUSIVE_LOCKS_REQUIRED(!m_addr_fetches_mutex);\n+    void ProcessAddrFetch() EXCLUSIVE_LOCKS_REQUIRED(!m_addr_fetches_mutex);\n+    void ThreadOpenConnections(std::vector<std::string> connect) EXCLUSIVE_LOCKS_REQUIRED(!m_addr_fetches_mutex, !m_added_nodes_mutex);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#discussion_r858729399",
       "id" : 858729399,
-      "line" : 961,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584zLyu3",
       "original_commit_id" : "e735d93ce456eb37898ae11e623702e46970b80f",
       "original_line" : 961,
       "original_position" : 104,
       "original_start_line" : null,
       "path" : "src/net.h",
-      "position" : 104,
+      "position" : null,
       "pull_request_review_id" : 953385102,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24931",
       "reactions" : {
@@ -664,6 +668,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-26T14:54:43Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858729399",
       "user" : {
@@ -699,21 +704,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858744340"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`ThreadDNSAddressSeed()` acquires `m_nodes_mutex` directly.\r\n\r\n```suggestion\r\n    void ThreadDNSAddressSeed() EXCLUSIVE_LOCKS_REQUIRED(!m_addr_fetches_mutex, !m_nodes_mutex);\r\n```",
-      "commit_id" : "e735d93ce456eb37898ae11e623702e46970b80f",
+      "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-04-26T13:54:01Z",
       "diff_hunk" : "@@ -1023,16 +1024,16 @@ class CConnman\n                                 const std::set<SOCKET>& recv_set,\n                                 const std::set<SOCKET>& send_set,\n                                 const std::set<SOCKET>& error_set)\n-        EXCLUSIVE_LOCKS_REQUIRED(!m_total_bytes_sent_mutex);\n+        EXCLUSIVE_LOCKS_REQUIRED(!m_total_bytes_sent_mutex, !mutexMsgProc);\n \n     /**\n      * Accept incoming connections, one from each read-ready listening socket.\n      * @param[in] recv_set Sockets that are ready for read.\n      */\n     void SocketHandlerListening(const std::set<SOCKET>& recv_set);\n \n-    void ThreadSocketHandler() EXCLUSIVE_LOCKS_REQUIRED(!m_total_bytes_sent_mutex);\n-    void ThreadDNSAddressSeed();\n+    void ThreadSocketHandler() EXCLUSIVE_LOCKS_REQUIRED(!m_total_bytes_sent_mutex, !mutexMsgProc);\n+    void ThreadDNSAddressSeed() EXCLUSIVE_LOCKS_REQUIRED(!m_addr_fetches_mutex);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#discussion_r858744340",
       "id" : 858744340,
-      "line" : 1036,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584zL2YU",
       "original_commit_id" : "e735d93ce456eb37898ae11e623702e46970b80f",
       "original_line" : 1036,
       "original_position" : 134,
       "original_start_line" : null,
       "path" : "src/net.h",
-      "position" : 134,
+      "position" : null,
       "pull_request_review_id" : 953385102,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24931",
       "reactions" : {
@@ -731,6 +736,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-26T14:54:43Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858744340",
       "user" : {
@@ -766,21 +772,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858771737"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This change seems unnecessary because this method does not lock any mutex or call a method that requires `!m_mutex`:\r\n\r\n```cpp\r\nBIP9Stats VersionBitsCache::Statistics(const CBlockIndex* pindex, const Consensus::Params& params, Consensus::DeploymentPos pos, std::vector<bool>* signalling_blocks)\r\n{\r\n    return VersionBitsConditionChecker(pos).GetStateStatisticsFor(pindex, params, signalling_blocks);\r\n}   \r\n```",
-      "commit_id" : "e735d93ce456eb37898ae11e623702e46970b80f",
+      "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-04-26T14:17:33Z",
       "diff_hunk" : "@@ -87,21 +87,21 @@ class VersionBitsCache\n     /** Get the numerical statistics for a given deployment for the signalling period that includes pindex.\n      * If provided, signalling_blocks is set to true/false based on whether each block in the period signalled\n      */\n-    static BIP9Stats Statistics(const CBlockIndex* pindex, const Consensus::Params& params, Consensus::DeploymentPos pos, std::vector<bool>* signalling_blocks = nullptr);\n+    static BIP9Stats Statistics(const CBlockIndex* pindex, const Consensus::Params& params, Consensus::DeploymentPos pos, std::vector<bool>* signalling_blocks = nullptr) EXCLUSIVE_LOCKS_REQUIRED(!m_mutex);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#discussion_r858771737",
       "id" : 858771737,
-      "line" : 90,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584zL9EZ",
       "original_commit_id" : "e735d93ce456eb37898ae11e623702e46970b80f",
       "original_line" : 90,
       "original_position" : 5,
       "original_start_line" : 90,
       "path" : "src/versionbits.h",
-      "position" : 5,
+      "position" : null,
       "pull_request_review_id" : 953385102,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24931",
       "reactions" : {
@@ -796,8 +802,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858771737/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 90,
+      "start_line" : null,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-04-26T14:54:43Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858771737",
       "user" : {
@@ -833,21 +840,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858793527"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "style: `AssertLockNotHeldInline()` is newly added function, so should abide to the naming convention for its arguments:\r\n\r\n```suggestion\r\ninline void AssertLockNotHeldInline(const char* mutex_name, const char* file_name, int line, Mutex* mutex) EXCLUSIVE_LOCKS_REQUIRED(!cs) { AssertLockNotHeldInternal(mutex_name, file_name, line, mutex); }\r\n```\r\n",
-      "commit_id" : "e735d93ce456eb37898ae11e623702e46970b80f",
+      "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-04-26T14:35:38Z",
       "diff_hunk" : "@@ -129,7 +127,25 @@ class LOCKABLE AnnotatedMixin : public PARENT\n using RecursiveMutex = AnnotatedMixin<std::recursive_mutex>;\n \n /** Wrapped mutex: supports waiting but not recursive locking */\n-typedef AnnotatedMixin<std::mutex> Mutex;\n+using Mutex = AnnotatedMixin<std::mutex>;\n+\n+/** Different type to mark Mutex at global scope\n+ *\n+ * Thread safety analysis can't handle negative assertions about mutexes\n+ * with global scope well, so mark them with a separate type, and\n+ * eventually move all the mutexes into classes so they are not globally\n+ * visible.\n+ *\n+ * See: https://github.com/bitcoin/bitcoin/pull/20272#issuecomment-720755781\n+ */\n+class GlobalMutex : public Mutex { };\n+\n+#define AssertLockHeld(cs) AssertLockHeldInternal(#cs, __FILE__, __LINE__, &cs)\n+\n+inline void AssertLockNotHeldInline(const char* pszName, const char* pszFile, int nLine, Mutex* cs) EXCLUSIVE_LOCKS_REQUIRED(!cs) { AssertLockNotHeldInternal(pszName, pszFile, nLine, cs); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#discussion_r858793527",
       "id" : 858793527,
-      "line" : 145,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584zMCY3",
       "original_commit_id" : "e735d93ce456eb37898ae11e623702e46970b80f",
       "original_line" : 145,
       "original_position" : 29,
       "original_start_line" : null,
       "path" : "src/sync.h",
-      "position" : 29,
+      "position" : null,
       "pull_request_review_id" : 953385102,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24931",
       "reactions" : {
@@ -865,6 +872,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-26T14:54:43Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858793527",
       "user" : {
@@ -900,22 +908,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858878323"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This isn't caught because `m_nodes_mutex` is a `RecursiveMutex` so it's okay if it's already held",
-      "commit_id" : "e735d93ce456eb37898ae11e623702e46970b80f",
+      "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-04-26T15:43:43Z",
       "diff_hunk" : "@@ -954,11 +955,11 @@ class CConnman\n     bool Bind(const CService& addr, unsigned int flags, NetPermissionFlags permissions);\n     bool InitBinds(const Options& options);\n \n-    void ThreadOpenAddedConnections();\n-    void AddAddrFetch(const std::string& strDest);\n-    void ProcessAddrFetch();\n-    void ThreadOpenConnections(std::vector<std::string> connect);\n-    void ThreadMessageHandler();\n+    void ThreadOpenAddedConnections() EXCLUSIVE_LOCKS_REQUIRED(!m_addr_fetches_mutex, !m_added_nodes_mutex, !m_nodes_mutex);\n+    void AddAddrFetch(const std::string& strDest) EXCLUSIVE_LOCKS_REQUIRED(!m_addr_fetches_mutex);\n+    void ProcessAddrFetch() EXCLUSIVE_LOCKS_REQUIRED(!m_addr_fetches_mutex);\n+    void ThreadOpenConnections(std::vector<std::string> connect) EXCLUSIVE_LOCKS_REQUIRED(!m_addr_fetches_mutex, !m_added_nodes_mutex);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#discussion_r858878323",
       "id" : 858878323,
       "in_reply_to_id" : 858729399,
-      "line" : 961,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584zMXFz",
       "original_commit_id" : "e735d93ce456eb37898ae11e623702e46970b80f",
       "original_line" : 961,
       "original_position" : 104,
       "original_start_line" : null,
       "path" : "src/net.h",
-      "position" : 104,
+      "position" : null,
       "pull_request_review_id" : 953625533,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24931",
       "reactions" : {
@@ -933,6 +941,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-26T15:43:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858878323",
       "user" : {
@@ -968,22 +977,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858880238"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "It's also static, so seems like it would have a hard time finding an `m_mutex` to reference...",
-      "commit_id" : "e735d93ce456eb37898ae11e623702e46970b80f",
+      "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-04-26T15:45:38Z",
       "diff_hunk" : "@@ -87,21 +87,21 @@ class VersionBitsCache\n     /** Get the numerical statistics for a given deployment for the signalling period that includes pindex.\n      * If provided, signalling_blocks is set to true/false based on whether each block in the period signalled\n      */\n-    static BIP9Stats Statistics(const CBlockIndex* pindex, const Consensus::Params& params, Consensus::DeploymentPos pos, std::vector<bool>* signalling_blocks = nullptr);\n+    static BIP9Stats Statistics(const CBlockIndex* pindex, const Consensus::Params& params, Consensus::DeploymentPos pos, std::vector<bool>* signalling_blocks = nullptr) EXCLUSIVE_LOCKS_REQUIRED(!m_mutex);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#discussion_r858880238",
       "id" : 858880238,
       "in_reply_to_id" : 858771737,
-      "line" : 90,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584zMXju",
       "original_commit_id" : "e735d93ce456eb37898ae11e623702e46970b80f",
       "original_line" : 90,
       "original_position" : 5,
       "original_start_line" : 90,
       "path" : "src/versionbits.h",
-      "position" : 5,
+      "position" : null,
       "pull_request_review_id" : 953628235,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24931",
       "reactions" : {
@@ -999,8 +1008,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858880238/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 90,
+      "start_line" : null,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-04-26T15:45:38Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/858880238",
       "user" : {
@@ -1025,7 +1035,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK a55ee93f5aa6c94eb333f16db112bb834807acd4 - just the first two commits, in case you decide to split them in a separate PR. Thanks!",
       "created_at" : "2022-04-27T09:28:48Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#issuecomment-1110778750",
@@ -1069,51 +1079,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-04-30T11:01:09Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#issuecomment-1113968252",
-      "id" : 1113968252,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24931",
-      "node_id" : "IC_kwDOABII585CZc58",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1113968252/reactions"
-      },
-      "updated_at" : "2022-04-30T11:01:09Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1113968252",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Rebased past #24543 ",
       "created_at" : "2022-05-03T17:01:43Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#issuecomment-1116334586",
@@ -1157,7 +1123,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Rebased past #25100 and split the first two commits out into #25109; please review that one first, it should be easy.",
       "created_at" : "2022-05-11T17:16:29Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#issuecomment-1124035716",
@@ -1201,7 +1167,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Rebased over #25109 merge",
       "created_at" : "2022-05-16T13:11:25Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#issuecomment-1127654878",
@@ -1302,7 +1268,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Sorry for bothering, but it's hard for me to parse this comment (sure I need to improve my English).\r\n\r\nMaybe, re-word it a bit?",
-      "commit_id" : "44052046a54135cb00605d525270bea744a97ebf",
+      "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-05-16T15:44:19Z",
       "diff_hunk" : "@@ -232,12 +244,26 @@ class SCOPED_LOCKABLE UniqueLock : public Base\n template<typename MutexArg>\n using DebugLock = UniqueLock<typename std::remove_reference<typename std::remove_pointer<MutexArg>::type>::type>;\n \n-#define LOCK(cs) DebugLock<decltype(cs)> UNIQUE_NAME(criticalblock)(cs, #cs, __FILE__, __LINE__)\n+// When locking a Mutex, require negative capability to ensure the lock\n+// is not already held\n+inline Mutex& MaybeCheckNotHeld(Mutex& cs) EXCLUSIVE_LOCKS_REQUIRED(!cs) LOCK_RETURNED(cs) { return cs; }\n+inline Mutex* MaybeCheckNotHeld(Mutex* cs) EXCLUSIVE_LOCKS_REQUIRED(!cs) LOCK_RETURNED(cs) { return cs; }\n+\n+// When locking a GlobalMutex, just check we don't know it's locked",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#discussion_r873883889",
@@ -1332,6 +1298,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T15:44:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873883889",
       "user" : {
@@ -1369,7 +1336,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "```suggestion\r\n// When locking a GlobalMutex, just check it is not locked in the surrounding scope.\r\n```",
-      "commit_id" : "44052046a54135cb00605d525270bea744a97ebf",
+      "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-05-16T15:48:49Z",
       "diff_hunk" : "@@ -232,12 +244,26 @@ class SCOPED_LOCKABLE UniqueLock : public Base\n template<typename MutexArg>\n using DebugLock = UniqueLock<typename std::remove_reference<typename std::remove_pointer<MutexArg>::type>::type>;\n \n-#define LOCK(cs) DebugLock<decltype(cs)> UNIQUE_NAME(criticalblock)(cs, #cs, __FILE__, __LINE__)\n+// When locking a Mutex, require negative capability to ensure the lock\n+// is not already held\n+inline Mutex& MaybeCheckNotHeld(Mutex& cs) EXCLUSIVE_LOCKS_REQUIRED(!cs) LOCK_RETURNED(cs) { return cs; }\n+inline Mutex* MaybeCheckNotHeld(Mutex* cs) EXCLUSIVE_LOCKS_REQUIRED(!cs) LOCK_RETURNED(cs) { return cs; }\n+\n+// When locking a GlobalMutex, just check we don't know it's locked",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#discussion_r873888414",
@@ -1400,6 +1367,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T15:48:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873888414",
       "user" : {
@@ -1437,19 +1405,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Using of `EXCLUSIVE_LOCKS_REQUIRED(!m_some_mutex)` also could prevent deadlocks.",
-      "commit_id" : "44052046a54135cb00605d525270bea744a97ebf",
+      "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-05-16T15:50:54Z",
       "diff_hunk" : "@@ -902,14 +902,19 @@ Threads and synchronization\n - Prefer `Mutex` type to `RecursiveMutex` one.\n \n - Consistently use [Clang Thread Safety Analysis](https://clang.llvm.org/docs/ThreadSafetyAnalysis.html) annotations to\n-  get compile-time warnings about potential race conditions in code. Combine annotations in function declarations with\n-  run-time asserts in function definitions:\n+  get compile-time warnings about potential race conditions in code.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#discussion_r873890891",
       "id" : 873890891,
-      "line" : 905,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5840FoRL",
       "original_commit_id" : "e6f05cc7dfa021a0aef03d1ae904aa3b9555b1aa",
       "original_line" : 905,
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "doc/developer-notes.md",
-      "position" : 6,
+      "position" : null,
       "pull_request_review_id" : 974196531,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24931",
       "reactions" : {
@@ -1467,6 +1435,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T15:51:27Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873890891",
       "user" : {
@@ -1491,7 +1460,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "The `g_shutdown_mutex` is scoped within the `Shutdown()` function rather than at the module level, so while it's a global in the sense of \"there's only one of them\", it's not global in the sense of \"every function can directly reference it, without need it to be passed in\", so there's no need to annotate it differently to other normal mutexes.",
       "created_at" : "2022-05-16T15:57:04Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#issuecomment-1127848760",
@@ -1500,7 +1469,7 @@
       "node_id" : "IC_kwDOABII585DOZs4",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1508,7 +1477,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1127848760/reactions"
       },
       "updated_at" : "2022-05-16T15:57:04Z",
@@ -1546,9 +1515,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873968747"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Done; thanks @MarcoFalke for the suggestion so I didn't have to ask for one :)",
-      "commit_id" : "44052046a54135cb00605d525270bea744a97ebf",
+      "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-05-16T17:09:35Z",
       "diff_hunk" : "@@ -232,12 +244,26 @@ class SCOPED_LOCKABLE UniqueLock : public Base\n template<typename MutexArg>\n using DebugLock = UniqueLock<typename std::remove_reference<typename std::remove_pointer<MutexArg>::type>::type>;\n \n-#define LOCK(cs) DebugLock<decltype(cs)> UNIQUE_NAME(criticalblock)(cs, #cs, __FILE__, __LINE__)\n+// When locking a Mutex, require negative capability to ensure the lock\n+// is not already held\n+inline Mutex& MaybeCheckNotHeld(Mutex& cs) EXCLUSIVE_LOCKS_REQUIRED(!cs) LOCK_RETURNED(cs) { return cs; }\n+inline Mutex* MaybeCheckNotHeld(Mutex* cs) EXCLUSIVE_LOCKS_REQUIRED(!cs) LOCK_RETURNED(cs) { return cs; }\n+\n+// When locking a GlobalMutex, just check we don't know it's locked",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#discussion_r873968747",
@@ -1579,6 +1548,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T17:09:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/873968747",
       "user" : {
@@ -1614,22 +1584,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/874061852"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "\"get compile-time warnings about potential race conditions and deadlocks in code\" ?",
-      "commit_id" : "44052046a54135cb00605d525270bea744a97ebf",
+      "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-05-16T18:59:51Z",
       "diff_hunk" : "@@ -902,14 +902,19 @@ Threads and synchronization\n - Prefer `Mutex` type to `RecursiveMutex` one.\n \n - Consistently use [Clang Thread Safety Analysis](https://clang.llvm.org/docs/ThreadSafetyAnalysis.html) annotations to\n-  get compile-time warnings about potential race conditions in code. Combine annotations in function declarations with\n-  run-time asserts in function definitions:\n+  get compile-time warnings about potential race conditions in code.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#discussion_r874061852",
       "id" : 874061852,
       "in_reply_to_id" : 873890891,
-      "line" : 905,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5840GSAc",
       "original_commit_id" : "e6f05cc7dfa021a0aef03d1ae904aa3b9555b1aa",
       "original_line" : 905,
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "doc/developer-notes.md",
-      "position" : 6,
+      "position" : null,
       "pull_request_review_id" : 974435867,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24931",
       "reactions" : {
@@ -1647,6 +1617,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T18:59:51Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/874061852",
       "user" : {
@@ -1682,9 +1653,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/877596068"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Done",
-      "commit_id" : "3cc953864d7bd25509fbb25641830850599aa4d0",
+      "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-05-19T22:46:32Z",
       "diff_hunk" : "@@ -902,14 +902,19 @@ Threads and synchronization\n - Prefer `Mutex` type to `RecursiveMutex` one.\n \n - Consistently use [Clang Thread Safety Analysis](https://clang.llvm.org/docs/ThreadSafetyAnalysis.html) annotations to\n-  get compile-time warnings about potential race conditions in code. Combine annotations in function declarations with\n-  run-time asserts in function definitions:\n+  get compile-time warnings about potential race conditions in code.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#discussion_r877596068",
@@ -1715,6 +1686,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-19T22:46:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/877596068",
       "user" : {
@@ -1748,7 +1720,7 @@
       "node_id" : "IC_kwDOABII585DhSit",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1756,7 +1728,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1132800173/reactions"
       },
       "updated_at" : "2022-05-20T11:40:39Z",
@@ -1827,7 +1799,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Rebased onto #25175. The `WITH_LOCK` macro is based on `LOCK`, so also enforces these checks. `LOCK2`, `TRY_LOCK` and `WAIT_LOCK` are also updated.",
       "created_at" : "2022-05-20T14:24:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#issuecomment-1132958876",
@@ -1915,7 +1887,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Though, on the other hand, `WITH_LOCK` is within a lambda (in order to be able to `return` the result of the expression) and the annotations aren't propogated to the lambda. I think this is probably okay: `RecursiveMutex` and `GlobalMutex` don't require propogation anyway, and `Mutex` are all within a class so the new lambda will be implicitly tagged with the negative capability anyway?\r\n\r\nHowever, tagging the `WITH_LOCK` lambda with `LOCKS_EXCLUDED(cs)` could be done, just as a double check that it's not being used when the lock is already held?",
       "created_at" : "2022-05-20T14:31:15Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#issuecomment-1132966912",
@@ -1959,7 +1931,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> https://github.com/bitcoin/bitcoin/blob/cd6ae6906602090a1f3537e9abf97e25e4a6421a/src/net_processing.cpp#L294-L297\r\n> \r\n> does not emit a warning about missed `EXCLUSIVE_LOCKS_REQUIRED(!m_tx_relay_mutex)` annotation.\r\n\r\nUpdated with negative assertions propogated when WITH_LOCK is used, which caught the above case and another. Couldn't see a way to avoid having WITH_LOCK expand cs twice though.\r\n",
       "created_at" : "2022-05-20T15:37:16Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24931#issuecomment-1133046480",
@@ -2046,6 +2018,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-20T18:21:36Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/878431136",
       "user" : {
@@ -2081,7 +2054,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/887670454"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "While playing with this I observed that it is possible to circumvent the thread safety warnings mechanism by wrapping the lock call in a lambda and calling this lambda immediately. That circumvention only works for mutexes that are a member of a class:\r\n\r\n```cpp\r\nMutex mutex_global;\r\n\r\n// Commented annotations would silence the warnings, clang 15\r\nclass C\r\n{\r\npublic:\r\n    Mutex mutex_member;\r\n\r\n    void f1() // EXCLUSIVE_LOCKS_REQUIRED(!mutex_member)\r\n    {\r\n        // warning: calling function 'MaybeCheckNotHeld' requires negative capability '!mutex_member' [-Wthread-safety-analysis]\r\n        LOCK(mutex_member);\r\n    }\r\n\r\n    void f2()\r\n    {\r\n        [&]() { LOCK(mutex_member); }(); // no need for annotations\r\n    }\r\n\r\n    void f3() // EXCLUSIVE_LOCKS_REQUIRED(!mutex_global)\r\n    {\r\n        // warning: calling function 'MaybeCheckNotHeld' requires negative capability '!mutex_global' [-Wthread-safety-analysis]\r\n        LOCK(mutex_global);\r\n    }\r\n\r\n    void f4() // EXCLUSIVE_LOCKS_REQUIRED(!mutex_global)\r\n    {\r\n        // warning: calling function 'MaybeCheckNotHeld' requires negative capability '!mutex_global' [-Wthread-safety-analysis]\r\n        [&]() /* EXCLUSIVE_LOCKS_REQUIRED(!mutex_global) */ { LOCK(mutex_global); }();\r\n    }\r\n};\r\n```\r\n\r\nLooks like the construct used for `WITH_LOCK()` in this PR relies on the `f2()` behavior from the example above. Is that behavior documented somewhere in the clang docs? If not, then it may be wiser to not depend on undocumented behavior.",
       "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-06-02T07:51:33Z",
@@ -2113,6 +2086,7 @@
       "side" : "RIGHT",
       "start_line" : 279,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-06-02T07:58:15Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/887670454",
       "user" : {
@@ -2148,7 +2122,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/888275014"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "You can avoid the thread safety warnings in a lot of ways if you create aliases for either the locks or the variables being guarded; eg:\r\n\r\n```c++\r\n    int i GUARDED_BY(mutex_member) = 0;\r\n    void f5()\r\n    {\r\n        int* i_alias = &i;\r\n        *i_alias = 5;\r\n    }\r\n```\r\n\r\n(Using `[&]` here is creating an implicit alias for all the member variables, though clang does a better job of analysing past the aliases there than in the above example...)\r\n\r\nI think the best long term approach is to do away with any uses of both `GlobalMutex` and `RecursiveMutex`, at which point we can annotate the lambda in `WITH_LOCK` with `EXCLUSIVE_LOCKS_REQUIRED(!cs)` and we're done. Having it work in the meantime allows us to be more confident that we don't have any potential recursive cases when switching a `RecursiveMutex` to a regular `Mutex`, so seems like it aids that goal to me.",
       "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-06-02T18:39:46Z",
@@ -2181,6 +2155,7 @@
       "side" : "RIGHT",
       "start_line" : 279,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-06-02T18:39:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/888275014",
       "user" : {
@@ -2216,7 +2191,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/890122245"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Ok, this explains why `f2()` needs no annotations. I guess at some point the compiler may become smarter, detect the reference and issue a warning.\r\n\r\n> I think the best long term approach is to do away with any uses of both `GlobalMutex` and `RecursiveMutex`, at which point we can annotate the lambda in `WITH_LOCK` with `EXCLUSIVE_LOCKS_REQUIRED(!cs)` and we're done.\r\n\r\nI agree. Do you envision that we do not have mutexes in global scope, or we have ones that are of type `Mutex`?",
       "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-06-06T12:58:23Z",
@@ -2249,6 +2224,7 @@
       "side" : "RIGHT",
       "start_line" : 279,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-06-06T12:58:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/890122245",
       "user" : {
@@ -2284,7 +2260,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/890636987"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Anytime you currently have:\r\n\r\n```c++\r\nGlobalMutex g_mut;\r\nint g_importantnum GUARDED_BY(g_mut) = 0;\r\nstd::string g_importantstr GUARDED_BY(g_mut);\r\n\r\nvoid bump_importantint(int offset)\r\n{\r\n    LOCK(g_mut);\r\n    g_importantnum += offset;\r\n}\r\n```\r\n\r\nyou can rewrite it as\r\n\r\n```c++\r\nclass important_stuff\r\n{\r\nprivate:\r\n    Mutex m_mut;\r\n    int m_num GUARDED_BY(m_mut) = 0;\r\n    std::string m_str GUARDED_BY(m_mut);\r\npublic:\r\n    void bump(int offset) EXCLUSIVE_LOCKS_REQUIRED(!m_mut);\r\n};\r\nimportant_stuff g_important;\r\n```\r\n\r\nor similar (depending on whether you can move all the code that uses the mutex into the class, or if you have to expose the mutex), which doesn't require very large changes to the code, but does make for a better fit with the thread safety analysis. Might also make it easy to later change `g_important` to not need to be a global too.",
       "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-06-06T23:12:14Z",
@@ -2317,6 +2293,7 @@
       "side" : "RIGHT",
       "start_line" : 279,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-06-06T23:12:15Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/890636987",
       "user" : {
@@ -2352,7 +2329,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/890963274"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Do you envision that we do not have mutexes in global scope, or we have ones that are of type `Mutex`\r\n\r\nI guess your reply above favors the \"we do not have mutexes in global scope\" case, right?",
       "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-06-07T09:00:19Z",
@@ -2385,6 +2362,7 @@
       "side" : "RIGHT",
       "start_line" : 279,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-06-07T09:00:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/890963274",
       "user" : {
@@ -2420,7 +2398,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/892160337"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "`g_important.m_mut` is still technically in global scope. Just works better with clang's thread safety logic",
       "commit_id" : "ce893c0497fc9b8ab9752153dfcc77c9f427545e",
       "created_at" : "2022-06-08T09:54:12Z",
@@ -2453,6 +2431,7 @@
       "side" : "RIGHT",
       "start_line" : 279,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-06-08T09:54:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/892160337",
       "user" : {
@@ -2521,6 +2500,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-10T14:24:02Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/894588946",
       "user" : {

@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25290](https://github.com/bitcoin/bitcoin/pull/25290) ([kernel 3a/n] Decouple `CTxMemPool` from `ArgsManager` by dongcarl)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-01-26T23:53:38Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24158#issuecomment-1022710490",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "What is the relationship of this PR to your #18191? Just judging from the title, they seem to do very similar things, although the code changes are not the same.",
       "created_at" : "2022-02-16T19:49:22Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24158#issuecomment-1042101831",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> see the pr description of #18191\r\n\r\nThat's from #21464 which was merged, my question is about the older #18191.",
       "created_at" : "2022-02-16T20:14:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24158#issuecomment-1042123094",
@@ -307,6 +307,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-17T12:04:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/808939277",
       "user" : {
@@ -374,6 +375,7 @@
       "side" : "RIGHT",
       "start_line" : 154,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-17T12:04:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/808951139",
       "user" : {
@@ -441,75 +443,9 @@
       "side" : "RIGHT",
       "start_line" : 128,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-17T12:04:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/808951919",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/25183001?v=4",
-         "events_url" : "https://api.github.com/users/glozow/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/glozow/followers",
-         "following_url" : "https://api.github.com/users/glozow/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/glozow/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/glozow",
-         "id" : 25183001,
-         "login" : "glozow",
-         "node_id" : "MDQ6VXNlcjI1MTgzMDAx",
-         "organizations_url" : "https://api.github.com/users/glozow/orgs",
-         "received_events_url" : "https://api.github.com/users/glozow/received_events",
-         "repos_url" : "https://api.github.com/users/glozow/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/glozow/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/glozow/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/glozow"
-      }
-   },
-   {
-      "_links" : {
-         "html" : {
-            "href" : "https://github.com/bitcoin/bitcoin/pull/24158#discussion_r808953118"
-         },
-         "pull_request" : {
-            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24158"
-         },
-         "self" : {
-            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/808953118"
-         }
-      },
-      "author_association" : "MEMBER",
-      "body" : "This is an appropriate use of epochs, but I think it's important to document what `visit`ing an entry means. IIUC, in this context it means you've added this entry to the `descendants` vector.",
-      "commit_id" : "1eac472976badf52312b52dcb119fa8b50ed408b",
-      "created_at" : "2022-02-17T11:33:33Z",
-      "diff_hunk" : "@@ -120,47 +120,91 @@ void CTxMemPool::UpdateForDescendants(txiter updateIt, cacheMap& cachedDescendan\n                                       const std::set<uint256>& setExclude, std::set<uint256>& descendants_to_remove,\n                                       uint64_t ancestor_size_limit, uint64_t ancestor_count_limit)\n {\n-    CTxMemPoolEntry::Children stageEntries, descendants;\n-    stageEntries = updateIt->GetMemPoolChildrenConst();\n-\n-    while (!stageEntries.empty()) {\n-        const CTxMemPoolEntry& descendant = *stageEntries.begin();\n-        descendants.insert(descendant);\n-        stageEntries.erase(descendant);\n-        const CTxMemPoolEntry::Children& children = descendant.GetMemPoolChildrenConst();\n-        for (const CTxMemPoolEntry& childEntry : children) {\n-            cacheMap::iterator cacheIt = cachedDescendants.find(mapTx.iterator_to(childEntry));\n-            if (cacheIt != cachedDescendants.end()) {\n-                // We've already calculated this one, just add the entries for this set\n-                // but don't traverse again.\n-                for (txiter cacheEntry : cacheIt->second) {\n-                    descendants.insert(*cacheEntry);\n+    const CTxMemPoolEntry::Children& children = updateIt->GetMemPoolChildrenConst();\n+\n+    // initialize to hold all direct children\n+    // children guaranteed to be unique at this point\n+    std::vector<txiter> descendants(children.size());\n+    size_t i = 0;\n+    for (const auto& child: children) {\n+        descendants[i] = mapTx.iterator_to(child);\n+        ++i;\n+    }\n+\n+    {\n+        WITH_FRESH_EPOCH(m_epoch);",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24158#discussion_r808953118",
-      "id" : 808953118,
-      "line" : 135,
-      "node_id" : "PRRC_kwDOABII584wN6Ue",
-      "original_commit_id" : "1eac472976badf52312b52dcb119fa8b50ed408b",
-      "original_line" : 135,
-      "original_position" : 31,
-      "original_start_line" : null,
-      "path" : "src/txmempool.cpp",
-      "position" : 31,
-      "pull_request_review_id" : 874762333,
-      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24158",
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/808953118/reactions"
-      },
-      "side" : "RIGHT",
-      "start_line" : null,
-      "start_side" : null,
-      "updated_at" : "2022-02-17T12:04:04Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/808953118",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/25183001?v=4",
          "events_url" : "https://api.github.com/users/glozow/events{/privacy}",
@@ -575,6 +511,7 @@
       "side" : "RIGHT",
       "start_line" : 184,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-17T12:04:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/808967963",
       "user" : {
@@ -642,6 +579,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-17T12:04:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/808974643",
       "user" : {
@@ -710,6 +648,7 @@
       "side" : "RIGHT",
       "start_line" : 184,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-18T11:54:36Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/809932699",
       "user" : {
@@ -764,7 +703,7 @@
       "pull_request_review_id" : 887614415,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24158",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -772,12 +711,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/810236818/reactions"
       },
       "side" : "RIGHT",
       "start_line" : 154,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-18T18:14:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/810236818",
       "user" : {
@@ -832,7 +772,7 @@
       "pull_request_review_id" : 887620164,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24158",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -840,12 +780,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/810241004/reactions"
       },
       "side" : "RIGHT",
       "start_line" : 184,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-18T18:20:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/810241004",
       "user" : {
@@ -914,6 +855,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-18T18:26:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/810244989",
       "user" : {
@@ -982,6 +924,7 @@
       "side" : "RIGHT",
       "start_line" : 128,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-18T18:29:43Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/810247278",
       "user" : {
@@ -1003,74 +946,6 @@
          "subscriptions_url" : "https://api.github.com/users/JeremyRubin/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/JeremyRubin"
-      }
-   },
-   {
-      "_links" : {
-         "html" : {
-            "href" : "https://github.com/bitcoin/bitcoin/pull/24158#discussion_r810997869"
-         },
-         "pull_request" : {
-            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24158"
-         },
-         "self" : {
-            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/810997869"
-         }
-      },
-      "author_association" : "MEMBER",
-      "body" : "> we are keeping a \"partition\" of processed and unprocessed elements.\r\n\r\nYeah that's what I meant by ordering, sorry for being unclear. Thanks for elaborating, this is helpful",
-      "commit_id" : "1eac472976badf52312b52dcb119fa8b50ed408b",
-      "created_at" : "2022-02-21T10:43:57Z",
-      "diff_hunk" : "@@ -120,47 +120,91 @@ void CTxMemPool::UpdateForDescendants(txiter updateIt, cacheMap& cachedDescendan\n                                       const std::set<uint256>& setExclude, std::set<uint256>& descendants_to_remove,\n                                       uint64_t ancestor_size_limit, uint64_t ancestor_count_limit)\n {\n-    CTxMemPoolEntry::Children stageEntries, descendants;\n-    stageEntries = updateIt->GetMemPoolChildrenConst();\n-\n-    while (!stageEntries.empty()) {\n-        const CTxMemPoolEntry& descendant = *stageEntries.begin();\n-        descendants.insert(descendant);\n-        stageEntries.erase(descendant);\n-        const CTxMemPoolEntry::Children& children = descendant.GetMemPoolChildrenConst();\n-        for (const CTxMemPoolEntry& childEntry : children) {\n-            cacheMap::iterator cacheIt = cachedDescendants.find(mapTx.iterator_to(childEntry));\n-            if (cacheIt != cachedDescendants.end()) {\n-                // We've already calculated this one, just add the entries for this set\n-                // but don't traverse again.\n-                for (txiter cacheEntry : cacheIt->second) {\n-                    descendants.insert(*cacheEntry);\n+    const CTxMemPoolEntry::Children& children = updateIt->GetMemPoolChildrenConst();\n+\n+    // initialize to hold all direct children\n+    // children guaranteed to be unique at this point\n+    std::vector<txiter> descendants(children.size());\n+    size_t i = 0;\n+    for (const auto& child: children) {\n+        descendants[i] = mapTx.iterator_to(child);\n+        ++i;\n+    }\n+\n+    {\n+        WITH_FRESH_EPOCH(m_epoch);\n+        // visit all children\n+        for (auto& child : descendants) {\n+            visited(child);\n+        }\n+        for (size_t i = 0, n_to_process = descendants.size(); i < n_to_process; ++i) {\n+            const CTxMemPoolEntry& descendant = *descendants[i];\n+            const CTxMemPoolEntry::Children& children = descendant.GetMemPoolChildrenConst();\n+            for (const CTxMemPoolEntry& childEntry : children) {\n+                cacheMap::iterator cacheIt = cachedDescendants.find(mapTx.iterator_to(childEntry));\n+                if (cacheIt != cachedDescendants.end()) {\n+                    // We've already calculated this one, just add the entries for this set\n+                    // but don't traverse again.\n+                    for (txiter cacheEntry : cacheIt->second) {\n+                        // Add all to descendants which have not yet been added\n+                        if (!visited(cacheEntry)) {\n+                            descendants.emplace_back(cacheEntry);\n+                            // skip self-swap because of buggy std::swap implementations\n+                            // on some platforms\n+                            if (!(descendants.size() == i+2)) {\n+                                std::swap(descendants[i+1], descendants.back());\n+                            }",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24158#discussion_r810997869",
-      "id" : 810997869,
-      "in_reply_to_id" : 808951139,
-      "line" : 156,
-      "node_id" : "PRRC_kwDOABII584wVtht",
-      "original_commit_id" : "1eac472976badf52312b52dcb119fa8b50ed408b",
-      "original_line" : 156,
-      "original_position" : 52,
-      "original_start_line" : 154,
-      "path" : "src/txmempool.cpp",
-      "position" : 52,
-      "pull_request_review_id" : 888503020,
-      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24158",
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/810997869/reactions"
-      },
-      "side" : "RIGHT",
-      "start_line" : 154,
-      "start_side" : "RIGHT",
-      "updated_at" : "2022-02-21T10:43:57Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/810997869",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/25183001?v=4",
-         "events_url" : "https://api.github.com/users/glozow/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/glozow/followers",
-         "following_url" : "https://api.github.com/users/glozow/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/glozow/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/glozow",
-         "id" : 25183001,
-         "login" : "glozow",
-         "node_id" : "MDQ6VXNlcjI1MTgzMDAx",
-         "organizations_url" : "https://api.github.com/users/glozow/orgs",
-         "received_events_url" : "https://api.github.com/users/glozow/received_events",
-         "repos_url" : "https://api.github.com/users/glozow/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/glozow/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/glozow/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/glozow"
       }
    },
    {
@@ -1118,6 +993,7 @@
       "side" : "RIGHT",
       "start_line" : 184,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-21T10:51:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/811004575",
       "user" : {
@@ -1186,6 +1062,7 @@
       "side" : "RIGHT",
       "start_line" : 128,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-21T10:56:15Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/811008835",
       "user" : {
@@ -1254,6 +1131,7 @@
       "side" : "RIGHT",
       "start_line" : 154,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-21T11:31:38Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/811037367",
       "user" : {
@@ -1322,6 +1200,7 @@
       "side" : "RIGHT",
       "start_line" : 154,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-21T20:38:21Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/811416671",
       "user" : {
@@ -1390,6 +1269,7 @@
       "side" : "RIGHT",
       "start_line" : 128,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-21T20:41:57Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/811418172",
       "user" : {
@@ -1458,6 +1338,7 @@
       "side" : "RIGHT",
       "start_line" : 184,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-21T20:42:37Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/811418425",
       "user" : {
@@ -1526,6 +1407,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-21T20:43:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/811418791",
       "user" : {
@@ -1594,6 +1476,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-04-15T02:22:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/851008181",
       "user" : {
@@ -1662,7 +1545,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
       "created_at" : "2022-06-29T08:03:32Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24158#issuecomment-1169662009",

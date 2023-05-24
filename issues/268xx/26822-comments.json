@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [1440000bytes](https://github.com/bitcoin/bitcoin/pull/26822#pullrequestreview-1239592729) |\n| Concept ACK | [andrewtoth](https://github.com/bitcoin/bitcoin/pull/26822#pullrequestreview-1238269263) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#19825](https://github.com/bitcoin/bitcoin/pull/19825) (rpc: simpler setban and new ban manipulation commands by dhruv)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2023-01-05T18:45:49Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26822#issuecomment-1372599697",
@@ -57,7 +57,7 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "There doesn't appear to be a test for successfully banning with absolute time. Maybe that test should be added as well?",
-      "commit_id" : "b5db26060c007fb79135921be0848dc3e63f3fee",
+      "commit_id" : "abccb27466c5a240a59f3f7c86f2bc60d51e9fee",
       "created_at" : "2023-01-06T02:49:59Z",
       "diff_hunk" : "@@ -46,6 +46,9 @@ def run_test(self):\n         assert_raises_rpc_error(-30, \"Error: Invalid IP/Subnet\", self.nodes[1].setban, \"127.0.0.1/42\", \"add\")\n         assert_equal(len(self.nodes[1].listbanned()), 1)  # still only one banned ip because 127.0.0.1 is within the range of 127.0.0.0/24\n \n+        self.log.info(\"setban: fail to ban with past absolute timestamp\")\n+        assert_raises_rpc_error(-8, \"Error: Past absolute timestamp is not allowed\", self.nodes[1].setban, \"127.27.0.1\", \"add\", 123, True)\n+",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26822#discussion_r1063054039",
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-06T02:53:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1063054039",
       "user" : {
@@ -124,19 +125,19 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "```suggestion\r\n            throw JSONRPCError(RPC_INVALID_PARAMETER, \"Error: Absolute timestamp is in the past\");\r\n```",
-      "commit_id" : "b5db26060c007fb79135921be0848dc3e63f3fee",
+      "commit_id" : "abccb27466c5a240a59f3f7c86f2bc60d51e9fee",
       "created_at" : "2023-01-06T02:50:46Z",
       "diff_hunk" : "@@ -741,6 +741,10 @@ static RPCHelpMan setban()\n \n         const bool absolute{request.params[3].isNull() ? false : request.params[3].get_bool()};\n \n+        if (absolute && banTime < GetTime()) {\n+            throw JSONRPCError(RPC_INVALID_PARAMETER, \"Error: Past absolute timestamp is not allowed\");",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26822#discussion_r1063054306",
       "id" : 1063054306,
-      "line" : 745,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584_XOvi",
       "original_commit_id" : "b5db26060c007fb79135921be0848dc3e63f3fee",
       "original_line" : 745,
       "original_position" : 5,
       "original_start_line" : null,
       "path" : "src/rpc/net.cpp",
-      "position" : 5,
+      "position" : null,
       "pull_request_review_id" : 1238269263,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26822",
       "reactions" : {
@@ -154,6 +155,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-06T02:53:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1063054306",
       "user" : {
@@ -189,21 +191,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1063074203"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "NONE",
       "body" : "```suggestion\r\n        assert_raises_rpc_error(-8, \"Error: Past absolute timestamp is not allowed\", self.nodes[1].setban, \"127.0.0.1\", \"add\", 123, True)\r\n ```",
-      "commit_id" : "b5db26060c007fb79135921be0848dc3e63f3fee",
+      "commit_id" : "abccb27466c5a240a59f3f7c86f2bc60d51e9fee",
       "created_at" : "2023-01-06T03:54:32Z",
       "diff_hunk" : "@@ -46,6 +46,9 @@ def run_test(self):\n         assert_raises_rpc_error(-30, \"Error: Invalid IP/Subnet\", self.nodes[1].setban, \"127.0.0.1/42\", \"add\")\n         assert_equal(len(self.nodes[1].listbanned()), 1)  # still only one banned ip because 127.0.0.1 is within the range of 127.0.0.0/24\n \n+        self.log.info(\"setban: fail to ban with past absolute timestamp\")\n+        assert_raises_rpc_error(-8, \"Error: Past absolute timestamp is not allowed\", self.nodes[1].setban, \"127.27.0.1\", \"add\", 123, True)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26822#discussion_r1063074203",
       "id" : 1063074203,
-      "line" : 50,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584_XTmb",
       "original_commit_id" : "b5db26060c007fb79135921be0848dc3e63f3fee",
       "original_line" : 50,
       "original_position" : 5,
       "original_start_line" : null,
       "path" : "test/functional/p2p_disconnect_ban.py",
-      "position" : 5,
+      "position" : null,
       "pull_request_review_id" : 1238306528,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26822",
       "reactions" : {
@@ -221,28 +223,10 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-06T03:54:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1063074203",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/94559964?v=4",
-         "events_url" : "https://api.github.com/users/1440000bytes/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/1440000bytes/followers",
-         "following_url" : "https://api.github.com/users/1440000bytes/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/1440000bytes/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/1440000bytes",
-         "id" : 94559964,
-         "login" : "1440000bytes",
-         "node_id" : "U_kgDOBaLe3A",
-         "organizations_url" : "https://api.github.com/users/1440000bytes/orgs",
-         "received_events_url" : "https://api.github.com/users/1440000bytes/received_events",
-         "repos_url" : "https://api.github.com/users/1440000bytes/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/1440000bytes/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/1440000bytes/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/1440000bytes"
-      }
+      "user" : null
    },
    {
       "_links" : {
@@ -256,9 +240,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1063378546"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Yes, I'm gonna add it! ",
-      "commit_id" : "ff52aaf1316853f74a9cbdfd13260a1576e7cde4",
+      "commit_id" : "abccb27466c5a240a59f3f7c86f2bc60d51e9fee",
       "created_at" : "2023-01-06T11:53:08Z",
       "diff_hunk" : "@@ -46,6 +46,9 @@ def run_test(self):\n         assert_raises_rpc_error(-30, \"Error: Invalid IP/Subnet\", self.nodes[1].setban, \"127.0.0.1/42\", \"add\")\n         assert_equal(len(self.nodes[1].listbanned()), 1)  # still only one banned ip because 127.0.0.1 is within the range of 127.0.0.0/24\n \n+        self.log.info(\"setban: fail to ban with past absolute timestamp\")\n+        assert_raises_rpc_error(-8, \"Error: Past absolute timestamp is not allowed\", self.nodes[1].setban, \"127.27.0.1\", \"add\", 123, True)\n+",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26822#discussion_r1063378546",
@@ -289,6 +273,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-06T11:53:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1063378546",
       "user" : {
@@ -324,9 +309,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1063394058"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I can't use \"127.0.0.1\" because it will throw another error (ip/subnet already banned) instead of the \"absolute timestamp\" one. That's why I'm using a random ip, it doesn't impact the purpose of the test.",
-      "commit_id" : "ff52aaf1316853f74a9cbdfd13260a1576e7cde4",
+      "commit_id" : "abccb27466c5a240a59f3f7c86f2bc60d51e9fee",
       "created_at" : "2023-01-06T12:21:00Z",
       "diff_hunk" : "@@ -46,6 +46,9 @@ def run_test(self):\n         assert_raises_rpc_error(-30, \"Error: Invalid IP/Subnet\", self.nodes[1].setban, \"127.0.0.1/42\", \"add\")\n         assert_equal(len(self.nodes[1].listbanned()), 1)  # still only one banned ip because 127.0.0.1 is within the range of 127.0.0.0/24\n \n+        self.log.info(\"setban: fail to ban with past absolute timestamp\")\n+        assert_raises_rpc_error(-8, \"Error: Past absolute timestamp is not allowed\", self.nodes[1].setban, \"127.27.0.1\", \"add\", 123, True)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26822#discussion_r1063394058",
@@ -357,6 +342,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-06T12:21:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1063394058",
       "user" : {
@@ -381,7 +367,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks @andrewtoth and @1440000bytes. Force-pushed addressing https://github.com/bitcoin/bitcoin/pull/26822#discussion_r1063054039 and https://github.com/bitcoin/bitcoin/pull/26822#discussion_r1063054306",
       "created_at" : "2023-01-06T12:22:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26822#issuecomment-1373560894",
@@ -425,7 +411,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Perhaps out of scope of this PR but I see there is a rpc_setban.py functional test file that largely overlaps with p2p_disconnect_ban.py. Should they be merged into a single file?\r\n\r\nI think so, specially part of them are testing same thing (e.g. the persistence across node restart).",
       "created_at" : "2023-01-06T12:31:22Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26822#issuecomment-1373567486",
@@ -469,7 +455,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> What is the point of adding this check if relative times still accept -1?\r\n\r\nI think both accepts -1 but sets the ban to the default time (86400), it's the behavior of the `BanMan::Ban`, not sure why:\r\nhttps://github.com/bitcoin/bitcoin/blob/911a40ead256b8849166cff1b745b9c9898e2da8/src/banman.cpp#L134-L137\r\n\r\nHowever, there is no check for past absolute timestamp, and I think it's more appropriate throws an error than setting the ban to the default time (if it would be an option). Maybe the RPC should not accept negative values for any time (relative or absolute).",
       "created_at" : "2023-01-06T13:20:02Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26822#issuecomment-1373615888",

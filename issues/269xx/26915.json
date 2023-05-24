@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "Fixes [#26869](https://github.com/bitcoin/bitcoin/issues/26869)\r\n\r\nVersion 5.x BerkeleyDB `wallet.dat` files are [backward compatible with the version of BDB that Bitcoin uses](https://github.com/bitcoin/bitcoin/pull/18844#issuecomment-623004113), but the database transaction log files (eg - `database/log.0000000001`) are not.\r\n\r\nThe legacy (BDB) backwards compatibility test fails intermittently because those log files aren't always deleted when the wallet gets unloaded. It appears that `DB_LOG_AUTO_REMOVE` is the source of the non-determinism since there aren't [guarantees when it'll run](https://docs.oracle.com/cd/E17076_05/html/programmer_reference/transapp_logfile.html). \r\n\r\nInstead, just skip the logs when copying the wallet files to the older nodes. Alternative solutions include 1) restarting `node_master` instead of unloading so that the logs are [guaranteed](https://github.com/bitcoin/bitcoin/blob/8ae2808a4354e8dcc697f76bacc5e2f2befe9220/src/wallet/bdb.cpp#L565-L571) to be deleted or 2) manually deleting the logs before copying the tree, but those are slightly less time efficient. \r\n",
    "closed_at" : "2023-01-18T21:48:45Z",
    "closed_by" : {
@@ -25,7 +25,7 @@
       "type" : "User",
       "url" : "https://api.github.com/users/john-moffett"
    },
-   "comments" : 3,
+   "comments" : 7,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26915/comments",
    "created_at" : "2023-01-18T20:23:49Z",
    "draft" : false,
@@ -73,7 +73,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26915/timeline",
    "title" : "test: Skip copying BDB database directory in wallet backwards compatibility test",
-   "updated_at" : "2023-01-18T21:48:45Z",
+   "updated_at" : "2023-02-07T16:55:35Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26915",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/116917595?v=4",

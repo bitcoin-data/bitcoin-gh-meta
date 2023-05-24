@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "The default for signet is `-bind=127.0.0.1:38334=onion`. From your attached `log-bitcoind.txt`:\r\n\r\n> Bound to 127.0.0.1:38334\r\n\r\nThen `bitcoind` is telling the tor daemon to redirect connections destined to the `.onion` address to `127.0.0.1:38334`. This obviously does not work when Tor is running on a different machine than `bitcoind`. You need to modify the default to something like `-bind=a.b.c.d:38334=onion` such that `bitcoind` can bind to `a.b.c.d` and the tor daemon can connect to it. `[::]` fulfills the first but not the second :(\r\n\r\nIs it not possible to have the docker-assigned IP address of the machine in an environment variable, like e.g. `${TOR_SOCKS_PORT}` from above?",
       "created_at" : "2022-11-11T11:02:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25094#issuecomment-1311552077",
@@ -176,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> It probably shouldn't do that and instead print a message to the log?\r\n\r\nWhy? It works well in the default case when tor is on the same machine and `-bind=127.0.0.1:8334=onion` and `-torcontrol=127.0.0.1:9051` (these are the default values). You have changed `-torcontrol`, but not `-bind=...=onion`. If you change the latter, then it will work too.\r\n\r\nThe only problem is that you want to use a hostname instead of an IP address for `-bind`, right?",
       "created_at" : "2022-11-11T13:32:18Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25094#issuecomment-1311700853",
@@ -221,7 +221,7 @@
    },
    {
       "author_association" : "CONTRIBUTOR",
-      "body" : "What I meant is it should probably not silently convert `[::]` to `127.0.0.1`. Yes, if you bind to `127.0.0.1` then it's expected to use `127.0.0.1` for the hidden service target. Of course running bitcoind and tor in the same container is not really recommended.\r\n\r\nAn elegant way to support the container isolated case would be\r\n\r\n```\r\n-torcontrol=tor:9051\r\n-bind=tor:8334=onion\r\n```\r\n\r\nor\r\n\r\n```\r\n-torcontrol=tor:9051\r\n-bind=[::]:8334=onion\r\n-hiddenservicetarget=tor:8334\r\n```\r\n\r\n\"hiddenservicetarget\" being a new option that would separate the bind address from the target address. If it exists, bitcoind would not try to derive the target address from the onion bind address and instead use the value of the option.\r\n\r\nI think one of these two ways should be considered in order to support container isolation.\r\n",
+      "body" : "What I meant is it should probably not silently convert `[::]` to `127.0.0.1`. Yes, if you bind to `127.0.0.1` then it's expected to use `127.0.0.1` for the hidden service target. Of course running bitcoind and tor in the same container is not really recommended.\r\n\r\nAn elegant way to support the container isolated case would be\r\n\r\n```\r\n-torcontrol=tor:9051\r\n-bind=bitcoind:8334=onion\r\n```\r\n\r\nor\r\n\r\n```\r\n-torcontrol=tor:9051\r\n-bind=[::]:8334=onion\r\n-hiddenservicetarget=bitcoind:8334\r\n```\r\n\r\n\"hiddenservicetarget\" being a new option that would separate the bind address from the target address. If it exists, bitcoind would not try to derive the target address from the onion bind address and instead use the value of the option.\r\n\r\nI think one of these two ways should be considered in order to support container isolation.\r\n",
       "created_at" : "2022-11-11T14:25:57Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25094#issuecomment-1311760237",
       "id" : 1311760237,
@@ -240,7 +240,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1311760237/reactions"
       },
-      "updated_at" : "2022-11-11T14:29:51Z",
+      "updated_at" : "2022-11-11T18:19:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1311760237",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/743306?v=4",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> What I meant is it should probably not silently convert [::] to 127.0.0.1\r\n\r\nYes, probably it makes sense to print something like \"tor control returned an invalid address for the socks5 proxy: [::]:9050, falling back to the default 127.0.0.1:9050`.\r\n\r\n> I think one of these two ways should be considered in order to support container isolation.\r\n\r\nI agree.",
       "created_at" : "2022-11-11T14:55:19Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25094#issuecomment-1311789124",

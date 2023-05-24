@@ -13,7 +13,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "`libtool` package has `libtoolize` binary:\r\n```suggestion\r\nassert_deps aclocal autoreconf libtoolize pkg-config\r\n```\r\n\r\nBut message _\"configuration failed, please install libtoolize first\"_ still useless.",
-      "commit_id" : "0da7f23da7229ddefc23719f89194e877fd9df55",
+      "commit_id" : "862dc6f20e7306bf6d79b4b116590b400f908fef",
       "created_at" : "2022-07-01T12:34:15Z",
       "diff_hunk" : "@@ -3,14 +3,24 @@\n # Distributed under the MIT software license, see the accompanying\n # file COPYING or http://www.opensource.org/licenses/mit-license.php.\n \n-export LC_ALL=C\n set -e\n+\n+assert_deps() {\n+  for dep; do\n+    if ! command -v $dep > /dev/null; then\n+      echo \"configuration failed, please install $dep first\"\n+      return 1\n+    fi\n+  done\n+}\n+\n+assert_deps aclocal autoreconf libtool pkg-config",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25523#discussion_r911922438",
@@ -43,6 +43,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-01T12:35:56Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/911922438",
       "user" : {
@@ -80,7 +81,7 @@
       },
       "author_association" : "CONTRIBUTOR",
       "body" : "@hebasto yep, it seems like `libtool` binary is not always present so it can't be used. It's present in Arch `libtool` but it's not provided by Debian\r\n\r\nWithout this check, it looks like this:\r\n\r\n```\r\nCan't exec \"libtoolize\": No such file or directory at /usr/share/autoconf/Autom4te/FileUtils.pm line 293.\r\nautoreconf: error: libtoolize failed with exit status: 2\r\n```\r\n\r\nSo maybe it would still look a bit cleaner",
-      "commit_id" : "0da7f23da7229ddefc23719f89194e877fd9df55",
+      "commit_id" : "862dc6f20e7306bf6d79b4b116590b400f908fef",
       "created_at" : "2022-07-01T12:49:05Z",
       "diff_hunk" : "@@ -3,14 +3,24 @@\n # Distributed under the MIT software license, see the accompanying\n # file COPYING or http://www.opensource.org/licenses/mit-license.php.\n \n-export LC_ALL=C\n set -e\n+\n+assert_deps() {\n+  for dep; do\n+    if ! command -v $dep > /dev/null; then\n+      echo \"configuration failed, please install $dep first\"\n+      return 1\n+    fi\n+  done\n+}\n+\n+assert_deps aclocal autoreconf libtool pkg-config",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25523#discussion_r911933054",
@@ -111,6 +112,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-01T12:49:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/911933054",
       "user" : {
@@ -267,7 +269,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\nA summary of reviews will appear here.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.\n",
       "created_at" : "2022-09-23T11:14:40Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25523#issuecomment-1256083315",
@@ -410,7 +412,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1090319410"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This does not instruct the user to look for `glibtoolize` on macOS.",
       "commit_id" : "862dc6f20e7306bf6d79b4b116590b400f908fef",
       "created_at" : "2023-01-30T08:46:45Z",
@@ -442,6 +444,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-30T08:47:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1090319410",
       "user" : {

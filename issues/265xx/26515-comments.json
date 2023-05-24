@@ -13,7 +13,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Haven't tested yet if this works, but checking for `fStateStats` seems a bit of a smell in general and I wanted to remove it entirely, e.g. https://github.com/bitcoin/bitcoin/pull/25923, though the way you use it here looks like a real improvement that could be orthogonal to much of that pull.\r\n\r\nNote that you haven't updated the code for the GUI peers details.",
-      "commit_id" : "ec839fe2a49e922aee75e49c7f432ff405322a63",
+      "commit_id" : "6fefd49527fa0ed9535e54f2a3e76fe2599b2350",
       "created_at" : "2022-11-16T22:57:51Z",
       "diff_hunk" : "@@ -185,6 +185,14 @@ static RPCHelpMan getpeerinfo()\n         UniValue obj(UniValue::VOBJ);\n         CNodeStateStats statestats;\n         bool fStateStats = peerman.GetNodeStateStats(stats.nodeid, statestats);\n+        // GetNodeStateStats() requires the existence of a CNodeState and a Peer object\n+        // to succeed for this peer. These are created at connection initialisation and\n+        // exist for the duration of the connection - except if there is a race where the\n+        // peer got disconnected in between the GetNodeStats() and the GetNodeStateStats()\n+        // calls. In this case, the peer doesn't need to be reported here.\n+        if (!fStateStats) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26515#discussion_r1024587778",
@@ -25,7 +25,7 @@
       "original_position" : 44,
       "original_start_line" : null,
       "path" : "src/rpc/net.cpp",
-      "position" : 44,
+      "position" : 9,
       "pull_request_review_id" : 1183444682,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26515",
       "reactions" : {
@@ -43,6 +43,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-17T05:13:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1024587778",
       "user" : {
@@ -67,7 +68,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [MarcoFalke](https://github.com/bitcoin/bitcoin/pull/26515#issuecomment-1357626542) |\n| Concept ACK | [jonatack](https://github.com/bitcoin/bitcoin/pull/26515#issuecomment-1318084235) |\n| Approach ACK | [dergoegge](https://github.com/bitcoin/bitcoin/pull/26515#issuecomment-1337781516) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#26621](https://github.com/bitcoin/bitcoin/pull/26621) (refactor: Continue moving application data from CNode to Peer by dergoegge)\n* [#25923](https://github.com/bitcoin/bitcoin/pull/25923) (p2p: always provide CNodeStateStats and getpeerinfo/netinfo/gui updates by jonatack)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2022-11-17T03:29:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26515#issuecomment-1318012205",
@@ -199,7 +200,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Do we really want this, given that the fields have been optional forever(?)? I think we should first think if there are fields that should be optional. If the answer to that is _no_, then this seems fine to do, but without an answer, it seems too early to change.\r\n\r\nI think that if we make any fields optional, we should have a reason for this, and communicate to the users within the RPC help in which situations these fields won't be included.\r\nUnless I'm missing something, the honest explanation as to why these fields are optional right now would be:\r\n\"We can't keep our internal objects in sync as well as we'd like to, so in case of a race condition some fields may be left out from the response because they are part of Internal Object 1, and others are always present because they belong to Internal Object 2\" - this seems really unsatisfactory to me.\r\n\r\nThe reason should be something that has to do with the actual meaning of the field, e.g. if there is a good reason why it's not available under certain conditions (like it's currently being done for fields like `mapped_as` or `minping`).",
       "created_at" : "2022-11-17T18:06:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26515#issuecomment-1319014413",
@@ -287,7 +288,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> yes, agree. This is what I was trying to say we should answer first before changing the code.\r\n\r\nOk, I'll look into this field by field before taking this out of draft. However, note that if we decide to keep certain field optional for an intrinsic reason, it would likely be a behavior change, because we currently include all `CNodeStateStats` fields as long as we have a `Peer` and `CNodeState` object for the peer.",
       "created_at" : "2022-11-17T18:26:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26515#issuecomment-1319037959",
@@ -386,9 +387,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1025824755"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Looking into #25923 right now - it seems that it does some what Marco suggested below, making some fields, like txrelay, optional for an intrinsic reason instead of using defaults like -1 or 0 when the info is not known.\r\n\r\nAs for the GUI - I didn't change it on purpose, because [this comment](https://github.com/bitcoin/bitcoin/blob/6863ad79a65842504ab6f5584fac3d1de7ecf87e/src/qt/rpcconsole.cpp#L1200-L1201) scared me off. I think that #25923 is affected by that too, I'll comment there.",
-      "commit_id" : "ec839fe2a49e922aee75e49c7f432ff405322a63",
+      "commit_id" : "6fefd49527fa0ed9535e54f2a3e76fe2599b2350",
       "created_at" : "2022-11-17T23:06:15Z",
       "diff_hunk" : "@@ -185,6 +185,14 @@ static RPCHelpMan getpeerinfo()\n         UniValue obj(UniValue::VOBJ);\n         CNodeStateStats statestats;\n         bool fStateStats = peerman.GetNodeStateStats(stats.nodeid, statestats);\n+        // GetNodeStateStats() requires the existence of a CNodeState and a Peer object\n+        // to succeed for this peer. These are created at connection initialisation and\n+        // exist for the duration of the connection - except if there is a race where the\n+        // peer got disconnected in between the GetNodeStats() and the GetNodeStateStats()\n+        // calls. In this case, the peer doesn't need to be reported here.\n+        if (!fStateStats) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26515#discussion_r1025824755",
@@ -401,7 +402,7 @@
       "original_position" : 44,
       "original_start_line" : null,
       "path" : "src/rpc/net.cpp",
-      "position" : 44,
+      "position" : 9,
       "pull_request_review_id" : 1185227165,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26515",
       "reactions" : {
@@ -419,6 +420,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-17T23:06:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1025824755",
       "user" : {
@@ -500,7 +502,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "The `TRY_LOCK` for accessing `CNodeStats` has been in the GUI since peer information was added in #4225 (see https://github.com/bitcoin/bitcoin/pull/4225#issuecomment-44150459). I'm not sure why it was decided that the GUI could block on taking `cs_vNodes`, but can't block on taking `cs_main`.",
-      "commit_id" : "ec839fe2a49e922aee75e49c7f432ff405322a63",
+      "commit_id" : "6fefd49527fa0ed9535e54f2a3e76fe2599b2350",
       "created_at" : "2022-11-24T21:29:05Z",
       "diff_hunk" : "@@ -185,6 +185,14 @@ static RPCHelpMan getpeerinfo()\n         UniValue obj(UniValue::VOBJ);\n         CNodeStateStats statestats;\n         bool fStateStats = peerman.GetNodeStateStats(stats.nodeid, statestats);\n+        // GetNodeStateStats() requires the existence of a CNodeState and a Peer object\n+        // to succeed for this peer. These are created at connection initialisation and\n+        // exist for the duration of the connection - except if there is a race where the\n+        // peer got disconnected in between the GetNodeStats() and the GetNodeStateStats()\n+        // calls. In this case, the peer doesn't need to be reported here.\n+        if (!fStateStats) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26515#discussion_r1031861127",
@@ -513,7 +515,7 @@
       "original_position" : 44,
       "original_start_line" : null,
       "path" : "src/rpc/net.cpp",
-      "position" : 44,
+      "position" : 9,
       "pull_request_review_id" : 1193648235,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26515",
       "reactions" : {
@@ -531,6 +533,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-24T21:29:05Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1031861127",
       "user" : {
@@ -555,7 +558,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I removed the part that makes the `CNodeStateStats` fields non-optional. Since that part conflicts with #25293 and can be a separate discussion (I commented [there](https://github.com/bitcoin/bitcoin/pull/25923#pullrequestreview-1188773952)), this PR now only addresses the situation where we have a `CNode` but no `CNodeStateStats` due to a race during shutdown.\r\n\r\n> I don't think this part is true. (...)\r\n\r\nRemoved from OP",
       "created_at" : "2022-11-28T19:10:58Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26515#issuecomment-1329613201",
@@ -610,7 +613,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1033977162"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I'm not sure either, but one reason might be because it slows down IBD a little if the GUI constantly competes with validation for `cs_main` just to update the peers window. Another reason might be that `cs_main` is held more often and longer by the node compared to `cs_vNodes` (current name `m_nodes_mutex`), so it might become noticeable that the GUI freezes. In both of these cases, skipping some of the requests from the GUI could make sense.",
       "commit_id" : "6fefd49527fa0ed9535e54f2a3e76fe2599b2350",
       "created_at" : "2022-11-28T19:39:46Z",
@@ -643,6 +646,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-28T19:39:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1033977162",
       "user" : {

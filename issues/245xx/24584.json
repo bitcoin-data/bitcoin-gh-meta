@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "# Concept\r\n\r\nFollowing https://github.com/bitcoin/bitcoin/pull/23789, Bitcoin Core wallet will now generate a change address that matches the payment address type. This improves privacy by not revealing which of the outputs is the change at the time of the transaction in scenarios where the input address types differ from the payment address type. However, information about the change can be leaked in a later transaction. This proposal attempts to address that concern.\r\n\r\n## Leaking information in a later transaction\r\n\r\nConsider the following scenario:\r\n\r\n![mix input types(1)](https://user-images.githubusercontent.com/7444140/158597086-788339b0-c698-4b60-bd45-9ede4cd3a483.png)\r\n\r\n1. Alice has a wallet with bech32 type UTXOs and pays Bob, who gives her a P2SH address\r\n2. Alice's wallet generates a P2SH change output, preserving her privacy in `txid: a`\r\n3. Alice then pays Carol, who gives her a bech32 address\r\n4. Alice's wallet combines the P2SH UTXO with a bech32 UTXO and `txid: b` has two bech32 outputs\r\n\r\nFrom a chain analysis perspective, it is reasonable to infer that the P2SH input in `txid: b` was the change from `txid: a`. To avoid leaking information in this scenario, Alice's wallet should avoid picking the P2SH output and instead fund the transaction with only bech32 Outputs. If the payment to Carol can be funded with just the P2SH output, it should be preferred over the bech32 outputs as this will convert the P2SH UTXO to bech32 UTXOs via the payment and change outputs of the new transaction.\r\n\r\n**TLDR;** Avoid mixing output types, spend non-default `OutputTypes` when it is economical to do so.\r\n\r\n# Approach\r\n\r\n`AvailableCoins` now populates a struct, which makes it easier to access coins by `OutputType`. Coin selection tries to find a funding solution by each output type and chooses the most economical by waste metric. If a solution can't be found without mixing, coin selection runs over the entire wallet, allowing mixing, which is the same as the current behavior.\r\n\r\nI've also added a functional test (`test/functional/wallet_avoid_mixing_output_types.py`) and unit test (`src/wallet/test/availablecoins_tests.cpp`.",
    "closed_at" : "2022-07-28T22:17:13Z",
    "closed_by" : {
@@ -73,7 +73,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24584/timeline",
    "title" : "wallet: avoid mixing different `OutputTypes` during coin selection",
-   "updated_at" : "2022-07-28T22:17:13Z",
+   "updated_at" : "2022-08-15T08:06:31Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/24584",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/7444140?v=4",

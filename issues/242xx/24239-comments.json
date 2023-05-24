@@ -11,21 +11,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/799761086"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"test: Call ceildiv helper with integer\" (11d4385819154e637eb34879bf3e4040f85ef194)\r\n\r\nNice find!\r\n\r\nThis seems like a working fix but fragile. It seems bad if callers are passing transaction sizes as decimals that will get silently rounded, instead of just passing integer values. I think it would be better to drop the rounding cast, and write `assert isinstance(tx_size, int)`, then fix the bad callers which are passing fractional transaction sizes.\r\n\r\nI think it would also be good to add `assert isinstance(a, int)` and `assert isinstance(b, int)` to the ceildiv function with a comment like \"# Implementation requires python integers, which have a // operator that does floor division. Other types like decimal.Decimal whose // operator truncates towards 0 will not work.\"",
-      "commit_id" : "11d4385819154e637eb34879bf3e4040f85ef194",
+      "commit_id" : "d1fab9d5d27a2db2546db0f610e0f6929ec4864e",
       "created_at" : "2022-02-04T19:39:27Z",
       "diff_hunk" : "@@ -226,7 +226,7 @@ def ceildiv(a, b):\n def get_fee(tx_size, feerate_btc_kvb):\n     \"\"\"Calculate the fee in BTC given a feerate is BTC/kvB. Reflects CFeeRate::GetFee\"\"\"\n     feerate_sat_kvb = int(feerate_btc_kvb * Decimal(1e8)) # Fee in sat/kvb as an int to avoid float precision errors\n-    target_fee_sat = ceildiv(feerate_sat_kvb * tx_size, 1000) # Round calculated fee up to nearest sat\n+    target_fee_sat = ceildiv(feerate_sat_kvb * int(tx_size), 1000) # Round calculated fee up to nearest sat",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24239#discussion_r799761086",
       "id" : 799761086,
-      "line" : 229,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584vq2K-",
       "original_commit_id" : "11d4385819154e637eb34879bf3e4040f85ef194",
       "original_line" : 229,
       "original_position" : 5,
       "original_start_line" : null,
       "path" : "test/functional/test_framework/util.py",
-      "position" : 5,
+      "position" : null,
       "pull_request_review_id" : 873503795,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24239",
       "reactions" : {
@@ -43,6 +43,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-04T19:55:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/799761086",
       "user" : {
@@ -78,21 +79,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/799762273"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"test: Call ceildiv helper with integer\" (11d4385819154e637eb34879bf3e4040f85ef194)\r\n\r\nNot directly related to this PR, but it seems like this satoshi_round call does nothing and should be dropped. (I suggested this previously https://github.com/bitcoin/bitcoin/pull/22949#discussion_r728064800)",
-      "commit_id" : "11d4385819154e637eb34879bf3e4040f85ef194",
+      "commit_id" : "d1fab9d5d27a2db2546db0f610e0f6929ec4864e",
       "created_at" : "2022-02-04T19:41:27Z",
       "diff_hunk" : "@@ -226,7 +226,7 @@ def ceildiv(a, b):\n def get_fee(tx_size, feerate_btc_kvb):\n     \"\"\"Calculate the fee in BTC given a feerate is BTC/kvB. Reflects CFeeRate::GetFee\"\"\"\n     feerate_sat_kvb = int(feerate_btc_kvb * Decimal(1e8)) # Fee in sat/kvb as an int to avoid float precision errors\n-    target_fee_sat = ceildiv(feerate_sat_kvb * tx_size, 1000) # Round calculated fee up to nearest sat\n+    target_fee_sat = ceildiv(feerate_sat_kvb * int(tx_size), 1000) # Round calculated fee up to nearest sat\n     return satoshi_round(target_fee_sat / Decimal(1e8)) # Truncate BTC result to nearest sat",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24239#discussion_r799762273",
       "id" : 799762273,
-      "line" : 230,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584vq2dh",
       "original_commit_id" : "11d4385819154e637eb34879bf3e4040f85ef194",
       "original_line" : 230,
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "test/functional/test_framework/util.py",
-      "position" : 6,
+      "position" : null,
       "pull_request_review_id" : 873503795,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24239",
       "reactions" : {
@@ -110,6 +111,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-04T19:55:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/799762273",
       "user" : {
@@ -145,7 +147,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/800720995"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks, that makes sense. I added the asserts as suggested and also your explanation.\r\nI changed the call sites to use the `count_bytes` helper for the tx size, so that the function is called with integers now.",
       "commit_id" : "d1fab9d5d27a2db2546db0f610e0f6929ec4864e",
       "created_at" : "2022-02-07T14:39:17Z",
@@ -178,6 +180,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-07T14:39:17Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/800720995",
       "user" : {
@@ -213,7 +216,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/800737392"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Yes, I agree it does nothing since we pass an argument that needs no rounding because `target_fee_sat` is calculated in sat. I removed the call to `satoshi_round` here.\r\n\r\nThe only difference in behavior I could see is that if we'd call `get_fee` with absurdly high feerates such as\r\n`get_fee(1000, Decimal(\"1.00000001\"))`, we'd get an `decimal.InvalidOperation` assert from `satoshi_round` before because the specified Decimal precision of 8 would not be enough. ",
       "commit_id" : "d1fab9d5d27a2db2546db0f610e0f6929ec4864e",
       "created_at" : "2022-02-07T14:54:55Z",
@@ -246,6 +249,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-07T14:54:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/800737392",
       "user" : {
@@ -270,7 +274,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Addressed the comments of @ryanofsky - thanks!",
       "created_at" : "2022-02-07T14:55:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24239#issuecomment-1031555325",

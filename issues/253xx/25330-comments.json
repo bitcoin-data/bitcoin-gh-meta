@@ -9,7 +9,7 @@
       "node_id" : "IC_kwDOABII585ErFum",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -17,7 +17,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1152146342/reactions"
       },
       "updated_at" : "2022-06-10T09:07:48Z",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "To be concrete, is the idea is that the locked chain \"lc\" class would lock cs_main when it is constructed, and unlock it when it destructed? \r\n\r\nIf so, I think that can be a nice interface, and it is similar to the to the [`interfaces::Chain::Lock`](https://github.com/bitcoin/bitcoin/blob/0f204dd3f21b997334a0e99954c939db154b64ca/src/interfaces/chain.h#L85) class which wallet code was using before #16426\r\n\r\nAnother benefit besides making locking easier to enforce is that it could eliminate explicit references to cs_main, and distinguish uses of cs_main for locking chain state from uses of cs_main for other reasons, and maybe make it easier to split up cs_main in the future.\r\n\r\nA risk of this approach is that the locked chain class could turn into a monolithic class doing a lot of unrelated things. Also it sounds like introducing it might require a lot of code changes, though that would depend on the details.\r\n\r\nSeems like a useful idea to explore",
       "created_at" : "2022-06-10T14:59:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25330#issuecomment-1152453781",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I think something like this makes sense for the combination of chain tip / utxo set / mempool access, since that is complicated, and controls a whole mess of different data structures -- and assumeutxo means we've now sometimes got two tips/utxo sets, which makes it even more complicated.\r\n\r\nFor the general case, I don't think the template really adds much over what we do now.",
       "created_at" : "2022-06-13T00:42:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25330#issuecomment-1153338488",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I guess what I'm thinking is something like:\r\n\r\n```c++\r\nclass KernelChain\r\n{\r\npublic:\r\n    CChainState& chainstate;\r\n    CoinsViews& coinviews;\r\nprivate:\r\n    DebugLock<decltype(::cs_main)> main_lock;\r\n};\r\n\r\nclass KernelMemPool\r\n{\r\npublic:\r\n    CTxMempool& mempool;\r\nprivate:\r\n    DebugLock<decltype(mempool.cs)> mempool_lock;\r\n};\r\n\r\nclass KernelChainAndMemPool : public KernelChain, public KernelMemPool\r\n{\r\n};\r\n\r\nclass ChainstateManager\r\n{\r\npublic:\r\n    CBlockIndex* GetTip() const;\r\n    KernelChain GetChain();\r\n    KernelChainAndMemPool GetChainMemPool();\r\n\r\n    KernelChain GetIBDChain();\r\n};\r\n```\r\n\r\nIf we figured out reader/writer locks; we could maybe have a `const KernelChain& GetChainRO() const;` to allow multiple threads simultaneous read-only access to the chain/mempool.\r\n\r\nThe idea above is that you only have access to the mempool once you've already taken both `mempool.cs`, and lose access to it at exactly the same time as you lose the lock; so none of the mempool methods need to worry about locking at all (and the mempool.cs could be moved into `ChainstateManager`, I guess), and likewise for `cs_main`.",
       "created_at" : "2022-06-13T01:54:08Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25330#issuecomment-1153375927",
@@ -308,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "**>> A good interface is impossible to misuse <<**\r\n\r\nWhat @hebasto suggested above is in-line with that - get all fields that need to be consistent with each other in one call. Replace `GetX()` and `GetY()` with `GetState()` (or `GetSnapshot()`) which returns both `X` and `Y`. That is also pretty simple to implement, understand and to use. It is dumb, which is good. [Code should be dumb](https://en.wikipedia.org/wiki/KISS_principle).\r\n\r\nThere may be some problems around the other idea about `Locked lc{node.chainman}`:\r\n* one could still call `node.chainman.tip_hash()` directly without creating `lc` beforehand\r\n* it opens the possibility to pass around `lc` as argument to functions, transferring mutex ownership, which opens up a can of worms and is better avoided if possible\r\n* the caller can unintentionally hold it locked for too long\r\n* will not work with thread safety annotations?\r\n* it would require a recurstive mutex? I think that every time a recursive mutex is needed there is some design flaw or at least low-level coding flaw.",
       "created_at" : "2022-06-13T09:21:13Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25330#issuecomment-1153682016",
@@ -396,7 +396,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Right, the GetState() approach is not suitable in all cases. I guess it is best to decide on a case-by-case basis. The lambda approach sounds nice.",
       "created_at" : "2022-06-13T15:26:18Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25330#issuecomment-1154064815",
@@ -440,7 +440,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Having now looked more at #25077 I'm a big concept ack on doing something along these lines; the current interface is a mess, and this does seem like the simplest way of addressing it cleanly.",
       "created_at" : "2022-06-13T15:58:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25330#issuecomment-1154098864",
@@ -484,7 +484,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I guess the other thing to consider is that aliasing makes any analysis hard, including thread safety -- if you do \"foo.bar = 3\" then it's easy to lookup what bar is and whether you need a mutex; but when you do \"x = &foo; x->bar = 3;\" that becomes a lot harder. \r\n\r\nSo perhaps a better approach is to avoid making aliases of things that are protected by external mutexes. So if you've got:\r\n\r\n```c++\r\nstruct X {\r\n    Mutex m;\r\n    int i GUARDED_BY(m);\r\n};\r\nX x;\r\n```\r\n\r\nthen it's fine to say `X& x2 = x;` and make an alias of the entire structure, but it's not fine to say `int* pi = &x.i`. `ChainstateManager::ActiveChain` in particular is returning an alias of `m_chain` which doesn't have an internal mutex protecting itself, and isn't natively thread safe. But, at least in theory, an alias of `CChainState` could be safe, since it's already designed to be accessed from multiple threads and has its own internal locking logic to be thread safe.",
       "created_at" : "2022-06-14T06:09:03Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25330#issuecomment-1154756124",
@@ -537,7 +537,7 @@
       "node_id" : "IC_kwDOABII585E7eR9",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -545,7 +545,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1156441213/reactions"
       },
       "updated_at" : "2022-06-15T12:59:33Z",
@@ -572,7 +572,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "https://github.com/bitcoin/bitcoin/pull/25390 has some solution that is relevant to this.",
       "created_at" : "2022-06-16T15:53:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25330#issuecomment-1157834789",

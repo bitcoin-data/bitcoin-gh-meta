@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "This is part of the `libbitcoinkernel` project: #24303, https://github.com/bitcoin/bitcoin/projects/18\r\n\r\n-----\r\n\r\nAs mentioned in the Stage 1 Step 2 description of [the `libbitcoinkernel` project](https://github.com/bitcoin/bitcoin/issues/24303), `ArgsManager` will not be part of `libbitcoinkernel`. Therefore, it is important that we remove any dependence on `ArgsManager` by code that will be part of `libbitcoinkernel`. This is the first in a series of PRs aiming to achieve this.\r\n\r\nThis PR removes `CTxMemPool+MempoolAccept`'s dependency on `ArgsManager` by introducing a `CTxMemPool::Options` struct, which is used to specify `CTxMemPool`'s various options at construction time.\r\n\r\nThese options are:\r\n- `-maxmempool` -> `CTxMemPool::Options::max_size`\r\n- `-mempoolexpiry` -> `CTxMemPool::Options::expiry`\r\n- `-limitancestorcount` -> `CTxMemPool::Options::limits::ancestor_count`\r\n- `-limitancestorsize` -> `CTxMemPool::Options::limits::ancestor_size`\r\n- `-limitdescendantcount` -> `CTxMemPool::Options::limits::descendant_count`\r\n- `-limitdescendantsize` -> `CTxMemPool::Options::limits::descendant_size`\r\n\r\nMore context can be gleaned from the commit messages. The important commits are:\r\n\r\n- 56eb479ded8bfb2ef635bb6f3b484f9d5952c70d \"pool: Add and use MemPoolOptions, ApplyArgsManOptions\"\r\n- a1e08b70f3068f4e8def1c630d8f50cd54da7832 \"mempool: Pass in -maxmempool instead of referencing gArgs\"\r\n- 6f4bf3ede5812b374828f08fc728ceded2f10024 \"mempool: Pass in -mempoolexpiry instead of referencing gArgs\"\r\n- 5958a7fe4806599fc620ee8c1a881ca10fa2dd16 \"mempool: Introduce (still-unused) MemPoolLimits\"\r\n\r\nReviewers: Help needed in the following commits (see commit messages):\r\n- a1e08b70f3068f4e8def1c630d8f50cd54da7832 \"mempool: Pass in -maxmempool instead of referencing gArgs\"\r\n- 0695081a797e9a5d7787b78b0f8289dafcc6bff7 \"node/ifaces: Use existing MemPoolLimits\"\r\n\r\nNote to Reviewers: There are perhaps an infinite number of ways to architect `CTxMemPool::Options`, the current one tries to keep it simple, usable, and flexible. I hope we don't spend too much time arguing over the design here since that's not the point. In the case that you're 100% certain that a different design is strictly better than this one in every regard, please show us a fully-implemented branch.\r\n\r\n-----\r\n\r\nTODO:\r\n- [x] Use the more ergonomic `CTxMemPool::Options` where appropriate\r\n- [x] Doxygen comments for `ApplyArgsManOptions`, `MemPoolOptions`\r\n\r\n-----\r\n\r\nQuestions for Reviewers:\r\n1. Should we use `std::chrono::seconds` for `CTxMemPool::Options::expiry` and `CTxMemPool::m_expiry` instead of an `int64_t`? Something else? (`std::chrono::hours`?)\r\n2. Should I merge `CTxMemPool::Limits` inside `CTxMemPool::Options`?\r\n",
    "closed_at" : "2022-06-29T07:17:19Z",
    "closed_by" : {
@@ -25,7 +25,7 @@
       "type" : "User",
       "url" : "https://api.github.com/users/MarcoFalke"
    },
-   "comments" : 15,
+   "comments" : 16,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25290/comments",
    "created_at" : "2022-06-07T01:59:02Z",
    "draft" : false,
@@ -73,7 +73,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25290/timeline",
    "title" : "[kernel 3a/n] Decouple `CTxMemPool` from `ArgsManager`",
-   "updated_at" : "2022-06-29T07:22:51Z",
+   "updated_at" : "2023-01-17T14:55:40Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25290",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/3445290?v=4",

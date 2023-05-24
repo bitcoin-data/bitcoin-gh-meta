@@ -11,21 +11,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/776366558"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I tend to agree that seeing `CTxOut(nValue=21000000.00000000...` when the error is for a missing amount is confusing. \r\n\r\nUsing `MAX_AMOUNT` for the check is already a nuanced concept (I had to read through all the linked PRs/issues before I understood why it was being used here). I don't think displaying 0 is correct, either, since a 0 amount UTXO is a valid spend.\r\n\r\nPerhaps just print the `scriptPubKey`? Something like `Missing amount for CTxOut with scriptPubKey=0014751e76e8199196d454941c45d1`",
-      "commit_id" : "8dc5fa1ee538a7ede25b68be3d496a3fc2af5229",
+      "commit_id" : "8bd34dc774788cbf3cad8e139542a0ed9f3e8bb4",
       "created_at" : "2021-12-29T14:57:52Z",
       "diff_hunk" : "@@ -669,6 +669,10 @@ static void MutateTxSign(CMutableTransaction& tx, const std::string& flagStr)\n         if (!fHashSingle || (i < mergedTx.vout.size()))\n             ProduceSignature(keystore, MutableTransactionSignatureCreator(&mergedTx, i, amount, nHashType), prevPubKey, sigdata);\n \n+        if (amount == MAX_MONEY && !sigdata.scriptWitness.IsNull()) {\n+            throw std::runtime_error(strprintf(\"Missing amount for %s\", coin.out.ToString()));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23784#discussion_r776366558",
       "id" : 776366558,
-      "line" : 673,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584uRmne",
       "original_commit_id" : "8dc5fa1ee538a7ede25b68be3d496a3fc2af5229",
       "original_line" : 673,
       "original_position" : 14,
       "original_start_line" : null,
       "path" : "src/bitcoin-tx.cpp",
-      "position" : 14,
+      "position" : null,
       "pull_request_review_id" : 841458015,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23784",
       "reactions" : {
@@ -43,6 +43,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-29T14:59:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/776366558",
       "user" : {
@@ -67,7 +68,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "One other suggestion: add a test with a 0 amount as that is a good (edge?) case to have tested.",
       "created_at" : "2021-12-29T15:00:40Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23784#issuecomment-1002635962",
@@ -122,7 +123,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/776484358"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks, I agree that the best would be to not display the amount at all if it is missing and picked up your suggestion.",
       "commit_id" : "8bd34dc774788cbf3cad8e139542a0ed9f3e8bb4",
       "created_at" : "2021-12-29T20:29:04Z",
@@ -155,6 +156,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-12-29T20:29:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/776484358",
       "user" : {
@@ -179,7 +181,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks for the valuable review @josibake! Rebased on master and force-pushed with the following adaptions:\r\n- changed the error message to not include the amount, as showing any value would be just confusing (https://github.com/bitcoin/bitcoin/pull/23784#discussion_r776366558)\r\n- changed the input value of the first introduced passing test from 31337 to 0, as this is an edge-case (https://github.com/bitcoin/bitcoin/pull/23784#issuecomment-1002635962)\r\n\r\n(`git range-diff 8dc5fa1...8bd34dc`)",
       "created_at" : "2021-12-29T20:33:27Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23784#issuecomment-1002767030",
@@ -223,7 +225,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK https://github.com/bitcoin/bitcoin/commit/8bd34dc774788cbf3cad8e139542a0ed9f3e8bb4",
       "created_at" : "2021-12-30T01:13:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23784#issuecomment-1002832522",
@@ -311,7 +313,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Needs OP adjusted before merge?\r\n\r\nThanks, done.",
       "created_at" : "2022-01-03T13:57:31Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23784#issuecomment-1004109343",

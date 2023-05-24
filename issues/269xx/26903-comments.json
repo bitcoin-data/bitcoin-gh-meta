@@ -1,7 +1,7 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| Concept ACK | [mzumsande](https://github.com/bitcoin/bitcoin/pull/26903#issuecomment-1403905417) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24230](https://github.com/bitcoin/bitcoin/pull/24230) (indexes: Stop using node internal types and locking cs_main, improve sync logic by ryanofsky)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| Concept ACK | [mzumsande](https://github.com/bitcoin/bitcoin/pull/26903#issuecomment-1403905417) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.\n",
       "created_at" : "2023-01-17T10:10:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26903#issuecomment-1385146310",
       "id" : 1385146310,
@@ -20,7 +20,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1385146310/reactions"
       },
-      "updated_at" : "2023-01-25T16:40:40Z",
+      "updated_at" : "2023-05-11T15:30:48Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1385146310",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK\r\n",
       "created_at" : "2023-01-25T16:40:38Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26903#issuecomment-1403905417",
@@ -305,6 +305,50 @@
          "subscriptions_url" : "https://api.github.com/users/mzumsande/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/mzumsande"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "I agree 1c67b495cb2de76723c404f42d0bee219cc765c3 would fix the problem, but I think it suppresses errors too broadly. The `Commit()` function is called many places, so changing it to silently skip the `CustomCommit()` call and return `true` when it doesn't do anything could make it harder debug other problems in the future, or even know about them.\r\n\r\nI think it would be better to apply a more targeted fix of just not calling `Commit()` when there is nothing to commit in the sync thread:\r\n\r\n```diff\r\n--- a/src/index/base.cpp\r\n+++ b/src/index/base.cpp\r\n@@ -189,9 +189,9 @@ void BaseIndex::ThreadSync()\r\n                           GetName(), pindex->nHeight);\r\n                 last_log_time = current_time;\r\n             }\r\n \r\n-            if (last_locator_write_time + SYNC_LOCATOR_WRITE_INTERVAL < current_time) {\r\n+            if (pindex->pprev && last_locator_write_time + SYNC_LOCATOR_WRITE_INTERVAL < current_time) {\r\n                 SetBestBlockIndex(pindex->pprev);\r\n                 last_locator_write_time = current_time;\r\n                 // No need to handle errors in Commit. See rationale above.\r\n                 Commit();\r\n```\r\n\r\n---\r\n\r\nNote on history of this bug: The `m_best_block_index == nullptr` check in the `Commit()` function was first added in 0243907faee0aa6af09974131d9a46a7f9c3ef38 from #24117 to avoid writing the index locator and try to prevent data corruption. It was later extended in 7878f97bf15b6e7c9b47d1c0d96419b97e1bdcbd from #25494 to avoid writing custom index data as well as the index locator, and to print an error message. That change unfortunately caused the issue here by spuriously printing the error message on startup when a new index was enabled. @mzumsande actually pointed out the spurious error message at the time in a review comment https://github.com/bitcoin/bitcoin/pull/25494#discussion_r924810836, but I didn't realize how commonly the error would happen, and we didn't do anything about it then.\r\n",
+      "created_at" : "2023-03-01T22:17:09Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26903#issuecomment-1450928417",
+      "id" : 1450928417,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26903",
+      "node_id" : "IC_kwDOABII585We2kh",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1450928417/reactions"
+      },
+      "updated_at" : "2023-03-01T22:17:09Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1450928417",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7133040?v=4",
+         "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/ryanofsky/followers",
+         "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/ryanofsky/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/ryanofsky",
+         "id" : 7133040,
+         "login" : "ryanofsky",
+         "node_id" : "MDQ6VXNlcjcxMzMwNDA=",
+         "organizations_url" : "https://api.github.com/users/ryanofsky/orgs",
+         "received_events_url" : "https://api.github.com/users/ryanofsky/received_events",
+         "repos_url" : "https://api.github.com/users/ryanofsky/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/ryanofsky/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/ryanofsky/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/ryanofsky"
       }
    }
 ]

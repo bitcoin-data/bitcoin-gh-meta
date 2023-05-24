@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "FYI @fjahr",
       "created_at" : "2022-01-24T14:10:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24138#issuecomment-1020140609",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24230](https://github.com/bitcoin/bitcoin/pull/24230) (indexes: Stop using node internal types and locking cs_main, improve sync logic by ryanofsky)\n* [#24150](https://github.com/bitcoin/bitcoin/pull/24150) (refactor: move index class members from protected to private by jonatack)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-01-26T00:58:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24138#issuecomment-1021753569",
@@ -101,7 +101,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "I don't see why this should change. The `CommitInternal` override feels like a hacky refactor.",
-      "commit_id" : "010156c07f28e2c8dc30d4408942d1e1d88ab54d",
+      "commit_id" : "691d45fdc83ec14f87a400f548553168ac70263f",
       "created_at" : "2022-01-29T20:59:12Z",
       "diff_hunk" : "@@ -228,10 +228,7 @@ bool CoinStatsIndex::WriteBlock(const CBlock& block, const CBlockIndex* pindex)\n     m_muhash.Finalize(out);\n     value.second.muhash = out;\n \n-    CDBBatch batch(*m_db);\n-    batch.Write(DBHeightKey(pindex->nHeight), value);\n-    batch.Write(DB_MUHASH, m_muhash);\n-    return m_db->WriteBatch(batch);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24138#discussion_r795092758",
@@ -131,6 +131,7 @@
       "side" : "LEFT",
       "start_line" : 231,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-01-29T21:00:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/795092758",
       "user" : {
@@ -168,19 +169,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Seems like the only problem is this lone line?",
-      "commit_id" : "010156c07f28e2c8dc30d4408942d1e1d88ab54d",
+      "commit_id" : "691d45fdc83ec14f87a400f548553168ac70263f",
       "created_at" : "2022-01-29T21:00:08Z",
       "diff_hunk" : "@@ -481,5 +486,5 @@ bool CoinStatsIndex::ReverseBlock(const CBlock& block, const CBlockIndex* pindex\n     Assert(m_total_unspendables_scripts == read_out.second.total_unspendables_scripts);\n     Assert(m_total_unspendables_unclaimed_rewards == read_out.second.total_unspendables_unclaimed_rewards);\n \n-    return m_db->Write(DB_MUHASH, m_muhash);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24138#discussion_r795092834",
       "id" : 795092834,
-      "line" : 484,
+      "line" : 492,
       "node_id" : "PRRC_kwDOABII584vZCdi",
       "original_commit_id" : "010156c07f28e2c8dc30d4408942d1e1d88ab54d",
-      "original_line" : 484,
+      "original_line" : 492,
       "original_position" : 31,
       "original_start_line" : null,
       "path" : "src/index/coinstatsindex.cpp",
-      "position" : 31,
+      "position" : 33,
       "pull_request_review_id" : 867009704,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24138",
       "reactions" : {
@@ -198,6 +199,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-01-29T21:00:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/795092834",
       "user" : {
@@ -233,9 +235,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/795096236"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I think this is spot is problematic, and the reason for the behavior reported in #24076: \r\n\r\nIf we persist `DB_MUHASH` here in each `BlockConnected()` callback, but not `DB_BEST_BLOCK` (which is persisted only in `ChainStateFlushed()` callbacks and will therefore at this point in time have a lower height), the db is temporarily in an inconsistent state.\r\n\r\nSo in case of an unclean shutdown (with no time to flush the chainstate to disk to get in sync again), on next startup the index will initialize with the older `DB_BEST_BLOCK` but a `DB_MUHASH` which contains data from newer blocks. The index then reprocesses the blocks after `DB_BEST_BLOCK`'s height a second time. \r\nBut MuHash is a rolling hash, so it will incorporate data from these blocks twice, and the hash will be incorrect.",
-      "commit_id" : "010156c07f28e2c8dc30d4408942d1e1d88ab54d",
+      "commit_id" : "691d45fdc83ec14f87a400f548553168ac70263f",
       "created_at" : "2022-01-29T21:41:44Z",
       "diff_hunk" : "@@ -228,10 +228,7 @@ bool CoinStatsIndex::WriteBlock(const CBlock& block, const CBlockIndex* pindex)\n     m_muhash.Finalize(out);\n     value.second.muhash = out;\n \n-    CDBBatch batch(*m_db);\n-    batch.Write(DBHeightKey(pindex->nHeight), value);\n-    batch.Write(DB_MUHASH, m_muhash);\n-    return m_db->WriteBatch(batch);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24138#discussion_r795096236",
@@ -266,6 +268,7 @@
       "side" : "LEFT",
       "start_line" : 231,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-01-29T21:41:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/795096236",
       "user" : {
@@ -303,20 +306,20 @@
       },
       "author_association" : "MEMBER",
       "body" : "If I replace only that line with `true` (or `false` for that matter) the reorg test in `feature_coinstatsindex.py` still passes. But not sure if that helps with the original issue (and it indicates an obvious test coverage omission, cc @fjahr).",
-      "commit_id" : "010156c07f28e2c8dc30d4408942d1e1d88ab54d",
+      "commit_id" : "691d45fdc83ec14f87a400f548553168ac70263f",
       "created_at" : "2022-02-08T12:46:53Z",
       "diff_hunk" : "@@ -481,5 +486,5 @@ bool CoinStatsIndex::ReverseBlock(const CBlock& block, const CBlockIndex* pindex\n     Assert(m_total_unspendables_scripts == read_out.second.total_unspendables_scripts);\n     Assert(m_total_unspendables_unclaimed_rewards == read_out.second.total_unspendables_unclaimed_rewards);\n \n-    return m_db->Write(DB_MUHASH, m_muhash);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24138#discussion_r801593190",
       "id" : 801593190,
       "in_reply_to_id" : 795092834,
-      "line" : 484,
+      "line" : 492,
       "node_id" : "PRRC_kwDOABII584vx1dm",
       "original_commit_id" : "010156c07f28e2c8dc30d4408942d1e1d88ab54d",
-      "original_line" : 484,
+      "original_line" : 492,
       "original_position" : 31,
       "original_start_line" : null,
       "path" : "src/index/coinstatsindex.cpp",
-      "position" : 31,
+      "position" : 33,
       "pull_request_review_id" : 875973739,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24138",
       "reactions" : {
@@ -334,6 +337,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-08T12:48:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/801593190",
       "user" : {
@@ -369,22 +373,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/805197117"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Only replacing this line means the rolling `muhash` state is not persisted during reorgs. That would be a problem if the node gets shut down during the reorg, then we would risk an inconsistent state or probably the index wouldn't even start up anymore because the guard check in `Init()` would fail.",
-      "commit_id" : "010156c07f28e2c8dc30d4408942d1e1d88ab54d",
+      "commit_id" : "691d45fdc83ec14f87a400f548553168ac70263f",
       "created_at" : "2022-02-12T19:44:24Z",
       "diff_hunk" : "@@ -481,5 +486,5 @@ bool CoinStatsIndex::ReverseBlock(const CBlock& block, const CBlockIndex* pindex\n     Assert(m_total_unspendables_scripts == read_out.second.total_unspendables_scripts);\n     Assert(m_total_unspendables_unclaimed_rewards == read_out.second.total_unspendables_unclaimed_rewards);\n \n-    return m_db->Write(DB_MUHASH, m_muhash);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24138#discussion_r805197117",
       "id" : 805197117,
       "in_reply_to_id" : 795092834,
-      "line" : 484,
+      "line" : 492,
       "node_id" : "PRRC_kwDOABII584v_lU9",
       "original_commit_id" : "010156c07f28e2c8dc30d4408942d1e1d88ab54d",
-      "original_line" : 484,
+      "original_line" : 492,
       "original_position" : 31,
       "original_start_line" : null,
       "path" : "src/index/coinstatsindex.cpp",
-      "position" : 31,
+      "position" : 33,
       "pull_request_review_id" : 880885450,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24138",
       "reactions" : {
@@ -402,6 +406,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-13T00:14:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/805197117",
       "user" : {
@@ -437,9 +442,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/805201361"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I think it was not considered hacky by the author of the current index architecture because it's done the same way in `blockfilterindex.cpp` and the documentation in `index/base.h` also states that this method can be overridden.\r\n\r\nObviously, I did it differently here but I can't remember if that was a deliberate choice or rather just lack of understanding (probably the latter).\r\n\r\nAnd that doesn't mean there isn't mayor room for refactoring here. But it looks like #24230 should be considered first when thinking about it first. I have not started reviewing it yet.",
-      "commit_id" : "010156c07f28e2c8dc30d4408942d1e1d88ab54d",
+      "commit_id" : "691d45fdc83ec14f87a400f548553168ac70263f",
       "created_at" : "2022-02-12T20:30:13Z",
       "diff_hunk" : "@@ -228,10 +228,7 @@ bool CoinStatsIndex::WriteBlock(const CBlock& block, const CBlockIndex* pindex)\n     m_muhash.Finalize(out);\n     value.second.muhash = out;\n \n-    CDBBatch batch(*m_db);\n-    batch.Write(DBHeightKey(pindex->nHeight), value);\n-    batch.Write(DB_MUHASH, m_muhash);\n-    return m_db->WriteBatch(batch);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24138#discussion_r805201361",
@@ -470,6 +475,7 @@
       "side" : "LEFT",
       "start_line" : 231,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-13T00:14:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/805201361",
       "user" : {
@@ -505,9 +511,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/809434532"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"index: Commit DB_MUHASH and DB_BEST_BLOCK to disk together\" (010156c07f28e2c8dc30d4408942d1e1d88ab54d)\r\n\r\n> The `CommitInternal` override feels like a hacky refactor.\r\n\r\nI think I agree with luke if the point is that the override-and-call-base class code in `CommitInternal` is a little hacky, but fjahr's right this just the way the base index class was designed, so the override seems like appropriate way to handle this now. #24230 does clean up all the overrides and will simplify this a bit.",
-      "commit_id" : "010156c07f28e2c8dc30d4408942d1e1d88ab54d",
+      "commit_id" : "691d45fdc83ec14f87a400f548553168ac70263f",
       "created_at" : "2022-02-17T20:17:30Z",
       "diff_hunk" : "@@ -228,10 +228,7 @@ bool CoinStatsIndex::WriteBlock(const CBlock& block, const CBlockIndex* pindex)\n     m_muhash.Finalize(out);\n     value.second.muhash = out;\n \n-    CDBBatch batch(*m_db);\n-    batch.Write(DBHeightKey(pindex->nHeight), value);\n-    batch.Write(DB_MUHASH, m_muhash);\n-    return m_db->WriteBatch(batch);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24138#discussion_r809434532",
@@ -538,6 +544,7 @@
       "side" : "LEFT",
       "start_line" : 231,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-17T20:53:57Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/809434532",
       "user" : {
@@ -573,9 +580,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/809436879"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"index: Commit DB_MUHASH and DB_BEST_BLOCK to disk together\" (010156c07f28e2c8dc30d4408942d1e1d88ab54d)\r\n\r\nI might add a code comment here like \"Intentionally do not update DB_MUHASH here so it stays in sync with DB_BEST_BLOCK, and index is not corrupted if there is an unclean shutdown\"",
-      "commit_id" : "010156c07f28e2c8dc30d4408942d1e1d88ab54d",
+      "commit_id" : "691d45fdc83ec14f87a400f548553168ac70263f",
       "created_at" : "2022-02-17T20:21:07Z",
       "diff_hunk" : "@@ -228,10 +228,7 @@ bool CoinStatsIndex::WriteBlock(const CBlock& block, const CBlockIndex* pindex)\n     m_muhash.Finalize(out);\n     value.second.muhash = out;\n \n-    CDBBatch batch(*m_db);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24138#discussion_r809436879",
@@ -605,6 +612,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-17T20:53:57Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/809436879",
       "user" : {
@@ -642,20 +650,20 @@
       },
       "author_association" : "MEMBER",
       "body" : ">  if the node gets shut down during the reorg,\r\n\r\nI guess this is very non trivial to test, but maybe add a comment?",
-      "commit_id" : "010156c07f28e2c8dc30d4408942d1e1d88ab54d",
+      "commit_id" : "691d45fdc83ec14f87a400f548553168ac70263f",
       "created_at" : "2022-02-18T13:33:33Z",
       "diff_hunk" : "@@ -481,5 +486,5 @@ bool CoinStatsIndex::ReverseBlock(const CBlock& block, const CBlockIndex* pindex\n     Assert(m_total_unspendables_scripts == read_out.second.total_unspendables_scripts);\n     Assert(m_total_unspendables_unclaimed_rewards == read_out.second.total_unspendables_unclaimed_rewards);\n \n-    return m_db->Write(DB_MUHASH, m_muhash);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24138#discussion_r810001814",
       "id" : 810001814,
       "in_reply_to_id" : 795092834,
-      "line" : 484,
+      "line" : 492,
       "node_id" : "PRRC_kwDOABII584wR6WW",
       "original_commit_id" : "010156c07f28e2c8dc30d4408942d1e1d88ab54d",
-      "original_line" : 484,
+      "original_line" : 492,
       "original_position" : 31,
       "original_start_line" : null,
       "path" : "src/index/coinstatsindex.cpp",
-      "position" : 31,
+      "position" : 33,
       "pull_request_review_id" : 887280272,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24138",
       "reactions" : {
@@ -673,6 +681,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-18T13:33:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/810001814",
       "user" : {
@@ -708,9 +717,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/811280315"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Just to make this clear: This is not a refactor, it changes behavior (the points in time when `DB_MUHASH` is written to disk).\r\n\r\nMy understanding is that the indexes work in general such that that all persisted data describing the current _progress_ of indexing (such as the best block) must be in sync with the persisted chainstate information (which is sometimes not flushed for several blocks received) - that is why `ChainStateFlushed()` callbacks are used. In case of an unclean shutdown, the chainstate will be constructed from this point on, so the indexes must as well.\r\n\r\nIn contrast to this is the actual indexed data for each block - I think we could in principle cache it and also write it to disk with each `ChainStateFlushed()` callback and not use `BlockConnected()` at all. \r\n\r\nBut it is also possible to write it to disk in advance with each `BlockConnected()` callback, as it is done:\r\nThis is dependent on the assumption that we will not read (and possibly overwrite) the indexed data in case it is ahead of the flushed chainstate data (and the best block), and also that _before_ flushing the chainstate, we have called `BlockConnected()` for each block.\r\n\r\nWith this in mind, I don't see a better way of doing this other than overriding `CommitInternal`.",
-      "commit_id" : "eb6cc05da32c5bde122725a0bc907d3767a791cd",
+      "commit_id" : "691d45fdc83ec14f87a400f548553168ac70263f",
       "created_at" : "2022-02-21T16:21:20Z",
       "diff_hunk" : "@@ -228,10 +228,7 @@ bool CoinStatsIndex::WriteBlock(const CBlock& block, const CBlockIndex* pindex)\n     m_muhash.Finalize(out);\n     value.second.muhash = out;\n \n-    CDBBatch batch(*m_db);\n-    batch.Write(DBHeightKey(pindex->nHeight), value);\n-    batch.Write(DB_MUHASH, m_muhash);\n-    return m_db->WriteBatch(batch);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24138#discussion_r811280315",
@@ -741,6 +750,7 @@
       "side" : "LEFT",
       "start_line" : 231,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-21T16:21:21Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/811280315",
       "user" : {
@@ -776,9 +786,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/811294780"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks, I added a comment here.",
-      "commit_id" : "eb6cc05da32c5bde122725a0bc907d3767a791cd",
+      "commit_id" : "691d45fdc83ec14f87a400f548553168ac70263f",
       "created_at" : "2022-02-21T16:40:07Z",
       "diff_hunk" : "@@ -228,10 +228,7 @@ bool CoinStatsIndex::WriteBlock(const CBlock& block, const CBlockIndex* pindex)\n     m_muhash.Finalize(out);\n     value.second.muhash = out;\n \n-    CDBBatch batch(*m_db);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24138#discussion_r811294780",
@@ -809,6 +819,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-21T16:40:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/811294780",
       "user" : {
@@ -844,9 +855,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/811297574"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I added a comment at the end of `CoinStatsIndex::WriteBlock` (as suggested by ryanofsky below). I think that duplicating this comment in `CoinStatsIndex::ReverseBlock` is not required, since this function doesn't write anything else to disk there wouldn't really be the expectation that for it to write `DB_MUHASH` here.",
-      "commit_id" : "eb6cc05da32c5bde122725a0bc907d3767a791cd",
+      "commit_id" : "691d45fdc83ec14f87a400f548553168ac70263f",
       "created_at" : "2022-02-21T16:43:46Z",
       "diff_hunk" : "@@ -481,5 +486,5 @@ bool CoinStatsIndex::ReverseBlock(const CBlock& block, const CBlockIndex* pindex\n     Assert(m_total_unspendables_scripts == read_out.second.total_unspendables_scripts);\n     Assert(m_total_unspendables_unclaimed_rewards == read_out.second.total_unspendables_unclaimed_rewards);\n \n-    return m_db->Write(DB_MUHASH, m_muhash);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24138#discussion_r811297574",
@@ -877,6 +888,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-21T16:43:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/811297574",
       "user" : {
@@ -901,7 +913,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I pushed an update, rebasing (with #24133 merged) and addressing feedback (adding a comment).\r\n\r\n> It would be good to add a unit test to coinstatsindex_tests that triggers the issue this is supposed to fix. I think the test would just need to make the index object, send a BlockConnected notification, and then destroy the index object without sending ChainStateFlushed notification. This would save a corrupted index that should result in errors next time it is loaded.\r\n\r\nThis would be great. I haven't done this with this push, because \r\na) I couldn't make it work yet, I had some technical difficulties with the test framework when restarting the index. I will look into it more unless\r\nb) @fjahr who said [here](https://github.com/bitcoin/bitcoin/pull/24133#discussion_r810605240) that he is working on this has more success.",
       "created_at" : "2022-02-21T16:51:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24138#issuecomment-1047069965",
@@ -945,7 +957,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> @mzumsande I wrote a little test which passes with this bugfix, and fails with the fix reverted. Feel free to add it to this PR or use the code in any way: ~[ded9fda](https://github.com/bitcoin/bitcoin/commit/ded9fda2b6e154ac64b2fc755ddaa738b309b7e9)~ [d3c2ebb](https://github.com/bitcoin/bitcoin/commit/d3c2ebbfdc3c61a04b645c6bb435424fa60f4a0b)\r\n\r\nThank you! The test looks great, I added your commit to this PR (and confirmed that it fails on master).\r\n",
       "created_at" : "2022-03-01T14:02:19Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24138#issuecomment-1055472029",
@@ -1000,7 +1012,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/820237111"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "in 691d45fdc83ec14f87a400f548553168ac70263f:\r\n\r\nNot sure why we need this whole block with the new `index` instead of reusing the old `index` above. It doesn't seem to make a difference in my testing? ",
       "commit_id" : "691d45fdc83ec14f87a400f548553168ac70263f",
       "created_at" : "2022-03-06T13:47:05Z",
@@ -1032,6 +1044,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-06T14:09:51Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/820237111",
       "user" : {
@@ -1100,6 +1113,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-09T10:49:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/822521424",
       "user" : {

@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Restarted the ARM CI, which failed due to an intermittent download issue. [Failure in the fuzzer ci](https://github.com/bitcoin/bitcoin/pull/24106/checks?check_run_id=4877279481):\r\n> \r\n> ```shell\r\n> INFO: Seed: 4040717080\r\n> INFO: Loaded 1 modules   (722258 inline 8-bit counters): 722258 [0x55ae9f2bf690, 0x55ae9f36fbe2), \r\n> INFO: Loaded 1 PC tables (722258 PCs): 722258 [0x55ae9f36fbe8,0x55ae9fe75108), \r\n> INFO:     4124 files found in /tmp/cirrus-ci-build/ci/scratch/qa-assets/fuzz_seed_corpus/script\r\n> INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 1048576 bytes\r\n> INFO: seed corpus: files: 4124 min: 1b max: 3146072b total: 220237367b rss: 162Mb\r\n> fuzz: test/fuzz/script.cpp:62: void script_fuzz_target(FuzzBufferType): Assertion `which_type == TxoutType::NONSTANDARD || which_type == TxoutType::NULL_DATA || which_type == TxoutType::MULTISIG' failed.\r\n> ==19805== ERROR: libFuzzer: deadly signal\r\n> ```\r\n\r\nThanks, the fuzzing issue should be fixed with the latest forced-push.",
       "created_at" : "2022-01-20T08:51:45Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24106#issuecomment-1017246162",
@@ -97,7 +97,7 @@
       "node_id" : "IC_kwDOABII5848pctF",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -105,7 +105,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1017498437/reactions"
       },
       "updated_at" : "2022-01-20T13:20:50Z",
@@ -141,7 +141,7 @@
       "node_id" : "IC_kwDOABII5848pdF3",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 3,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -149,7 +149,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 3,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1017500023/reactions"
       },
       "updated_at" : "2022-01-20T13:22:48Z",
@@ -185,7 +185,7 @@
       "node_id" : "IC_kwDOABII5848phM7",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 0,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -193,7 +193,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1017516859/reactions"
       },
       "updated_at" : "2022-01-20T15:34:57Z",
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@sipa @sdaftuar: Good points, I agree that this policy change could lead to problems in batching transactions and similar scenarios that I haven't thought about, potentially hindering adoption. My initial assumption would be that exchanges are professional enough to know what they are doing and are able to fix such a potential problem quite quickly if it comes up (rather than going a step backwards and removing bech32m support completely), but probably that is too optimistic.\r\n\r\nWhat I think _can_ be easily done though is to at least warn the user in RPCs like `verifyaddress` etc. if the address output contains an invalid x-only pubkey. This is the first address type that can be verifiably unspendable (previously it was just hashes encoded), so the concept is new, but we could introduce an `unspendable` field in the result or similar.",
       "created_at" : "2022-01-21T12:35:17Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24106#issuecomment-1018468101",
@@ -440,7 +440,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Exchanges can't even decode valid addresses (https://bitcoin.stackexchange.com/a/111441/3576), so expecting them to implement an ever-changing list of heuristics to detect valid addresses that hold an \"invalid\" payload seems overly optimistic.\r\n\r\nI agree that my assumption w.r.t. to exchange competence is overly optimistic, though I neither think the list would be \"ever-changing\" nor that it even needs a heuristic (see last paragraph below). Addresses so far only encode either hashes or pub-keys; hashes are neutral, for pub-keys the only way to be verifiably unspendable is if they are not on the curve.\r\n\r\n> > This is the first address type that can be verifiably unspendable\r\n> \r\n> No, the same is possible with v0 bech32 addresses:\r\n> \r\n> https://github.com/bitcoin/bitcoin/blob/e3ce019667fba2ec50a59814a26566fb67fa9125/src/script/interpreter.cpp#L1914\r\n\r\n\r\nFair enough, though v0 bech32 addresses with witness program sizes other than 20 or 32 bytes don't match a specific output type and thus were never treated as standard in the first place. Let me rephrase: \"This is the first address-encoded output script type that can be verifiably unspendable.\"  (I think previously this was only possible for P2PK and bare multisig, but those didn't have an address format).\r\n\r\n> Potentially others as well if you know what was wrapped into a script-hash, see #23486.\r\n\r\nYes, but that was not the point of this PR / discussion. I'm assuming that we don't know anything other than the output script.\r\n\r\n> Adding a field to `validateaddress`/`decodescript` seems ok, understanding that this can only ever be a heuristic and not something to rely on.\r\n\r\nNot sure why you would call this heuristic, as in this specific case there are no \"smart guesses\" or probabilities involved. If the x-only pubkey is not on the curve, then there is verifiably no chance this output can ever be spent. I.e. the `unspendable` result flag would only be set if we are sure about it, without any sophisticated heuristics involved. (This does of course not mean that all outputs where the `unspendable` flag is not set, _are_ spendable; there is no way to guarantee that).\r\n\r\n",
       "created_at" : "2022-01-21T15:32:17Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24106#issuecomment-1018615363",
@@ -572,7 +572,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@MarcoFalke: Thanks for clarifying, that makes sense. IIUC, the conclusion of this is, all output scripts that are treated as standard by now, will/should be treated as standard forever (particularly, all v1+ segwit outputs for the future), and we only ever extend the set, but likely never reduce it?",
       "created_at" : "2022-01-21T19:35:41Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24106#issuecomment-1018802441",
@@ -616,7 +616,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Closing this PR, since this approach would introduce many potential problems (as pointed out in https://github.com/bitcoin/bitcoin/pull/24106#issuecomment-1017498437, https://github.com/bitcoin/bitcoin/pull/24106#issuecomment-1017500023, https://github.com/bitcoin/bitcoin/pull/24106#issuecomment-1018660851).",
       "created_at" : "2022-01-28T14:07:13Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24106#issuecomment-1024256639",

@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "Running `make -C depends` on nixos with gcc 10.3.0 results in\r\n\r\n```c++\r\nlibtool: compile:  gcc -c -I. -I../dist/./.. -I/home/russ/work/bitcoin/depends/x86_64-pc-linux-gnu/include -D_GNU_SOURCE -D_REENTRANT -pipe -O2 -Wno-error=implicit-function-declaration ../dist/./../txn/txn.c  -fPIC -DPIC -o txn.o\r\n../dist/./../txn/txn.c: In function â__txn_beginâ:\r\n../dist/./../txn/txn.c:171:3: error: format not a string literal and no format arguments [-Werror=format-security]\r\n  171 |   __db_errx(env, TxnAlloc);\r\n      |   ^~~~~~~~~\r\n../dist/./../txn/txn.c: In function â__txn_compensate_beginâ:\r\n../dist/./../txn/txn.c:318:3: error: format not a string literal and no format arguments [-Werror=format-security]\r\n  318 |   __db_errx(env, TxnAlloc);\r\n      |   ^~~~~~~~~\r\ncc1: some warnings being treated as errors\r\nmake[1]: *** [Makefile:1980: txn.o] Error 1\r\nmake[1]: Leaving directory '/home/russ/work/bitcoin/depends/work/build/x86_64-pc-linux-gnu/bdb/4.8.30-1205703c56a/build_unix'\r\nmake: *** [funcs.mk:288: /home/russ/work/bitcoin/depends/work/build/x86_64-pc-linux-gnu/bdb/4.8.30-1205703c56a/build_unix/.stamp_built] Error 2\r\nmake: Leaving directory '/home/russ/work/bitcoin/depends'\r\n```\r\n\r\nI could work around it with\r\n\r\n```diff\r\ndiff --git a/depends/packages/bdb.mk b/depends/packages/bdb.mk\r\nindex dc536fd3991..b69276cb154 100644\r\n--- a/depends/packages/bdb.mk\r\n+++ b/depends/packages/bdb.mk\r\n@@ -14,7 +14,7 @@ $(package)_config_opts_freebsd=--with-pic\r\n $(package)_config_opts_netbsd=--with-pic\r\n $(package)_config_opts_openbsd=--with-pic\r\n $(package)_config_opts_android=--with-pic\r\n-$(package)_cflags+=-Wno-error=implicit-function-declaration\r\n+$(package)_cflags+=-Wno-error=implicit-function-declaration -Wno-error=format-security\r\n $(package)_cxxflags+=-std=c++17\r\n $(package)_cppflags_mingw32=-DUNICODE -D_UNICODE\r\n endef\r\n\r\n```\r\n\r\nBut I don't know if this is the right fix or if there possibly is a real bug in the code causing the warning.",
    "closed_at" : "2022-08-02T10:52:56Z",
    "closed_by" : {
@@ -58,7 +58,7 @@
    "number" : 25211,
    "performed_via_github_app" : null,
    "reactions" : {
-      "+1" : 0,
+      "+1" : 1,
       "-1" : 0,
       "confused" : 0,
       "eyes" : 0,
@@ -66,7 +66,7 @@
       "hooray" : 0,
       "laugh" : 0,
       "rocket" : 0,
-      "total_count" : 0,
+      "total_count" : 1,
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25211/reactions"
    },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",

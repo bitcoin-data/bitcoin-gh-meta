@@ -7,10 +7,23 @@
       "id" : 622437145,
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDYyMjQzNzE0NQ==",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/622437145/reactions"
+      },
       "updated_at" : "2020-05-01T15:35:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/622437145",
       "user" : {
-         "avatar_url" : "https://avatars0.githubusercontent.com/u/6399679?v=4",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
          "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
          "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
          "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
@@ -31,17 +44,30 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/18842#issuecomment-622437145\r\n\r\n> This is an alternative to my preferred fix #18840\r\n\r\nfa3fdbfa89719797bba3b044b96caa984c5ff4be does seem a little fragile. I guess I was thinking of something more like:\r\n\r\n```diff\r\ndiff --git a/src/interfaces/chain.cpp b/src/interfaces/chain.cpp\r\nindex 0e7641ae320..8b288e62ff7 100644\r\n--- a/src/interfaces/chain.cpp\r\n+++ b/src/interfaces/chain.cpp\r\n@@ -309,6 +309,11 @@ public:\r\n         LOCK(::mempool.cs);\r\n         return IsRBFOptIn(tx, ::mempool);\r\n     }\r\n+    bool isInMempool(const uint256& txid) override\r\n+    {\r\n+        LOCK(::mempool.cs);\r\n+        return ::mempool.exists(txid);\r\n+    }\r\n     bool hasDescendantsInMempool(const uint256& txid) override\r\n     {\r\n         LOCK(::mempool.cs);\r\ndiff --git a/src/interfaces/chain.h b/src/interfaces/chain.h\r\nindex fb77c81cdcb..c76a361f261 100644\r\n--- a/src/interfaces/chain.h\r\n+++ b/src/interfaces/chain.h\r\n@@ -185,6 +185,9 @@ public:\r\n     //! Check if transaction is RBF opt in.\r\n     virtual RBFTransactionState isRBFOptIn(const CTransaction& tx) = 0;\r\n \r\n+    //! Check if transaction is in mempool.\r\n+    virtual bool isInMempool(const uint256& txid) = 0;\r\n+\r\n     //! Check if transaction has descendants in mempool.\r\n     virtual bool hasDescendantsInMempool(const uint256& txid) = 0;\r\n \r\ndiff --git a/src/wallet/wallet.cpp b/src/wallet/wallet.cpp\r\nindex 7a6deab1a8c..833414d4880 100644\r\n--- a/src/wallet/wallet.cpp\r\n+++ b/src/wallet/wallet.cpp\r\n@@ -707,6 +707,12 @@ bool CWallet::MarkReplaced(const uint256& originalHash, const uint256& newHash)\r\n \r\n     wtx.mapValue[\"replaced_by_txid\"] = newHash.ToString();\r\n \r\n+    // Refresh mempool status without waiting for transactionRemovedFromMempool\r\n+    // notification so the wallet is in an internally consistent state and\r\n+    // immediately knows the old transaction should not be considered trusted\r\n+    // and is eligible to be abandoned\r\n+    wtx.fInMempool = chain().isInMempool(originalHash);\r\n+\r\n     WalletBatch batch(*database, \"r+\");\r\n \r\n     bool success = true;\r\n```\r\n",
       "created_at" : "2020-05-01T17:45:47Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/18842#issuecomment-622489245",
       "id" : 622489245,
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDYyMjQ4OTI0NQ==",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/622489245/reactions"
+      },
       "updated_at" : "2020-05-01T17:45:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/622489245",
       "user" : {
-         "avatar_url" : "https://avatars2.githubusercontent.com/u/7133040?v=4",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/7133040?v=4",
          "events_url" : "https://api.github.com/users/ryanofsky/events{/privacy}",
          "followers_url" : "https://api.github.com/users/ryanofsky/followers",
          "following_url" : "https://api.github.com/users/ryanofsky/following{/other_user}",
@@ -70,10 +96,22 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDY3NDMxODI5Ng==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/674318296/reactions"
+      },
       "updated_at" : "2020-08-15T00:13:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/674318296",
       "user" : {
-         "avatar_url" : "https://avatars1.githubusercontent.com/u/3534524?v=4",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/3534524?v=4",
          "events_url" : "https://api.github.com/users/promag/events{/privacy}",
          "followers_url" : "https://api.github.com/users/promag/followers",
          "following_url" : "https://api.github.com/users/promag/following{/other_user}",
@@ -94,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.",
       "created_at" : "2020-09-20T04:22:17Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/18842#issuecomment-695690717",
@@ -102,40 +140,20 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDY5NTY5MDcxNw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/695690717/reactions"
+      },
       "updated_at" : "2021-03-06T03:32:36Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/695690717",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2020-10-14T14:15:12Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/18842#issuecomment-708432437",
-      "id" : 708432437,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
-      "node_id" : "MDEyOklzc3VlQ29tbWVudDcwODQzMjQzNw==",
-      "performed_via_github_app" : null,
-      "updated_at" : "2020-10-14T14:15:12Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/708432437",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
          "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
@@ -166,6 +184,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc4OTcyODE4MA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/789728180/reactions"
+      },
       "updated_at" : "2021-03-03T13:51:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/789728180",
       "user" : {
@@ -198,6 +228,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc5MTUyMDU4Mg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791520582/reactions"
+      },
       "updated_at" : "2021-03-05T16:14:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791520582",
       "user" : {
@@ -222,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Rebased. Not addressed any feedback, because the question by @promag hasn't been answered: \"@ryanofsky how could chain().isInMempool(originalHash) be true?\"\r\n\r\nI think it should be true because MarkReplaced should be called after the new transaction is committed and the old transaction is no longer in the mempool. As I understand it, the race happens because `transactionRemovedFromMempool` notification hasn't been processed yet, not because the old transaction is actually in the mempool.",
       "created_at" : "2021-03-05T16:38:16Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/18842#issuecomment-791536626",
@@ -230,6 +272,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc5MTUzNjYyNg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791536626/reactions"
+      },
       "updated_at" : "2021-03-05T16:38:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791536626",
       "user" : {
@@ -254,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Oh sorry, I answered why the question how could it be false, not how could it be true. It could be true if MarkReplaced was called at unexpected time on a transaction that wasn't successfully replaced, or maybe restored after a replacement was abandoned. So the change was suggested to make MarkReplaced safer. An alternative to:\r\n\r\n```c++\r\nwtx.fInMempool = chain().isInMempool(originalHash);\r\n```\r\n\r\ncould be:\r\n\r\n```c++\r\nassert(!chain().isInMempool(originalHash));\r\nwtx.fInMempool = false;\r\n```\r\n\r\nand I think either of these would be more safe. Adding the comment from https://github.com/bitcoin/bitcoin/pull/18842#issuecomment-622489245 could also be helpful.",
       "created_at" : "2021-03-05T17:00:06Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/18842#issuecomment-791550092",
@@ -262,6 +316,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc5MTU1MDA5Mg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791550092/reactions"
+      },
       "updated_at" : "2021-03-05T17:03:24Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791550092",
       "user" : {
@@ -286,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Code review ACK faeedff5c87091fd83d2fb2b29eb49c948363f29 or for any of the suggested alternatives.",
       "created_at" : "2021-03-05T17:01:45Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/18842#issuecomment-791551132",
@@ -294,6 +360,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc5MTU1MTEzMg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791551132/reactions"
+      },
       "updated_at" : "2021-03-05T17:02:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791551132",
       "user" : {
@@ -326,6 +404,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc5MTU3OTU0OA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791579548/reactions"
+      },
       "updated_at" : "2021-03-05T17:49:09Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791579548",
       "user" : {
@@ -350,7 +440,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > assert(!chain().isInMempool(originalHash));\r\n> \r\n> This seems fragile, as it (in theory) may crash the node. Imagine calling `bumpfee`, then deprioritizing the tx with `prioritizetransaction`, then adding back the original tx (before the interface call can complete).\r\n\r\nRight, that's why I suggested `wtx.fInMempool = chain().isInMempool(originalHash);` to do the correct thing in this case. But crashing seems better than doing the wrong thing if we don't want to handle this case.",
       "created_at" : "2021-03-05T17:55:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/18842#issuecomment-791583397",
@@ -358,6 +448,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc5MTU4MzM5Nw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791583397/reactions"
+      },
       "updated_at" : "2021-03-05T17:55:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791583397",
       "user" : {
@@ -382,7 +484,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Or you could replace crashing assert with throwing CHECK.  Basically https://github.com/bitcoin/bitcoin/pull/18842#issuecomment-622489245 is still my preferred alternative, but all alternatives discussed and current PR seem fine.",
       "created_at" : "2021-03-05T17:58:20Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/18842#issuecomment-791584702",
@@ -390,6 +492,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc5MTU4NDcwMg==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791584702/reactions"
+      },
       "updated_at" : "2021-03-05T17:59:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791584702",
       "user" : {
@@ -422,6 +536,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc5MTU5NDYzMw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791594633/reactions"
+      },
       "updated_at" : "2021-03-05T18:16:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791594633",
       "user" : {
@@ -446,7 +572,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Is there something not correct about `wtx.fInMempool = chain().isInMempool(originalHash);` with cs_wallet held?",
       "created_at" : "2021-03-05T18:28:56Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/18842#issuecomment-791601417",
@@ -454,6 +580,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc5MTYwMTQxNw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791601417/reactions"
+      },
       "updated_at" : "2021-03-05T18:28:56Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791601417",
       "user" : {
@@ -486,6 +624,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc5MTYwNTk3MQ==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791605971/reactions"
+      },
       "updated_at" : "2021-03-05T18:39:17Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791605971",
       "user" : {
@@ -510,7 +660,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Imagine calling `bumpfee`, concurrently you deprioritize the new tx with `prioritizetransaction`, then adding back the original tx with `sendrawtransaction`. Then `wtx.fInMempool = chain().isInMempool(originalHash);` assigns `true`\r\n\r\nI think can you avoid problems here just holding cs_wallet throughout the bumpfee call. I haven't dug into the details of what we're doing, but clearly what we're doing now is incorrect.\r\n\r\nI'm not sure if you prefer blindly assigning `wtx.fInMempool = false` over assigning `wtx.fInMempool = isInMempool(wtx)`. If you do, I guess I have a different preference and think that latter would be more correct in long run even if it doesn't fix every problem right now. But either choice seems fine and would be better than current behavior.",
       "created_at" : "2021-03-05T19:01:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/18842#issuecomment-791618228",
@@ -518,6 +668,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc5MTYxODIyOA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791618228/reactions"
+      },
       "updated_at" : "2021-03-05T19:01:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/791618228",
       "user" : {
@@ -550,6 +712,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc5MjI2MDQxMw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/792260413/reactions"
+      },
       "updated_at" : "2021-03-07T11:19:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/792260413",
       "user" : {
@@ -582,6 +756,18 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/18842",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDc5MzQ2NDIyMA==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/793464220/reactions"
+      },
       "updated_at" : "2021-03-09T06:53:59Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/793464220",
       "user" : {

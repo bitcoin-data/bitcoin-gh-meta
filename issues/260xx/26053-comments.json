@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25685](https://github.com/bitcoin/bitcoin/pull/25685) (wallet: Faster transaction creation by removing pre-set-inputs fetching responsibility from Coin Selection by furszy)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-09-09T22:33:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26053#issuecomment-1242530545",
@@ -57,19 +57,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Shouldn't this be a `DefaultHint`?",
-      "commit_id" : "2e37f0a084e6c4ba3de1e51f60418360ced0a3c5",
+      "commit_id" : "b00fc44ca5cb938f18d31cde7feb4e1c968dcc2f",
       "created_at" : "2022-09-10T06:25:36Z",
       "diff_hunk" : "@@ -1137,7 +1137,8 @@ RPCHelpMan send()\n             {\"options\", RPCArg::Type::OBJ, RPCArg::Optional::OMITTED_NAMED_ARG, \"\",\n                 Cat<std::vector<RPCArg>>(\n                 {\n-                    {\"add_inputs\", RPCArg::Type::BOOL, RPCArg::Default{false}, \"If inputs are specified, automatically include more if they are not enough.\"},\n+                    {\"add_inputs\", RPCArg::Type::BOOL, RPCArg::Default{true}, \"Automatically include coins from the wallet to cover the target amount (sum of the outputs amounts).\\n\"\n+                                                                              \"Default value is true unless \\\"inputs\\\" are specified, in such case, add_inputs=false.\"},",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26053#discussion_r967605246",
       "id" : 967605246,
-      "line" : 1141,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5845rHv-",
       "original_commit_id" : "2e37f0a084e6c4ba3de1e51f60418360ced0a3c5",
       "original_line" : 1141,
       "original_position" : 6,
       "original_start_line" : null,
       "path" : "src/wallet/rpc/spend.cpp",
-      "position" : 6,
+      "position" : null,
       "pull_request_review_id" : 1103083104,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26053",
       "reactions" : {
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-10T06:25:50Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/967605246",
       "user" : {
@@ -122,9 +123,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/967647076"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "yeah, better.",
-      "commit_id" : "1350349f5951a4e1fdc7d92018cb5be6c014e99a",
+      "commit_id" : "b00fc44ca5cb938f18d31cde7feb4e1c968dcc2f",
       "created_at" : "2022-09-10T12:38:13Z",
       "diff_hunk" : "@@ -1137,7 +1137,8 @@ RPCHelpMan send()\n             {\"options\", RPCArg::Type::OBJ, RPCArg::Optional::OMITTED_NAMED_ARG, \"\",\n                 Cat<std::vector<RPCArg>>(\n                 {\n-                    {\"add_inputs\", RPCArg::Type::BOOL, RPCArg::Default{false}, \"If inputs are specified, automatically include more if they are not enough.\"},\n+                    {\"add_inputs\", RPCArg::Type::BOOL, RPCArg::Default{true}, \"Automatically include coins from the wallet to cover the target amount (sum of the outputs amounts).\\n\"\n+                                                                              \"Default value is true unless \\\"inputs\\\" are specified, in such case, add_inputs=false.\"},",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26053#discussion_r967647076",
@@ -155,6 +156,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-10T12:38:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/967647076",
       "user" : {
@@ -179,7 +181,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks MarkoFalke, feedback tackled.\r\n\r\nChanged `RPCArg::Default` to `RPCArg::DefaultHint`.",
       "created_at" : "2022-09-10T12:39:42Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26053#issuecomment-1242720302",
@@ -223,7 +225,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Code Review ACK 1350349f5951a4e1fdc7d92018cb5be6c014e99a\r\n\r\nVerified that the new help text is consistent with the behaviour. I agree that the new help text is less confusing.",
       "created_at" : "2022-09-13T06:39:31Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26053#issuecomment-1244966440",
@@ -280,19 +282,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "In 8d74ea7bc4c6e484279d860bb0ec533320cc2145 \"RPC: bugfix, 'add_inputs' default value is true unless 'inputs' are provided\"\r\n\r\n```suggestion\r\n                    {\"add_inputs\", RPCArg::Type::BOOL, RPCArg::DefaultHint{\"false when \\\"inputs\\\" are specified, true otherwise\"},\"Automatically include coins from the wallet to cover the target amount.\\n\"},\r\n```",
-      "commit_id" : "1350349f5951a4e1fdc7d92018cb5be6c014e99a",
+      "commit_id" : "b00fc44ca5cb938f18d31cde7feb4e1c968dcc2f",
       "created_at" : "2022-09-13T16:57:39Z",
       "diff_hunk" : "@@ -1137,7 +1137,7 @@ RPCHelpMan send()\n             {\"options\", RPCArg::Type::OBJ, RPCArg::Optional::OMITTED_NAMED_ARG, \"\",\n                 Cat<std::vector<RPCArg>>(\n                 {\n-                    {\"add_inputs\", RPCArg::Type::BOOL, RPCArg::Default{false}, \"If inputs are specified, automatically include more if they are not enough.\"},\n+                    {\"add_inputs\", RPCArg::Type::BOOL, RPCArg::DefaultHint{\"true unless \\\"inputs\\\" are specified, in such case, add_inputs=false\"},\"Automatically include coins from the wallet to cover the target amount.\\n\"},",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26053#discussion_r969875007",
       "id" : 969875007,
-      "line" : 1140,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5845zx4_",
       "original_commit_id" : "8d74ea7bc4c6e484279d860bb0ec533320cc2145",
       "original_line" : 1140,
       "original_position" : 5,
       "original_start_line" : null,
       "path" : "src/wallet/rpc/spend.cpp",
-      "position" : 5,
+      "position" : null,
       "pull_request_review_id" : 1106154512,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26053",
       "reactions" : {
@@ -310,6 +312,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-13T17:02:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/969875007",
       "user" : {
@@ -347,19 +350,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "In 1350349f5951a4e1fdc7d92018cb5be6c014e99a \"test: add coverage for 'add_inputs' dynamic default value\"\r\n\r\nI think it would be useful to have a case for having both add_inputs=true and preset inputs.",
-      "commit_id" : "1350349f5951a4e1fdc7d92018cb5be6c014e99a",
+      "commit_id" : "b00fc44ca5cb938f18d31cde7feb4e1c968dcc2f",
       "created_at" : "2022-09-13T17:01:35Z",
       "diff_hunk" : "@@ -1073,6 +1074,81 @@ def test_external_inputs(self):\n \n         self.nodes[2].unloadwallet(\"extfund\")\n \n+    def test_add_inputs_default_value(self):\n+        self.log.info(\"Test 'add_inputs' default value\")\n+\n+        # Create and fund the wallet with 5 BTC\n+        self.nodes[2].createwallet(\"test_preset_inputs\")\n+        wallet = self.nodes[2].get_wallet_rpc(\"test_preset_inputs\")\n+        addr1 = wallet.getnewaddress(address_type=\"bech32\")\n+        self.nodes[0].sendtoaddress(addr1, 5)\n+        self.generate(self.nodes[0], 1)\n+\n+        # Covered cases:\n+        # 1. Default add_inputs value with no pre-set inputs (add_inputs=true):\n+        #       Expect: automatically add coins from the wallet to the tx.\n+        # 2. Default add_inputs value with preset inputs (add_inputs=false):\n+        #       Expect: disallow automatic coin selection.\n+        # 3. Explicit add_inputs=true:\n+        #       Expect: include inputs from the wallet.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26053#discussion_r969878547",
       "id" : 969878547,
-      "line" : 1093,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5845zywT",
       "original_commit_id" : "1350349f5951a4e1fdc7d92018cb5be6c014e99a",
-      "original_line" : 1093,
+      "original_line" : 1097,
       "original_position" : 28,
       "original_start_line" : 1087,
       "path" : "test/functional/rpc_fundrawtransaction.py",
-      "position" : 28,
+      "position" : null,
       "pull_request_review_id" : 1106154512,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26053",
       "reactions" : {
@@ -375,8 +378,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/969878547/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 1087,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-09-13T17:02:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/969878547",
       "user" : {
@@ -412,9 +416,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/969998405"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done",
-      "commit_id" : "40b20102371d9fa6ae3dcdcb32a678a940e1130a",
+      "commit_id" : "b00fc44ca5cb938f18d31cde7feb4e1c968dcc2f",
       "created_at" : "2022-09-13T19:15:30Z",
       "diff_hunk" : "@@ -1137,7 +1137,7 @@ RPCHelpMan send()\n             {\"options\", RPCArg::Type::OBJ, RPCArg::Optional::OMITTED_NAMED_ARG, \"\",\n                 Cat<std::vector<RPCArg>>(\n                 {\n-                    {\"add_inputs\", RPCArg::Type::BOOL, RPCArg::Default{false}, \"If inputs are specified, automatically include more if they are not enough.\"},\n+                    {\"add_inputs\", RPCArg::Type::BOOL, RPCArg::DefaultHint{\"true unless \\\"inputs\\\" are specified, in such case, add_inputs=false\"},\"Automatically include coins from the wallet to cover the target amount.\\n\"},",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26053#discussion_r969998405",
@@ -445,6 +449,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-13T19:15:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/969998405",
       "user" : {
@@ -480,9 +485,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/970000375"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done",
-      "commit_id" : "40b20102371d9fa6ae3dcdcb32a678a940e1130a",
+      "commit_id" : "b00fc44ca5cb938f18d31cde7feb4e1c968dcc2f",
       "created_at" : "2022-09-13T19:17:56Z",
       "diff_hunk" : "@@ -1073,6 +1074,81 @@ def test_external_inputs(self):\n \n         self.nodes[2].unloadwallet(\"extfund\")\n \n+    def test_add_inputs_default_value(self):\n+        self.log.info(\"Test 'add_inputs' default value\")\n+\n+        # Create and fund the wallet with 5 BTC\n+        self.nodes[2].createwallet(\"test_preset_inputs\")\n+        wallet = self.nodes[2].get_wallet_rpc(\"test_preset_inputs\")\n+        addr1 = wallet.getnewaddress(address_type=\"bech32\")\n+        self.nodes[0].sendtoaddress(addr1, 5)\n+        self.generate(self.nodes[0], 1)\n+\n+        # Covered cases:\n+        # 1. Default add_inputs value with no pre-set inputs (add_inputs=true):\n+        #       Expect: automatically add coins from the wallet to the tx.\n+        # 2. Default add_inputs value with preset inputs (add_inputs=false):\n+        #       Expect: disallow automatic coin selection.\n+        # 3. Explicit add_inputs=true:\n+        #       Expect: include inputs from the wallet.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26053#discussion_r970000375",
@@ -513,6 +518,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-09-13T19:17:57Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/970000375",
       "user" : {
@@ -537,7 +543,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks achow101, feedback tackled (and a bit more).\r\n\r\nAdded two new test scenarios:\r\n\r\n1. Explicit `add_inputs=true` and preset inputs (with preset inputs not-covering the target amount).\r\nÂ Â Â Â Â Â  Expect: include inputs from the wallet.\r\n\r\n2. Explicit `add_inputs=true` and preset inputs (with preset inputs covering the target amount).\r\nÂ Â Â Â Â Â  Expect: only preset inputs are used.\r\n",
       "created_at" : "2022-09-13T19:20:45Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26053#issuecomment-1245856491",
@@ -636,21 +642,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/970416698"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "It seems this comment is now inconsistent with the code",
-      "commit_id" : "40b20102371d9fa6ae3dcdcb32a678a940e1130a",
+      "commit_id" : "b00fc44ca5cb938f18d31cde7feb4e1c968dcc2f",
       "created_at" : "2022-09-14T07:15:32Z",
       "diff_hunk" : "@@ -1073,6 +1074,121 @@ def test_external_inputs(self):\n \n         self.nodes[2].unloadwallet(\"extfund\")\n \n+    def test_add_inputs_default_value(self):\n+        self.log.info(\"Test 'add_inputs' default value\")\n+\n+        # Create and fund the wallet with 5 BTC\n+        self.nodes[2].createwallet(\"test_preset_inputs\")\n+        wallet = self.nodes[2].get_wallet_rpc(\"test_preset_inputs\")\n+        addr1 = wallet.getnewaddress(address_type=\"bech32\")\n+        self.nodes[0].sendtoaddress(addr1, 5)\n+        self.generate(self.nodes[0], 1)\n+\n+        # Covered cases:\n+        # 1. Default add_inputs value with no preset inputs (add_inputs=true):\n+        #       Expect: automatically add coins from the wallet to the tx.\n+        # 2. Default add_inputs value with preset inputs (add_inputs=false):\n+        #       Expect: disallow automatic coin selection.\n+        # 3. Explicit add_inputs=true and preset inputs (with preset inputs not-covering the target amount).\n+        #       Expect: include inputs from the wallet.\n+        # 4. Explicit add_inputs=true and preset inputs (with preset inputs covering the target amount).\n+        #       Expect: only preset inputs are used.\n+        # 5. Explicit add_inputs=true, no preset inputs (same as (1) but with an explicit set):\n+        #       Expect: include inputs from the wallet.\n+\n+        # Case (1), 'send' command\n+        # 'add_inputs' value is true unless \"inputs\" are specified, in such case, add_inputs=false.\n+        # So, the wallet will automatically select coins and create the transaction if only the outputs are provided.\n+        tx = wallet.send(outputs=[{addr1: 3}])\n+        assert tx[\"complete\"]\n+\n+        # Case (2), 'send' command\n+        # Select an input manually, which doesn't cover the entire output amount and\n+        # verify that the dynamically set 'add_inputs=true' value works.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26053#discussion_r970416698",
       "id" : 970416698,
-      "line" : 1107,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584512I6",
       "original_commit_id" : "40b20102371d9fa6ae3dcdcb32a678a940e1130a",
       "original_line" : 1107,
       "original_position" : 42,
       "original_start_line" : null,
       "path" : "test/functional/rpc_fundrawtransaction.py",
-      "position" : 42,
+      "position" : null,
       "pull_request_review_id" : 1106918837,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26053",
       "reactions" : {
@@ -668,6 +674,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-14T07:15:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/970416698",
       "user" : {
@@ -703,7 +710,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/970868946"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "pushed",
       "commit_id" : "b00fc44ca5cb938f18d31cde7feb4e1c968dcc2f",
       "created_at" : "2022-09-14T14:15:11Z",
@@ -736,6 +743,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-14T14:15:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/970868946",
       "user" : {
@@ -760,7 +768,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks @S3RK, review tackled.\r\nOnly made a small modification to one of the test comments: [diff](https://github.com/furszy/bitcoin-core/compare/40b2010..b00fc44)",
       "created_at" : "2022-09-14T14:20:44Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26053#issuecomment-1246838955",
@@ -848,7 +856,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK b00fc44ca5cb938f18d31cde7feb4e1c968dcc2f",
       "created_at" : "2022-09-14T19:06:27Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26053#issuecomment-1247188399",

@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| Concept ACK | [stickies-v](https://github.com/bitcoin/bitcoin/pull/26555#pullrequestreview-1193010616) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n",
       "created_at" : "2022-11-23T00:53:10Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26555#issuecomment-1324415919",
@@ -55,7 +55,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1031410193"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: both are accepted but `verbosity` is the documented kwargs since it became an integer type so I'd go with that?\r\n```suggestion\r\n            for tx in node.getblock(blockhash=node.getblockhash(height), verbosity=3)['tx']:\r\n```",
       "commit_id" : "6553331efaff4fb67ad1be468f7c6302919c40ec",
       "created_at" : "2022-11-24T11:35:45Z",
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-24T16:59:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1031410193",
       "user" : {
@@ -122,7 +123,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1031417827"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "```suggestion\r\n                    for vin in tx['vin']:\r\n```",
       "commit_id" : "6553331efaff4fb67ad1be468f7c6302919c40ec",
       "created_at" : "2022-11-24T11:44:41Z",
@@ -154,6 +155,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-24T16:59:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1031417827",
       "user" : {
@@ -189,7 +191,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1031417903"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "```suggestion\r\n                for vout in tx['vout']:\r\n```",
       "commit_id" : "6553331efaff4fb67ad1be468f7c6302919c40ec",
       "created_at" : "2022-11-24T11:44:48Z",
@@ -221,6 +223,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-24T16:59:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1031417903",
       "user" : {
@@ -256,7 +259,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1031425288"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Sorry, here I am again with the type hint nits. Also renamed `n` -> `output_index`\r\n\r\nnit: `serialize_txout` seems like a more natural sounding name but bike shedding\r\n```suggestion\r\ndef txout_serialize(txid_hex: str, output_index: int, height: int, is_coinbase: bool, value: float,\r\n                    scriptPubKey_hex: str) -> bytes:\r\n```",
       "commit_id" : "6553331efaff4fb67ad1be468f7c6302919c40ec",
       "created_at" : "2022-11-24T11:53:15Z",
@@ -288,6 +291,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-24T16:59:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1031425288",
       "user" : {
@@ -323,7 +327,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1031638793"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "tl;dr - could be improved with batch requests but shouldn't be a blocker for this pull, current approach is very reasonable.\r\n\r\nThis would benefit from a batch request approach, albeit quite modestly.  On my machine, test runtime decreased from \\~0.35s to \\~0.33s. Overall runtime is very short so I don't think we need to go out of our way to optimize here, but would be a best practice. I'm thinking we should add streamlined batch request handling (~`send_batch_request` as implemented here) on the `AuthServiceProxy` level so tests can use it with minimal overhead. But I guess I should just make a separate pull for that - there's probably room for improvement in other tests that iterate over single requests.\r\n\r\n<details>\r\n<summary>git diff on 3accc773c</summary>\r\n\r\n```diff\r\ndiff --git a/test/functional/feature_utxo_set_hash.py b/test/functional/feature_utxo_set_hash.py\r\nindex 46a1813d4..a328d6805 100755\r\n--- a/test/functional/feature_utxo_set_hash.py\r\n+++ b/test/functional/feature_utxo_set_hash.py\r\n@@ -9,13 +9,16 @@ from test_framework.messages import (\r\n     CTxOut,\r\n )\r\n from test_framework.muhash import MuHash3072\r\n-from test_framework.test_framework import BitcoinTestFramework\r\n+from test_framework.test_framework import BitcoinTestFramework, TestNode\r\n from test_framework.util import assert_equal\r\n from test_framework.wallet import MiniWallet\r\n \r\n+from typing import Dict, List, Any\r\n \r\n-def txout_serialize(txid_hex, n, height, is_coinbase, value, scriptPubKey_hex):\r\n-    data = COutPoint(int(txid_hex, 16), n).serialize()\r\n+\r\n+def txout_serialize(txid_hex: str, output_index: int, height: int, is_coinbase: bool, value: float,\r\n+                    scriptPubKey_hex: str) -> bytes:\r\n+    data = COutPoint(int(txid_hex, 16), output_index).serialize()\r\n     data += (height * 2 + is_coinbase).to_bytes(4, 'little')\r\n     data += CTxOut(int(value * COIN), bytes.fromhex(scriptPubKey_hex)).serialize()\r\n     return data\r\n@@ -43,20 +46,23 @@ class UTXOSetHashTest(BitcoinTestFramework):\r\n         # apply (add/remove) them to the MuHash object accordingly\r\n         muhash = MuHash3072()\r\n \r\n-        for height in range(1, node.getblockcount() + 1):\r\n-            for tx in node.getblock(blockhash=node.getblockhash(height), verbose=3)['tx']:\r\n+        hashes = send_batch_request(node, \"getblockhash\", [[i] for i in range(1, node.getblockcount() + 1)])\r\n+        blocks = send_batch_request(node, \"getblock\", [{\"blockhash\": h, \"verbosity\": 3} for h in hashes])\r\n+        for block in blocks:\r\n+            height = block[\"height\"]\r\n+            for tx in block[\"tx\"]:\r\n                 # add created coins\r\n                 is_coinbase_tx = 'coinbase' in tx['vin'][0]\r\n                 for o in tx['vout']:\r\n                     if o['scriptPubKey']['type'] != 'nulldata':\r\n                         muhash.insert(txout_serialize(tx['txid'], o['n'], height, is_coinbase_tx,\r\n-                                                      o['value'], o['scriptPubKey']['hex']))\r\n+                                                        o['value'], o['scriptPubKey']['hex']))\r\n                 # remove spent coins\r\n                 if not is_coinbase_tx:\r\n                     for i in tx['vin']:\r\n                         prev = i['prevout']\r\n                         muhash.remove(txout_serialize(i['txid'], i['vout'], prev['height'], prev['generated'],\r\n-                                                      prev['value'], prev['scriptPubKey']['hex']))\r\n+                                                        prev['value'], prev['scriptPubKey']['hex']))\r\n \r\n         finalized = muhash.digest()\r\n         node_muhash = node.gettxoutsetinfo(\"muhash\")['muhash']\r\n@@ -71,5 +77,17 @@ class UTXOSetHashTest(BitcoinTestFramework):\r\n         self.test_muhash_implementation()\r\n \r\n \r\n+def send_batch_request(node: TestNode, method: str, params: List[Any]) -> List[Any]:\r\n+    \"\"\"Send batch request and parse all results\"\"\"\r\n+    data = [{\"method\": method, \"params\": p} for p in params]\r\n+    response = node.batch(data)\r\n+    result = []\r\n+    for item in response:\r\n+        assert item[\"error\"] is None, item[\"error\"]\r\n+        result.append(item[\"result\"])\r\n+\r\n+    return result\r\n+\r\n+\r\n if __name__ == '__main__':\r\n     UTXOSetHashTest().main()\r\n```\r\n</details>\r\n\r\n<details>\r\n<summary>benchmark results</summary>\r\n\r\n```sh\r\nunpatched (3accc773c)\r\n------------------------\r\n% repeat 5 time ./test/functional/feature_utxo_set_hash.py > /dev/null\r\n./test/functional/feature_utxo_set_hash.py > /dev/null  0.34s user 0.10s system 35% cpu 1.235 total\r\n./test/functional/feature_utxo_set_hash.py > /dev/null  0.35s user 0.09s system 33% cpu 1.315 total\r\n./test/functional/feature_utxo_set_hash.py > /dev/null  0.35s user 0.09s system 35% cpu 1.231 total\r\n./test/functional/feature_utxo_set_hash.py > /dev/null  0.35s user 0.09s system 37% cpu 1.183 total\r\n./test/functional/feature_utxo_set_hash.py > /dev/null  0.35s user 0.09s system 35% cpu 1.247 total\r\n\r\npatch (diff above)\r\n------------------\r\n% repeat 5 time ./test/functional/feature_utxo_set_hash.py > /dev/null\r\n./test/functional/feature_utxo_set_hash.py > /dev/null  0.32s user 0.08s system 28% cpu 1.406 total\r\n./test/functional/feature_utxo_set_hash.py > /dev/null  0.33s user 0.08s system 27% cpu 1.508 total\r\n./test/functional/feature_utxo_set_hash.py > /dev/null  0.33s user 0.08s system 34% cpu 1.207 total\r\n./test/functional/feature_utxo_set_hash.py > /dev/null  0.32s user 0.09s system 27% cpu 1.490 total\r\n./test/functional/feature_utxo_set_hash.py > /dev/null  0.32s user 0.08s system 33% cpu 1.211 total\r\n```\r\n</details>",
       "commit_id" : "6553331efaff4fb67ad1be468f7c6302919c40ec",
       "created_at" : "2022-11-24T15:31:18Z",
@@ -355,6 +359,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-11-24T16:59:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1031638793",
       "user" : {
@@ -390,7 +395,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1031680032"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Okay, I guess you just used snake case of the `TxOutSer` function name. On that note, I think it would be good to explicitly reference `TxOutSer` (name is fine imo) here so it's easier for people where this logic is coming from?",
       "commit_id" : "6553331efaff4fb67ad1be468f7c6302919c40ec",
       "created_at" : "2022-11-24T16:19:21Z",
@@ -423,6 +428,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-24T16:59:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1031680032",
       "user" : {
@@ -458,7 +464,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1031711125"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit to make the link with the next sentence a bit more clear\r\n```suggestion\r\n        # Serialize (created/spent) transaction outputs in each block and\r\n```",
       "commit_id" : "6553331efaff4fb67ad1be468f7c6302919c40ec",
       "created_at" : "2022-11-24T16:58:34Z",
@@ -490,6 +496,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-24T16:59:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1031711125",
       "user" : {
@@ -514,7 +521,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Right now the MuHash calculation in the functional test `feature_utxo_set_hash.py` is dependent on the specific chain we generate, e.g. it only works as long as the only spent coin is created in block number 1 (and no other UTXO is created in that same block) and uses that quirk to avoid the need to ever remove anything from the MuHash object.\r\n\r\nThe test still depends on the specifc chain because the resulting muhash is tested against a static value at the end. The whole point of this test is have a test against a static value to make sure the muhash results are consistent across refactors.\r\n\r\n> This PR generalizes the MuHash calculation by systematically going through all blocks and taking all spent/created coins into account (reflecting the actual behaviour on the coinstatsindex), which allows to potentially create more complex test-cases for UTXO set hashes in the future.\r\n\r\nCan you give examples what test cases you want to build?\r\n\r\n",
       "created_at" : "2022-11-24T19:55:16Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26555#issuecomment-1326803135",
@@ -558,7 +565,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@stickies-v: Thanks for the thorough review, will tackle the comments within the next days. Most suggestions look good at a first glance. The batching idea is very nice (I wasn't even aware that this is possible), but maybe a candidate for a follow-up PR, considering that it doesn't change runtime significantly with this small block chain.\r\n\r\n> > Right now the MuHash calculation in the functional test `feature_utxo_set_hash.py` is dependent on the specific chain we generate, e.g. it only works as long as the only spent coin is created in block number 1 (and no other UTXO is created in that same block) and uses that quirk to avoid the need to ever remove anything from the MuHash object.\r\n> \r\n> The test still depends on the specifc chain because the resulting muhash is tested against a static value at the end. The whole point of this test is have a test against a static value to make sure the muhash results are consistent across refactors.\r\n\r\n@fjahr: Yes, I was specifically referring to the MuHash calculation part (i.e. the [creation of the `muhash`/`finalized` objects in the test](https://github.com/bitcoin/bitcoin/blob/38d06e1561013f4ca845fd5ba6ffcc64de67f9c0/test/functional/feature_utxo_set_hash.py#L43-L66)), not the test as a whole. If the test is extended in the future leading to a different UTXO set, then the hard-coded hash value has to be adapted, obviously.\r\n> \r\n> > This PR generalizes the MuHash calculation by systematically going through all blocks and taking all spent/created coins into account (reflecting the actual behaviour on the coinstatsindex), which allows to potentially create more complex test-cases for UTXO set hashes in the future.\r\n> \r\n> Can you give examples what test cases you want to build?\r\n\r\nSome ideas:\r\n- test that the MuHash calculation for invalidating blocks / reorgs is correct (`CoinStatsIndex::ReverseBlock` doesn't seem to have test coverage regarding MuHash)\r\n- creating/spending UTXOs  with different outpoint index (right now they all have n=0)\r\n- sending to OP_RETURN outputs (i.e. verify that nulldata outputs are not taken into account for the UTXO set hash calculation)\r\n\r\nTo make a point for the latter two points -- currently, the following modifications would still pass the test:\r\n```diff\r\ndiff --git a/src/index/coinstatsindex.cpp b/src/index/coinstatsindex.cpp\r\nindex d3559b1b75..7ff144a8d2 100644\r\n--- a/src/index/coinstatsindex.cpp\r\n+++ b/src/index/coinstatsindex.cpp\r\n@@ -166,7 +166,7 @@ bool CoinStatsIndex::CustomAppend(const interfaces::BlockInfo& block)\r\n                 COutPoint outpoint{tx->GetHash(), j};\r\n\r\n                 // Skip unspendable coins\r\n-                if (coin.out.scriptPubKey.IsUnspendable()) {\r\n+                if (tx->IsCoinBase() && coin.out.scriptPubKey.IsUnspendable()) {\r\n                     m_total_unspendable_amount += coin.out.nValue;\r\n                     m_total_unspendables_scripts += coin.out.nValue;\r\n                     continue;\r\ndiff --git a/src/kernel/coinstats.cpp b/src/kernel/coinstats.cpp\r\nindex 06a4b8c974..7ab58b11c9 100644\r\n--- a/src/kernel/coinstats.cpp\r\n+++ b/src/kernel/coinstats.cpp\r\n@@ -50,7 +50,7 @@ uint64_t GetBogoSize(const CScript& script_pub_key)\r\n\r\n CDataStream TxOutSer(const COutPoint& outpoint, const Coin& coin) {\r\n     CDataStream ss(SER_DISK, PROTOCOL_VERSION);\r\n-    ss << outpoint;\r\n+    ss << COutPoint(outpoint.hash, 0);\r\n     ss << static_cast<uint32_t>(coin.nHeight * 2 + coin.fCoinBase);\r\n     ss << coin.out;\r\n     return ss;\r\n```",
       "created_at" : "2022-11-25T16:04:19Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26555#issuecomment-1327658815",
@@ -613,7 +620,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1032848942"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks, done.",
       "commit_id" : "6553331efaff4fb67ad1be468f7c6302919c40ec",
       "created_at" : "2022-11-27T00:35:07Z",
@@ -646,6 +653,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-27T00:35:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1032848942",
       "user" : {
@@ -681,7 +689,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1032849256"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This doesn't seem appropriate, since `vin` (and `vout`) doesn't denote a single input/output, but rather a collection of them. I assume the `v` prefix stems from `vector`, see e.g. https://github.com/bitcoin/bitcoin/blob/9c47eb450346937b3d7ee21b9e669b5c91a7ed6c/src/primitives/transaction.h#L298-L299\r\nI was thinking only using `in`/`out`, but `in` is a reserved word in Python (`for in in ...` would look weird), `input`/`output` is IMHO too long, so I decided to just stick with `i`/`o`.",
       "commit_id" : "6553331efaff4fb67ad1be468f7c6302919c40ec",
       "created_at" : "2022-11-27T00:40:39Z",
@@ -714,6 +722,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-27T00:40:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1032849256",
       "user" : {
@@ -749,7 +758,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1032849361"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "See comment above (https://github.com/bitcoin/bitcoin/pull/26555#discussion_r1031417827).",
       "commit_id" : "6553331efaff4fb67ad1be468f7c6302919c40ec",
       "created_at" : "2022-11-27T00:41:09Z",
@@ -782,6 +791,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-27T00:41:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1032849361",
       "user" : {
@@ -817,7 +827,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1032849554"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Good ideas, applied both the type hints and the s/n/output_index rename. Also add a small comment referring to the original serialization function `TxOutSer`.",
       "commit_id" : "6553331efaff4fb67ad1be468f7c6302919c40ec",
       "created_at" : "2022-11-27T00:43:40Z",
@@ -850,6 +860,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-27T00:43:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1032849554",
       "user" : {
@@ -885,7 +896,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1032849600"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks, done.",
       "commit_id" : "6553331efaff4fb67ad1be468f7c6302919c40ec",
       "created_at" : "2022-11-27T00:44:25Z",
@@ -918,6 +929,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-27T00:44:25Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1032849600",
       "user" : {
@@ -953,7 +965,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1032849891"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Since the run-time difference is insignificant, I think that would be a nice candidate for a follow-up. Even if this PR doesn't get merged, in general it would be nice to investigate which tests could be sped up by using this batch request approach.",
       "commit_id" : "6553331efaff4fb67ad1be468f7c6302919c40ec",
       "created_at" : "2022-11-27T00:48:03Z",
@@ -986,6 +998,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-11-27T00:48:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1032849891",
       "user" : {
@@ -1010,7 +1023,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Force-pushed with some suggestions taken from @stickies-v.",
       "created_at" : "2022-11-27T00:49:22Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26555#issuecomment-1328142677",
@@ -1054,7 +1067,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> @fjahr: Yes, I was specifically referring to the MuHash calculation part (i.e. the [creation of the muhash/finalized objects in the test](https://github.com/bitcoin/bitcoin/blob/38d06e1561013f4ca845fd5ba6ffcc64de67f9c0/test/functional/feature_utxo_set_hash.py#L43-L66)), not the test as a whole. If the test is extended in the future leading to a different UTXO set, then the hard-coded hash value has to be adapted, obviously.\r\n\r\nWe need to have some tests that make sure that the results stay consistent across refactors for deterministic cases. So I would be against removing all checks against static values if that is what you mean by adapting.\r\n\r\n> Some ideas:\r\n> \r\n> * test that the MuHash calculation for invalidating blocks / reorgs is correct (`CoinStatsIndex::ReverseBlock` doesn't seem to have test coverage regarding MuHash)\r\n> * creating/spending UTXOs  with different outpoint index (right now they all have n=0)\r\n> * sending to OP_RETURN outputs (i.e. verify that nulldata outputs are not taken into account for the UTXO set hash calculation)\r\n\r\nI think some, if not all, of these code path are covered in `feature_coinstatsindex.py`. There the Muhash result is dynamically checked for internal consistency. I would suggest to make further checks against a python reimplementation in there as well and not reimplement them here. It will save a lot of work and prevents duplication plus the functional test suite will run faster as a whole (fewer nodes running, fewer blocks mined).",
       "created_at" : "2022-11-27T01:00:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26555#issuecomment-1328144035",
@@ -1098,7 +1111,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > @fjahr: Yes, I was specifically referring to the MuHash calculation part (i.e. the [creation of the muhash/finalized objects in the test](https://github.com/bitcoin/bitcoin/blob/38d06e1561013f4ca845fd5ba6ffcc64de67f9c0/test/functional/feature_utxo_set_hash.py#L43-L66)), not the test as a whole. If the test is extended in the future leading to a different UTXO set, then the hard-coded hash value has to be adapted, obviously.\r\n> \r\n> We need to have some tests that make sure that the results stay consistent across refactors for deterministic cases. So I would be against removing all checks against static values if that is what you mean by adapting.\r\n\r\nNo plan of removing the static check, by \"adapting\" I merely mean changing the hardcoded hash if needed in the future -- it's not that this hash is set in stone forever, there have been three previous adaptions before: 041abfebe49ae5e3e882c00cc5caea1365a27a49, f30041c9143d0added18105c9f0c4ae3f340efbc and fa38b1c8bd29e2c792737f6481ab928e46396b7e. I agree though that there should be a very good reason for changes that cause an adaption of the hash. Note that this PR does _not_ change or remove the static hash check, it's for now just a refactor for a more systematic Python Muhash calculation approach and (IMHO) slightly improved readability.\r\n\r\n> \r\n> > Some ideas:\r\n> > \r\n> > * test that the MuHash calculation for invalidating blocks / reorgs is correct (`CoinStatsIndex::ReverseBlock` doesn't seem to have test coverage regarding MuHash)\r\n> > * creating/spending UTXOs  with different outpoint index (right now they all have n=0)\r\n> > * sending to OP_RETURN outputs (i.e. verify that nulldata outputs are not taken into account for the UTXO set hash calculation)\r\n> \r\n> I think some, if not all, of these code path are covered in `feature_coinstatsindex.py`. There the Muhash result is dynamically checked for internal consistency. I would suggest to make further checks against a python reimplementation in there as well and not reimplement them here. It will save a lot of work and prevents duplication plus the functional test suite will run faster as a whole (fewer nodes running, fewer blocks mined).\r\n\r\nGood point, will take a closer look there. Not sure about the \"fewer nodes running\" argument, I don't see why this `feature_utxo_set_hash.py` test would ever need more than a single node.",
       "created_at" : "2022-11-27T11:48:13Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26555#issuecomment-1328229103",
@@ -1153,7 +1166,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1033026569"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "You're absolutely right about `vin`/`vout` being inappropriate for a single input/output, my bad. I don't agree with `input`/`output` being too long though, especially here when we have multiple layers of nesting. However, it's also not important enough and probably too much personal preference to bikeshed over so I'll leave it up to you.",
       "commit_id" : "6553331efaff4fb67ad1be468f7c6302919c40ec",
       "created_at" : "2022-11-27T23:07:26Z",
@@ -1186,6 +1199,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-27T23:07:26Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1033026569",
       "user" : {
@@ -1221,7 +1235,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1034066899"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "FYI: I looked at quite a few/most of the long-running tests and couldn't identify any significant enough improvements because of batching so I'm not going to look further into it for now myself - comment can be marked resolved.",
       "commit_id" : "6553331efaff4fb67ad1be468f7c6302919c40ec",
       "created_at" : "2022-11-28T21:30:51Z",
@@ -1254,6 +1268,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-11-28T21:30:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1034066899",
       "user" : {
@@ -1322,7 +1337,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> @theStack @fjahr what are the next steps here? Is this blocked on other changes?\r\n\r\nMy comment from above stands, I think this change as is doesn't hold much value if the intention is to implement additional test cases that would be a better fit for `feature_coinstatsindex.py`. @theStack wanted to take a look into that and that seems to be still pending.",
       "created_at" : "2023-02-08T19:36:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26555#issuecomment-1423139553",

@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "`-seednode` is an alternative bootstrap mechanism - when choosing it, we make a `AddrFetch` connection to the specified peer, gather addresses from them, and then disconnect. Presumably, if users specify a seednode they prefer addresses from that node over fixed seeds.\r\n\r\nHowever, when disabling dns seeds and specifiying `-seednode`, `CConnman::ProcessAddrFetch()`  immediately removes the entry from `m_addr_fetches` (before the seednode could give us addresses) - and once `m_addr_fetches`  is empty, `ThreadOpenConnections` will add fixed seeds, resulting in a \"race\" between the fixed seeds and seednodes filling up AddrMan.\r\n\r\nThis PR suggests to check for any provided `-seednode` arg instead of using the size of `m_addr_fetches`, thus delaying the querying of fixed seeds for 1 minute when specifying any seednode (as we already do for `addnode` peers).\r\nThat way, we actually give the seednodes a chance for  to provide us with addresses before falling back to fixed seeds.\r\n\r\nThis can be tested with `bitcoind -debug=net -dnsseed=0 -seednode=(...)` on a node without `peers.dat` and observing the debug log.",
    "closed_at" : null,
    "closed_by" : null,
@@ -54,7 +54,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27577/timeline",
    "title" : "p2p: give seednodes time before falling back to fixed seeds",
-   "updated_at" : "2023-05-04T22:21:19Z",
+   "updated_at" : "2023-05-05T17:56:21Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27577",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/48763452?v=4",

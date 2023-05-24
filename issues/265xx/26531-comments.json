@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [0xB10C](https://github.com/bitcoin/bitcoin/pull/26531#issuecomment-1476519399), [achow101](https://github.com/bitcoin/bitcoin/pull/26531#issuecomment-1476570364) |\n| Concept ACK | [jamesob](https://github.com/bitcoin/bitcoin/pull/26531#pullrequestreview-1186284786), [dergoegge](https://github.com/bitcoin/bitcoin/pull/26531#issuecomment-1324291258) |\n| Stale ACK | [glozow](https://github.com/bitcoin/bitcoin/pull/26531#pullrequestreview-1317193860) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25832](https://github.com/bitcoin/bitcoin/pull/25832) (tracing: network connection tracepoints by 0xB10C)\n* [#25038](https://github.com/bitcoin/bitcoin/pull/25038) (policy: nVersion=3 and Package RBF by glozow)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2022-11-18T14:34:00Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#issuecomment-1320075744",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2022-11-18T15:02:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#issuecomment-1320139932",
@@ -101,7 +101,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Would it make sense to convey information about the peer (even if just ID) as well? One of the things that I think is potentially valuable e.g. [in bmon](https://github.com/chaincodelabs/bmon/blob/master/bmon/logparse.py#L245) is tracking which peers fed you which transactions.",
-      "commit_id" : "c0395b5c1b27af281db1cbaec539c2d9f2ba4e6f",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-11-18T15:10:47Z",
       "diff_hunk" : "@@ -211,6 +211,58 @@ Arguments passed:\n 4. The expected transaction fee as an `int64`\n 5. The position of the change output as an `int32`\n \n+### Context `mempool`\n+\n+#### Tracepoint `mempool:added`\n+\n+Is called when a transaction is added to the node's mempool. Passes information\n+about the transaction.\n+\n+Arguments passed:\n+1. Transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Transaction virtual size as `uint64`\n+3. Transaction fee as `int64`",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1026553186",
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-18T15:17:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1026553186",
       "user" : {
@@ -168,7 +169,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "```\r\ntest/functional/interface_usdt_mempool.py:14: error: Cannot find implementation or library stub for module named \"bcc\"  [import]\r\ntest/functional/interface_usdt_mempool.py:14: note: See https://mypy.readthedocs.io/en/stable/running_mypy.html#missing-imports\r\nFound 1 error in 1 file (checked 256 source files)\r\n^---- failure generated from lint-python.py\r\n```\r\n\r\n\r\nI think you may want to do this?\r\n```suggestion\r\n# Test will be skipped if we don't have bcc installed\r\ntry:\r\n    from bcc import BPF, USDT # type: ignore[import]\r\nexcept ImportError:\r\n    pass\r\n```",
-      "commit_id" : "c0395b5c1b27af281db1cbaec539c2d9f2ba4e6f",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-11-18T18:07:53Z",
       "diff_hunk" : "@@ -0,0 +1,361 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\n+\"\"\" Example logging Bitcoin Core mempool events using the mempool:added,\n+    mempool:removed, mempool:replaced, and mempool:rejected tracepoints. \"\"\"\n+\n+import curses\n+import sys\n+from datetime import datetime, timezone\n+\n+from bcc import BPF, USDT",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1026742783",
@@ -198,6 +199,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-18T18:08:09Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1026742783",
       "user" : {
@@ -233,9 +235,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1026753452"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "yes, that's the trick we're using in the other tracepoint tests too",
-      "commit_id" : "c0395b5c1b27af281db1cbaec539c2d9f2ba4e6f",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-11-18T18:21:28Z",
       "diff_hunk" : "@@ -0,0 +1,361 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\n+\"\"\" Example logging Bitcoin Core mempool events using the mempool:added,\n+    mempool:removed, mempool:replaced, and mempool:rejected tracepoints. \"\"\"\n+\n+import curses\n+import sys\n+from datetime import datetime, timezone\n+\n+from bcc import BPF, USDT",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1026753452",
@@ -266,6 +268,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-18T18:21:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1026753452",
       "user" : {
@@ -301,9 +304,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1027105344"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "Thanks.",
-      "commit_id" : "80a9dc387628ea06fbd8f20ec833b9fc5da419b5",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-11-19T15:24:00Z",
       "diff_hunk" : "@@ -0,0 +1,361 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\n+\"\"\" Example logging Bitcoin Core mempool events using the mempool:added,\n+    mempool:removed, mempool:replaced, and mempool:rejected tracepoints. \"\"\"\n+\n+import curses\n+import sys\n+from datetime import datetime, timezone\n+\n+from bcc import BPF, USDT",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1027105344",
@@ -334,6 +337,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-19T15:24:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1027105344",
       "user" : {
@@ -369,9 +373,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1028048065"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "I think it makes sense.\r\n\r\nHowever, peer information is no longer available in functions that handle low-level mempool operations, so I propose adding a separate `mempool:accepted` tracepoint for this in `PeerManagerImpl::ProcessMessage` [here](https://github.com/bitcoin/bitcoin/blob/master/src/net_processing.cpp#L4042) (which is right where the debug log entries for transactions accepted into the memory pool are created).\r\n\r\nThe rationale for adding a separate `mempool:accepted` tracepoint instead of moving the existing `mempool:added` one from `CTxMemPool::addUnchecked` is to ensure consistency of added and removed transactions.\r\n\r\nDetails: The tracepoint call in `ProcessMessage` would depend on the success of `ProcessTransaction` [here](https://github.com/bitcoin/bitcoin/blob/master/src/net_processing.cpp#L4025). There's an edge case where a transaction added to the mempool in `MemPoolAccept::Finalize` [here](https://github.com/bitcoin/bitcoin/blob/master/src/validation.cpp#L1074) is immediately removed again seven lines below during the call to `LimitMempoolSize`, in which case `MemPoolAccept::Finalize` will return `state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY, \"mempool full\")`. As expected, in this case `ProcessMessage` will not call the tracepoint (or create a debug log entry). `LimitMempoolSize`, however, will at some point call `CTxMemPool::removeUnchecked`, which calls the `mempool:removed` tracepoint, resulting in tracepoint data containing a \"transaction removed\" event without a preceding \"transaction added\" event.\r\n\r\nPlease note that this problem does not arise due to poor placement of the `mempool:removed` tracepoint [here](https://github.com/virtu/bitcoin/blob/add_mempool_tracepoints/src/txmempool.cpp#L481-L488). The tracepoint is positioned right after `GetMainSignals().TransactionRemovedFromMempool`, which leads me to believe that the aforementioned consistency issue currently affects zeromq (cf. [here](https://github.com/bitcoin/bitcoin/blob/master/src/validation.cpp#L1184-L1186)) and the debug log.",
-      "commit_id" : "8b6ac488fbf851c006b4a9b45d48ac0ec3d77480",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-11-21T13:39:31Z",
       "diff_hunk" : "@@ -211,6 +211,58 @@ Arguments passed:\n 4. The expected transaction fee as an `int64`\n 5. The position of the change output as an `int32`\n \n+### Context `mempool`\n+\n+#### Tracepoint `mempool:added`\n+\n+Is called when a transaction is added to the node's mempool. Passes information\n+about the transaction.\n+\n+Arguments passed:\n+1. Transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Transaction virtual size as `uint64`\n+3. Transaction fee as `int64`",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1028048065",
@@ -402,6 +406,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-21T13:55:04Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1028048065",
       "user" : {
@@ -437,9 +442,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1028068736"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Note that adding transactions we receive over the network is only one option out of several to add something to our mempool. Can also add transactions via RPC, `loadMempool()`, wallet, etc..   \r\n\r\nI agree that it could be useful to have information about peers that send us transactions we end up accepting.  Could call a tracepoint something like `net:tx_accepted`. Not sure if that's in-scope for this PR though.",
-      "commit_id" : "8b6ac488fbf851c006b4a9b45d48ac0ec3d77480",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-11-21T13:54:49Z",
       "diff_hunk" : "@@ -211,6 +211,58 @@ Arguments passed:\n 4. The expected transaction fee as an `int64`\n 5. The position of the change output as an `int32`\n \n+### Context `mempool`\n+\n+#### Tracepoint `mempool:added`\n+\n+Is called when a transaction is added to the node's mempool. Passes information\n+about the transaction.\n+\n+Arguments passed:\n+1. Transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Transaction virtual size as `uint64`\n+3. Transaction fee as `int64`",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1028068736",
@@ -470,6 +475,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-21T13:54:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1028068736",
       "user" : {
@@ -507,7 +513,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Couldn't this be done by using both `net:inbound_message` and `mempool:added` at the same time? That is, correlate the txids from both tracepoints to deduce which peer sent the tx.",
-      "commit_id" : "8b6ac488fbf851c006b4a9b45d48ac0ec3d77480",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-11-22T22:01:20Z",
       "diff_hunk" : "@@ -211,6 +211,58 @@ Arguments passed:\n 4. The expected transaction fee as an `int64`\n 5. The position of the change output as an `int32`\n \n+### Context `mempool`\n+\n+#### Tracepoint `mempool:added`\n+\n+Is called when a transaction is added to the node's mempool. Passes information\n+about the transaction.\n+\n+Arguments passed:\n+1. Transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Transaction virtual size as `uint64`\n+3. Transaction fee as `int64`",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1029861158",
@@ -524,7 +530,7 @@
       "pull_request_review_id" : 1190828014,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26531",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -532,12 +538,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1029861158/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-22T22:01:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1029861158",
       "user" : {
@@ -617,9 +624,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1029925507"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Yes, that works too. Needs transaction decoding in the tracing script though, but possible ",
-      "commit_id" : "8b6ac488fbf851c006b4a9b45d48ac0ec3d77480",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-11-23T00:06:17Z",
       "diff_hunk" : "@@ -211,6 +211,58 @@ Arguments passed:\n 4. The expected transaction fee as an `int64`\n 5. The position of the change output as an `int32`\n \n+### Context `mempool`\n+\n+#### Tracepoint `mempool:added`\n+\n+Is called when a transaction is added to the node's mempool. Passes information\n+about the transaction.\n+\n+Arguments passed:\n+1. Transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Transaction virtual size as `uint64`\n+3. Transaction fee as `int64`",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1029925507",
@@ -650,6 +657,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-23T00:06:17Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1029925507",
       "user" : {
@@ -685,21 +693,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1036914820"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: I'd find it more intuitive to first pass the replaced transaction and then the replacement. ",
-      "commit_id" : "3b6d3f0294bca3985458eb97c89c8e07704957e6",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-12-01T10:02:30Z",
       "diff_hunk" : "@@ -211,6 +211,58 @@ Arguments passed:\n 4. The expected transaction fee as an `int64`\n 5. The position of the change output as an `int32`\n \n+### Context `mempool`\n+\n+#### Tracepoint `mempool:added`\n+\n+Is called when a transaction is added to the node's mempool. Passes information\n+about the transaction.\n+\n+Arguments passed:\n+1. Transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Transaction virtual size as `uint64`\n+3. Transaction fee as `int64`\n+\n+#### Tracepoint `mempool:removed`\n+\n+Is called when a transaction is removed from the node's mempool. Passes information\n+about the transaction.\n+\n+Arguments passed:\n+1. Transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Removal reason as `pointer to C-style String` (max. length 9 characters)\n+3. Transaction virtual size as `uint64`\n+4. Transaction fee as `int64`\n+\n+#### Tracepoint `mempool:replaced`\n+\n+Is called when a transaction in the node's mempool is getting replaced by another.\n+Passed information about the replaced and replacement transactions.\n+\n+Arguments passed:\n+1. Replacement transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Replacement transaction virtual size as `uint64`\n+3. Replacement transaction fee as `int64`\n+4. Replaced transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1036914820",
       "id" : 1036914820,
-      "line" : 246,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5849zhCE",
       "original_commit_id" : "3b6d3f0294bca3985458eb97c89c8e07704957e6",
       "original_line" : 246,
       "original_position" : 36,
       "original_start_line" : 245,
       "path" : "doc/tracing.md",
-      "position" : 36,
+      "position" : null,
       "pull_request_review_id" : 1200696353,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26531",
       "reactions" : {
@@ -715,8 +723,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1036914820/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 245,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-12-01T10:02:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1036914820",
       "user" : {
@@ -741,7 +750,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "With [#26593: tracing: Only prepare tracepoint arguments when actually tracing](https://github.com/bitcoin/bitcoin/pull/26593), we could also pass the serialized transactions as arguments for the mempool tracepoints. I think this makes these mempool tracepoints even more interesting as we otherwise only have the txids of removed/rejected/replaced transactions and wouldn't need to pair them with e.g. ZMQ `rawtx` data in an extra step.  As demonstration, see the last three commits of [2022-11-virtu-add_mempool_tracepoints-with-rawtx](https://github.com/0xB10C/bitcoin/commits/2022-11-virtu-add_mempool_tracepoints-with-rawtx). I'd be interested in hearing from people that left a Concept ACK here and @virtu if this extension to this PR that makes sense (once we have more Concept ACKs for #26593).\r\n\r\nI'm currently working on monitoring for fullrbf replacements as seen by my node with the above branch (if the replaced transaction didn't signal optin-RBF, it should be a fullrbf replacement). Edit: It's live on https://fullrbf.mempool.observer.\r\n\r\n(also sorry for the \"0xB10C added a commit to 0xB10C/bitcoin that referenced this pull request\" spam. Forgot that this would appear here for every force push...)\r\n",
       "created_at" : "2022-12-01T14:15:22Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#issuecomment-1333832906",
@@ -829,7 +838,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "> One note should removal reason 'BLOCK' be logged? It's the one exclusion from even ZMQ because of the resulting data dump. With eBPF it's the most difficult to log because it will overflow the eBPF ring buffer every time.\r\n\r\nBlock removal was deliberately included because it makes data collection much easier (inferring removal times from block arrival time involves a certain degree of processing; also, timestamps could be wrong if there was a block reorg and the original block is lost) and the overhead of calling the tracepoint pales in comparison to the rest of the code. But that's not set in stone.\r\n\r\nCheck the `mempool_monitor.py`'s [code](https://github.com/bitcoin/bitcoin/pull/26531/files#diff-f0c928fac39782cb8cefde1f6345d08195e0c359a68aa53d2ed6af6ca45208cbR152-R158) for a possible take on avoiding overflowing the ring buffer.",
       "created_at" : "2022-12-01T15:15:27Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#issuecomment-1333921682",
@@ -884,25 +893,25 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1039635761"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Played around with this a bit. Super cool!\r\n\r\nnit: I think these could be a bit more human readable instead of just printing the raw values. Examples:\r\n- added 0356df4450c76d2474eab13fab15bfab843e31617edf9ce88d5d5bea5b19bf3e with 27.14 sat/vbyte (4968 sat in fees at 183 vbyte)\r\n- replaced 0356df4450c76d2474eab13fab15bfab843e31617edf9ce88d5d5bea5b19bf3 (110 vbyte, 16655 sat,  151.40 sat/vbyte) with db3c91d7dfff65ea5b85ca58bc3e9a26556eb6506ccb04a573f920d297060218 (110 vbyte, 23343 sat, 212.20 sat/vbyte)\r\n- rejected 1cd12698577446904e8654372421e1ab5b82bdb8faee3f11f34ed758c17ae85a from peer 2568 (158.69.116.169:8333): bad-txns-inputs-missingorspent  ",
-      "commit_id" : "3b6d3f0294bca3985458eb97c89c8e07704957e6",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-12-05T13:57:19Z",
       "diff_hunk" : "@@ -286,3 +286,49 @@ Spent   a05880b8c77971ed0b9f73062c7c4cdb0ff3856ab14cbf8bc481ed571cd34b83:1\n Added   eb689865f7d957938978d6207918748f74e6aa074f47874724327089445b0960:0            5589696005 2094513 No\n Added   eb689865f7d957938978d6207918748f74e6aa074f47874724327089445b0960:1               1565556 2094513 No\n ```\n+\n+### mempool_monitor.py\n+\n+A BCC Python script producing mempool statistics and an event log. Based on the\n+`mempool:added`, `mempool:removed`, `mempool:replaced`, and `mempool:rejected`\n+tracepoints.\n+\n+Statistics include incidence and rate for each event type since the script was\n+started (`total`) as well as during the last minute (`1 min`) and ten minutes\n+(`10 min`). The event log shows mempool events in real time, each entry\n+comprising a timestamp along with all event data available via the event's\n+tracepoint.\n+\n+```console\n+$ python3 contrib/tracing/log_utxocache_flush.py ./src/bitcoind\n+```\n+\n+```\n+ Mempool Monitor\n+ Press CTRL-C to stop.\n+\n+ ââEvent countââââââââââââââââââââââââ  ââEvent rateâââââââââââââââââââââââââââ\n+ â Event       total   1 min  10 min â  â Event       total    1 min   10 min â\n+ â added      4130tx   218tx  2211tx â  â added     3.9tx/s  3.6tx/s  3.7tx/s â\n+ â removed     201tx     5tx    90tx â  â removed   0.2tx/s  0.1tx/s  0.1tx/s â\n+ â replaced    201tx     5tx    90tx â  â replaced  0.2tx/s  0.1tx/s  0.1tx/s â\n+ â rejected     31tx     5tx    23tx â  â rejected  0.0tx/s  0.1tx/s  0.0tx/s â\n+ âââââââââââââââââââââââââââââââââââââ  âââââââââââââââââââââââââââââââââââââââ\n+\n+ ââEvent logââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ\n+ â 17:09:56Z event=added, txid=0a2f2ef84d77a13162f26bb7a544efbab7f09d0b8a965b6f00e85bbd64cd8152, vsize=183, fee=4968   â\n+ â 17:09:56Z event=removed, txid=0356df4450c76d2474eab13fab15bfab843e31617edf9ce88d5d5bea5b19bf3e, reason=replaced, vsiâ\n+ â ze=110, fee=16655                                                                                                   â\n+ â 17:09:56Z event=removed, txid=653db4f9af156626a7359c18f9cb095009583497ef606d7a9d2f093c63d392da, reason=replaced, vsiâ\n+ â ze=110, fee=4037                                                                                                    â\n+ â 17:09:56Z event=rejected, txid=1cd12698577446904e8654372421e1ab5b82bdb8faee3f11f34ed758c17ae85a, reason=bad-txns-inpâ\n+ â uts-missingorspent, peer_id=2568, peer_addr=158.69.116.169:8333                                                     â\n+ â 17:09:56Z event=replaced, replacement_txid=db3c91d7dfff65ea5b85ca58bc3e9a26556eb6506ccb04a573f920d297060218, replaceâ\n+ â ment_vsize=110, replacement_fee=23343, replaced_txid=0356df4450c76d2474eab13fab15bfab843e31617edf9ce88d5d5bea5b19bf3â\n+ â e, replaced_vsize=110, replaced_fee=16655                                                                           â\n+ â 17:09:56Z event=replaced, replacement_txid=9b304b9357df5e2cfcbbbead7ffa67c0efc3c599aac9093362b398478d46a587, replaceâ\n+ â ment_vsize=110, replacement_fee=4268, replaced_txid=653db4f9af156626a7359c18f9cb095009583497ef606d7a9d2f093c63d392daâ\n+ â , replaced_vsize=110, replaced_fee=4037                                                                             â",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1039635761",
       "id" : 1039635761,
-      "line" : 331,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584995Ux",
       "original_commit_id" : "3b6d3f0294bca3985458eb97c89c8e07704957e6",
       "original_line" : 331,
       "original_position" : 46,
       "original_start_line" : 319,
       "path" : "contrib/tracing/README.md",
-      "position" : 46,
+      "position" : null,
       "pull_request_review_id" : 1204598091,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26531",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -910,12 +919,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1039635761/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 319,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-12-05T13:57:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1039635761",
       "user" : {
@@ -951,21 +961,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1045624376"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "probably makes sense to also pass the time the transaction was initially added to the mempool here. `CTxMempoolEntry` has a `GetTime()` method.",
-      "commit_id" : "3b6d3f0294bca3985458eb97c89c8e07704957e6",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-12-12T10:05:22Z",
       "diff_hunk" : "@@ -211,6 +211,58 @@ Arguments passed:\n 4. The expected transaction fee as an `int64`\n 5. The position of the change output as an `int32`\n \n+### Context `mempool`\n+\n+#### Tracepoint `mempool:added`\n+\n+Is called when a transaction is added to the node's mempool. Passes information\n+about the transaction.\n+\n+Arguments passed:\n+1. Transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Transaction virtual size as `uint64`\n+3. Transaction fee as `int64`\n+\n+#### Tracepoint `mempool:removed`\n+\n+Is called when a transaction is removed from the node's mempool. Passes information\n+about the transaction.\n+\n+Arguments passed:\n+1. Transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Removal reason as `pointer to C-style String` (max. length 9 characters)\n+3. Transaction virtual size as `uint64`\n+4. Transaction fee as `int64`\n+",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1045624376",
       "id" : 1045624376,
-      "line" : 236,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584-UvY4",
       "original_commit_id" : "3b6d3f0294bca3985458eb97c89c8e07704957e6",
-      "original_line" : 236,
+      "original_line" : 237,
       "original_position" : 26,
       "original_start_line" : 231,
       "path" : "doc/tracing.md",
-      "position" : 26,
+      "position" : null,
       "pull_request_review_id" : 1213227632,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26531",
       "reactions" : {
@@ -981,8 +991,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1045624376/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 231,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-12-12T10:05:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1045624376",
       "user" : {
@@ -1018,25 +1029,25 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1045624415"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "probably makes sense to also pass the time the **`replaced`** transaction was initially added to the mempool here. `CTxMempoolEntry` has a `GetTime()` method. See also https://github.com/0xB10C/mempool-observer-fullrbf-ui/issues/1#issue-1488592350",
-      "commit_id" : "3b6d3f0294bca3985458eb97c89c8e07704957e6",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-12-12T10:05:24Z",
       "diff_hunk" : "@@ -211,6 +211,58 @@ Arguments passed:\n 4. The expected transaction fee as an `int64`\n 5. The position of the change output as an `int32`\n \n+### Context `mempool`\n+\n+#### Tracepoint `mempool:added`\n+\n+Is called when a transaction is added to the node's mempool. Passes information\n+about the transaction.\n+\n+Arguments passed:\n+1. Transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Transaction virtual size as `uint64`\n+3. Transaction fee as `int64`\n+\n+#### Tracepoint `mempool:removed`\n+\n+Is called when a transaction is removed from the node's mempool. Passes information\n+about the transaction.\n+\n+Arguments passed:\n+1. Transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Removal reason as `pointer to C-style String` (max. length 9 characters)\n+3. Transaction virtual size as `uint64`\n+4. Transaction fee as `int64`\n+\n+#### Tracepoint `mempool:replaced`\n+\n+Is called when a transaction in the node's mempool is getting replaced by another.\n+Passed information about the replaced and replacement transactions.\n+\n+Arguments passed:\n+1. Replacement transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Replacement transaction virtual size as `uint64`\n+3. Replacement transaction fee as `int64`\n+4. Replaced transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+5. Replaced transaction virtual size as `uint64`\n+6. Replaced transaction fee as `int64`",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1045624415",
       "id" : 1045624415,
-      "line" : 248,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584-UvZf",
       "original_commit_id" : "3b6d3f0294bca3985458eb97c89c8e07704957e6",
       "original_line" : 248,
       "original_position" : 38,
       "original_start_line" : null,
       "path" : "doc/tracing.md",
-      "position" : 38,
+      "position" : null,
       "pull_request_review_id" : 1213227632,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26531",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1044,12 +1055,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1045624415/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-12T10:05:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1045624415",
       "user" : {
@@ -1074,7 +1086,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "- addressed feedback on [argument order of mempool:replaced](https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1036914820) with [2335347](https://github.com/bitcoin/bitcoin/pull/26531/commits/2335347474e87c707008e6ac8b6632a0af751aea): replaced transaction details now passed before replacement transaction details\r\n- addressed feedback on [adding replaced transaction's entry time](https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1045624415) with [bfe4fe4](https://github.com/bitcoin/bitcoin/pull/26531/commits/bfe4fe444345e7d3215d93754de8d1b86e9753cc): added replaced transaction's entry time to `mempool:replaced` tracepoint\r\n- addressed feedback on [making demo script output more human readable](https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1039635761) with [869a749](https://github.com/bitcoin/bitcoin/pull/26531/commits/869a7492df02e85383f55b9bac96a24dadf6d72f): added replaced transaction's entry time to `mempool:replaced` tracepoint\r\n- feedback on [adding serialized tx to tracepoints once they're semaphore-gated](https://github.com/bitcoin/bitcoin/pull/26531#issuecomment-1333832906): Strongly in favor of this, @0xB10C! If  #26593 is merged before this PR, I will make the necessary changes.",
       "created_at" : "2022-12-12T13:28:31Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#issuecomment-1346500049",
@@ -1131,19 +1143,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "No huge objection, but what is the reasoning behind only tracing rejected transactions received over p2p, excluding RPC/wallet? If the reason is so we get the peerid, same comment as https://github.com/bitcoin/bitcoin/pull/26531/files#r1029861158 - this can be done by correlating mempool events with p2p inbound messages?",
-      "commit_id" : "9d1879c22bea0497e30a69cb1c9ae33880697f82",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-12-12T16:36:22Z",
       "diff_hunk" : "@@ -4161,6 +4161,12 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type,\n             LogPrint(BCLog::MEMPOOLREJ, \"%s from peer=%d was not accepted: %s\\n\", tx.GetHash().ToString(),\n                 pfrom.GetId(),\n                 state.ToString());\n+            TRACE4(mempool, rejected,",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1046069472",
       "id" : 1046069472,
-      "line" : 4164,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584-WcDg",
       "original_commit_id" : "869a7492df02e85383f55b9bac96a24dadf6d72f",
       "original_line" : 4164,
       "original_position" : 4,
       "original_start_line" : null,
       "path" : "src/net_processing.cpp",
-      "position" : 4,
+      "position" : null,
       "pull_request_review_id" : 1213917876,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26531",
       "reactions" : {
@@ -1161,6 +1173,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-12T17:45:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1046069472",
       "user" : {
@@ -1198,7 +1211,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Question: is there a purpose for setting `acceptnonstdtxn=1`? Deleting this and having `rejected_test` send a `create_self_transfer(fee_rate=0)` seems to be an equivalent test to me. It would be preferable to test the default mempool behavior if possible, unless I'm missing something?",
-      "commit_id" : "9d1879c22bea0497e30a69cb1c9ae33880697f82",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-12-12T16:57:47Z",
       "diff_hunk" : "@@ -0,0 +1,360 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\n+\"\"\"  Tests the mempool:* tracepoint API interface.\n+     See https://github.com/bitcoin/bitcoin/blob/master/doc/tracing.md#context-mempool\n+\"\"\"\n+\n+from decimal import Decimal\n+\n+# Test will be skipped if we don't have bcc installed\n+try:\n+    from bcc import BPF, USDT # type: ignore[import]\n+except ImportError:\n+    pass\n+\n+from test_framework.blocktools import COINBASE_MATURITY, MAX_BLOCK_SIGOPS\n+from test_framework.messages import COIN, DEFAULT_MEMPOOL_EXPIRY_HOURS\n+from test_framework.p2p import P2PDataStore\n+from test_framework.script import OP_CHECKSIG, CScript\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import assert_equal\n+from test_framework.wallet import MiniWallet\n+\n+MEMPOOL_TRACEPOINTS_PROGRAM = \"\"\"\n+# include <uapi/linux/ptrace.h>\n+\n+// The longest address type is tor v3 at 62 chars + 6 chars for the port (':12345').\n+#define MAX_PEER_ADDR_LENGTH            (62+6)\n+// The longest rejection reason is 118 chars and is generated in case of SCRIPT_ERR_EVAL_FALSE by\n+// strprintf(\"mandatory-script-verify-flag-failed (%s)\", ScriptErrorString(check.GetScriptError()))\n+#define MAX_REJECT_REASON_LENGTH        118\n+// The longest string returned by RemovalReasonToString() is 'sizelimit'\n+#define MAX_REMOVAL_REASON_LENGTH       9\n+#define HASH_LENGTH                     32\n+\n+struct added_event\n+{\n+  u8    hash[HASH_LENGTH];\n+  u64   vsize;\n+  s64   fee;\n+};\n+\n+struct removed_event\n+{\n+  u8    hash[HASH_LENGTH];\n+  char  reason[MAX_REMOVAL_REASON_LENGTH];\n+  u64   vsize;\n+  s64   fee;\n+};\n+\n+struct rejected_event\n+{\n+  u8    hash[HASH_LENGTH];\n+  char  reason[MAX_REJECT_REASON_LENGTH];\n+  s64   peer_id;\n+  char  peer_addr[MAX_PEER_ADDR_LENGTH];\n+};\n+\n+struct replaced_event\n+{\n+  u8    replaced_hash[HASH_LENGTH];\n+  u64   replaced_vsize;\n+  s64   replaced_fee;\n+  u64   replaced_entry_time;\n+  u8    replacement_hash[HASH_LENGTH];\n+  u64   replacement_vsize;\n+  s64   replacement_fee;\n+};\n+\n+// BPF perf buffer to push the data to user space.\n+BPF_PERF_OUTPUT(added_events);\n+BPF_PERF_OUTPUT(removed_events);\n+BPF_PERF_OUTPUT(rejected_events);\n+BPF_PERF_OUTPUT(replaced_events);\n+\n+int trace_added(struct pt_regs *ctx) {\n+  struct added_event added = {};\n+\n+  bpf_usdt_readarg_p(1, ctx, &added.hash, HASH_LENGTH);\n+  bpf_usdt_readarg(2, ctx, &added.vsize);\n+  bpf_usdt_readarg(3, ctx, &added.fee);\n+\n+  added_events.perf_submit(ctx, &added, sizeof(added));\n+  return 0;\n+}\n+\n+int trace_removed(struct pt_regs *ctx) {\n+  struct removed_event removed = {};\n+\n+  bpf_usdt_readarg_p(1, ctx, &removed.hash, HASH_LENGTH);\n+  bpf_usdt_readarg_p(2, ctx, &removed.reason, MAX_REMOVAL_REASON_LENGTH);\n+  bpf_usdt_readarg(3, ctx, &removed.vsize);\n+  bpf_usdt_readarg(4, ctx, &removed.fee);\n+\n+  removed_events.perf_submit(ctx, &removed, sizeof(removed));\n+  return 0;\n+}\n+\n+int trace_rejected(struct pt_regs *ctx) {\n+  struct rejected_event rejected = {};\n+\n+  bpf_usdt_readarg_p(1, ctx, &rejected.hash, HASH_LENGTH);\n+  bpf_usdt_readarg_p(2, ctx, &rejected.reason, MAX_REJECT_REASON_LENGTH);\n+  bpf_usdt_readarg(3, ctx, &rejected.peer_id);\n+  bpf_usdt_readarg_p(4, ctx, &rejected.peer_addr, MAX_PEER_ADDR_LENGTH);\n+\n+  rejected_events.perf_submit(ctx, &rejected, sizeof(rejected));\n+  return 0;\n+}\n+\n+int trace_replaced(struct pt_regs *ctx) {\n+  struct replaced_event replaced = {};\n+\n+  bpf_usdt_readarg_p(1, ctx, &replaced.replaced_hash, HASH_LENGTH);\n+  bpf_usdt_readarg(2, ctx, &replaced.replaced_vsize);\n+  bpf_usdt_readarg(3, ctx, &replaced.replaced_fee);\n+  bpf_usdt_readarg(4, ctx, &replaced.replaced_entry_time);\n+  bpf_usdt_readarg_p(5, ctx, &replaced.replacement_hash, HASH_LENGTH);\n+  bpf_usdt_readarg(6, ctx, &replaced.replacement_vsize);\n+  bpf_usdt_readarg(7, ctx, &replaced.replacement_fee);\n+\n+  replaced_events.perf_submit(ctx, &replaced, sizeof(replaced));\n+  return 0;\n+}\n+\"\"\"\n+\n+\n+class MempoolTracepointTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.extra_args = [\n+            [\n+                \"-acceptnonstdtxn=1\",",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1046100523",
@@ -1228,6 +1241,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-12T17:45:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1046100523",
       "user" : {
@@ -1263,9 +1277,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1047100870"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "I guess I was too occupied with trying to understand the functional test framework to figure out this solution. \r\n[d890e9a](https://github.com/bitcoin/bitcoin/pull/26531/commits/d890e9ae605de4f8317cd2bdc475a8793dfe6aae) removes `acceptnonstdtxn=1`.",
-      "commit_id" : "9d1879c22bea0497e30a69cb1c9ae33880697f82",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-12-13T12:36:30Z",
       "diff_hunk" : "@@ -0,0 +1,360 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\n+\"\"\"  Tests the mempool:* tracepoint API interface.\n+     See https://github.com/bitcoin/bitcoin/blob/master/doc/tracing.md#context-mempool\n+\"\"\"\n+\n+from decimal import Decimal\n+\n+# Test will be skipped if we don't have bcc installed\n+try:\n+    from bcc import BPF, USDT # type: ignore[import]\n+except ImportError:\n+    pass\n+\n+from test_framework.blocktools import COINBASE_MATURITY, MAX_BLOCK_SIGOPS\n+from test_framework.messages import COIN, DEFAULT_MEMPOOL_EXPIRY_HOURS\n+from test_framework.p2p import P2PDataStore\n+from test_framework.script import OP_CHECKSIG, CScript\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import assert_equal\n+from test_framework.wallet import MiniWallet\n+\n+MEMPOOL_TRACEPOINTS_PROGRAM = \"\"\"\n+# include <uapi/linux/ptrace.h>\n+\n+// The longest address type is tor v3 at 62 chars + 6 chars for the port (':12345').\n+#define MAX_PEER_ADDR_LENGTH            (62+6)\n+// The longest rejection reason is 118 chars and is generated in case of SCRIPT_ERR_EVAL_FALSE by\n+// strprintf(\"mandatory-script-verify-flag-failed (%s)\", ScriptErrorString(check.GetScriptError()))\n+#define MAX_REJECT_REASON_LENGTH        118\n+// The longest string returned by RemovalReasonToString() is 'sizelimit'\n+#define MAX_REMOVAL_REASON_LENGTH       9\n+#define HASH_LENGTH                     32\n+\n+struct added_event\n+{\n+  u8    hash[HASH_LENGTH];\n+  u64   vsize;\n+  s64   fee;\n+};\n+\n+struct removed_event\n+{\n+  u8    hash[HASH_LENGTH];\n+  char  reason[MAX_REMOVAL_REASON_LENGTH];\n+  u64   vsize;\n+  s64   fee;\n+};\n+\n+struct rejected_event\n+{\n+  u8    hash[HASH_LENGTH];\n+  char  reason[MAX_REJECT_REASON_LENGTH];\n+  s64   peer_id;\n+  char  peer_addr[MAX_PEER_ADDR_LENGTH];\n+};\n+\n+struct replaced_event\n+{\n+  u8    replaced_hash[HASH_LENGTH];\n+  u64   replaced_vsize;\n+  s64   replaced_fee;\n+  u64   replaced_entry_time;\n+  u8    replacement_hash[HASH_LENGTH];\n+  u64   replacement_vsize;\n+  s64   replacement_fee;\n+};\n+\n+// BPF perf buffer to push the data to user space.\n+BPF_PERF_OUTPUT(added_events);\n+BPF_PERF_OUTPUT(removed_events);\n+BPF_PERF_OUTPUT(rejected_events);\n+BPF_PERF_OUTPUT(replaced_events);\n+\n+int trace_added(struct pt_regs *ctx) {\n+  struct added_event added = {};\n+\n+  bpf_usdt_readarg_p(1, ctx, &added.hash, HASH_LENGTH);\n+  bpf_usdt_readarg(2, ctx, &added.vsize);\n+  bpf_usdt_readarg(3, ctx, &added.fee);\n+\n+  added_events.perf_submit(ctx, &added, sizeof(added));\n+  return 0;\n+}\n+\n+int trace_removed(struct pt_regs *ctx) {\n+  struct removed_event removed = {};\n+\n+  bpf_usdt_readarg_p(1, ctx, &removed.hash, HASH_LENGTH);\n+  bpf_usdt_readarg_p(2, ctx, &removed.reason, MAX_REMOVAL_REASON_LENGTH);\n+  bpf_usdt_readarg(3, ctx, &removed.vsize);\n+  bpf_usdt_readarg(4, ctx, &removed.fee);\n+\n+  removed_events.perf_submit(ctx, &removed, sizeof(removed));\n+  return 0;\n+}\n+\n+int trace_rejected(struct pt_regs *ctx) {\n+  struct rejected_event rejected = {};\n+\n+  bpf_usdt_readarg_p(1, ctx, &rejected.hash, HASH_LENGTH);\n+  bpf_usdt_readarg_p(2, ctx, &rejected.reason, MAX_REJECT_REASON_LENGTH);\n+  bpf_usdt_readarg(3, ctx, &rejected.peer_id);\n+  bpf_usdt_readarg_p(4, ctx, &rejected.peer_addr, MAX_PEER_ADDR_LENGTH);\n+\n+  rejected_events.perf_submit(ctx, &rejected, sizeof(rejected));\n+  return 0;\n+}\n+\n+int trace_replaced(struct pt_regs *ctx) {\n+  struct replaced_event replaced = {};\n+\n+  bpf_usdt_readarg_p(1, ctx, &replaced.replaced_hash, HASH_LENGTH);\n+  bpf_usdt_readarg(2, ctx, &replaced.replaced_vsize);\n+  bpf_usdt_readarg(3, ctx, &replaced.replaced_fee);\n+  bpf_usdt_readarg(4, ctx, &replaced.replaced_entry_time);\n+  bpf_usdt_readarg_p(5, ctx, &replaced.replacement_hash, HASH_LENGTH);\n+  bpf_usdt_readarg(6, ctx, &replaced.replacement_vsize);\n+  bpf_usdt_readarg(7, ctx, &replaced.replacement_fee);\n+\n+  replaced_events.perf_submit(ctx, &replaced, sizeof(replaced));\n+  return 0;\n+}\n+\"\"\"\n+\n+\n+class MempoolTracepointTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.extra_args = [\n+            [\n+                \"-acceptnonstdtxn=1\",",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1047100870",
@@ -1296,6 +1310,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-13T12:36:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1047100870",
       "user" : {
@@ -1331,9 +1346,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1047108198"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "(I think this is a leftover from when you used ToManySigOps to create an invalid transaction in an earlier version of this PR)",
-      "commit_id" : "9d1879c22bea0497e30a69cb1c9ae33880697f82",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-12-13T12:43:14Z",
       "diff_hunk" : "@@ -0,0 +1,360 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2022 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\n+\"\"\"  Tests the mempool:* tracepoint API interface.\n+     See https://github.com/bitcoin/bitcoin/blob/master/doc/tracing.md#context-mempool\n+\"\"\"\n+\n+from decimal import Decimal\n+\n+# Test will be skipped if we don't have bcc installed\n+try:\n+    from bcc import BPF, USDT # type: ignore[import]\n+except ImportError:\n+    pass\n+\n+from test_framework.blocktools import COINBASE_MATURITY, MAX_BLOCK_SIGOPS\n+from test_framework.messages import COIN, DEFAULT_MEMPOOL_EXPIRY_HOURS\n+from test_framework.p2p import P2PDataStore\n+from test_framework.script import OP_CHECKSIG, CScript\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import assert_equal\n+from test_framework.wallet import MiniWallet\n+\n+MEMPOOL_TRACEPOINTS_PROGRAM = \"\"\"\n+# include <uapi/linux/ptrace.h>\n+\n+// The longest address type is tor v3 at 62 chars + 6 chars for the port (':12345').\n+#define MAX_PEER_ADDR_LENGTH            (62+6)\n+// The longest rejection reason is 118 chars and is generated in case of SCRIPT_ERR_EVAL_FALSE by\n+// strprintf(\"mandatory-script-verify-flag-failed (%s)\", ScriptErrorString(check.GetScriptError()))\n+#define MAX_REJECT_REASON_LENGTH        118\n+// The longest string returned by RemovalReasonToString() is 'sizelimit'\n+#define MAX_REMOVAL_REASON_LENGTH       9\n+#define HASH_LENGTH                     32\n+\n+struct added_event\n+{\n+  u8    hash[HASH_LENGTH];\n+  u64   vsize;\n+  s64   fee;\n+};\n+\n+struct removed_event\n+{\n+  u8    hash[HASH_LENGTH];\n+  char  reason[MAX_REMOVAL_REASON_LENGTH];\n+  u64   vsize;\n+  s64   fee;\n+};\n+\n+struct rejected_event\n+{\n+  u8    hash[HASH_LENGTH];\n+  char  reason[MAX_REJECT_REASON_LENGTH];\n+  s64   peer_id;\n+  char  peer_addr[MAX_PEER_ADDR_LENGTH];\n+};\n+\n+struct replaced_event\n+{\n+  u8    replaced_hash[HASH_LENGTH];\n+  u64   replaced_vsize;\n+  s64   replaced_fee;\n+  u64   replaced_entry_time;\n+  u8    replacement_hash[HASH_LENGTH];\n+  u64   replacement_vsize;\n+  s64   replacement_fee;\n+};\n+\n+// BPF perf buffer to push the data to user space.\n+BPF_PERF_OUTPUT(added_events);\n+BPF_PERF_OUTPUT(removed_events);\n+BPF_PERF_OUTPUT(rejected_events);\n+BPF_PERF_OUTPUT(replaced_events);\n+\n+int trace_added(struct pt_regs *ctx) {\n+  struct added_event added = {};\n+\n+  bpf_usdt_readarg_p(1, ctx, &added.hash, HASH_LENGTH);\n+  bpf_usdt_readarg(2, ctx, &added.vsize);\n+  bpf_usdt_readarg(3, ctx, &added.fee);\n+\n+  added_events.perf_submit(ctx, &added, sizeof(added));\n+  return 0;\n+}\n+\n+int trace_removed(struct pt_regs *ctx) {\n+  struct removed_event removed = {};\n+\n+  bpf_usdt_readarg_p(1, ctx, &removed.hash, HASH_LENGTH);\n+  bpf_usdt_readarg_p(2, ctx, &removed.reason, MAX_REMOVAL_REASON_LENGTH);\n+  bpf_usdt_readarg(3, ctx, &removed.vsize);\n+  bpf_usdt_readarg(4, ctx, &removed.fee);\n+\n+  removed_events.perf_submit(ctx, &removed, sizeof(removed));\n+  return 0;\n+}\n+\n+int trace_rejected(struct pt_regs *ctx) {\n+  struct rejected_event rejected = {};\n+\n+  bpf_usdt_readarg_p(1, ctx, &rejected.hash, HASH_LENGTH);\n+  bpf_usdt_readarg_p(2, ctx, &rejected.reason, MAX_REJECT_REASON_LENGTH);\n+  bpf_usdt_readarg(3, ctx, &rejected.peer_id);\n+  bpf_usdt_readarg_p(4, ctx, &rejected.peer_addr, MAX_PEER_ADDR_LENGTH);\n+\n+  rejected_events.perf_submit(ctx, &rejected, sizeof(rejected));\n+  return 0;\n+}\n+\n+int trace_replaced(struct pt_regs *ctx) {\n+  struct replaced_event replaced = {};\n+\n+  bpf_usdt_readarg_p(1, ctx, &replaced.replaced_hash, HASH_LENGTH);\n+  bpf_usdt_readarg(2, ctx, &replaced.replaced_vsize);\n+  bpf_usdt_readarg(3, ctx, &replaced.replaced_fee);\n+  bpf_usdt_readarg(4, ctx, &replaced.replaced_entry_time);\n+  bpf_usdt_readarg_p(5, ctx, &replaced.replacement_hash, HASH_LENGTH);\n+  bpf_usdt_readarg(6, ctx, &replaced.replacement_vsize);\n+  bpf_usdt_readarg(7, ctx, &replaced.replacement_fee);\n+\n+  replaced_events.perf_submit(ctx, &replaced, sizeof(replaced));\n+  return 0;\n+}\n+\"\"\"\n+\n+\n+class MempoolTracepointTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        self.extra_args = [\n+            [\n+                \"-acceptnonstdtxn=1\",",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1047108198",
@@ -1364,6 +1379,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-13T12:43:15Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1047108198",
       "user" : {
@@ -1399,22 +1415,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1047117123"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I initially suggested to @virtu to include the peer_id (and thus place it in net_processing.cpp). But based on the 'mempool' scope of this PR might be better to place this tracepoint somewhere transaction source (p2p/wallet/rpc,..) agnostic. ",
-      "commit_id" : "9d1879c22bea0497e30a69cb1c9ae33880697f82",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-12-13T12:52:05Z",
       "diff_hunk" : "@@ -4161,6 +4161,12 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type,\n             LogPrint(BCLog::MEMPOOLREJ, \"%s from peer=%d was not accepted: %s\\n\", tx.GetHash().ToString(),\n                 pfrom.GetId(),\n                 state.ToString());\n+            TRACE4(mempool, rejected,",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1047117123",
       "id" : 1047117123,
       "in_reply_to_id" : 1046069472,
-      "line" : 4164,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584-ab1D",
       "original_commit_id" : "869a7492df02e85383f55b9bac96a24dadf6d72f",
       "original_line" : 4164,
       "original_position" : 4,
       "original_start_line" : null,
       "path" : "src/net_processing.cpp",
-      "position" : 4,
+      "position" : null,
       "pull_request_review_id" : 1215409047,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26531",
       "reactions" : {
@@ -1432,6 +1448,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-13T12:52:05Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1047117123",
       "user" : {
@@ -1467,9 +1484,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1052242322"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "My reasoning was to follow the precedent set by the debug log, which only records rejected transactions received by peers. I assumed this would be the most interesting case, especially since it allowed the collection of peer data (as suggested by @0xB10C). At the time this approach seemed pragmatic, but now it appears to clash with a clean design.\r\n\r\nLet me know what you think of the following change:\r\n1. Remove all networking-related information from the `mempool:rejected` tracepoint to narrow the scope of the mempool tracepoints to mempool data, making for a clean interface.\r\n2. Call the `mempool:rejected` tracepoint after [this loop](https://github.com/bitcoin/bitcoin/blob/968f03e65c98a9a36aea6c57a29306839b0ada57/src/validation.cpp#L1424-L1425) if `test_accept` is `false`.",
-      "commit_id" : "df1bd959f9361a73b9a1aeb28e2af2e5290ee2a9",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-12-19T14:12:56Z",
       "diff_hunk" : "@@ -4161,6 +4161,12 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type,\n             LogPrint(BCLog::MEMPOOLREJ, \"%s from peer=%d was not accepted: %s\\n\", tx.GetHash().ToString(),\n                 pfrom.GetId(),\n                 state.ToString());\n+            TRACE4(mempool, rejected,",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1052242322",
@@ -1500,6 +1517,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-16T13:20:38Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1052242322",
       "user" : {
@@ -1535,22 +1553,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1053406901"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Sounds good. Might also make sense to call the tracepoint for the `test_accept == false` case. Maybe even pass `test_accept` as argument to allow filtering in e.g. BPF or downstream tools. ",
-      "commit_id" : "9d1879c22bea0497e30a69cb1c9ae33880697f82",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2022-12-20T14:54:44Z",
       "diff_hunk" : "@@ -4161,6 +4161,12 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type,\n             LogPrint(BCLog::MEMPOOLREJ, \"%s from peer=%d was not accepted: %s\\n\", tx.GetHash().ToString(),\n                 pfrom.GetId(),\n                 state.ToString());\n+            TRACE4(mempool, rejected,",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1053406901",
       "id" : 1053406901,
       "in_reply_to_id" : 1046069472,
-      "line" : 4164,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584-yba1",
       "original_commit_id" : "869a7492df02e85383f55b9bac96a24dadf6d72f",
       "original_line" : 4164,
       "original_position" : 4,
       "original_start_line" : null,
       "path" : "src/net_processing.cpp",
-      "position" : 4,
+      "position" : null,
       "pull_request_review_id" : 1224629892,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26531",
       "reactions" : {
@@ -1568,6 +1586,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-20T14:54:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1053406901",
       "user" : {
@@ -1592,50 +1611,6 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n",
-      "created_at" : "2023-01-03T22:19:51Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#issuecomment-1370282878",
-      "id" : 1370282878,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/26531",
-      "node_id" : "IC_kwDOABII585RrNt-",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1370282878/reactions"
-      },
-      "updated_at" : "2023-01-03T22:19:51Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1370282878",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
       "_links" : {
          "html" : {
             "href" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1072017350"
@@ -1647,9 +1622,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072017350"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "Implemented in [069af24](https://github.com/bitcoin/bitcoin/commit/069af2404c0b71da2857766752d2296e621ca754).\r\n\r\nThis also simplified the functional tests, since validation no longer requires determining node address and port.\r\n\r\nTo test, for example, that transactions received via RPC are covered, one can try spending an already-spent tx via `bitcoin-cli`. Example (courtesy of [stackoverflow](https://stackoverflow.com/questions/38493893/heres-how-to-send-raw-transaction-btc-using-bitcoin-cli-command)):\r\n\r\n```\r\nbitcoin-cli sendrawtransaction 0100000001e34ac1e2baac09c366fce1c2245536bda8f7db0f6685862aecf53ebd69f9a89c000000006a47304402203e8a16522da80cef66bacfbc0c800c6d52c4a26d1d86a54e0a1b76d661f020c9022010397f00149f2a8fb2bc5bca52f2d7a7f87e3897a273ef54b277e4af52051a06012103c9700559f690c4a9182faa8bed88ad8a0c563777ac1d3f00fd44ea6c71dc5127ffffffff02a0252600000000001976a914d90d36e98f62968d2bc9bbd68107564a156a9bcf88ac50622500000000001976a91407bdb518fa2e6089fd810235cf1100c9c13d1fd288ac00000000\r\n``` ",
-      "commit_id" : "df1bd959f9361a73b9a1aeb28e2af2e5290ee2a9",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2023-01-17T10:12:57Z",
       "diff_hunk" : "@@ -4161,6 +4161,12 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type,\n             LogPrint(BCLog::MEMPOOLREJ, \"%s from peer=%d was not accepted: %s\\n\", tx.GetHash().ToString(),\n                 pfrom.GetId(),\n                 state.ToString());\n+            TRACE4(mempool, rejected,",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1072017350",
@@ -1666,7 +1641,7 @@
       "pull_request_review_id" : 1251270655,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26531",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1674,12 +1649,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072017350/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-17T10:12:57Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072017350",
       "user" : {
@@ -1717,7 +1693,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "I have a question about reusing an event name, i.e. for rejections in packages (in a future PR) could/should we add a `TRACE2(mempool, rejected, txhash, reason)` or `TRACE3(mempool, rejected, txhash, pkghash, reason)` in the package rejection code? Or should we use a different `event`?",
-      "commit_id" : "d0c6da92c5a4d2a972f884f29dd716da2040fdb2",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2023-02-28T10:12:57Z",
       "diff_hunk" : "@@ -1461,6 +1470,10 @@ MempoolAcceptResult AcceptToMemoryPool(Chainstate& active_chainstate, const CTra\n \n         for (const COutPoint& hashTx : coins_to_uncache)\n             active_chainstate.CoinsTip().Uncache(hashTx);\n+        TRACE2(mempool, rejected,\n+                tx->GetHash().data(),\n+                result.m_state.GetRejectReason().c_str()\n+        );",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1119840003",
@@ -1747,6 +1723,7 @@
       "side" : "RIGHT",
       "start_line" : 1473,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2023-03-14T10:00:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1119840003",
       "user" : {
@@ -1782,9 +1759,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1135459251"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "Last time I checked event names could not be reused, so the package rejection code would have to use a new event.\r\n\r\nOn the bright side, having separate rejection events might help differentiating between them and avoid conflating regular vs. package-based rejections.",
-      "commit_id" : "d0c6da92c5a4d2a972f884f29dd716da2040fdb2",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2023-03-14T12:22:12Z",
       "diff_hunk" : "@@ -1461,6 +1470,10 @@ MempoolAcceptResult AcceptToMemoryPool(Chainstate& active_chainstate, const CTra\n \n         for (const COutPoint& hashTx : coins_to_uncache)\n             active_chainstate.CoinsTip().Uncache(hashTx);\n+        TRACE2(mempool, rejected,\n+                tx->GetHash().data(),\n+                result.m_state.GetRejectReason().c_str()\n+        );",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1135459251",
@@ -1815,6 +1792,7 @@
       "side" : "RIGHT",
       "start_line" : 1473,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2023-03-14T12:22:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1135459251",
       "user" : {
@@ -1852,7 +1830,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Mm good to know, thanks!",
-      "commit_id" : "d0c6da92c5a4d2a972f884f29dd716da2040fdb2",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2023-03-14T12:31:01Z",
       "diff_hunk" : "@@ -1461,6 +1470,10 @@ MempoolAcceptResult AcceptToMemoryPool(Chainstate& active_chainstate, const CTra\n \n         for (const COutPoint& hashTx : coins_to_uncache)\n             active_chainstate.CoinsTip().Uncache(hashTx);\n+        TRACE2(mempool, rejected,\n+                tx->GetHash().data(),\n+                result.m_state.GetRejectReason().c_str()\n+        );",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1135469419",
@@ -1883,6 +1861,7 @@
       "side" : "RIGHT",
       "start_line" : 1473,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2023-03-14T12:31:02Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1135469419",
       "user" : {
@@ -1907,7 +1886,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK d0c6da92c5a4d2a972f884f29dd716da2040fdb2\r\n\r\nCode reviewed the mempool tracepoint interface tests and the `mempool_monitor.py` example script including the BCC code for both. Tracepoint placement also looks good and the tracepoint arguments match whats added in the documentation.\r\n\r\nTwo things to note:\r\n- the `mempool_monitor.py` demo script will, over time, use more and more system resources (RAM and CPU) as mempool events are added to the `events` list. The list is never cleared. The entries in the `events` list are used to calculate the statistics, so for a large list it takes longer to calculate. I noticed this after running the demo script for >24h. I don't think it's a problem for a *demo* script, though.\r\n- I still think it makes sense to also pass the time a transaction was added to the mempool in the transaction removed tracepoint as noted in https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1045624376. This allows calculating the time the transaction was in the mempool before being mined/evicted. (I think this is an oversight as you addressed this similar comment https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1045624415 right after it).\r\n\r\nI've also setup a quick-and-dirty dashboard using these tracepoints on https://bitcoind.observer/d/jRIa_aaVk/mempool (might turn this off at somepoint again). ",
       "created_at" : "2023-03-16T17:10:05Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#issuecomment-1472375220",
@@ -1916,7 +1895,7 @@
       "node_id" : "IC_kwDOABII585Xwqm0",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1924,7 +1903,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1472375220/reactions"
       },
       "updated_at" : "2023-03-16T17:10:05Z",
@@ -1964,20 +1943,20 @@
       },
       "author_association" : "MEMBER",
       "body" : "It would probably make sense to include the time for all of the tracepoints added in this PR?",
-      "commit_id" : "d0c6da92c5a4d2a972f884f29dd716da2040fdb2",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2023-03-16T22:22:16Z",
       "diff_hunk" : "@@ -211,6 +211,58 @@ Arguments passed:\n 4. The expected transaction fee as an `int64`\n 5. The position of the change output as an `int32`\n \n+### Context `mempool`\n+\n+#### Tracepoint `mempool:added`\n+\n+Is called when a transaction is added to the node's mempool. Passes information\n+about the transaction.\n+\n+Arguments passed:\n+1. Transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Transaction virtual size as `uint64`\n+3. Transaction fee as `int64`\n+\n+#### Tracepoint `mempool:removed`\n+\n+Is called when a transaction is removed from the node's mempool. Passes information\n+about the transaction.\n+\n+Arguments passed:\n+1. Transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Removal reason as `pointer to C-style String` (max. length 9 characters)\n+3. Transaction virtual size as `uint64`\n+4. Transaction fee as `int64`\n+",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1139414366",
       "id" : 1139414366,
       "in_reply_to_id" : 1045624376,
-      "line" : 236,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII585D6hVe",
       "original_commit_id" : "3b6d3f0294bca3985458eb97c89c8e07704957e6",
-      "original_line" : 236,
+      "original_line" : 237,
       "original_position" : 26,
       "original_start_line" : 231,
       "path" : "doc/tracing.md",
-      "position" : 26,
+      "position" : null,
       "pull_request_review_id" : 1344822147,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26531",
       "reactions" : {
@@ -1993,7 +1972,7 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1139414366/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 231,
+      "start_line" : null,
       "start_side" : "RIGHT",
       "subject_type" : "line",
       "updated_at" : "2023-03-16T22:22:17Z",
@@ -2031,22 +2010,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1139897157"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Not necessarily. Might be redundant. When a transaction is added and you pass the tracepoint arguments _directly_ to a tracing script (can't think of a reason why you would want to store it in a BPF map first for a while), then the time is very close to `now()`. Similar for rejected transactions and for the replacement transaction during RBF (the time when the replaced transaction entered is passed). ",
-      "commit_id" : "d0c6da92c5a4d2a972f884f29dd716da2040fdb2",
+      "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2023-03-17T07:58:23Z",
       "diff_hunk" : "@@ -211,6 +211,58 @@ Arguments passed:\n 4. The expected transaction fee as an `int64`\n 5. The position of the change output as an `int32`\n \n+### Context `mempool`\n+\n+#### Tracepoint `mempool:added`\n+\n+Is called when a transaction is added to the node's mempool. Passes information\n+about the transaction.\n+\n+Arguments passed:\n+1. Transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Transaction virtual size as `uint64`\n+3. Transaction fee as `int64`\n+\n+#### Tracepoint `mempool:removed`\n+\n+Is called when a transaction is removed from the node's mempool. Passes information\n+about the transaction.\n+\n+Arguments passed:\n+1. Transaction ID (hash) as `pointer to unsigned chars` (i.e. 32 bytes in little-endian)\n+2. Removal reason as `pointer to C-style String` (max. length 9 characters)\n+3. Transaction virtual size as `uint64`\n+4. Transaction fee as `int64`\n+",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#discussion_r1139897157",
       "id" : 1139897157,
       "in_reply_to_id" : 1045624376,
-      "line" : 236,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII585D8XNF",
       "original_commit_id" : "3b6d3f0294bca3985458eb97c89c8e07704957e6",
-      "original_line" : 236,
+      "original_line" : 237,
       "original_position" : 26,
       "original_start_line" : 231,
       "path" : "doc/tracing.md",
-      "position" : 26,
+      "position" : null,
       "pull_request_review_id" : 1345444070,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26531",
       "reactions" : {
@@ -2062,7 +2041,7 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1139897157/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 231,
+      "start_line" : null,
       "start_side" : "RIGHT",
       "subject_type" : "line",
       "updated_at" : "2023-03-17T07:58:23Z",
@@ -2100,7 +2079,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1142083883"
          }
       },
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "In reply to the original comment: oversight on my part; will push a fix.\r\n\r\nIn reply to adding event timestamps for all tracepoints: in omitting the actual event timestamps as tracepoint parameters, I followed the precedent set by other tracepoints, where, as laid out by @0xB10C, event timestamps are generated inside tracing scripts.",
       "commit_id" : "4b7aec2951fe4595946cdc804b0dec1921d79d05",
       "created_at" : "2023-03-20T13:05:21Z",
@@ -2202,7 +2181,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ACK 4b7aec2951fe4595946cdc804b0dec1921d79d05\r\n\r\nReviewed changes since my last ACK with `git range-diff d0c6da92c...4b7aec2951`:\r\n- This adds the entry time to the `mempool:removed`  transactions. The docs and the tests are updated accordingly.\r\n- Code reviewed that the `mempool_monitor.py` demo now doesn't store events forever and let the script run for >10min. \r\n- Ran the `interface_usdt_mempool.py` test\r\n\r\nThe failing CI job looks unrelated.",
       "created_at" : "2023-03-20T16:05:59Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26531#issuecomment-1476519399",

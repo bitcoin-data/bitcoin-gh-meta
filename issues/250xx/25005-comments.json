@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25269](https://github.com/bitcoin/bitcoin/pull/25269) (wallet: re-activate the not triggered  \"AmountWithFeeExceedsBalance\" error by furszy)\n* [#25183](https://github.com/bitcoin/bitcoin/pull/25183) (rpc: Segwit-only inputs option for fundrawtransaction by aureleoules)\n* [#24699](https://github.com/bitcoin/bitcoin/pull/24699) (wallet: Improve AvailableCoins performance by reducing duplicated operations by achow101)\n* [#24584](https://github.com/bitcoin/bitcoin/pull/24584) (wallet: avoid mixing different `OutputTypes` during coin selection by josibake)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-04-28T02:00:32Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#issuecomment-1111657636",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Ah, thanks @jonatack ð. Just noticed that the GUI `WalletTests` isn't run by default in my OS under `make check`.\r\n\r\nIt's an easy fix; as the test doesn't start the balance polling timer, the model does not have the balance cached so.. as 5babfb7 make uses of it, the creation process fails with a not-enough balance error.\r\n\r\nWill push the fix and expand + improve the test coverage a bit more.\r\nAnd.. most likely will decouple that last commit into a separate PR in few days. Have some further improvements locally for the wallet model area that can package out all together that aren't really part of the scope of this PR.\r\n(like a mutex to be able to access the model cached balance from different threads, connect it to the widgets etc..)",
       "created_at" : "2022-04-28T14:01:29Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#issuecomment-1112243680",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> 6) The GUI `WalletModel::prepareTransaction` will now use the cached balance to make the funds availability check if the user didn't manually selected outputs to spend. This will avoid an entire on-demand recalculation of the available balance which is quite expensive as the wallet has to walk through the entire txs map.\r\n\r\nDropped the last two commits that were implementing point (6) described above. They are now part of https://github.com/bitcoin-core/gui/pull/598",
       "created_at" : "2022-05-09T20:58:06Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#issuecomment-1121574208",
@@ -189,19 +189,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "In 2cdd2a1a5498cb8767799dd26a4082e9d3b064ee \"wallet: speedup 'GetAvailableBalance' filtering by spendable outputs only and using the 'AvailableCoins' retrieved total_amount.\"\r\n\r\nWhat is the purpose of the rename and making an empty `CCoinControl` here? `AvailableCoins` can take `nullptr` for `coinControl`.",
-      "commit_id" : "2cdd2a1a5498cb8767799dd26a4082e9d3b064ee",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
       "created_at" : "2022-05-16T20:23:45Z",
       "diff_hunk" : "@@ -225,17 +223,13 @@ CoinsResult AvailableCoins(const CWallet& wallet,\n     return result;\n }\n \n-CAmount GetAvailableBalance(const CWallet& wallet, const CCoinControl* coinControl)\n+CAmount GetAvailableBalance(const CWallet& wallet, const CCoinControl* _coinControl)\n {\n     LOCK(wallet.cs_wallet);\n-\n-    CAmount balance = 0;\n-    for (const COutput& out : AvailableCoins(wallet, coinControl).coins) {\n-        if (out.spendable) {\n-            balance += out.txout.nValue;\n-        }\n-    }\n-    return balance;\n+    // Copy to filter by spendable coins only\n+    CCoinControl coinControl = _coinControl ? *_coinControl : CCoinControl();",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r874124981",
       "id" : 874124981,
-      "line" : 230,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5840Gha1",
       "original_commit_id" : "2cdd2a1a5498cb8767799dd26a4082e9d3b064ee",
-      "original_line" : 230,
+      "original_line" : 236,
       "original_position" : 40,
       "original_start_line" : null,
       "path" : "src/wallet/spend.cpp",
-      "position" : 40,
+      "position" : null,
       "pull_request_review_id" : 974523072,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25005",
       "reactions" : {
@@ -219,6 +219,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-16T20:27:27Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/874124981",
       "user" : {
@@ -243,7 +244,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Hey achow101, thanks for the review!\r\n\r\n> I don't quite understand the purpose of the first commit. It doesn't seem like it materially improves anything?\r\n\r\nWe are skipping the non-spendable coins that appear in `vCoins` (`AvailableCoins` result) later, in several parts of the `CreateTransaction` and `GetBalance` flows:\r\n\r\n1.  `GetAvailableBalance` was (1) getting all the available coins calling `AvailableCoins` and, right away, walking through the entire vector, skipping the non-spendable coins, to calculate the total balance.â¨\r\n\r\n2. Inside `CreateTransactionInternal` â> `SelectCoins(vCoins,...)`, we have several calls to `AttemptSelection` which, on each of them internally, we call twice to `GroupOutputs` which internally has two for-loops over the entire `vCoins` vector that skip the non-spendable coins.\r\n\r\nSo, the purpose is not add the non-spendable coins into the `AvailableCoins` result (`vCoins`) in the first place for the processes that arenât using them at all, so we donât waste resources skipping them later so many times.\r\n\r\nNote: this speedup is for all the processes that calls to `CreateTransaction` and `GetBalance*` internally.",
       "created_at" : "2022-05-21T17:54:51Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#issuecomment-1133735550",
@@ -298,9 +299,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/878744964"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "The previous flow was:\r\n```c++\r\nstd::vector<COutput> vCoins;\r\nAvailableCoins(wallet, vCoins, coinControl);\r\nfor (const COutput& out : vCoins) {\r\n     if (out.spendable) { --> // this is the reason\r\n         balance += out.txout.nValue;\r\n     }\r\n}\r\n```\r\n\r\nTo remove the second unnecessary for-loop, as the function arg is `const CCoinControl*`, in order to continue having the same calculation (skipping the non-spendable coins), needed to create a local copy of the `coinControl` arg and set the new flag `m_include_only_spendable_outputs` to true (which by default is false).\r\n\r\nSo the coins vector and the total balance returned by `AvailableCoins` has all, and only, the spendable coins directly.\r\n\r\nIn the new flow:\r\n```c++\r\nCCoinControl coinControl = _coinControl ? *_coinControl : CCoinControl();\r\ncoinControl.m_include_only_spendable_outputs = true; // --> this enforces that non-spendable coins are filtered from `AvailableCoins` result.\r\nreturn AvailableCoins(wallet, &coinControl).total_amount;\r\n```\r\n",
-      "commit_id" : "46ac311e0bf706482bb8d7001f6ff6825620caff",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
       "created_at" : "2022-05-21T18:09:03Z",
       "diff_hunk" : "@@ -225,17 +223,13 @@ CoinsResult AvailableCoins(const CWallet& wallet,\n     return result;\n }\n \n-CAmount GetAvailableBalance(const CWallet& wallet, const CCoinControl* coinControl)\n+CAmount GetAvailableBalance(const CWallet& wallet, const CCoinControl* _coinControl)\n {\n     LOCK(wallet.cs_wallet);\n-\n-    CAmount balance = 0;\n-    for (const COutput& out : AvailableCoins(wallet, coinControl).coins) {\n-        if (out.spendable) {\n-            balance += out.txout.nValue;\n-        }\n-    }\n-    return balance;\n+    // Copy to filter by spendable coins only\n+    CCoinControl coinControl = _coinControl ? *_coinControl : CCoinControl();",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r878744964",
@@ -331,6 +332,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-21T21:46:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/878744964",
       "user" : {
@@ -355,7 +357,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Rebased after #25083 merge. Conflicts solved.",
       "created_at" : "2022-05-23T18:18:26Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#issuecomment-1134992768",
@@ -412,7 +414,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "In 3082f2270fa96eaf2bd1d5e69d56fce9588a4f79 \"wallet: add 'm_include_only_spendable_outputs' filter to CoinControl\"\r\n\r\nInstead of setting this parameter all the way out here in the RPC, I think it would make more sense to set it closer to the places where it actually matters, e.g. in `CreateTransactionInternal` right before `AvailableCoins` is called. This way we won't have to remember to always set this option for every caller to `CreateTransaction`.",
-      "commit_id" : "46ac311e0bf706482bb8d7001f6ff6825620caff",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
       "created_at" : "2022-06-02T15:53:03Z",
       "diff_hunk" : "@@ -395,6 +396,8 @@ RPCHelpMan sendmany()\n         coin_control.m_signal_bip125_rbf = request.params[5].get_bool();\n     }\n \n+    coin_control.m_include_only_spendable_outputs = true;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r888117918",
@@ -442,6 +444,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-02T16:00:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/888117918",
       "user" : {
@@ -479,7 +482,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "In aa0be53fcd85f8ad8102c5843baeec9d0740297a \"wallet::AvailableCoins, stop calling 'wtx.tx->vout[i]' multiple times.\"\r\n\r\nnit: const\r\n```suggestion\r\n            const COutPoint outpoint(wtxid, i);\r\n```",
-      "commit_id" : "46ac311e0bf706482bb8d7001f6ff6825620caff",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
       "created_at" : "2022-06-02T15:55:13Z",
       "diff_hunk" : "@@ -166,24 +166,27 @@ CoinsResult AvailableCoins(const CWallet& wallet,\n         bool tx_from_me = CachedTxIsFromMe(wallet, wtx, ISMINE_ALL);\n \n         for (unsigned int i = 0; i < wtx.tx->vout.size(); i++) {\n+            const CTxOut& output = wtx.tx->vout[i];\n+            COutPoint outpoint(wtxid, i);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r888119926",
@@ -509,6 +512,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-02T16:00:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/888119926",
       "user" : {
@@ -546,7 +550,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "In da875e6e8008f9b7053b5ce42fade49a322e0a50 \"wallet::IsSpent accepting 'COutPoint' instead of hash:index.\"\r\n\r\nnit: inline\r\n```suggestion\r\n        if (!wallet.IsSpent(COutPoint(hashTx, i)) && (allow_used_addresses || !wallet.IsSpentKey(hashTx, i))) {\r\n```",
-      "commit_id" : "46ac311e0bf706482bb8d7001f6ff6825620caff",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
       "created_at" : "2022-06-02T15:58:31Z",
       "diff_hunk" : "@@ -204,9 +204,9 @@ CAmount CachedTxGetAvailableCredit(const CWallet& wallet, const CWalletTx& wtx,\n     bool allow_used_addresses = (filter & ISMINE_USED) || !wallet.IsWalletFlagSet(WALLET_FLAG_AVOID_REUSE);\n     CAmount nCredit = 0;\n     uint256 hashTx = wtx.GetHash();\n-    for (unsigned int i = 0; i < wtx.tx->vout.size(); i++)\n-    {\n-        if (!wallet.IsSpent(hashTx, i) && (allow_used_addresses || !wallet.IsSpentKey(hashTx, i))) {\n+    for (unsigned int i = 0; i < wtx.tx->vout.size(); i++)  {\n+        COutPoint outpoint(hashTx, i);\n+        if (!wallet.IsSpent(outpoint) && (allow_used_addresses || !wallet.IsSpentKey(hashTx, i))) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r888123040",
@@ -576,6 +580,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-06-02T16:00:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/888123040",
       "user" : {
@@ -611,9 +616,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/888153750"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I was doing it there first but the `CCoinControl` arg of `CreateTransactionInternal` is const. Options were (1) modify it by copying the coin control object to a temp variable or (2) change the function signature.\r\n\r\nAnd at least in this case, I wasn't totally good with those two options (not against neither, it was a \"maybe\"). But open for new thoughts, would you prefer option 1 more?",
-      "commit_id" : "46ac311e0bf706482bb8d7001f6ff6825620caff",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
       "created_at" : "2022-06-02T16:25:22Z",
       "diff_hunk" : "@@ -395,6 +396,8 @@ RPCHelpMan sendmany()\n         coin_control.m_signal_bip125_rbf = request.params[5].get_bool();\n     }\n \n+    coin_control.m_include_only_spendable_outputs = true;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r888153750",
@@ -644,6 +649,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-02T16:25:22Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/888153750",
       "user" : {
@@ -681,7 +687,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Actually, since this option is really just for `AvailableCoins` itself, it might make more sense to make it a parameter to `AvailableCoins` rather than having it in `CCoinControl`.",
-      "commit_id" : "46ac311e0bf706482bb8d7001f6ff6825620caff",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
       "created_at" : "2022-06-02T17:08:27Z",
       "diff_hunk" : "@@ -395,6 +396,8 @@ RPCHelpMan sendmany()\n         coin_control.m_signal_bip125_rbf = request.params[5].get_bool();\n     }\n \n+    coin_control.m_include_only_spendable_outputs = true;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r888192137",
@@ -712,6 +718,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-02T17:08:27Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/888192137",
       "user" : {
@@ -747,9 +754,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/888245468"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ðð¼ , added it in 8daa58b.",
-      "commit_id" : "5646ccf4af89bd77953030dedabb1545b851d3ea",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
       "created_at" : "2022-06-02T18:02:46Z",
       "diff_hunk" : "@@ -395,6 +396,8 @@ RPCHelpMan sendmany()\n         coin_control.m_signal_bip125_rbf = request.params[5].get_bool();\n     }\n \n+    coin_control.m_include_only_spendable_outputs = true;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r888245468",
@@ -780,6 +787,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-05T14:21:24Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/888245468",
       "user" : {
@@ -804,7 +812,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Ready, feedback applied:\r\n\r\n- Moved `only_spendable` from be a `CoinControl` field to be a `AvailableCoins` param.\r\n- Nits tackled.",
       "created_at" : "2022-06-02T18:06:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#issuecomment-1145160959",
@@ -848,7 +856,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2022-06-05T20:18:45Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#issuecomment-1146877116",
@@ -903,21 +911,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/891477877"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "The `vCoins` parameter doesn't exist anymore, i.e. the comment should be adapted accordingly. E.g.\r\n```suggestion\r\n * Return vector of available COutputs.\r\n```",
-      "commit_id" : "5646ccf4af89bd77953030dedabb1545b851d3ea",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
       "created_at" : "2022-06-07T16:44:01Z",
       "diff_hunk" : "@@ -34,16 +34,28 @@ struct TxSize {\n TxSize CalculateMaximumSignedTxSize(const CTransaction& tx, const CWallet* wallet, const std::vector<CTxOut>& txouts, const CCoinControl* coin_control = nullptr);\n TxSize CalculateMaximumSignedTxSize(const CTransaction& tx, const CWallet* wallet, const CCoinControl* coin_control = nullptr) EXCLUSIVE_LOCKS_REQUIRED(wallet->cs_wallet);\n \n+struct CoinsResult {\n+    std::vector<COutput> coins;\n+    // Sum of all the coins amounts\n+    CAmount total_amount{0};\n+};\n /**\n- * populate vCoins with vector of available COutputs.\n+ * Populate vCoins with vector of available COutputs.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r891477877",
       "id" : 891477877,
-      "line" : 43,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5841It91",
       "original_commit_id" : "5646ccf4af89bd77953030dedabb1545b851d3ea",
       "original_line" : 43,
       "original_position" : 11,
       "original_start_line" : null,
       "path" : "src/wallet/spend.h",
-      "position" : 11,
+      "position" : null,
       "pull_request_review_id" : 998508682,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25005",
       "reactions" : {
@@ -935,6 +943,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-07T17:12:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/891477877",
       "user" : {
@@ -970,21 +979,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/891482704"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: unnecessary whitespace\r\n```suggestion\r\n    for (unsigned int i = 0; i < wtx.tx->vout.size(); i++) {\r\n```",
-      "commit_id" : "5646ccf4af89bd77953030dedabb1545b851d3ea",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
       "created_at" : "2022-06-07T16:48:19Z",
       "diff_hunk" : "@@ -204,10 +204,9 @@ CAmount CachedTxGetAvailableCredit(const CWallet& wallet, const CWalletTx& wtx,\n     bool allow_used_addresses = (filter & ISMINE_USED) || !wallet.IsWalletFlagSet(WALLET_FLAG_AVOID_REUSE);\n     CAmount nCredit = 0;\n     uint256 hashTx = wtx.GetHash();\n-    for (unsigned int i = 0; i < wtx.tx->vout.size(); i++)\n-    {\n-        if (!wallet.IsSpent(hashTx, i) && (allow_used_addresses || !wallet.IsSpentKey(hashTx, i))) {\n-            const CTxOut &txout = wtx.tx->vout[i];\n+    for (unsigned int i = 0; i < wtx.tx->vout.size(); i++)  {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r891482704",
       "id" : 891482704,
-      "line" : 207,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5841IvJQ",
       "original_commit_id" : "5646ccf4af89bd77953030dedabb1545b851d3ea",
       "original_line" : 207,
       "original_position" : 8,
       "original_start_line" : null,
       "path" : "src/wallet/receive.cpp",
-      "position" : 8,
+      "position" : null,
       "pull_request_review_id" : 998508682,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25005",
       "reactions" : {
@@ -1002,6 +1011,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-07T17:12:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/891482704",
       "user" : {
@@ -1037,21 +1047,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/891498739"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Not tested, but would it make sense to set the default parameter of `spendable_only` of `AvailableCoins` to `true` rather than `false`? Then this call would simply be\r\n```suggestion\r\n    return AvailableCoins(wallet, coinControl).total_amount;\r\n```\r\nAs far as I can see, there are only 4 instances in total that call `AvailableCoins`, so it should be quite easy to find out where `false` has to be passed explicitly for the `spendable_only` parameter.",
-      "commit_id" : "5646ccf4af89bd77953030dedabb1545b851d3ea",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
       "created_at" : "2022-06-07T17:05:25Z",
       "diff_hunk" : "@@ -159,76 +165,82 @@ void AvailableCoins(const CWallet& wallet, std::vector<COutput>& vCoins, const C\n         bool tx_from_me = CachedTxIsFromMe(wallet, wtx, ISMINE_ALL);\n \n         for (unsigned int i = 0; i < wtx.tx->vout.size(); i++) {\n+            const CTxOut& output = wtx.tx->vout[i];\n+            const COutPoint outpoint(wtxid, i);\n+\n             // Only consider selected coins if add_inputs is false\n-            if (coinControl && !coinControl->m_add_inputs && !coinControl->IsSelected(COutPoint(entry.first, i))) {\n+            if (coinControl && !coinControl->m_add_inputs && !coinControl->IsSelected(outpoint)) {\n                 continue;\n             }\n \n-            if (wtx.tx->vout[i].nValue < nMinimumAmount || wtx.tx->vout[i].nValue > nMaximumAmount)\n+            if (output.nValue < nMinimumAmount || output.nValue > nMaximumAmount)\n                 continue;\n \n-            if (coinControl && coinControl->HasSelected() && !coinControl->fAllowOtherInputs && !coinControl->IsSelected(COutPoint(entry.first, i)))\n+            if (coinControl && coinControl->HasSelected() && !coinControl->fAllowOtherInputs && !coinControl->IsSelected(outpoint))\n                 continue;\n \n-            if (wallet.IsLockedCoin(entry.first, i))\n+            if (wallet.IsLockedCoin(outpoint))\n                 continue;\n \n-            if (wallet.IsSpent(wtxid, i))\n+            if (wallet.IsSpent(outpoint))\n                 continue;\n \n-            isminetype mine = wallet.IsMine(wtx.tx->vout[i]);\n+            isminetype mine = wallet.IsMine(output);\n \n             if (mine == ISMINE_NO) {\n                 continue;\n             }\n \n-            if (!allow_used_addresses && wallet.IsSpentKey(wtxid, i)) {\n+            if (!allow_used_addresses && wallet.IsSpentKey(output.scriptPubKey)) {\n                 continue;\n             }\n \n-            std::unique_ptr<SigningProvider> provider = wallet.GetSolvingProvider(wtx.tx->vout[i].scriptPubKey);\n+            std::unique_ptr<SigningProvider> provider = wallet.GetSolvingProvider(output.scriptPubKey);\n \n-            bool solvable = provider ? IsSolvable(*provider, wtx.tx->vout[i].scriptPubKey) : false;\n+            bool solvable = provider ? IsSolvable(*provider, output.scriptPubKey) : false;\n             bool spendable = ((mine & ISMINE_SPENDABLE) != ISMINE_NO) || (((mine & ISMINE_WATCH_ONLY) != ISMINE_NO) && (coinControl && coinControl->fAllowWatchOnly && solvable));\n-            int input_bytes = GetTxSpendSize(wallet, wtx, i, (coinControl && coinControl->fAllowWatchOnly));\n \n-            vCoins.emplace_back(COutPoint(wtx.GetHash(), i), wtx.tx->vout.at(i), nDepth, input_bytes, spendable, solvable, safeTx, wtx.GetTxTime(), tx_from_me, feerate);\n+            // Filter by spendable outputs only\n+            if (!spendable && only_spendable) continue;\n+\n+            int input_bytes = GetTxSpendSize(wallet, wtx, i, (coinControl && coinControl->fAllowWatchOnly));\n+            result.coins.emplace_back(outpoint, output, nDepth, input_bytes, spendable, solvable, safeTx, wtx.GetTxTime(), tx_from_me, feerate);\n+            result.total_amount += output.nValue;\n \n             // Checks the sum amount of all UTXO's.\n             if (nMinimumSumAmount != MAX_MONEY) {\n-                nTotal += wtx.tx->vout[i].nValue;\n-\n-                if (nTotal >= nMinimumSumAmount) {\n-                    return;\n+                if (result.total_amount >= nMinimumSumAmount) {\n+                    return result;\n                 }\n             }\n \n             // Checks the maximum number of UTXO's.\n-            if (nMaximumCount > 0 && vCoins.size() >= nMaximumCount) {\n-                return;\n+            if (nMaximumCount > 0 && result.coins.size() >= nMaximumCount) {\n+                return result;\n             }\n         }\n     }\n+\n+    return result;\n }\n \n-void AvailableCoinsListUnspent(const CWallet& wallet, std::vector<COutput>& vCoins, const CCoinControl* coinControl, const CAmount& nMinimumAmount, const CAmount& nMaximumAmount, const CAmount& nMinimumSumAmount, const uint64_t nMaximumCount)\n+CoinsResult AvailableCoinsListUnspent(const CWallet& wallet, const CCoinControl* coinControl, const CAmount& nMinimumAmount, const CAmount& nMaximumAmount, const CAmount& nMinimumSumAmount, const uint64_t nMaximumCount)\n {\n-    AvailableCoins(wallet, vCoins, coinControl, /*feerate=*/ std::nullopt, nMinimumAmount, nMaximumAmount, nMinimumSumAmount, nMaximumCount);\n+    return AvailableCoins(wallet, coinControl, /*feerate=*/ std::nullopt, nMinimumAmount, nMaximumAmount, nMinimumSumAmount, nMaximumCount);\n }\n \n CAmount GetAvailableBalance(const CWallet& wallet, const CCoinControl* coinControl)\n {\n     LOCK(wallet.cs_wallet);\n-\n-    CAmount balance = 0;\n-    std::vector<COutput> vCoins;\n-    AvailableCoinsListUnspent(wallet, vCoins, coinControl);\n-    for (const COutput& out : vCoins) {\n-        if (out.spendable) {\n-            balance += out.txout.nValue;\n-        }\n-    }\n-    return balance;\n+    return AvailableCoins(wallet,\n+                          coinControl,\n+                          std::nullopt, /*feerate=*/\n+                          1,            /*nMinimumAmount*/\n+                          MAX_MONEY,    /*nMaximumAmount*/\n+                          MAX_MONEY,    /*nMinimumSumAmount*/\n+                          0,            /*nMaximumCount*/\n+                          true          /*spendable_only*/\n+                          ).total_amount;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r891498739",
       "id" : 891498739,
-      "line" : 243,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5841IzDz",
       "original_commit_id" : "5646ccf4af89bd77953030dedabb1545b851d3ea",
-      "original_line" : 243,
+      "original_line" : 242,
       "original_position" : 130,
       "original_start_line" : 235,
       "path" : "src/wallet/spend.cpp",
-      "position" : 130,
+      "position" : null,
       "pull_request_review_id" : 998508682,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25005",
       "reactions" : {
@@ -1067,8 +1077,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/891498739/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 235,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-06-07T17:12:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/891498739",
       "user" : {
@@ -1104,7 +1115,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/892438732"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "You found an existing issue in the RPC `sendall` command :).\r\n\r\nWhen `send_max` is set, `sendall` uses all the coins returned from `AvailableCoins` as inputs for a new transaction, without checking if the coin are spendable/solvable first.\r\n\r\nSo.. this command should be always failing in master if the user sets the `send_max` param and the wallet has at least one non-spendable or non-solvable coin.\r\n\r\nNote:\r\nThis is easily solved passing the new `spendable_only=false` flag to `AvailableCoins` here.",
       "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
       "created_at" : "2022-06-08T14:14:51Z",
@@ -1137,6 +1148,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-06-08T14:39:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/892438732",
       "user" : {
@@ -1161,7 +1173,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "thanks for the feedback theStack!\r\n\r\nApplied the following changes:\r\n\r\n1) Re-wrote commits titles to be 72-80 characters long.\r\n2) Moved the `only_spendable` arg of `AvailableCoins` to be true by default.\r\n3) By having `spendable_only=true` by default, fixed an already existent hidden issue in `sendall` RPC command -> [description](https://github.com/bitcoin/bitcoin/pull/25005#discussion_r892438732)",
       "created_at" : "2022-06-08T14:36:56Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#issuecomment-1150006470",
@@ -1205,7 +1217,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2022-06-15T20:42:18Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#issuecomment-1156910573",
@@ -1290,6 +1302,414 @@
          "subscriptions_url" : "https://api.github.com/users/achow101/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/achow101"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r900489542"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25005"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900489542"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit: `CoinsResult` is not technically a vector of `COutputs`, think this could be updated a little bit?",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
+      "created_at" : "2022-06-17T20:41:00Z",
+      "diff_hunk" : "@@ -34,16 +34,29 @@ struct TxSize {\n TxSize CalculateMaximumSignedTxSize(const CTransaction& tx, const CWallet* wallet, const std::vector<CTxOut>& txouts, const CCoinControl* coin_control = nullptr);\n TxSize CalculateMaximumSignedTxSize(const CTransaction& tx, const CWallet* wallet, const CCoinControl* coin_control = nullptr) EXCLUSIVE_LOCKS_REQUIRED(wallet->cs_wallet);\n \n+struct CoinsResult {\n+    std::vector<COutput> coins;\n+    // Sum of all the coins amounts\n+    CAmount total_amount{0};\n+};\n /**\n- * populate vCoins with vector of available COutputs.\n+ * Return vector of available COutputs.",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r900489542",
+      "id" : 900489542,
+      "line" : 43,
+      "node_id" : "PRRC_kwDOABII5841rGFG",
+      "original_commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
+      "original_line" : 43,
+      "original_position" : 11,
+      "original_start_line" : null,
+      "path" : "src/wallet/spend.h",
+      "position" : 11,
+      "pull_request_review_id" : 1010996802,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25005",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900489542/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-06-18T01:19:13Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900489542",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/69010457?v=4",
+         "events_url" : "https://api.github.com/users/stickies-v/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/stickies-v/followers",
+         "following_url" : "https://api.github.com/users/stickies-v/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/stickies-v/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/stickies-v",
+         "id" : 69010457,
+         "login" : "stickies-v",
+         "node_id" : "MDQ6VXNlcjY5MDEwNDU3",
+         "organizations_url" : "https://api.github.com/users/stickies-v/orgs",
+         "received_events_url" : "https://api.github.com/users/stickies-v/received_events",
+         "repos_url" : "https://api.github.com/users/stickies-v/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/stickies-v/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/stickies-v/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/stickies-v"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r900504744"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25005"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900504744"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit: I think the `res_` prefix is not really necessary?\r\n```suggestion\r\n    auto available_coins = AvailableCoins(wallet,\r\n```",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
+      "created_at" : "2022-06-17T21:13:31Z",
+      "diff_hunk" : "@@ -791,11 +799,16 @@ static std::optional<CreatedTransactionResult> CreateTransactionInternal(\n     CAmount selection_target = recipients_sum + not_input_fees;\n \n     // Get available coins\n-    std::vector<COutput> vAvailableCoins;\n-    AvailableCoins(wallet, vAvailableCoins, &coin_control, coin_selection_params.m_effective_feerate, 1, MAX_MONEY, MAX_MONEY, 0);\n+    auto res_available_coins = AvailableCoins(wallet,",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r900504744",
+      "id" : 900504744,
+      "line" : 802,
+      "node_id" : "PRRC_kwDOABII5841rJyo",
+      "original_commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
+      "original_line" : 802,
+      "original_position" : 152,
+      "original_start_line" : null,
+      "path" : "src/wallet/spend.cpp",
+      "position" : 152,
+      "pull_request_review_id" : 1010996802,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25005",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900504744/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-06-18T01:17:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900504744",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/69010457?v=4",
+         "events_url" : "https://api.github.com/users/stickies-v/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/stickies-v/followers",
+         "following_url" : "https://api.github.com/users/stickies-v/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/stickies-v/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/stickies-v",
+         "id" : 69010457,
+         "login" : "stickies-v",
+         "node_id" : "MDQ6VXNlcjY5MDEwNDU3",
+         "organizations_url" : "https://api.github.com/users/stickies-v/orgs",
+         "received_events_url" : "https://api.github.com/users/stickies-v/received_events",
+         "repos_url" : "https://api.github.com/users/stickies-v/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/stickies-v/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/stickies-v/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/stickies-v"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r900506046"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25005"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900506046"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Ideally, `result` is declared as closely as possible to where it's used.",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
+      "created_at" : "2022-06-17T21:16:30Z",
+      "diff_hunk" : "@@ -84,12 +84,18 @@ TxSize CalculateMaximumSignedTxSize(const CTransaction &tx, const CWallet *walle\n     return CalculateMaximumSignedTxSize(tx, wallet, txouts, coin_control);\n }\n \n-void AvailableCoins(const CWallet& wallet, std::vector<COutput>& vCoins, const CCoinControl* coinControl, std::optional<CFeeRate> feerate, const CAmount& nMinimumAmount, const CAmount& nMaximumAmount, const CAmount& nMinimumSumAmount, const uint64_t nMaximumCount)\n+CoinsResult AvailableCoins(const CWallet& wallet,\n+                           const CCoinControl* coinControl,\n+                           std::optional<CFeeRate> feerate,\n+                           const CAmount& nMinimumAmount,\n+                           const CAmount& nMaximumAmount,\n+                           const CAmount& nMinimumSumAmount,\n+                           const uint64_t nMaximumCount,\n+                           bool only_spendable)\n {\n     AssertLockHeld(wallet.cs_wallet);\n \n-    vCoins.clear();\n-    CAmount nTotal = 0;\n+    CoinsResult result;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r900506046",
+      "id" : 900506046,
+      "line" : 98,
+      "node_id" : "PRRC_kwDOABII5841rKG-",
+      "original_commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
+      "original_line" : 98,
+      "original_position" : 18,
+      "original_start_line" : null,
+      "path" : "src/wallet/spend.cpp",
+      "position" : 18,
+      "pull_request_review_id" : 1010996802,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25005",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900506046/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-06-18T01:17:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900506046",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/69010457?v=4",
+         "events_url" : "https://api.github.com/users/stickies-v/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/stickies-v/followers",
+         "following_url" : "https://api.github.com/users/stickies-v/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/stickies-v/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/stickies-v",
+         "id" : 69010457,
+         "login" : "stickies-v",
+         "node_id" : "MDQ6VXNlcjY5MDEwNDU3",
+         "organizations_url" : "https://api.github.com/users/stickies-v/orgs",
+         "received_events_url" : "https://api.github.com/users/stickies-v/received_events",
+         "repos_url" : "https://api.github.com/users/stickies-v/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/stickies-v/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/stickies-v/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/stickies-v"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r900514170"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25005"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900514170"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "nit: since you're already touching this, maybe you could update `result` to something more helpful like `selected_coins`? It does affect a few other lines so would understand if out of scope.",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
+      "created_at" : "2022-06-17T21:36:57Z",
+      "diff_hunk" : "@@ -791,11 +799,16 @@ static std::optional<CreatedTransactionResult> CreateTransactionInternal(\n     CAmount selection_target = recipients_sum + not_input_fees;\n \n     // Get available coins\n-    std::vector<COutput> vAvailableCoins;\n-    AvailableCoins(wallet, vAvailableCoins, &coin_control, coin_selection_params.m_effective_feerate, 1, MAX_MONEY, MAX_MONEY, 0);\n+    auto res_available_coins = AvailableCoins(wallet,\n+                                              &coin_control,\n+                                              coin_selection_params.m_effective_feerate,\n+                                              1,            /*nMinimumAmount*/\n+                                              MAX_MONEY,    /*nMaximumAmount*/\n+                                              MAX_MONEY,    /*nMinimumSumAmount*/\n+                                              0);           /*nMaximumCount*/\n \n     // Choose coins to use\n-    std::optional<SelectionResult> result = SelectCoins(wallet, vAvailableCoins, /*nTargetValue=*/selection_target, coin_control, coin_selection_params);\n+    std::optional<SelectionResult> result = SelectCoins(wallet, res_available_coins.coins, /*nTargetValue=*/selection_target, coin_control, coin_selection_params);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r900514170",
+      "id" : 900514170,
+      "line" : 811,
+      "node_id" : "PRRC_kwDOABII5841rMF6",
+      "original_commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
+      "original_line" : 811,
+      "original_position" : 162,
+      "original_start_line" : null,
+      "path" : "src/wallet/spend.cpp",
+      "position" : 162,
+      "pull_request_review_id" : 1010996802,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25005",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900514170/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-06-18T01:17:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900514170",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/69010457?v=4",
+         "events_url" : "https://api.github.com/users/stickies-v/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/stickies-v/followers",
+         "following_url" : "https://api.github.com/users/stickies-v/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/stickies-v/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/stickies-v",
+         "id" : 69010457,
+         "login" : "stickies-v",
+         "node_id" : "MDQ6VXNlcjY5MDEwNDU3",
+         "organizations_url" : "https://api.github.com/users/stickies-v/orgs",
+         "received_events_url" : "https://api.github.com/users/stickies-v/received_events",
+         "repos_url" : "https://api.github.com/users/stickies-v/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/stickies-v/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/stickies-v/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/stickies-v"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r900574047"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25005"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900574047"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "I think it's preferred to use {} list initialization - any reason not to? (Here and in quite a few other places)\r\n```suggestion\r\n    result.is_spent = wallet.IsSpent(COutPoint{wtx.GetHash(), n});\r\n```",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
+      "created_at" : "2022-06-17T23:47:45Z",
+      "diff_hunk" : "@@ -110,7 +110,7 @@ WalletTxOut MakeWalletTxOut(const CWallet& wallet,\n     result.txout = wtx.tx->vout[n];\n     result.time = wtx.GetTxTime();\n     result.depth_in_main_chain = depth;\n-    result.is_spent = wallet.IsSpent(wtx.GetHash(), n);\n+    result.is_spent = wallet.IsSpent(COutPoint(wtx.GetHash(), n));",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r900574047",
+      "id" : 900574047,
+      "line" : 113,
+      "node_id" : "PRRC_kwDOABII5841ratf",
+      "original_commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
+      "original_line" : 113,
+      "original_position" : 5,
+      "original_start_line" : null,
+      "path" : "src/wallet/interfaces.cpp",
+      "position" : 5,
+      "pull_request_review_id" : 1010996802,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25005",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900574047/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-06-18T01:17:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900574047",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/69010457?v=4",
+         "events_url" : "https://api.github.com/users/stickies-v/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/stickies-v/followers",
+         "following_url" : "https://api.github.com/users/stickies-v/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/stickies-v/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/stickies-v",
+         "id" : 69010457,
+         "login" : "stickies-v",
+         "node_id" : "MDQ6VXNlcjY5MDEwNDU3",
+         "organizations_url" : "https://api.github.com/users/stickies-v/orgs",
+         "received_events_url" : "https://api.github.com/users/stickies-v/received_events",
+         "repos_url" : "https://api.github.com/users/stickies-v/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/stickies-v/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/stickies-v/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/stickies-v"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r900638179"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25005"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900638179"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "Since we're explicitly relying on `only_spendable` to be `true`, I think it would be nice to make the argument explicit?",
+      "commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
+      "created_at" : "2022-06-18T01:15:11Z",
+      "diff_hunk" : "@@ -159,76 +165,81 @@ void AvailableCoins(const CWallet& wallet, std::vector<COutput>& vCoins, const C\n         bool tx_from_me = CachedTxIsFromMe(wallet, wtx, ISMINE_ALL);\n \n         for (unsigned int i = 0; i < wtx.tx->vout.size(); i++) {\n+            const CTxOut& output = wtx.tx->vout[i];\n+            const COutPoint outpoint(wtxid, i);\n+\n             // Only consider selected coins if add_inputs is false\n-            if (coinControl && !coinControl->m_add_inputs && !coinControl->IsSelected(COutPoint(entry.first, i))) {\n+            if (coinControl && !coinControl->m_add_inputs && !coinControl->IsSelected(outpoint)) {\n                 continue;\n             }\n \n-            if (wtx.tx->vout[i].nValue < nMinimumAmount || wtx.tx->vout[i].nValue > nMaximumAmount)\n+            if (output.nValue < nMinimumAmount || output.nValue > nMaximumAmount)\n                 continue;\n \n-            if (coinControl && coinControl->HasSelected() && !coinControl->fAllowOtherInputs && !coinControl->IsSelected(COutPoint(entry.first, i)))\n+            if (coinControl && coinControl->HasSelected() && !coinControl->fAllowOtherInputs && !coinControl->IsSelected(outpoint))\n                 continue;\n \n-            if (wallet.IsLockedCoin(entry.first, i))\n+            if (wallet.IsLockedCoin(outpoint))\n                 continue;\n \n-            if (wallet.IsSpent(wtxid, i))\n+            if (wallet.IsSpent(outpoint))\n                 continue;\n \n-            isminetype mine = wallet.IsMine(wtx.tx->vout[i]);\n+            isminetype mine = wallet.IsMine(output);\n \n             if (mine == ISMINE_NO) {\n                 continue;\n             }\n \n-            if (!allow_used_addresses && wallet.IsSpentKey(wtxid, i)) {\n+            if (!allow_used_addresses && wallet.IsSpentKey(output.scriptPubKey)) {\n                 continue;\n             }\n \n-            std::unique_ptr<SigningProvider> provider = wallet.GetSolvingProvider(wtx.tx->vout[i].scriptPubKey);\n+            std::unique_ptr<SigningProvider> provider = wallet.GetSolvingProvider(output.scriptPubKey);\n \n-            bool solvable = provider ? IsSolvable(*provider, wtx.tx->vout[i].scriptPubKey) : false;\n+            bool solvable = provider ? IsSolvable(*provider, output.scriptPubKey) : false;\n             bool spendable = ((mine & ISMINE_SPENDABLE) != ISMINE_NO) || (((mine & ISMINE_WATCH_ONLY) != ISMINE_NO) && (coinControl && coinControl->fAllowWatchOnly && solvable));\n-            int input_bytes = GetTxSpendSize(wallet, wtx, i, (coinControl && coinControl->fAllowWatchOnly));\n \n-            vCoins.emplace_back(COutPoint(wtx.GetHash(), i), wtx.tx->vout.at(i), nDepth, input_bytes, spendable, solvable, safeTx, wtx.GetTxTime(), tx_from_me, feerate);\n+            // Filter by spendable outputs only\n+            if (!spendable && only_spendable) continue;\n+\n+            int input_bytes = GetTxSpendSize(wallet, wtx, i, (coinControl && coinControl->fAllowWatchOnly));\n+            result.coins.emplace_back(outpoint, output, nDepth, input_bytes, spendable, solvable, safeTx, wtx.GetTxTime(), tx_from_me, feerate);\n+            result.total_amount += output.nValue;\n \n             // Checks the sum amount of all UTXO's.\n             if (nMinimumSumAmount != MAX_MONEY) {\n-                nTotal += wtx.tx->vout[i].nValue;\n-\n-                if (nTotal >= nMinimumSumAmount) {\n-                    return;\n+                if (result.total_amount >= nMinimumSumAmount) {\n+                    return result;\n                 }\n             }\n \n             // Checks the maximum number of UTXO's.\n-            if (nMaximumCount > 0 && vCoins.size() >= nMaximumCount) {\n-                return;\n+            if (nMaximumCount > 0 && result.coins.size() >= nMaximumCount) {\n+                return result;\n             }\n         }\n     }\n+\n+    return result;\n }\n \n-void AvailableCoinsListUnspent(const CWallet& wallet, std::vector<COutput>& vCoins, const CCoinControl* coinControl, const CAmount& nMinimumAmount, const CAmount& nMaximumAmount, const CAmount& nMinimumSumAmount, const uint64_t nMaximumCount)\n+CoinsResult AvailableCoinsListUnspent(const CWallet& wallet, const CCoinControl* coinControl, const CAmount& nMinimumAmount, const CAmount& nMaximumAmount, const CAmount& nMinimumSumAmount, const uint64_t nMaximumCount)\n {\n-    AvailableCoins(wallet, vCoins, coinControl, /*feerate=*/ std::nullopt, nMinimumAmount, nMaximumAmount, nMinimumSumAmount, nMaximumCount);\n+    return AvailableCoins(wallet, coinControl, /*feerate=*/ std::nullopt, nMinimumAmount, nMaximumAmount, nMinimumSumAmount, nMaximumCount, /*only_spendable=*/false);\n }\n \n CAmount GetAvailableBalance(const CWallet& wallet, const CCoinControl* coinControl)\n {\n     LOCK(wallet.cs_wallet);\n-\n-    CAmount balance = 0;\n-    std::vector<COutput> vCoins;\n-    AvailableCoinsListUnspent(wallet, vCoins, coinControl);\n-    for (const COutput& out : vCoins) {\n-        if (out.spendable) {\n-            balance += out.txout.nValue;\n-        }\n-    }\n-    return balance;\n+    return AvailableCoins(wallet,\n+                          coinControl,\n+                          std::nullopt, /*feerate=*/\n+                          1,            /*nMinimumAmount*/\n+                          MAX_MONEY,    /*nMaximumAmount*/\n+                          MAX_MONEY,    /*nMinimumSumAmount*/\n+                          0             /*nMaximumCount*/\n+                          ).total_amount;",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25005#discussion_r900638179",
+      "id" : 900638179,
+      "line" : 242,
+      "node_id" : "PRRC_kwDOABII5841rqXj",
+      "original_commit_id" : "fd5c996d1609e6f88769f6f3ef0c322e3435b3aa",
+      "original_line" : 242,
+      "original_position" : 129,
+      "original_start_line" : null,
+      "path" : "src/wallet/spend.cpp",
+      "position" : 129,
+      "pull_request_review_id" : 1010996802,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25005",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900638179/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-06-18T01:17:37Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/900638179",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/69010457?v=4",
+         "events_url" : "https://api.github.com/users/stickies-v/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/stickies-v/followers",
+         "following_url" : "https://api.github.com/users/stickies-v/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/stickies-v/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/stickies-v",
+         "id" : 69010457,
+         "login" : "stickies-v",
+         "node_id" : "MDQ6VXNlcjY5MDEwNDU3",
+         "organizations_url" : "https://api.github.com/users/stickies-v/orgs",
+         "received_events_url" : "https://api.github.com/users/stickies-v/received_events",
+         "repos_url" : "https://api.github.com/users/stickies-v/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/stickies-v/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/stickies-v/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/stickies-v"
       }
    },
    {

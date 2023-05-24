@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "signet/miner --poisson attempts to simulate the distribution of times you'd see on mainnet. My original reasoning for the 60 minute cap is that you only expect 0.25% of blocks to take that long, so what does it matter. With a lower cap it seems worthwhile checking what that effects. I think you can work out the expected average with a cap as follows:\r\n\r\n```py\r\ndef expected_times(tgt, N=100000):\r\n    return [tgt*-math.log(1-i*1.0/N) for i in range(N)]\r\n\r\ndef capped_average(seq, cap):\r\n    sum, cnt = 0,0\r\n    for v in seq:\r\n        sum += min(v, cap)\r\n        cnt += 1\r\n    return sum/cnt\r\n\r\ndef bisect(f, want, l=0, h=100000, prec=0.0005):\r\n    while l + prec < h:\r\n        m = (l + h)/2\r\n        if f(m) < want:\r\n            l = m\r\n        else:\r\n            h = m\r\n    return h\r\n\r\nfor cap in [11, 15, 16, 20, 25, 30, 45, 60]:\r\n    tgt = bisect(lambda t: capped_average(expected_times(t), cap*60), 600)\r\n    print(\"cap=%dmin, tgt=%.2fmin, average=%ds\" % (cap, tgt/60, capped_average(expected_times(tgt), cap*60)))\r\n\r\n# results:\r\n# cap=11min, tgt=56.78min, average=600.0s\r\n# cap=15min, tgt=17.16min, average=600.0s\r\n# cap=16min, tgt=15.58min, average=600.0s\r\n# cap=20min, tgt=12.55min, average=600.0s\r\n# cap=25min, tgt=11.20min, average=600.0s\r\n# cap=30min, tgt=10.63min, average=600.0s\r\n# cap=45min, tgt=10.12min, average=600.0s\r\n# cap=60min, tgt=10.03min, average=600.0s\r\n```\r\n\r\nThat is, if you have a cap of 30 minutes, you need to be trying to have blocks every 10.63 minutes instead of every ten minutes because after applying the cap, you actual average will be reduced by that much. Effectively, this means the actual difficulty will generally be somewhat above the `--nbits` target, causing the signet miner to attempt to reduce the difficulty by mining more slowly, but that reduction will be offset in practice by the cap.\r\n\r\nIt seems to me like 30 minutes is a nice round figure that doesn't cause anything to get too weird; and I've used 16minutes as a lower limit, since below that, you're targetting an average block interval that's higher than your maximum acceptable block interval, so it's probably better to just not use `--poisson` at all at that point, I think.",
       "created_at" : "2022-09-29T19:45:06Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26208#issuecomment-1262736176",
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-10-01T12:49:26Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/985095913",
       "user" : {
@@ -122,7 +123,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/985166473"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "You want each call site to use the same `max_interval`, so I thought it was less bug prone for missing the value to have an explicit \"missing argument\" error, rather than an implicit \"cap is set to a different time\".\r\n\r\nAll existing callers in the script should already be updated by this patch; it's not really intended for this to provide a stable api that external callers could rely on.",
       "commit_id" : "51a08f41ffab914d6dfa009b2ba31065b86444a4",
       "created_at" : "2022-10-02T01:58:56Z",
@@ -155,6 +156,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-10-02T01:58:56Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/985166473",
       "user" : {

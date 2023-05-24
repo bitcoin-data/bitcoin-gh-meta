@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I could reproduce this locally on my laptop: Windows 10, V21H2, built with MS Visual Studio Community 2022 V17.2.6, Python 3.10.5.\r\nThe test failed for me 6 times over 1000 runs. I'll try to investigate further.",
       "created_at" : "2022-08-01T17:22:51Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25482#issuecomment-1201494464",
@@ -97,7 +97,7 @@
       "node_id" : "IC_kwDOABII585HnVnA",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -105,7 +105,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1201494464/reactions"
       },
       "updated_at" : "2022-08-01T17:23:55Z",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Also, you might be able to reproduce more often if you determine the duration of the rpc and try to delay the test so that it more often ends in the \"bug range\" of \".99\":\r\n\r\nGreat idea, that worked to make it fail more often.\r\n\r\n> Nice, can you try if this was caused by [0000a63](https://github.com/bitcoin/bitcoin/commit/0000a63689036dc4368d04c0648a55fdf507932f) (switch from time() -> std::chrono)?\r\n\r\nI did this by reintroducing the old code as `int64_t GetTimeLegacy()` on top of master and when I use it in `encrypt.cpp` instead of the new `GetTime()` the test didn't fail anymore.\r\nThen I logged both `GetTime()` and `GetTimeLegacy()` at this spot, and confirmed that `GetTime()`, although executed first, is bigger by 1  in runs where the test fails.\r\n\r\nSo it does seem that on msvc, the `std::chrono` time deviates slightly from `time()` (by `~0.005s`) - and the python clock, which seems to coincide with `time()`.\r\n",
       "created_at" : "2022-08-02T18:24:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25482#issuecomment-1203070031",
@@ -229,7 +229,7 @@
       "node_id" : "IC_kwDOABII585HtWRP",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 1,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -237,7 +237,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 1,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1203070031/reactions"
       },
       "updated_at" : "2022-08-02T18:24:53Z",
@@ -308,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> To clarify, the following code would print a _negative_ value?\r\n\r\nNo, it prints a (small) positive value. Since the `std::chrono` time is larger than `time()`, this is expected?\r\n",
       "created_at" : "2022-08-03T16:00:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25482#issuecomment-1204151393",
@@ -396,7 +396,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "It prints `-10000000[1/10000000]s`\r\nI'd assume that's equivalent to -1s, if I instead use `std::chrono::seconds(end) - FloorS(run)` in the cout statement, it actually prints `-1s`.",
       "created_at" : "2022-08-03T18:41:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/25482#issuecomment-1204341138",
@@ -550,6 +550,50 @@
       },
       "updated_at" : "2022-08-04T12:24:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1205184343",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "Cleared milestone for now. While this is a regression for 24.0, I don't think anyone has figured out why or how to fix it. The underlying bug shouldn't lead to consensus failure or other user facing bugs, so it seems fine to ship 24.0 with this \"bug\".",
+      "created_at" : "2022-08-19T14:38:02Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/issues/25482#issuecomment-1220756898",
+      "id" : 1220756898,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25482",
+      "node_id" : "IC_kwDOABII585Iw0Wi",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1220756898/reactions"
+      },
+      "updated_at" : "2022-08-19T14:38:02Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1220756898",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
          "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",

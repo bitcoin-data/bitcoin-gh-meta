@@ -616,7 +616,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "This is puzzling because https://github.com/bitcoin/bitcoin/issues/27283#issuecomment-1476822455 seems to suggest that memory is leaked while creating the BDB environment, but the commit which triggers the leak 8b5e7297c02f3100a9cb27bfe206e3fc617ec173 does not seem to be changing the way the environment is created or how it is used. The commit does switch from using a function called `CreateWalletDatabase` to another one called `MakeWalletDatabase`, but in both cases the functions are calling the same `GetWalletEnv` function to get a shared_ptr to the BerkeleyEnvironment, and passing that pointer to the BerkeleyDatabase constructor.\r\n\r\nI guess the fact that the leak happens in one version of BDB but another suggests it is a BDB bug, but it's not clear what could be changing in commit 8b5e7297c02f3100a9cb27bfe206e3fc617ec173 which triggers the bug.\r\n\r\nI haven't tried to reproduce this myself, though, so just going off of the information above.",
       "created_at" : "2023-03-20T22:10:20Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/27283#issuecomment-1477004863",
@@ -745,6 +745,94 @@
          "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/Sjors"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "One solution is to ignore the problem but fix the address sanitizer test suite.\r\n\r\nThis branch does that: https://github.com/bitcoin/bitcoin/compare/master...Sjors:bitcoin:2023/03/legacy-leak\r\n\r\nIt sets `options.use_shared_memory = true` for wallet unit tests, and it adds `-dbpriv=0` to the default config of functional tests.\r\n\r\nThe second commit also makes the wallet migration tool `use_shared_memory`. This seems safe, since the operation only runs briefly, so the concern about other processes snooping seems less pressing.\r\n\r\nStrangely there's one test that still fails with a memory leak: `wallet_migration.py`, at \"Test migration of a basic keys only wallet with a balance\".\r\n\r\nEven with this \"fix\", creating a legacy wallet under valgrind still generates heaps (haha) of warnings ([log](https://gist.github.com/Sjors/ea51c96aec671181e6351eb75e2819ca)).\r\n\r\nI can make a PR if people think it's the right approach.\r\n\r\nAdding a suppression (still not sure how) would be another way to satisfy the address sanitizer, though not valgrind(?).\r\n",
+      "created_at" : "2023-03-21T14:14:27Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/issues/27283#issuecomment-1477915405",
+      "id" : 1477915405,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27283",
+      "node_id" : "IC_kwDOABII585YFzMN",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1477915405/reactions"
+      },
+      "updated_at" : "2023-03-21T14:33:05Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1477915405",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/10217?v=4",
+         "events_url" : "https://api.github.com/users/Sjors/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/Sjors/followers",
+         "following_url" : "https://api.github.com/users/Sjors/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/Sjors/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/Sjors",
+         "id" : 10217,
+         "login" : "Sjors",
+         "node_id" : "MDQ6VXNlcjEwMjE3",
+         "organizations_url" : "https://api.github.com/users/Sjors/orgs",
+         "received_events_url" : "https://api.github.com/users/Sjors/received_events",
+         "repos_url" : "https://api.github.com/users/Sjors/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/Sjors/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/Sjors/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/Sjors"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
+      "body" : "My preference would be to suppress libdb4.8, but I guess that is not possible because the sanitizer doesn't see the lib in static builds?",
+      "created_at" : "2023-03-21T14:51:26Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/issues/27283#issuecomment-1477980568",
+      "id" : 1477980568,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27283",
+      "node_id" : "IC_kwDOABII585YGDGY",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1477980568/reactions"
+      },
+      "updated_at" : "2023-03-21T14:51:26Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1477980568",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
       }
    }
 ]

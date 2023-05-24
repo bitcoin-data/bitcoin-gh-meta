@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "Changes a CI task that runs test the previously not run `test/functional/interface_usdt_*.py` functional tests (added in https://github.com/bitcoin/bitcoin/pull/24358). \r\n\r\nThis task is run as CirussCI `compute_engine_instance` VM as hooking into the tracepoints is not possible in CirrusCI docker containers (https://github.com/bitcoin/bitcoin/issues/23296#issuecomment-1024920845). We use an unoffical PPA and untrusted  `bpfcc-tools` package in the CI as the Ubuntu jammy and Debian bullseye packages are outdated. We hope use an official package when new Ubuntu/Debian releases are available for the use with Google Compute Engine.\r\n\r\nWe make sure to hook into `bitcoind` binaries in USDT interface tests via their PID, instead of their path. This makes sure multiple functional tests running in parallel don't interfere with each other.\r\n\r\nThe utxocache USDT interface tests is adopted to a change of the functional test framework that wasn't detected as the tests weren't run in the CI. As the tracepoints expose internals, it can happen that we need to adopt the interface test when internals change. This is a bit awkward, and if it happens to frequently, we should consider generalizing the tests a bit more. For now it's fine, I think.\r\n\r\nSee the individual commit messages for more details on the changes.\r\n\r\nFixes https://github.com/bitcoin/bitcoin/issues/24782\r\nFixes https://github.com/bitcoin/bitcoin/issues/23296\r\n\r\nI'd like to hear from reviewers:\r\n- Are we OK with using the [`hadret/bpfcc`](https://launchpad.net/~hadret/+archive/ubuntu/bpfcc) PPA for now? There is a clear plan when to drop it and as is currently, it could only impact the newly added VM task. \r\n- ~~Adding a new task increases CI runtime and costs. Should an existing `container` CI task be ported to a VM and reused instead?~~ Yes, see https://github.com/bitcoin/bitcoin/pull/25528#issuecomment-1179509525 ",
    "closed_at" : "2022-08-01T09:29:35Z",
    "closed_by" : {
@@ -73,7 +73,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25528/timeline",
    "title" : "ci: run USDT interface tests in the CI",
-   "updated_at" : "2022-08-01T09:29:35Z",
+   "updated_at" : "2022-12-29T18:51:35Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25528",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/19157360?v=4",

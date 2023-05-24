@@ -1,8 +1,8 @@
 {
-   "active_lock_reason" : null,
+   "active_lock_reason" : "resolved",
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "**Expected behavior**\r\n\r\n`addnode` should not open a second connection even if the destination port is different for I2P nodes.\r\n\r\n**Actual behavior**\r\n\r\nA second connection is being opened even though ports are irrelevant and we actually connect to the same node two times.\r\n\r\n**To reproduce**\r\n\r\n```sh\r\n# Set up two I2P nodes A and B.\r\n\r\nnode_a$ bitcoin-cli addnode bbb.b32.i2p:8333 onetry\r\n# If we would try the same again it would not open a second connection,\r\n# but trying on a different port does.\r\nnode_a$ bitcoin-cli addnode bbb.b32.i2p:8833 onetry # notice it is different port\r\nnode_a$ bitcoin-cli getpeerinfo |jq 'map(select(.network == \"i2p\")) |map({inbound: .inbound, addr: .addr, addrbind: .addrbind})'\r\n[\r\n  {\r\n    \"inbound\": false,\r\n    \"addr\": \"bbb.b32.i2p:8333\",\r\n    \"addrbind\": \"aaa.b32.i2p:8333\"\r\n  },\r\n  {\r\n    \"inbound\": false,\r\n    \"addr\": \"bbb.b32.i2p:8833\",\r\n    \"addrbind\": \"aaa.b32.i2p:8333\"\r\n  }\r\n]\r\n\r\n# Both connections are established, but in I2P ports are ignored,\r\n# so we actually connected two times to the same node.\r\n\r\n# This is how it looks on the B's end:\r\n\r\nnode_b$ bitcoin-cli getpeerinfo |jq 'map(select(.network == \"i2p\")) |map({inbound: .inbound, addr: .addr, addrbind: .addrbind})'\r\n[\r\n  {\r\n    \"inbound\": true,\r\n    \"addr\": \"aaa.b32.i2p:8333\",\r\n    \"addrbind\": \"bbb.b32.i2p:8333\"\r\n  },\r\n  {\r\n    \"inbound\": true,\r\n    \"addr\": \"aaa.b32.i2p:8333\",\r\n    \"addrbind\": \"bbb.b32.i2p:8333\"\r\n  }\r\n]\r\n```",
    "closed_at" : "2021-07-13T12:52:59Z",
    "closed_by" : {
@@ -25,7 +25,7 @@
       "type" : "User",
       "url" : "https://api.github.com/users/laanwj"
    },
-   "comments" : 9,
+   "comments" : 10,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21389/comments",
    "created_at" : "2021-03-08T17:19:13Z",
    "events_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21389/events",
@@ -43,15 +43,29 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21389/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "MDU6SXNzdWU4MjQ3NzQ1OTY=",
    "number" : 21389,
    "performed_via_github_app" : null,
+   "reactions" : {
+      "+1" : 1,
+      "-1" : 0,
+      "confused" : 0,
+      "eyes" : 0,
+      "heart" : 0,
+      "hooray" : 0,
+      "laugh" : 0,
+      "rocket" : 0,
+      "total_count" : 1,
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21389/reactions"
+   },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : "completed",
+   "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21389/timeline",
    "title" : "It is possible to open >1 connections to the same I2P node",
-   "updated_at" : "2021-07-13T12:52:59Z",
+   "updated_at" : "2022-08-18T18:36:49Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21389",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/266751?v=4",

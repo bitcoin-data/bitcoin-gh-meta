@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25685](https://github.com/bitcoin/bitcoin/pull/25685) (wallet: Faster transaction creation by removing pre-set-inputs fetching responsibility from Coin Selection by furszy)\n* [#25273](https://github.com/bitcoin/bitcoin/pull/25273) (wallet: Pass through transaction locktime and preset input sequences and scripts to CreateTransaction by achow101)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-07-20T10:51:16Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#issuecomment-1190125519",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Simulation results here https://github.com/S3RK/coin-selection-simulation/tree/25647-sim/results/25647",
       "created_at" : "2022-07-21T07:32:49Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#issuecomment-1191145752",
@@ -99,9 +99,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932582168"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"wallet: calculate and store min_change\" (ef71f057495b0a152667857ab277c0e76e76ad76):\r\n\r\nWhen I read `min_change` I think of the modifier of the target for the coin selection parameters. This seems to rather be the upper bound for dust. Perhaps we should use a different name here instead of the same term.\r\n\r\n```suggestion\r\n    CAmount min_viable_change{0};\r\n```",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-07-28T19:07:31Z",
       "diff_hunk" : "@@ -123,6 +123,10 @@ struct CoinSelectionParams {\n     /** Mininmum change to target in Knapsack solver: select coins to cover the payment and\n      * at least this value of change. */\n     CAmount m_min_change_target{0};\n+    /** Minimum amount for creating a change output.\n+     * If change budget is smaller than min_change then we forgo creation of change output.\n+     */\n+    CAmount min_change{0};",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r932582168",
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-28T20:23:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932582168",
       "user" : {
@@ -166,9 +167,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932586988"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"wallet: calculate and store min_change\" (ef71f057495b0a152667857ab277c0e76e76ad76):\r\nShouldn't this be the same criteria we use for discarding the remainder? Also, I think the +1 should be added to either of the terms, so we can pull it out of the parens.\r\n\r\n```suggestion\r\n    coin_selection_params.min_change = std::max(coin_selection_params.m_cost_of_change, dust) + 1;\r\n```",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-07-28T19:13:32Z",
       "diff_hunk" : "@@ -745,6 +745,13 @@ static BResult<CreatedTransactionResult> CreateTransactionInternal(\n     coin_selection_params.m_change_fee = coin_selection_params.m_effective_feerate.GetFee(coin_selection_params.change_output_size);\n     coin_selection_params.m_cost_of_change = coin_selection_params.m_discard_feerate.GetFee(coin_selection_params.change_spend_size) + coin_selection_params.m_change_fee;\n \n+    // The smallest change amount should be:\n+    // 1. at least equal to dust threshold\n+    // 2. at least 1 sat greater than fees to spend it at m_discard_feerate\n+    const auto dust = GetDustThreshold(change_prototype_txout, coin_selection_params.m_discard_feerate);\n+    const auto change_spend_fee = coin_selection_params.m_discard_feerate.GetFee(coin_selection_params.change_spend_size);\n+    coin_selection_params.min_change = std::max(change_spend_fee + 1, dust);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r932586988",
@@ -198,6 +199,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-28T20:23:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932586988",
       "user" : {
@@ -233,9 +235,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932593733"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"wallet: add SelectionResult::GetChange\" (83bf6ab231af6db030cab876b169551f438c2499):\r\n\r\nNaming-nit: My understanding was that `change_budget` refers to `change_amount + change_fee`, but in this function `change_budget` is actually just `change`?\r\n\r\n```suggestion\r\nCAmount SelectionResult::GetChange(const CAmount min_viable_change, const CAmount change_fee) const\r\n{\r\n    // change = SUM(inputs) - SUM(outputs) - fees\r\n    // 1) With SFFO we don't pay any fees\r\n    // 2) Otherwise we pay all the fees:\r\n    //  - input fees are covered by GetSelectedEffectiveValue()\r\n    //  - non_input_fee is included in m_target\r\n    //  - change_fee\r\n    const CAmount change = m_use_effective\r\n                                  ? GetSelectedEffectiveValue() - m_target - change_fee\r\n                                  : GetSelectedValue() - m_target;\r\n\r\n    if (change < min_viable_change) {\r\n        return 0;\r\n    }\r\n\r\n    return change;\r\n}\r\n```",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-07-28T19:22:50Z",
       "diff_hunk" : "@@ -480,4 +485,24 @@ std::string GetAlgorithmName(const SelectionAlgorithm algo)\n     }\n     assert(false);\n }\n+\n+CAmount SelectionResult::GetChange(const CAmount min_change, const CAmount change_fee) const\n+{\n+    // change_budget = SUM(inputs) - SUM(outputs) - fees\n+    // 1) With SFFO we don't pay any fees\n+    // 2) Otherwise we pay all the fees:\n+    //  - input fees are covered by GetSelectedEffectiveValue()\n+    //  - non_input_fee is included in m_target\n+    //  - change_fee\n+    const CAmount change_budget = m_use_effective\n+                                  ? GetSelectedEffectiveValue() - m_target - change_fee\n+                                  : GetSelectedValue() - m_target;\n+\n+    if (change_budget < min_change) {\n+        return 0;\n+    }\n+\n+    return change_budget;\n+}",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r932593733",
@@ -265,6 +267,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-07-28T20:23:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932593733",
       "user" : {
@@ -300,9 +303,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932598916"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In commit \"wallet: use GetChange() in tx building\" (64af431f328de586b3e8769ec875a7cf9083b44e):\r\n\r\nStyle-nit: Inconsistent line breaking between if and brace.",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-07-28T19:29:42Z",
       "diff_hunk" : "@@ -792,23 +792,23 @@ static BResult<CreatedTransactionResult> CreateTransactionInternal(\n     }\n     TRACE5(coin_selection, selected_coins, wallet.GetName().c_str(), GetAlgorithmName(result->GetAlgo()).c_str(), result->GetTarget(), result->GetWaste(), result->GetSelectedValue());\n \n-    // Always make a change output\n-    // We will reduce the fee from this change output later, and remove the output if it is too small.\n-    const CAmount change_and_fee = result->GetSelectedValue() - recipients_sum;\n-    assert(change_and_fee >= 0);\n-    CTxOut newTxOut(change_and_fee, scriptChange);\n-\n-    if (nChangePosInOut == -1) {\n-        // Insert change txn at random position:\n-        nChangePosInOut = rng_fast.randrange(txNew.vout.size() + 1);\n-    }\n-    else if ((unsigned int)nChangePosInOut > txNew.vout.size()) {\n-        return _(\"Transaction change output index out of range\");\n+    const CAmount change_amount = result->GetChange(coin_selection_params.min_change, coin_selection_params.m_change_fee);\n+    if (change_amount > 0) {\n+        CTxOut newTxOut(change_amount, scriptChange);\n+        if (nChangePosInOut == -1)\n+        {\n+            // Insert change txn at random position:\n+            nChangePosInOut = rng_fast.randrange(txNew.vout.size() + 1);\n+        }\n+        else if ((unsigned int)nChangePosInOut > txNew.vout.size())\n+        {\n+            return _(\"Transaction change output index out of range\");\n+        }\n+        txNew.vout.insert(txNew.vout.begin() + nChangePosInOut, newTxOut);\n+    } else {\n+        nChangePosInOut = -1;\n     }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r932598916",
@@ -310,7 +313,7 @@
       "line" : null,
       "node_id" : "PRRC_kwDOABII5843llSE",
       "original_commit_id" : "64af431f328de586b3e8769ec875a7cf9083b44e",
-      "original_line" : 914,
+      "original_line" : 917,
       "original_position" : 31,
       "original_start_line" : 795,
       "path" : "src/wallet/spend.cpp",
@@ -332,6 +335,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-07-28T20:23:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932598916",
       "user" : {
@@ -367,9 +371,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932626345"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In \"wallet: use GetChange() when computing waste\" (45ee9d3a737cc23babb9200c4d75d7dae4dc6700):\r\n\r\nShouldn't the first value here be the maximum of `cost_of_change`  and  `dust_threshold`? I think that the former can be lower than the latter for feerates below discard_feerate.",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-07-28T20:09:01Z",
       "diff_hunk" : "@@ -156,7 +156,7 @@ std::optional<SelectionResult> SelectCoinsBnB(std::vector<OutputGroup>& utxo_poo\n     for (const size_t& i : best_selection) {\n         result.AddInput(utxo_pool.at(i));\n     }\n-    result.ComputeAndSetWaste(CAmount{0});\n+    result.ComputeAndSetWaste(cost_of_change, cost_of_change, CAmount{0});",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r932626345",
@@ -399,6 +403,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-28T20:23:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932626345",
       "user" : {
@@ -434,9 +439,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932633319"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In \"wallet: use GetChange() when computing waste\" (45ee9d3a737cc23babb9200c4d75d7dae4dc6700):\r\n\r\nAs suggested before, I'd prefer `min_viable_change` for this value here and below.",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-07-28T20:18:50Z",
       "diff_hunk" : "@@ -406,9 +406,15 @@ CAmount GenerateChangeTarget(CAmount payment_value, FastRandomContext& rng)\n     }\n }\n \n-void SelectionResult::ComputeAndSetWaste(CAmount change_cost)\n+void SelectionResult::ComputeAndSetWaste(const CAmount min_change, const CAmount change_cost, const CAmount change_fee)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r932633319",
@@ -466,6 +471,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-07-28T20:23:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/932633319",
       "user" : {
@@ -490,50 +496,6 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-07-28T23:00:38Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#issuecomment-1198707276",
-      "id" : 1198707276,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25647",
-      "node_id" : "IC_kwDOABII585HctJM",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1198707276/reactions"
-      },
-      "updated_at" : "2022-07-28T23:00:38Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1198707276",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
       "_links" : {
          "html" : {
             "href" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r940990376"
@@ -545,9 +507,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/940990376"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I'm not sure I understand the question about the remainder. I've tried to keep the existing behaviour unchanged.\r\n\r\nWe can totally add +1 to the dust threshold but that would be a change in behaviour. Are we sure we want to do it?",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-09T07:24:00Z",
       "diff_hunk" : "@@ -745,6 +745,13 @@ static BResult<CreatedTransactionResult> CreateTransactionInternal(\n     coin_selection_params.m_change_fee = coin_selection_params.m_effective_feerate.GetFee(coin_selection_params.change_output_size);\n     coin_selection_params.m_cost_of_change = coin_selection_params.m_discard_feerate.GetFee(coin_selection_params.change_spend_size) + coin_selection_params.m_change_fee;\n \n+    // The smallest change amount should be:\n+    // 1. at least equal to dust threshold\n+    // 2. at least 1 sat greater than fees to spend it at m_discard_feerate\n+    const auto dust = GetDustThreshold(change_prototype_txout, coin_selection_params.m_discard_feerate);\n+    const auto change_spend_fee = coin_selection_params.m_discard_feerate.GetFee(coin_selection_params.change_spend_size);\n+    coin_selection_params.min_change = std::max(change_spend_fee + 1, dust);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r940990376",
@@ -578,6 +540,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-09T07:24:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/940990376",
       "user" : {
@@ -613,9 +576,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/940991118"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I think I fixed it",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-09T07:24:51Z",
       "diff_hunk" : "@@ -792,23 +792,23 @@ static BResult<CreatedTransactionResult> CreateTransactionInternal(\n     }\n     TRACE5(coin_selection, selected_coins, wallet.GetName().c_str(), GetAlgorithmName(result->GetAlgo()).c_str(), result->GetTarget(), result->GetWaste(), result->GetSelectedValue());\n \n-    // Always make a change output\n-    // We will reduce the fee from this change output later, and remove the output if it is too small.\n-    const CAmount change_and_fee = result->GetSelectedValue() - recipients_sum;\n-    assert(change_and_fee >= 0);\n-    CTxOut newTxOut(change_and_fee, scriptChange);\n-\n-    if (nChangePosInOut == -1) {\n-        // Insert change txn at random position:\n-        nChangePosInOut = rng_fast.randrange(txNew.vout.size() + 1);\n-    }\n-    else if ((unsigned int)nChangePosInOut > txNew.vout.size()) {\n-        return _(\"Transaction change output index out of range\");\n+    const CAmount change_amount = result->GetChange(coin_selection_params.min_change, coin_selection_params.m_change_fee);\n+    if (change_amount > 0) {\n+        CTxOut newTxOut(change_amount, scriptChange);\n+        if (nChangePosInOut == -1)\n+        {\n+            // Insert change txn at random position:\n+            nChangePosInOut = rng_fast.randrange(txNew.vout.size() + 1);\n+        }\n+        else if ((unsigned int)nChangePosInOut > txNew.vout.size())\n+        {\n+            return _(\"Transaction change output index out of range\");\n+        }\n+        txNew.vout.insert(txNew.vout.begin() + nChangePosInOut, newTxOut);\n+    } else {\n+        nChangePosInOut = -1;\n     }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r940991118",
@@ -624,7 +587,7 @@
       "line" : null,
       "node_id" : "PRRC_kwDOABII5844FmKO",
       "original_commit_id" : "64af431f328de586b3e8769ec875a7cf9083b44e",
-      "original_line" : 914,
+      "original_line" : 917,
       "original_position" : 31,
       "original_start_line" : 795,
       "path" : "src/wallet/spend.cpp",
@@ -646,6 +609,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-08-09T07:24:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/940991118",
       "user" : {
@@ -681,9 +645,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/940994464"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-09T07:28:09Z",
       "diff_hunk" : "@@ -123,6 +123,10 @@ struct CoinSelectionParams {\n     /** Mininmum change to target in Knapsack solver: select coins to cover the payment and\n      * at least this value of change. */\n     CAmount m_min_change_target{0};\n+    /** Minimum amount for creating a change output.\n+     * If change budget is smaller than min_change then we forgo creation of change output.\n+     */\n+    CAmount min_change{0};",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r940994464",
@@ -714,6 +678,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-09T07:28:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/940994464",
       "user" : {
@@ -749,9 +714,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/940995100"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-09T07:28:52Z",
       "diff_hunk" : "@@ -480,4 +485,24 @@ std::string GetAlgorithmName(const SelectionAlgorithm algo)\n     }\n     assert(false);\n }\n+\n+CAmount SelectionResult::GetChange(const CAmount min_change, const CAmount change_fee) const\n+{\n+    // change_budget = SUM(inputs) - SUM(outputs) - fees\n+    // 1) With SFFO we don't pay any fees\n+    // 2) Otherwise we pay all the fees:\n+    //  - input fees are covered by GetSelectedEffectiveValue()\n+    //  - non_input_fee is included in m_target\n+    //  - change_fee\n+    const CAmount change_budget = m_use_effective\n+                                  ? GetSelectedEffectiveValue() - m_target - change_fee\n+                                  : GetSelectedValue() - m_target;\n+\n+    if (change_budget < min_change) {\n+        return 0;\n+    }\n+\n+    return change_budget;\n+}",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r940995100",
@@ -782,6 +747,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-08-09T07:28:52Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/940995100",
       "user" : {
@@ -817,9 +783,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/941005409"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-09T07:39:36Z",
       "diff_hunk" : "@@ -406,9 +406,15 @@ CAmount GenerateChangeTarget(CAmount payment_value, FastRandomContext& rng)\n     }\n }\n \n-void SelectionResult::ComputeAndSetWaste(CAmount change_cost)\n+void SelectionResult::ComputeAndSetWaste(const CAmount min_change, const CAmount change_cost, const CAmount change_fee)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r941005409",
@@ -850,6 +816,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-09T07:39:36Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/941005409",
       "user" : {
@@ -885,9 +852,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/941007231"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Technically yes, but it doesn't matter in this case because BnB would never have change more than `cost_of_change`.\r\n\r\nI'd say a better way to fix it is to use `min_viable_change` for the upper bound of BnB. But I don't want to do expand the scope of this PR. Can we leave it for the follow up?",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-09T07:41:31Z",
       "diff_hunk" : "@@ -156,7 +156,7 @@ std::optional<SelectionResult> SelectCoinsBnB(std::vector<OutputGroup>& utxo_poo\n     for (const size_t& i : best_selection) {\n         result.AddInput(utxo_pool.at(i));\n     }\n-    result.ComputeAndSetWaste(CAmount{0});\n+    result.ComputeAndSetWaste(cost_of_change, cost_of_change, CAmount{0});",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r941007231",
@@ -918,6 +885,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-09T07:41:32Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/941007231",
       "user" : {
@@ -955,7 +923,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "The changeless window is based on `cost_of_change`, not just `change_spend_fee`. So the minimum viable change should be `cost_of_change + 1`.\r\n\r\nI agree that the `+ 1` should not be applied to the dust threshold. The existing behavior throws away change when it is `< dust` or `<= cost of change`. So that's equivalent to `< dust` or `< cost of change + 1`.",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-09T18:00:23Z",
       "diff_hunk" : "@@ -745,6 +745,13 @@ static BResult<CreatedTransactionResult> CreateTransactionInternal(\n     coin_selection_params.m_change_fee = coin_selection_params.m_effective_feerate.GetFee(coin_selection_params.change_output_size);\n     coin_selection_params.m_cost_of_change = coin_selection_params.m_discard_feerate.GetFee(coin_selection_params.change_spend_size) + coin_selection_params.m_change_fee;\n \n+    // The smallest change amount should be:\n+    // 1. at least equal to dust threshold\n+    // 2. at least 1 sat greater than fees to spend it at m_discard_feerate\n+    const auto dust = GetDustThreshold(change_prototype_txout, coin_selection_params.m_discard_feerate);\n+    const auto change_spend_fee = coin_selection_params.m_discard_feerate.GetFee(coin_selection_params.change_spend_size);\n+    coin_selection_params.min_change = std::max(change_spend_fee + 1, dust);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r941646567",
@@ -972,7 +940,7 @@
       "pull_request_review_id" : 1067162564,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25647",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -980,12 +948,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/941646567/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-09T18:00:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/941646567",
       "user" : {
@@ -1021,9 +990,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/941793621"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Err, yes. You're right, the `+1` should be on `coin_selection_params.m_cost_of_change`",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-09T20:54:29Z",
       "diff_hunk" : "@@ -745,6 +745,13 @@ static BResult<CreatedTransactionResult> CreateTransactionInternal(\n     coin_selection_params.m_change_fee = coin_selection_params.m_effective_feerate.GetFee(coin_selection_params.change_output_size);\n     coin_selection_params.m_cost_of_change = coin_selection_params.m_discard_feerate.GetFee(coin_selection_params.change_spend_size) + coin_selection_params.m_change_fee;\n \n+    // The smallest change amount should be:\n+    // 1. at least equal to dust threshold\n+    // 2. at least 1 sat greater than fees to spend it at m_discard_feerate\n+    const auto dust = GetDustThreshold(change_prototype_txout, coin_selection_params.m_discard_feerate);\n+    const auto change_spend_fee = coin_selection_params.m_discard_feerate.GetFee(coin_selection_params.change_spend_size);\n+    coin_selection_params.min_change = std::max(change_spend_fee + 1, dust);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r941793621",
@@ -1054,6 +1023,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-09T20:54:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/941793621",
       "user" : {
@@ -1089,9 +1059,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/942692791"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "No. `cost_of_change` = `change_fee` + `change_spend_fee`. When we compare `change` To `min_viable_change` the `change_fee` is already deducted.\r\n\r\nThink about it from this perspective, you don't want to create a change output that is less than what it takes to spend it.",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-10T16:59:03Z",
       "diff_hunk" : "@@ -745,6 +745,13 @@ static BResult<CreatedTransactionResult> CreateTransactionInternal(\n     coin_selection_params.m_change_fee = coin_selection_params.m_effective_feerate.GetFee(coin_selection_params.change_output_size);\n     coin_selection_params.m_cost_of_change = coin_selection_params.m_discard_feerate.GetFee(coin_selection_params.change_spend_size) + coin_selection_params.m_change_fee;\n \n+    // The smallest change amount should be:\n+    // 1. at least equal to dust threshold\n+    // 2. at least 1 sat greater than fees to spend it at m_discard_feerate\n+    const auto dust = GetDustThreshold(change_prototype_txout, coin_selection_params.m_discard_feerate);\n+    const auto change_spend_fee = coin_selection_params.m_discard_feerate.GetFee(coin_selection_params.change_spend_size);\n+    coin_selection_params.min_change = std::max(change_spend_fee + 1, dust);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r942692791",
@@ -1122,6 +1092,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-10T16:59:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/942692791",
       "user" : {
@@ -1157,9 +1128,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/942696762"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "You're right though, that right now we drop change smaller than `cost_of_change` after deducting the `change_fee`. So the `change_fee` is deducted twice. Which I think is a bug. But I need to disclose this in the description.\r\n\r\nUPD: oh.. I did disclose it already.. stupid me",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-10T17:03:36Z",
       "diff_hunk" : "@@ -745,6 +745,13 @@ static BResult<CreatedTransactionResult> CreateTransactionInternal(\n     coin_selection_params.m_change_fee = coin_selection_params.m_effective_feerate.GetFee(coin_selection_params.change_output_size);\n     coin_selection_params.m_cost_of_change = coin_selection_params.m_discard_feerate.GetFee(coin_selection_params.change_spend_size) + coin_selection_params.m_change_fee;\n \n+    // The smallest change amount should be:\n+    // 1. at least equal to dust threshold\n+    // 2. at least 1 sat greater than fees to spend it at m_discard_feerate\n+    const auto dust = GetDustThreshold(change_prototype_txout, coin_selection_params.m_discard_feerate);\n+    const auto change_spend_fee = coin_selection_params.m_discard_feerate.GetFee(coin_selection_params.change_spend_size);\n+    coin_selection_params.min_change = std::max(change_spend_fee + 1, dust);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r942696762",
@@ -1190,6 +1161,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-10T17:05:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/942696762",
       "user" : {
@@ -1227,7 +1199,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Ah ok. That makes sense.",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-10T17:22:08Z",
       "diff_hunk" : "@@ -745,6 +745,13 @@ static BResult<CreatedTransactionResult> CreateTransactionInternal(\n     coin_selection_params.m_change_fee = coin_selection_params.m_effective_feerate.GetFee(coin_selection_params.change_output_size);\n     coin_selection_params.m_cost_of_change = coin_selection_params.m_discard_feerate.GetFee(coin_selection_params.change_spend_size) + coin_selection_params.m_change_fee;\n \n+    // The smallest change amount should be:\n+    // 1. at least equal to dust threshold\n+    // 2. at least 1 sat greater than fees to spend it at m_discard_feerate\n+    const auto dust = GetDustThreshold(change_prototype_txout, coin_selection_params.m_discard_feerate);\n+    const auto change_spend_fee = coin_selection_params.m_discard_feerate.GetFee(coin_selection_params.change_spend_size);\n+    coin_selection_params.min_change = std::max(change_spend_fee + 1, dust);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r942712817",
@@ -1258,6 +1230,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-10T17:22:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/942712817",
       "user" : {
@@ -1337,9 +1310,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/942818102"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Okay, convinced. That all sounds right. Thanks for explaining",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-10T19:22:18Z",
       "diff_hunk" : "@@ -745,6 +745,13 @@ static BResult<CreatedTransactionResult> CreateTransactionInternal(\n     coin_selection_params.m_change_fee = coin_selection_params.m_effective_feerate.GetFee(coin_selection_params.change_output_size);\n     coin_selection_params.m_cost_of_change = coin_selection_params.m_discard_feerate.GetFee(coin_selection_params.change_spend_size) + coin_selection_params.m_change_fee;\n \n+    // The smallest change amount should be:\n+    // 1. at least equal to dust threshold\n+    // 2. at least 1 sat greater than fees to spend it at m_discard_feerate\n+    const auto dust = GetDustThreshold(change_prototype_txout, coin_selection_params.m_discard_feerate);\n+    const auto change_spend_fee = coin_selection_params.m_discard_feerate.GetFee(coin_selection_params.change_spend_size);\n+    coin_selection_params.min_change = std::max(change_spend_fee + 1, dust);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r942818102",
@@ -1370,6 +1343,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-10T19:22:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/942818102",
       "user" : {
@@ -1405,9 +1379,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/942837440"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Ah right, and since this call originates from `SelectCoinsBnB(â¦)` that's sufficient of course.\r\n\r\nYeah, doing the BnB upper bound separately sounds fine to me.",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-10T19:35:47Z",
       "diff_hunk" : "@@ -156,7 +156,7 @@ std::optional<SelectionResult> SelectCoinsBnB(std::vector<OutputGroup>& utxo_poo\n     for (const size_t& i : best_selection) {\n         result.AddInput(utxo_pool.at(i));\n     }\n-    result.ComputeAndSetWaste(CAmount{0});\n+    result.ComputeAndSetWaste(cost_of_change, cost_of_change, CAmount{0});",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r942837440",
@@ -1438,6 +1412,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-10T19:36:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/942837440",
       "user" : {
@@ -1473,21 +1448,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/942856543"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Just a headscratcher: \r\nIn the commit message of âwallet: accurate SelectionResult::m_targetâ (98d5dd26aec30ec63b555afc844281a4a04bd0fb) you write:\r\n\r\n> SelectionResult::m_target should be equal to actual selection target.\r\n> Selection target is the sum of all recipient amounts plus non input fees.\r\n> So we need to remove change_fee from the m_target. It's safe because change\r\n> target is always greater than the change fee, so we can always cover fees\r\n> if change output is created.\r\n\r\nIt's not clear to me why the change target is always greater than change fee. Are you just alluding to the minimum change being more than the change fee even beyond 1,000â¯s/vB, or does the change fee actually get added anywhere that I'm missing?",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-10T20:01:08Z",
       "diff_hunk" : "@@ -489,31 +489,19 @@ std::optional<SelectionResult> ChooseSelectionResult(const CWallet& wallet, cons\n     // Vector of results. We will choose the best one based on waste.\n     std::vector<SelectionResult> results;\n \n-    // Note that unlike KnapsackSolver, we do not include the fee for creating a change output as BnB will not create a change output.\n-    std::vector<OutputGroup> positive_groups = GroupOutputs(wallet, available_coins, coin_selection_params, eligibility_filter, true /* positive_only */);\n+    std::vector<OutputGroup> positive_groups = GroupOutputs(wallet, available_coins, coin_selection_params, eligibility_filter, /*positive_only=*/true);\n     if (auto bnb_result{SelectCoinsBnB(positive_groups, nTargetValue, coin_selection_params.m_cost_of_change)}) {\n         results.push_back(*bnb_result);\n     }\n \n     // The knapsack solver has some legacy behavior where it will spend dust outputs. We retain this behavior, so don't filter for positive only here.\n-    std::vector<OutputGroup> all_groups = GroupOutputs(wallet, available_coins, coin_selection_params, eligibility_filter, false /* positive_only */);\n-    CAmount target_with_change = nTargetValue;\n-    // While nTargetValue includes the transaction fees for non-input things, it does not include the fee for creating a change output.\n-    // So we need to include that for KnapsackSolver and SRD as well, as we are expecting to create a change output.\n-    if (!coin_selection_params.m_subtract_fee_outputs) {\n-        target_with_change += coin_selection_params.m_change_fee;\n-    }\n-    if (auto knapsack_result{KnapsackSolver(all_groups, target_with_change, coin_selection_params.m_min_change_target, coin_selection_params.rng_fast)}) {\n+    std::vector<OutputGroup> all_groups = GroupOutputs(wallet, available_coins, coin_selection_params, eligibility_filter, /*positive_only=*/false);\n+    if (auto knapsack_result{KnapsackSolver(all_groups, nTargetValue, coin_selection_params.m_min_change_target, coin_selection_params.rng_fast)}) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r942856543",
       "id" : 942856543,
-      "line" : 499,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5844Mtlf",
       "original_commit_id" : "98d5dd26aec30ec63b555afc844281a4a04bd0fb",
       "original_line" : 499,
       "original_position" : 21,
       "original_start_line" : 499,
       "path" : "src/wallet/spend.cpp",
-      "position" : 21,
+      "position" : null,
       "pull_request_review_id" : 1068861504,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25647",
       "reactions" : {
@@ -1505,6 +1480,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-08-10T20:58:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/942856543",
       "user" : {
@@ -1540,9 +1516,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/942894465"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Nit: \r\nIn wallet: calculate and store min_change (84f871db7bc2e74c5b9ebdd4690a9eb5c79ef334) the change introduces now `min_viable_change` but the commit message still says `min_change`.",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-10T20:49:55Z",
       "diff_hunk" : "@@ -123,6 +123,10 @@ struct CoinSelectionParams {\n     /** Mininmum change to target in Knapsack solver: select coins to cover the payment and\n      * at least this value of change. */\n     CAmount m_min_change_target{0};\n+    /** Minimum amount for creating a change output.\n+     * If change budget is smaller than min_change then we forgo creation of change output.\n+     */\n+    CAmount min_viable_change{0};",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r942894465",
@@ -1572,6 +1548,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-10T20:58:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/942894465",
       "user" : {
@@ -1607,22 +1584,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/943202084"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Good catch. Indeed what I meant is that `m_change_target` is at least `CHANGE_LOWER` which in most cases should be bigger than `change_fee`, but at high enough fee rate it doesn't hold.\r\n\r\nMaybe we can ensure that `m_change_target` is at least `change_fee` by making `CHANGE_LOWER` dynamic and equal to `max(50000, change_fee)`. @Xekyo @achow101 wdyt?",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-11T08:00:18Z",
       "diff_hunk" : "@@ -489,31 +489,19 @@ std::optional<SelectionResult> ChooseSelectionResult(const CWallet& wallet, cons\n     // Vector of results. We will choose the best one based on waste.\n     std::vector<SelectionResult> results;\n \n-    // Note that unlike KnapsackSolver, we do not include the fee for creating a change output as BnB will not create a change output.\n-    std::vector<OutputGroup> positive_groups = GroupOutputs(wallet, available_coins, coin_selection_params, eligibility_filter, true /* positive_only */);\n+    std::vector<OutputGroup> positive_groups = GroupOutputs(wallet, available_coins, coin_selection_params, eligibility_filter, /*positive_only=*/true);\n     if (auto bnb_result{SelectCoinsBnB(positive_groups, nTargetValue, coin_selection_params.m_cost_of_change)}) {\n         results.push_back(*bnb_result);\n     }\n \n     // The knapsack solver has some legacy behavior where it will spend dust outputs. We retain this behavior, so don't filter for positive only here.\n-    std::vector<OutputGroup> all_groups = GroupOutputs(wallet, available_coins, coin_selection_params, eligibility_filter, false /* positive_only */);\n-    CAmount target_with_change = nTargetValue;\n-    // While nTargetValue includes the transaction fees for non-input things, it does not include the fee for creating a change output.\n-    // So we need to include that for KnapsackSolver and SRD as well, as we are expecting to create a change output.\n-    if (!coin_selection_params.m_subtract_fee_outputs) {\n-        target_with_change += coin_selection_params.m_change_fee;\n-    }\n-    if (auto knapsack_result{KnapsackSolver(all_groups, target_with_change, coin_selection_params.m_min_change_target, coin_selection_params.rng_fast)}) {\n+    std::vector<OutputGroup> all_groups = GroupOutputs(wallet, available_coins, coin_selection_params, eligibility_filter, /*positive_only=*/false);\n+    if (auto knapsack_result{KnapsackSolver(all_groups, nTargetValue, coin_selection_params.m_min_change_target, coin_selection_params.rng_fast)}) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r943202084",
       "id" : 943202084,
       "in_reply_to_id" : 942856543,
-      "line" : 499,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5844OB8k",
       "original_commit_id" : "98d5dd26aec30ec63b555afc844281a4a04bd0fb",
       "original_line" : 499,
       "original_position" : 21,
       "original_start_line" : 499,
       "path" : "src/wallet/spend.cpp",
-      "position" : 21,
+      "position" : null,
       "pull_request_review_id" : 1069319334,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25647",
       "reactions" : {
@@ -1640,6 +1617,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-08-11T08:00:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/943202084",
       "user" : {
@@ -1675,9 +1653,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/943203080"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "ack. I'll fix it on the next push",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-11T08:01:23Z",
       "diff_hunk" : "@@ -123,6 +123,10 @@ struct CoinSelectionParams {\n     /** Mininmum change to target in Knapsack solver: select coins to cover the payment and\n      * at least this value of change. */\n     CAmount m_min_change_target{0};\n+    /** Minimum amount for creating a change output.\n+     * If change budget is smaller than min_change then we forgo creation of change output.\n+     */\n+    CAmount min_viable_change{0};",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r943203080",
@@ -1708,6 +1686,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-11T08:01:23Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/943203080",
       "user" : {
@@ -1743,39 +1722,40 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/943528337"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Hmm, isn't `m_change_target` an unused field right now? ",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-11T14:06:18Z",
       "diff_hunk" : "@@ -489,31 +489,19 @@ std::optional<SelectionResult> ChooseSelectionResult(const CWallet& wallet, cons\n     // Vector of results. We will choose the best one based on waste.\n     std::vector<SelectionResult> results;\n \n-    // Note that unlike KnapsackSolver, we do not include the fee for creating a change output as BnB will not create a change output.\n-    std::vector<OutputGroup> positive_groups = GroupOutputs(wallet, available_coins, coin_selection_params, eligibility_filter, true /* positive_only */);\n+    std::vector<OutputGroup> positive_groups = GroupOutputs(wallet, available_coins, coin_selection_params, eligibility_filter, /*positive_only=*/true);\n     if (auto bnb_result{SelectCoinsBnB(positive_groups, nTargetValue, coin_selection_params.m_cost_of_change)}) {\n         results.push_back(*bnb_result);\n     }\n \n     // The knapsack solver has some legacy behavior where it will spend dust outputs. We retain this behavior, so don't filter for positive only here.\n-    std::vector<OutputGroup> all_groups = GroupOutputs(wallet, available_coins, coin_selection_params, eligibility_filter, false /* positive_only */);\n-    CAmount target_with_change = nTargetValue;\n-    // While nTargetValue includes the transaction fees for non-input things, it does not include the fee for creating a change output.\n-    // So we need to include that for KnapsackSolver and SRD as well, as we are expecting to create a change output.\n-    if (!coin_selection_params.m_subtract_fee_outputs) {\n-        target_with_change += coin_selection_params.m_change_fee;\n-    }\n-    if (auto knapsack_result{KnapsackSolver(all_groups, target_with_change, coin_selection_params.m_min_change_target, coin_selection_params.rng_fast)}) {\n+    std::vector<OutputGroup> all_groups = GroupOutputs(wallet, available_coins, coin_selection_params, eligibility_filter, /*positive_only=*/false);\n+    if (auto knapsack_result{KnapsackSolver(all_groups, nTargetValue, coin_selection_params.m_min_change_target, coin_selection_params.rng_fast)}) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r943528337",
       "id" : 943528337,
       "in_reply_to_id" : 942856543,
-      "line" : 499,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5844PRmR",
       "original_commit_id" : "98d5dd26aec30ec63b555afc844281a4a04bd0fb",
       "original_line" : 499,
       "original_position" : 21,
       "original_start_line" : 499,
       "path" : "src/wallet/spend.cpp",
-      "position" : 21,
+      "position" : null,
       "pull_request_review_id" : 1069781735,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25647",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
-         "eyes" : 0,
+         "eyes" : 1,
          "heart" : 0,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/943528337/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-08-11T14:06:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/943528337",
       "user" : {
@@ -1811,22 +1791,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/944140801"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@furszy #25825 ",
-      "commit_id" : "e763496caab2f9b9f9ba038f7a020caa56997c1b",
+      "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-12T06:07:52Z",
       "diff_hunk" : "@@ -489,31 +489,19 @@ std::optional<SelectionResult> ChooseSelectionResult(const CWallet& wallet, cons\n     // Vector of results. We will choose the best one based on waste.\n     std::vector<SelectionResult> results;\n \n-    // Note that unlike KnapsackSolver, we do not include the fee for creating a change output as BnB will not create a change output.\n-    std::vector<OutputGroup> positive_groups = GroupOutputs(wallet, available_coins, coin_selection_params, eligibility_filter, true /* positive_only */);\n+    std::vector<OutputGroup> positive_groups = GroupOutputs(wallet, available_coins, coin_selection_params, eligibility_filter, /*positive_only=*/true);\n     if (auto bnb_result{SelectCoinsBnB(positive_groups, nTargetValue, coin_selection_params.m_cost_of_change)}) {\n         results.push_back(*bnb_result);\n     }\n \n     // The knapsack solver has some legacy behavior where it will spend dust outputs. We retain this behavior, so don't filter for positive only here.\n-    std::vector<OutputGroup> all_groups = GroupOutputs(wallet, available_coins, coin_selection_params, eligibility_filter, false /* positive_only */);\n-    CAmount target_with_change = nTargetValue;\n-    // While nTargetValue includes the transaction fees for non-input things, it does not include the fee for creating a change output.\n-    // So we need to include that for KnapsackSolver and SRD as well, as we are expecting to create a change output.\n-    if (!coin_selection_params.m_subtract_fee_outputs) {\n-        target_with_change += coin_selection_params.m_change_fee;\n-    }\n-    if (auto knapsack_result{KnapsackSolver(all_groups, target_with_change, coin_selection_params.m_min_change_target, coin_selection_params.rng_fast)}) {\n+    std::vector<OutputGroup> all_groups = GroupOutputs(wallet, available_coins, coin_selection_params, eligibility_filter, /*positive_only=*/false);\n+    if (auto knapsack_result{KnapsackSolver(all_groups, nTargetValue, coin_selection_params.m_min_change_target, coin_selection_params.rng_fast)}) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#discussion_r944140801",
       "id" : 944140801,
       "in_reply_to_id" : 942856543,
-      "line" : 499,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5844RnIB",
       "original_commit_id" : "98d5dd26aec30ec63b555afc844281a4a04bd0fb",
       "original_line" : 499,
       "original_position" : 21,
       "original_start_line" : 499,
       "path" : "src/wallet/spend.cpp",
-      "position" : 21,
+      "position" : null,
       "pull_request_review_id" : 1070632380,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25647",
       "reactions" : {
@@ -1844,6 +1824,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-08-12T06:07:53Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/944140801",
       "user" : {
@@ -1879,7 +1860,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/945488419"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done",
       "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-15T07:35:35Z",
@@ -1912,6 +1893,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-15T07:35:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/945488419",
       "user" : {
@@ -1947,7 +1929,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/945488739"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I've added c8cf08ea743e430c2bf3fe46439594257b0937e5 to address this. Please review",
       "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-15T07:36:16Z",
@@ -1980,6 +1962,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-08-15T07:36:16Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/945488739",
       "user" : {
@@ -2004,7 +1987,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Added one commit c8cf08ea743e430c2bf3fe46439594257b0937e5 and rebased on master again",
       "created_at" : "2022-08-15T07:36:48Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#issuecomment-1214711626",
@@ -2059,7 +2042,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/947240848"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "for the current sources, this code block is a no-op.\r\n\r\nthe only time when we are entering here is when we merge a manual selection result with another manual selection result.",
       "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-16T20:53:42Z",
@@ -2091,6 +2074,7 @@
       "side" : "RIGHT",
       "start_line" : 451,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-08-17T03:32:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/947240848",
       "user" : {
@@ -2126,7 +2110,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/947419147"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "hmm, this doesn't seems to be right:\r\n\r\n1) The dust amount is taken from --> `GetDustThreshold` which receives the change output, serializes it and uses magic numbers to calculate the input vsize (it's a general minimum input vsize calculation for an output), then calls `discard_fee.Get(vsize)` with it to get the dust amount.\r\n\r\n2. The `change_spend_fee` is taken from --> `discard_fee.Get(change_spend_size)` , where `change_spend_size` is the result of `CalculateMaximumSignedInputSize(output)` which is the real vsize calculation of a signed input that spends the change output (we don't hardcode numbers here, we create the input and sign it).\r\n\r\n\r\nIn other words:\r\n\r\nThe only difference between the `dust` and `change_spend_fee` variables is the vsize calculation (both are doing `m_discard_fee.GetFee(vsize)`), and:\r\n\r\n- for `dust`, vsize is calculated from hardcoded numbers to get the minimum theoretical possible size.\r\n- for `change_spend_fee`, vsize is calculated creating an input and dummy signing it.\r\n\r\nSo, `dust` will always be smaller than `change_spend_fee` right?",
       "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-17T03:31:22Z",
@@ -2158,6 +2142,7 @@
       "side" : "RIGHT",
       "start_line" : 858,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-08-17T03:38:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/947419147",
       "user" : {
@@ -2193,7 +2178,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/947421219"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Extra note, had a great convo about this topic with @theStack. He mentioned that you might wanted to use `wallet.chain().relayDustFee()` instead of `coin_selection_params.m_discard_feerate` in the dust amount calculation?",
       "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-17T03:37:26Z",
@@ -2226,6 +2211,7 @@
       "side" : "RIGHT",
       "start_line" : 858,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-08-17T04:10:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/947421219",
       "user" : {
@@ -2294,6 +2280,7 @@
       "side" : "RIGHT",
       "start_line" : 858,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-08-17T03:57:02Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/947427949",
       "user" : {
@@ -2329,7 +2316,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/947790824"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "\r\n> > you might wanted to use `wallet.chain().relayDustFee()` instead of `coin_selection_params.m_discard_feerate` in the dust amount calculation?\r\n> \r\n> I think discard feerate is correct here. It is the maximum of the longest term fee estimate and the dust relay fee. As the name suggests, it is the feerate that we are willing to discard at, so I think it makes sense to keep it as is.\r\n\r\nIsn't the point of setting the smallest change amount to \"at least equal to dust threshold\"  to ensure that the created tx can enter our own mempool now, rather than somewhen in the future (considering that we run a node with a possibly customized `-dustrelayfee=...` option)? As an example, if one would set `-dustrelayfee=...` to a high value and `discardfee=0`, a tx with a change output could be created that is rejected from our mempool (due to being `IsDust` and therefore `!IsStandardTx()`) and thus can't be sent. That's why my assumption was that we want to call `GetDustThreshold` with the dustRelayFee instead:\r\n\r\n```diff\r\n-    const auto dust = GetDustThreshold(change_prototype_txout, coin_selection_params.m_discard_feerate);\r\n+    const auto dust = GetDustThreshold(change_prototype_txout, wallet.chain.relayDustFee());\r\n```\r\n(Am I missing something?)",
       "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-17T11:03:03Z",
@@ -2362,6 +2349,7 @@
       "side" : "RIGHT",
       "start_line" : 858,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-08-17T11:03:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/947790824",
       "user" : {
@@ -2430,6 +2418,7 @@
       "side" : "RIGHT",
       "start_line" : 858,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-08-17T14:42:24Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/948032834",
       "user" : {
@@ -2509,7 +2498,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/948470959"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > As an example, if one would set `-dustrelayfee=...` to a high value and `discardfee=0`, a tx with a change output could be created that is rejected from our mempool\r\n> \r\n> Then the dustrelayfee is what `m_discard_fee` is set to. See `GetDiscardRate` in src/wallet/fees.cpp.\r\n\r\nOh right, I completely overlooked this following line of code, d'oh! ð¤¦ââï¸ \r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/a8f69541ad53a76d5f69044ba829069d225a4af1/src/wallet/fees.cpp#L91",
       "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-17T22:03:43Z",
@@ -2542,6 +2531,7 @@
       "side" : "RIGHT",
       "start_line" : 858,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-08-17T22:03:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/948470959",
       "user" : {
@@ -2566,7 +2556,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Concept ACK",
       "created_at" : "2022-08-17T22:05:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#issuecomment-1218536863",
@@ -2621,7 +2611,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951047082"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I believe we should get rid of `discard fee rate` and replace it with `dust relay fee rate` and `long term fee rate`. For this PR I decide to stick to the current implementation to limit the scope. I'll open an issue to deprecate `discard fee rate` if there is none yet.",
       "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-22T06:13:33Z",
@@ -2654,6 +2644,7 @@
       "side" : "RIGHT",
       "start_line" : 858,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-08-22T06:13:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951047082",
       "user" : {
@@ -2689,7 +2680,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951391774"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In âwallet: add SelectionResult::GetChangeâ (15e97a6886902ebb378829993a972dc52558aa92):\r\n\r\nIf `m_target` includes the `non_input_fee`, but the recipient is supposed to pay for all fees, shouldn't SFFO branch here rather be `GetSelectedValue() - (m_target - non_input_fee)` or `GetSelectedValue() - recipients_sum`?",
       "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-22T12:41:49Z",
@@ -2721,6 +2712,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-22T13:10:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951391774",
       "user" : {
@@ -2756,7 +2748,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951412982"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In âwallet: account for preselected inputs in targetâ (e3210a722542a9cb5f7e4be72470dbe488c281fd):\r\n\r\nThis is a question about the commit message:\r\nSorry, if I'm being dense, but how was âdeducting the effective values of the preselected inputs from `m_target`â leading to a different result than âcreating a separate SelectionResult with the target set to the effective values of the preselected inputs and then starting the selection targeting the delta between that and the search targetâ?\r\n\r\nIt sounds to me that in both cases that would be `m_target - effective_value_of_preselection` under the hood? I assume there is a subtle difference here, but it's not obvious to me from the description. Is the difference that once we use `m_target` and âsearch targetâ is now composed differently? Please feel free to ignore if this has been covered elsewhere, and I just missed it.\r\n\r\n(Edited to clarify that I'm inquiring about the commit message.)",
       "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-22T13:02:29Z",
@@ -2788,6 +2780,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-22T16:25:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951412982",
       "user" : {
@@ -2823,7 +2816,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951634669"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "With SFFO `non_input_fee` is always set to 0. We can probably make this simpler and cleaner, let's discuss it on the wallet meeting or in some other place.",
       "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-22T16:20:18Z",
@@ -2856,6 +2849,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-22T16:20:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951634669",
       "user" : {
@@ -2924,6 +2918,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-22T16:26:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951640526",
       "user" : {
@@ -2959,7 +2954,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951642702"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Ah okay, that explains it. Thanks",
       "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-22T16:27:21Z",
@@ -2992,6 +2987,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-22T16:27:22Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951642702",
       "user" : {
@@ -3027,7 +3023,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951645933"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Answering my own question after talking to S3RK out of band:\r\n\r\nThe correct `m_target` is needed to calculate the change in advance. Previously, the preselection approach was reducing `m_target` to reflect that some funds had already been picked, and now storing them in a SelectionResult and combining the two before calculating the change will be operating on basis of the correct `m_target` instead.",
       "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-22T16:30:55Z",
@@ -3060,6 +3056,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-22T16:30:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951645933",
       "user" : {
@@ -3084,7 +3081,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "crACK 4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-22T16:31:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25647#issuecomment-1222606713",
@@ -3139,7 +3136,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951649478"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Ah thanks, @achow101, the case with the negative target makes it even clearer how this is better.",
       "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-22T16:34:43Z",
@@ -3172,6 +3169,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-22T16:34:43Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951649478",
       "user" : {
@@ -3207,7 +3205,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951657458"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Small extra add to the topic in case you haven't seen it; the pre-set inputs workflow (this stuff) is being decoupled from the coin selection process in #25685. Which should make the flow clearer and less error-prone.",
       "commit_id" : "4fef5344288e454460b80db0316294e1ec1ad8ad",
       "created_at" : "2022-08-22T16:42:59Z",
@@ -3240,6 +3238,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-22T16:43:00Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/951657458",
       "user" : {

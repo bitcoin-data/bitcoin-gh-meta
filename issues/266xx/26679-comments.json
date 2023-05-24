@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [ishaanam](https://github.com/bitcoin/bitcoin/pull/26679#issuecomment-1358667519), [w0xlt](https://github.com/bitcoin/bitcoin/pull/26679#pullrequestreview-1223801035), [furszy](https://github.com/bitcoin/bitcoin/pull/26679#pullrequestreview-1241095096) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n",
       "created_at" : "2022-12-09T22:16:49Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26679#issuecomment-1344836895",
@@ -55,21 +55,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1046476073"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit:\r\n```suggestion\r\n                // We were unable to find a block that had a time more recent than our earliest timestamp\r\n```",
-      "commit_id" : "57f8f618f47526205e515b5ee8f9ab2f1eb625cd",
+      "commit_id" : "378400953424598fd78ccec5ba8cc38bc253c550",
       "created_at" : "2022-12-12T23:01:05Z",
       "diff_hunk" : "@@ -3184,6 +3184,24 @@ bool CWallet::AttachChain(const std::shared_ptr<CWallet>& walletInstance, interf\n \n     if (tip_height && *tip_height != rescan_height)\n     {\n+        // No need to read and scan block if block was created before\n+        // our wallet birthday (as adjusted for block time variability)\n+        std::optional<int64_t> time_first_key;\n+        for (auto spk_man : walletInstance->GetAllScriptPubKeyMans()) {\n+            int64_t time = spk_man->GetTimeFirstKey();\n+            if (!time_first_key || time < *time_first_key) time_first_key = time;\n+        }\n+        if (time_first_key) {\n+            FoundBlock found = FoundBlock().height(rescan_height);\n+            chain.findFirstBlockWithTimeAndHeight(*time_first_key - TIMESTAMP_WINDOW, rescan_height, found);\n+            if (!found.found) {\n+                // We were unable to find a block a block that had a time more recent than our earliest timestamp",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26679#discussion_r1046476073",
       "id" : 1046476073,
-      "line" : 3198,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584-X_Up",
       "original_commit_id" : "57f8f618f47526205e515b5ee8f9ab2f1eb625cd",
       "original_line" : 3198,
       "original_position" : 15,
       "original_start_line" : null,
       "path" : "src/wallet/wallet.cpp",
-      "position" : 15,
+      "position" : null,
       "pull_request_review_id" : 1214463401,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26679",
       "reactions" : {
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-13T00:45:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1046476073",
       "user" : {
@@ -155,6 +156,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-13T20:55:42Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1047738218",
       "user" : {
@@ -179,7 +181,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re-utACK 378400953424598fd78ccec5ba8cc38bc253c550",
       "created_at" : "2022-12-20T00:18:30Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26679#issuecomment-1358667519",
@@ -266,6 +268,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-09T14:21:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1064684751",
       "user" : {
@@ -334,6 +337,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-09T14:35:26Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1064706980",
       "user" : {
@@ -370,7 +374,7 @@
          }
       },
       "author_association" : "MEMBER",
-      "body" : "yeah ok, digested it now. thanks. Was expecting `FoundBlock` to be an inputs-only container when it's actually a function's outputs container.",
+      "body" : "yeah ok, digested it now. thanks. Was expecting `FoundBlock` to be an inputs-only container when it's actually the outputs container.",
       "commit_id" : "378400953424598fd78ccec5ba8cc38bc253c550",
       "created_at" : "2023-01-09T15:03:46Z",
       "diff_hunk" : "@@ -3184,6 +3184,24 @@ bool CWallet::AttachChain(const std::shared_ptr<CWallet>& walletInstance, interf\n \n     if (tip_height && *tip_height != rescan_height)\n     {\n+        // No need to read and scan block if block was created before\n+        // our wallet birthday (as adjusted for block time variability)\n+        std::optional<int64_t> time_first_key;\n+        for (auto spk_man : walletInstance->GetAllScriptPubKeyMans()) {\n+            int64_t time = spk_man->GetTimeFirstKey();\n+            if (!time_first_key || time < *time_first_key) time_first_key = time;\n+        }\n+        if (time_first_key) {\n+            FoundBlock found = FoundBlock().height(rescan_height);",
@@ -402,7 +406,8 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
-      "updated_at" : "2023-01-09T15:03:46Z",
+      "subject_type" : "line",
+      "updated_at" : "2023-01-10T19:27:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1064739591",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/5377650?v=4",

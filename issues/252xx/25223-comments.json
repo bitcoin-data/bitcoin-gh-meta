@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25073](https://github.com/bitcoin/bitcoin/pull/25073) (test: Cleanup miner_tests by MarcoFalke)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-05-27T00:36:23Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#issuecomment-1139174394",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Can you explain what this change has to do with the kernel? \r\n\r\nI'm also not clear on how making BlockAssembler constructor not require an empty mempool relates to making kernel library better, or lets it drop dependencies. (This still does seem like a positive change, just connection is unclear)\r\n\r\n> I don't see any modifications in the kernel folder or the kernel build target.\r\n\r\nMaybe you already know this, but one thing that I wasn't expecting looking at Carl's branch is that it mostly doesn't move source code into `src/kernel/`, instead it just changes build rules to build source files in other directories as part of the kernel library. I think the only source code that does moves into src/kernel/ initially is from files that have to be split up because they pull in wanted dependencies. If existing source files can be wholly moved into the kernel without being split up, they aren't moved. Probably  src/node/miner.cpp is one of these files.",
       "created_at" : "2022-05-27T14:16:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#issuecomment-1139662213",
@@ -132,51 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--cf906140f33d8803c4a75a2196329ecb-->\nð This pull request conflicts with the target branch and [needs rebase](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#rebasing-changes).\n\n<sub>Want to unsubscribe from rebase notifications on this pull request? Just convert this pull request to a \"draft\".</sub>",
-      "created_at" : "2022-05-27T14:34:17Z",
-      "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#issuecomment-1139678103",
-      "id" : 1139678103,
-      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/25223",
-      "node_id" : "IC_kwDOABII585D7huX",
-      "performed_via_github_app" : null,
-      "reactions" : {
-         "+1" : 0,
-         "-1" : 0,
-         "confused" : 0,
-         "eyes" : 0,
-         "heart" : 0,
-         "hooray" : 0,
-         "laugh" : 0,
-         "rocket" : 0,
-         "total_count" : 0,
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1139678103/reactions"
-      },
-      "updated_at" : "2022-05-27T14:34:17Z",
-      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1139678103",
-      "user" : {
-         "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
-         "events_url" : "https://api.github.com/users/DrahtBot/events{/privacy}",
-         "followers_url" : "https://api.github.com/users/DrahtBot/followers",
-         "following_url" : "https://api.github.com/users/DrahtBot/following{/other_user}",
-         "gists_url" : "https://api.github.com/users/DrahtBot/gists{/gist_id}",
-         "gravatar_id" : "",
-         "html_url" : "https://github.com/DrahtBot",
-         "id" : 39886733,
-         "login" : "DrahtBot",
-         "node_id" : "MDQ6VXNlcjM5ODg2NzMz",
-         "organizations_url" : "https://api.github.com/users/DrahtBot/orgs",
-         "received_events_url" : "https://api.github.com/users/DrahtBot/received_events",
-         "repos_url" : "https://api.github.com/users/DrahtBot/repos",
-         "site_admin" : false,
-         "starred_url" : "https://api.github.com/users/DrahtBot/starred{/owner}{/repo}",
-         "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
-         "type" : "User",
-         "url" : "https://api.github.com/users/DrahtBot"
-      }
-   },
-   {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@MarcoFalke \r\n> Can you explain what this change has to do with the kernel? I don't see any modifications in the kernel folder or the kernel build target.s\r\n\r\nAh yes, as the companion PR to #25215, this PR also \"reduces the number of call sites where we explicitly construct CTxMemPool. This is done in preparation for later PRs which decouple the mempool module from ArgsManager...\"\r\n\r\nOne of the challenges I found with making the upcoming `CTxMemPool+MemPoolAccept+mempool-relevant parts of CChainState` <-> `ArgsManager` decoupling PRs easy to review was that from the view point of a reviewer, it was hard to reason that the behavior at each `CTxMemPool` construction call site was preserved. This is because after we decouple from `ArgsMan`, instead of reaching for `gArgs` deep in the mempool code, we now have to make sure that the options are set correctly and passed to each `CTxMemPool` that we construct. During development I also ran into some inadvertent bugs stemming from this.\r\n\r\nAs an example: When we stop asking `gArgs` for `-mempoolexpiry` or `-maxmempool` in `CTxMemPool+MemPoolAccept+mempool-relevant parts of CChainState`, and instead construct `CTxMemPool` with an `CTxMemPool::Options` with these parameters as struct members, preserving existing behaviour means that **_every_** `CTxMemPool` construction call site would have to get the default `CTxMemPool::Options` and apply `gArgs` overrides.\r\n\r\nI reasoned that since these `CTxMemPool` constructor calls were entirely unnecessary in the first place, and the fix wasn't that involved, we could kill two birds with one stone: remove what's unnecessary and also make the `ArgsMan` decoupling PRs easier to reason about.",
       "created_at" : "2022-05-27T19:18:39Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#issuecomment-1139960210",
@@ -220,7 +176,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "@ryanofsky \r\n\r\n> Maybe you already know this, but one thing that I wasn't expecting looking at Carl's branch is that it mostly doesn't move source code into `src/kernel/`, instead it just changes build rules to build source files in other directories as part of the kernel library. I think the only source code that does moves into src/kernel/ initially is from files that have to be split up because they pull in wanted dependencies. If existing source files can be wholly moved into the kernel without being split up, they aren't moved. Probably src/node/miner.cpp is one of these files.\r\n\r\nYeah I think that's right. Mostly I just don't think moving things around and changing namespaces for everything needs to be done right now. Looking at past reviews it also seems that people expect things in `src/kernel/` to have some kind of cleanliness, even though we're not going to be refining the API until Phase 2, so I'd like to avoid the sum of these little expectations to make it harder for the main thrust of Phase 1 to get through review.",
       "created_at" : "2022-05-27T19:28:43Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#issuecomment-1139966468",
@@ -264,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Pushed f159dbb92c88840ad44c6e0f1d8357449fd65141 -> 10827ac257689f8945166163b1ae496d792c790c\r\n- Rebased over master",
       "created_at" : "2022-05-27T20:26:04Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#issuecomment-1140008424",
@@ -352,7 +308,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "libbitcoinkernel doesn't have anything to do with mining. However, mining does require (prior to this PR) a mempool. In many cases, these mempool are sometimes constructed on-the-fly (not as part of init). For example:\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/640eb772e55671c5dab29843cebe42ec35cb703f/src/rpc/mining.cpp#L357-L358\r\n\r\nTherefore, when I start making `CTxMemPool` options explicitly passed in to `CTxMemPool`'s constructor instead of just being globals inside `gArgs`, the on-the-fly calls to `CTxMemPool`'s constructor become much more involved.\r\n\r\n```bash\r\n        CTxMemPool::Options mempool_opts{};\r\n        OverlayArgsManSettings(mempool_opts);\r\n        CTxMemPool empty_mempool{mempool_opts};\r\n        std::unique_ptr<CBlockTemplate> blocktemplate(BlockAssembler{chainman.ActiveChainstate(), empty_mempool}.CreateNewBlock(coinbase_script));\r\n```\r\n\r\nNow, it would be another story if any of these `empty_mempool`s were being useful, but it seems that they're basically unused, so there's no need for this charade. We can just remove `BlockAssembler`'s dependence on `CTxMemPool` by making it nullable and call it a day.",
       "created_at" : "2022-05-31T15:42:57Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#issuecomment-1142303146",
@@ -440,7 +396,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Wouldn't it be better to move mining out of libbitcoinkernel and not motivate this pull request on `[kernel 2e/n]` and instead make it an orthogonal change?\r\n\r\nMining is not in `libbitcoinkernel` right now, I put this PR as `[kernel 2e/n]` because there's a lot of future work in `libbitcoinkernel`'s `ArgsManager` decoupling that depends on this. Another way I could have done it would be to publish the vision quest branch for `libbitcoinkernel`'s `ArgsManager` decoupling then split out this PR, but I didn't think it'd matter that much which way I did it.\r\n\r\n> So an alternative would be to make `CTxMemPool::Options` optional to be passed to the constructor?\r\n\r\nYeah I suppose so, but it's also fraught with danger:\r\n\r\n#### Does the `CTxMemPool` constructor consult `gArgs` when the `CTxMemPool::Options` is null?\r\n\r\nThen we've made `CTxMemPool` dependent on `ArgsManager` again.\r\n\r\n#### Does the `CTxMemPool` constructor just use the `static const` sane defaults when the `CTxMemPool::Options` is null?\r\n\r\nThen you're likely introducing a behaviour change since the `gArgs` settings are no longer respected.",
       "created_at" : "2022-05-31T16:29:57Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#issuecomment-1142354292",
@@ -541,7 +497,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "In the commit message you claim that this is a behaviour change, but I don't see an obvious user facing (or even test-facing) behaviour change. Maybe explain this a bit better or mention that this does *not* change behaviour?",
-      "commit_id" : "10827ac257689f8945166163b1ae496d792c790c",
+      "commit_id" : "0f1a259657280afc727db97689512aef5ca928fc",
       "created_at" : "2022-05-31T16:52:34Z",
       "diff_hunk" : "@@ -121,7 +121,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc\n     pblocktemplate->vTxFees.push_back(-1); // updated at end\n     pblocktemplate->vTxSigOpsCost.push_back(-1); // updated at end\n \n-    LOCK2(cs_main, m_mempool.cs);\n+    LOCK(::cs_main);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#discussion_r885880832",
@@ -571,6 +527,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-31T16:52:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/885880832",
       "user" : {
@@ -606,9 +563,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/886044009"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Ah yeah true... Guess I meant a \"code-behaviour\" change, but yes, will update!",
-      "commit_id" : "faddefe547cad0e4ba0f1cab635e48b42e153a11",
+      "commit_id" : "0f1a259657280afc727db97689512aef5ca928fc",
       "created_at" : "2022-05-31T19:18:55Z",
       "diff_hunk" : "@@ -121,7 +121,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc\n     pblocktemplate->vTxFees.push_back(-1); // updated at end\n     pblocktemplate->vTxSigOpsCost.push_back(-1); // updated at end\n \n-    LOCK2(cs_main, m_mempool.cs);\n+    LOCK(::cs_main);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#discussion_r886044009",
@@ -639,6 +596,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-31T19:18:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/886044009",
       "user" : {
@@ -663,7 +621,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Pushed 10827ac257689f8945166163b1ae496d792c790c -> faddefe547cad0e4ba0f1cab635e48b42e153a11\r\n- Addressed: https://github.com/bitcoin/bitcoin/pull/25223#discussion_r885880832",
       "created_at" : "2022-05-31T19:21:12Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#issuecomment-1142552714",
@@ -718,9 +676,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/886047100"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Fixed as of faddefe547cad0e4ba0f1cab635e48b42e153a11",
-      "commit_id" : "faddefe547cad0e4ba0f1cab635e48b42e153a11",
+      "commit_id" : "0f1a259657280afc727db97689512aef5ca928fc",
       "created_at" : "2022-05-31T19:21:25Z",
       "diff_hunk" : "@@ -121,7 +121,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc\n     pblocktemplate->vTxFees.push_back(-1); // updated at end\n     pblocktemplate->vTxSigOpsCost.push_back(-1); // updated at end\n \n-    LOCK2(cs_main, m_mempool.cs);\n+    LOCK(::cs_main);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#discussion_r886047100",
@@ -751,6 +709,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-31T19:21:25Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/886047100",
       "user" : {
@@ -788,19 +747,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "> Aside from approach in this current PR, we can also take the approach of moving the CTxMemPool* argument from the BlockAssembler constructor to BlockAssembler::CreateNewBlock, since that's where it's needed anyway. I did not push this approach because it requires quite a lot of call sites to be changed.\r\n\r\nI don't think that would be better; I think the [reference to] mempool belongs as a member of the class. Since the class also keeps track of things like `nBlockWeight` and `nFees` of the block, that suggests to me the intention is 1 `BlockAssembler` instance = building 1 block template. So I can't think of why it would be safe/useful to change which mempool we're using, and thus the mempool should remain a member and in fact\r\n\r\n```suggestion\r\n    const CTxMemPool* const m_mempool;\r\n```\r\n?",
-      "commit_id" : "faddefe547cad0e4ba0f1cab635e48b42e153a11",
+      "commit_id" : "0f1a259657280afc727db97689512aef5ca928fc",
       "created_at" : "2022-06-02T21:55:35Z",
       "diff_hunk" : "@@ -147,7 +147,7 @@ class BlockAssembler\n     int64_t m_lock_time_cutoff;\n \n     const CChainParams& chainparams;\n-    const CTxMemPool& m_mempool;\n+    const CTxMemPool* m_mempool;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#discussion_r888443470",
       "id" : 888443470,
-      "line" : 150,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII58409JJO",
       "original_commit_id" : "faddefe547cad0e4ba0f1cab635e48b42e153a11",
       "original_line" : 150,
       "original_position" : 5,
       "original_start_line" : null,
       "path" : "src/node/miner.h",
-      "position" : 5,
+      "position" : null,
       "pull_request_review_id" : 994233439,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25223",
       "reactions" : {
@@ -818,6 +777,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-03T00:29:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/888443470",
       "user" : {
@@ -853,22 +813,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/889207575"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Oh yeah that makes sense. Does it look like I need to modify the const-ness anywhere else?",
-      "commit_id" : "faddefe547cad0e4ba0f1cab635e48b42e153a11",
+      "commit_id" : "0f1a259657280afc727db97689512aef5ca928fc",
       "created_at" : "2022-06-03T17:59:10Z",
       "diff_hunk" : "@@ -147,7 +147,7 @@ class BlockAssembler\n     int64_t m_lock_time_cutoff;\n \n     const CChainParams& chainparams;\n-    const CTxMemPool& m_mempool;\n+    const CTxMemPool* m_mempool;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#discussion_r889207575",
       "id" : 889207575,
       "in_reply_to_id" : 888443470,
-      "line" : 150,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5841ADsX",
       "original_commit_id" : "faddefe547cad0e4ba0f1cab635e48b42e153a11",
       "original_line" : 150,
       "original_position" : 5,
       "original_start_line" : null,
       "path" : "src/node/miner.h",
-      "position" : 5,
+      "position" : null,
       "pull_request_review_id" : 995284790,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25223",
       "reactions" : {
@@ -886,6 +846,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-03T17:59:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/889207575",
       "user" : {
@@ -910,7 +871,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Pushed faddefe547cad0e4ba0f1cab635e48b42e153a11 -> 0f1a259657280afc727db97689512aef5ca928fc\r\n- Addressed https://github.com/bitcoin/bitcoin/pull/25223#discussion_r888443470 (thanks Gloria!)",
       "created_at" : "2022-06-06T19:40:05Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#issuecomment-1147834225",
@@ -965,7 +926,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/890488432"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Fixed in 0f1a259657280afc727db97689512aef5ca928fc",
       "commit_id" : "0f1a259657280afc727db97689512aef5ca928fc",
       "created_at" : "2022-06-06T19:40:49Z",
@@ -998,6 +959,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-06T19:40:49Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/890488432",
       "user" : {
@@ -1065,6 +1027,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-13T08:48:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/892118946",
       "user" : {
@@ -1089,7 +1052,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Talked with Gloria offline, I'm fine with either approach as long as we don't **create** extraneous `CTxMemPool`s. However, there are two things to consider if we take the route of \"even in the case of supplying BlockAssembler with a custom list of transactions we insert them into the mempool then use the mempool logic to select txs to include in the block\":\r\n\r\n1. Do we want to allow for cases where we want to assemble a block with transactions which would not be selected using the mempool selection logic? For example: The mempool already has a block's worth of high feerate txs, we want to create a block with a list of low feerate txs. This wouldn't be possible if we take the aforementioned route of \"even in the case of supplying BlockAssembler with a custom list of transactions we insert them into the mempool then use the mempool logic to select txs to include in the block\"\r\n2. It seems from previous PRs (#19556) that we want to move towards a world where it's possible to not have a mempool at all. In that `-blocksonly` world, do we still want to retain the ability to use the `BlockAssembler`?\r\n\r\nPing @MarcoFalke @glozow",
       "created_at" : "2022-06-13T14:10:03Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#issuecomment-1153967788",
@@ -1265,7 +1228,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Many thanks for the insightful comments Marco and Gloria! Lots to refer back to in future convos for sure.\n\nGlad that the current approach is good to move forward with!",
       "created_at" : "2022-06-13T14:54:53Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25223#issuecomment-1154027491",
@@ -1320,7 +1283,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/895867288"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Oh, I just thought it was unnecessary. I think Marco added it in fa03d0acd6bd8bb6d3d5227512f042ff537ad993\r\n\r\nI don't care either way what we do here!",
       "commit_id" : "0f1a259657280afc727db97689512aef5ca928fc",
       "created_at" : "2022-06-13T15:37:00Z",
@@ -1353,6 +1316,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-13T15:37:02Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/895867288",
       "user" : {
@@ -1420,6 +1384,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-15T09:21:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/897746657",
       "user" : {
@@ -1499,7 +1464,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/898138477"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "When I was looking at it, this function just seemed so intertwined with the rest of `addPackageTxs`. Both `mapModifiedTx` and `failedTx` are local variables to `addPackageTxs` and without the function abstraction we can also drop the `AssertLockHeld`. I agree that `addPackageTxs` is quite large and we could break it down into pieces where appropriate but I'm not sure that this is the right place.\r\n\r\nIf we were to make it static we'd have to pass in the mempool and inBlock.",
       "commit_id" : "0f1a259657280afc727db97689512aef5ca928fc",
       "created_at" : "2022-06-15T15:38:18Z",
@@ -1532,6 +1497,7 @@
       "side" : "LEFT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-15T15:38:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/898138477",
       "user" : {
@@ -1567,7 +1533,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/898164322"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "The `BlockAssembler::addPackageTxs` function now has access two different mempool variables: a `mempool` argument, and a `this->m_mempool` member variable. Right now these point to the same mempool, and the current `addPackageTxs` code only refers to `mempool` instead of `m_mempool` after this PR. But there is no enforcement for these things, so they can easily change and bugs could show up with no one noticing.\r\n\r\nIMO, either this new `mempool` argument should be dropped and function should go back to using `m_mempool`, or the `m_mempool` member should be dropped so it is guaranteed that function is only using `mempool`. But having multiple aliases for no reason is confusing and asking for bugs",
       "commit_id" : "0f1a259657280afc727db97689512aef5ca928fc",
       "created_at" : "2022-06-15T16:02:44Z",
@@ -1599,6 +1565,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-15T16:02:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/898164322",
       "user" : {
@@ -1634,7 +1601,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/898189606"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Added to the project issue TODO list: #24303",
       "commit_id" : "0f1a259657280afc727db97689512aef5ca928fc",
       "created_at" : "2022-06-15T16:29:30Z",
@@ -1667,6 +1634,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-15T16:29:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/898189606",
       "user" : {
@@ -1735,6 +1703,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-15T17:19:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/898233059",
       "user" : {
@@ -1770,7 +1739,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/898246987"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I mean honestly all the \"helper functions for addPackageTxs()\" listed in the header could be made static, also `AddToBlock`, and then `inBlock` could be a local var in `addPackageTxs`. That would minimize the `BlockAssembler` interface quite nicely. Lots of shuffling around tho.",
       "commit_id" : "0f1a259657280afc727db97689512aef5ca928fc",
       "created_at" : "2022-06-15T17:35:15Z",
@@ -1803,6 +1772,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-06-15T17:35:15Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/898246987",
       "user" : {

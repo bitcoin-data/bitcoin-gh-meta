@@ -117,7 +117,7 @@
       "pull_request_review_id" : 773877852,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23197",
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -125,12 +125,13 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/724159991/reactions"
       },
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2021-10-07T13:05:29Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/724159991",
       "user" : {
@@ -155,7 +156,76 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/23197#discussion_r753167341"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23197"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/753167341"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "`CSubNet::ToString()` probably needs something like the following at the start:\r\n\r\n```cpp\r\nif (!valid) {\r\n    return \"invalid subnet\"; // or throw?\r\n}\r\n```\r\n\r\nAnd then, here, assert that `NetmaskBits()` always returns a good value.\r\n\r\nIn general, I don't like the notion of allowing objects that are not valid. I think it is clearer to never allow invalid objects in the first place - `throw` an exception from the constructor on invalid input instead of creating \"an invalid\" object and carry it all over the place and then wonder \"How should I proceed if asked to convert this invalid stuff to string?\" or \"How should I compare this invalid subnet with another one? Is it bigger or smaller or equal to a valid one? To another invalid one?\" (end of rant)",
+      "commit_id" : "799704d8ed8602d1d6cd711b7c46a2d5e3e7ae26",
+      "created_at" : "2021-11-19T12:54:42Z",
+      "diff_hunk" : "@@ -1187,7 +1187,12 @@ std::string CSubNet::ToString() const\n             if (netmask[i] == 0x00) {\n                 break;\n             }\n-            cidr += NetmaskBits(netmask[i]);\n+            const int bits{NetmaskBits(netmask[i])};\n+            if (bits == -1) {\n+                // Invalid subnet mask.",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/23197#discussion_r753167341",
+      "id" : 753167341,
+      "in_reply_to_id" : 724159991,
+      "line" : 1192,
+      "node_id" : "PRRC_kwDOABII584s5Gvt",
+      "original_commit_id" : "799704d8ed8602d1d6cd711b7c46a2d5e3e7ae26",
+      "original_line" : 1192,
+      "original_position" : 7,
+      "original_start_line" : null,
+      "path" : "src/netaddress.cpp",
+      "position" : 7,
+      "pull_request_review_id" : 811172360,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/23197",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/753167341/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2021-11-19T13:00:40Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/753167341",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/266751?v=4",
+         "events_url" : "https://api.github.com/users/vasild/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/vasild/followers",
+         "following_url" : "https://api.github.com/users/vasild/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/vasild/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/vasild",
+         "id" : 266751,
+         "login" : "vasild",
+         "node_id" : "MDQ6VXNlcjI2Njc1MQ==",
+         "organizations_url" : "https://api.github.com/users/vasild/orgs",
+         "received_events_url" : "https://api.github.com/users/vasild/received_events",
+         "repos_url" : "https://api.github.com/users/vasild/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/vasild/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/vasild/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/vasild"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
       "body" : "> How is it possible to construct `CNetMask` objects with non-CIDR mask?\r\n\r\nRight, how is that possible? The fuzzer uses [`ConsumeSubNet()`](https://github.com/bitcoin/bitcoin/blob/fe03f7a37fd0ef05149161f6b95a25493e1fe38f/src/test/fuzz/util.h#L242-L245) which calls this constructor: [`CSubNet(const CNetAddr& addr, uint8_t mask)`](https://github.com/bitcoin/bitcoin/blob/fe03f7a37fd0ef05149161f6b95a25493e1fe38f/src/netaddress.cpp#L1059-L1078). I don't see how that constructor could create `CSubNet` object with `netmask` member that has 0-bits followed by 1-bits. Even if it creates `CSubNet` with `valid` equal to `false`, then `netmask` should be all zeros.\r\n\r\nThe logs from the CI are gone. Maybe remove the URL to cirrus-ci.com from the commit message because it is now useless.",
       "created_at" : "2021-11-19T13:10:49Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23197#issuecomment-974058982",
@@ -243,7 +313,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Ok, the removed `CSubNet` unserialize method could have produced such a bricked `CSubNet` object (even with `valid` set to `true`).\r\n\r\nI removed the suppression and pushed to my personal CI at https://cirrus-ci.com/task/5343275400822784 and it is green.\r\n\r\nI think this PR should be reduced to just removing the suppression.",
       "created_at" : "2021-11-19T16:24:09Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/23197#issuecomment-974215976",
@@ -252,7 +322,7 @@
       "node_id" : "IC_kwDOABII5846EVso",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -260,7 +330,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/974215976/reactions"
       },
       "updated_at" : "2021-11-19T16:24:09Z",

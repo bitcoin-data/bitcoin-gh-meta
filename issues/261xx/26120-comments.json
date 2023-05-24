@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [ajtowns](https://github.com/bitcoin/bitcoin/pull/26120#pullrequestreview-1221249007), [hebasto](https://github.com/bitcoin/bitcoin/pull/26120#pullrequestreview-1221341486) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nNo conflicts as of last run.\n",
       "created_at" : "2022-09-23T03:26:59Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26120#issuecomment-1255763399",
@@ -143,21 +143,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/983855786"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Maybe just pass in both a `std::atomic<bool>& found` and a `std::atomic<uint32_t>& proposed_nonce` with the threads doing:\r\n\r\n```c++\r\nif (hash <= target) { found = true; proposed_nonce = header.nNonce; return; }\r\n```\r\n\r\nand the parent doing\r\n```c++\r\nif (found) { header.nNonce = proposed_nonce }\r\nelse { error; }\r\n```",
-      "commit_id" : "fa0f81937d890a16be1b9604e56988e2276d0316",
+      "commit_id" : "fafcc9439838b3f084fc054b91bca4b50ee62df5",
       "created_at" : "2022-09-29T17:46:03Z",
       "diff_hunk" : "@@ -122,17 +119,19 @@ static int Grind(const std::vector<std::string>& args, std::string& strPrint)\n     }\n \n     uint32_t nBits = header.nBits;\n-    std::atomic<bool> found{false};\n+    std::atomic<std::optional<uint32_t>> found{};\n \n     std::vector<std::thread> threads;\n     int n_tasks = std::max(1u, std::thread::hardware_concurrency());\n     for (int i = 0; i < n_tasks; ++i) {\n-        threads.emplace_back( grind_task, nBits, std::ref(header), i, n_tasks, std::ref(found) );\n+        threads.emplace_back(grind_task, nBits, header, i, n_tasks, std::ref(found));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26120#discussion_r983855786",
       "id" : 983855786,
-      "line" : 127,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5846pHKq",
       "original_commit_id" : "fa0f81937d890a16be1b9604e56988e2276d0316",
       "original_line" : 127,
       "original_position" : 40,
       "original_start_line" : null,
       "path" : "src/bitcoin-util.cpp",
-      "position" : 40,
+      "position" : null,
       "pull_request_review_id" : 1125754650,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26120",
       "reactions" : {
@@ -175,6 +175,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-29T17:46:22Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/983855786",
       "user" : {
@@ -210,22 +211,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/983873106"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "(gcc seems to treat `optional<atomic<int>>` and `atomic<bool> + atomic<int>` pretty similarly; clang seems to need to do calls to atomic_load/atomic_store with the optional which seems lame to me. mostly the code seems easier to read without the `.load()` and `.has_value()` stuff. But only very weak preference)",
-      "commit_id" : "fa0f81937d890a16be1b9604e56988e2276d0316",
+      "commit_id" : "fafcc9439838b3f084fc054b91bca4b50ee62df5",
       "created_at" : "2022-09-29T18:04:19Z",
       "diff_hunk" : "@@ -122,17 +119,19 @@ static int Grind(const std::vector<std::string>& args, std::string& strPrint)\n     }\n \n     uint32_t nBits = header.nBits;\n-    std::atomic<bool> found{false};\n+    std::atomic<std::optional<uint32_t>> found{};\n \n     std::vector<std::thread> threads;\n     int n_tasks = std::max(1u, std::thread::hardware_concurrency());\n     for (int i = 0; i < n_tasks; ++i) {\n-        threads.emplace_back( grind_task, nBits, std::ref(header), i, n_tasks, std::ref(found) );\n+        threads.emplace_back(grind_task, nBits, header, i, n_tasks, std::ref(found));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26120#discussion_r983873106",
       "id" : 983873106,
       "in_reply_to_id" : 983855786,
-      "line" : 127,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5846pLZS",
       "original_commit_id" : "fa0f81937d890a16be1b9604e56988e2276d0316",
       "original_line" : 127,
       "original_position" : 40,
       "original_start_line" : null,
       "path" : "src/bitcoin-util.cpp",
-      "position" : 40,
+      "position" : null,
       "pull_request_review_id" : 1125779219,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26120",
       "reactions" : {
@@ -243,6 +244,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-09-29T18:04:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/983873106",
       "user" : {
@@ -280,7 +282,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Huh? Are you sure this will work. What if the thread is put to sleep after `found=true` and before setting the nonce. Then, the parent will succeed with `if(found)`, but fail to read the nonce.",
-      "commit_id" : "2222b089792f9db72ec78ca136f2fa3413ce1f27",
+      "commit_id" : "fafcc9439838b3f084fc054b91bca4b50ee62df5",
       "created_at" : "2022-12-08T15:26:18Z",
       "diff_hunk" : "@@ -122,17 +119,19 @@ static int Grind(const std::vector<std::string>& args, std::string& strPrint)\n     }\n \n     uint32_t nBits = header.nBits;\n-    std::atomic<bool> found{false};\n+    std::atomic<std::optional<uint32_t>> found{};\n \n     std::vector<std::thread> threads;\n     int n_tasks = std::max(1u, std::thread::hardware_concurrency());\n     for (int i = 0; i < n_tasks; ++i) {\n-        threads.emplace_back( grind_task, nBits, std::ref(header), i, n_tasks, std::ref(found) );\n+        threads.emplace_back(grind_task, nBits, header, i, n_tasks, std::ref(found));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26120#discussion_r1043482146",
@@ -311,6 +313,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-08T15:26:29Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1043482146",
       "user" : {
@@ -348,7 +351,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Oh, I guess it requires the threads to join, which was the requirement before as well.",
-      "commit_id" : "2222b089792f9db72ec78ca136f2fa3413ce1f27",
+      "commit_id" : "fafcc9439838b3f084fc054b91bca4b50ee62df5",
       "created_at" : "2022-12-08T15:27:33Z",
       "diff_hunk" : "@@ -122,17 +119,19 @@ static int Grind(const std::vector<std::string>& args, std::string& strPrint)\n     }\n \n     uint32_t nBits = header.nBits;\n-    std::atomic<bool> found{false};\n+    std::atomic<std::optional<uint32_t>> found{};\n \n     std::vector<std::thread> threads;\n     int n_tasks = std::max(1u, std::thread::hardware_concurrency());\n     for (int i = 0; i < n_tasks; ++i) {\n-        threads.emplace_back( grind_task, nBits, std::ref(header), i, n_tasks, std::ref(found) );\n+        threads.emplace_back(grind_task, nBits, header, i, n_tasks, std::ref(found));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26120#discussion_r1043483558",
@@ -379,6 +382,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-08T15:27:33Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1043483558",
       "user" : {
@@ -416,7 +420,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Thanks, done",
-      "commit_id" : "2222b089792f9db72ec78ca136f2fa3413ce1f27",
+      "commit_id" : "fafcc9439838b3f084fc054b91bca4b50ee62df5",
       "created_at" : "2022-12-08T15:50:33Z",
       "diff_hunk" : "@@ -122,17 +119,19 @@ static int Grind(const std::vector<std::string>& args, std::string& strPrint)\n     }\n \n     uint32_t nBits = header.nBits;\n-    std::atomic<bool> found{false};\n+    std::atomic<std::optional<uint32_t>> found{};\n \n     std::vector<std::thread> threads;\n     int n_tasks = std::max(1u, std::thread::hardware_concurrency());\n     for (int i = 0; i < n_tasks; ++i) {\n-        threads.emplace_back( grind_task, nBits, std::ref(header), i, n_tasks, std::ref(found) );\n+        threads.emplace_back(grind_task, nBits, header, i, n_tasks, std::ref(found));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26120#discussion_r1043514654",
@@ -447,6 +451,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-08T15:50:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1043514654",
       "user" : {
@@ -471,7 +476,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Commit message says \"Also, fix l_atomic.m4 bug.\" but that doesn't seem to be touched?",
       "created_at" : "2022-12-15T22:31:35Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26120#issuecomment-1353799996",
@@ -480,7 +485,7 @@
       "node_id" : "IC_kwDOABII585QsVk8",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -488,7 +493,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1353799996/reactions"
       },
       "updated_at" : "2022-12-15T22:31:35Z",
@@ -524,7 +529,7 @@
       "node_id" : "IC_kwDOABII585QyYdI",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -532,7 +537,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1355384648/reactions"
       },
       "updated_at" : "2022-12-16T18:29:19Z",

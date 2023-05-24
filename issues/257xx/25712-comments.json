@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > To keep the diff minimal and to avoid having to change the callers,\r\n> \r\n> I don't think there's any point keeping redundant code for the sake of a smaller diff. Someone is just going to open a PR to remove the code later on. Might as well remove it here.\r\n\r\nSure, but before tackling that I'd want to 1) have consensus first that there's really no need for 16-byte keys and 2) discuss which exact interface would make sense (e.g. only removing the size parameter and just keeping the pointer as input parameter seems to be fishy and dangerous; the burden of the length check would just move to all callers).",
       "created_at" : "2022-07-26T14:16:18Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25712#issuecomment-1195543471",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#26153](https://github.com/bitcoin/bitcoin/pull/26153) (Reduce wasted pseudorandom bytes in ChaCha20 + various improvements by sipa)\n* [#25903](https://github.com/bitcoin/bitcoin/pull/25903) (Use static member functions from class instead of instances by aureleoules)\n* [#25698](https://github.com/bitcoin/bitcoin/pull/25698) (crypto: avoid potential buffer overread in `ChaCha20::SetKey` by theStack)\n* [#25361](https://github.com/bitcoin/bitcoin/pull/25361) (BIP324: Cipher suite by dhruv)\n* [#25172](https://github.com/bitcoin/bitcoin/pull/25172) (refactor: use std:: prefix for std lib funcs by fanquake)\n* [#23561](https://github.com/bitcoin/bitcoin/pull/23561) (BIP324: Handshake prerequisites by dhruv)\n* [#23233](https://github.com/bitcoin/bitcoin/pull/23233) (BIP324: Add encrypted p2p transport {de}serializer by dhruv)\n* [#16545](https://github.com/bitcoin/bitcoin/pull/16545) (refactor: Implement missing error checking for ArgsManager flags by ryanofsky)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-07-26T17:27:17Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25712#issuecomment-1195769804",
@@ -145,19 +145,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Could use\r\n\r\n```c++\r\ninput[0] = 0x61707865;\r\ninput[1] = 0x3320646e;\r\ninput[2] = 0x79622d32;\r\ninput[3] = 0x6b206574;\r\n```\r\n\r\nOr even better: make the input variable only 12 long, and replace accesses to input 0..3 with these constants.",
-      "commit_id" : "88d2b510faa3498202e3e7b66d5b0ae05e989cf8",
+      "commit_id" : "0f17395123e55ebcd495c2a65730be085a7fa066",
       "created_at" : "2022-08-23T17:57:40Z",
       "diff_hunk" : "@@ -21,30 +22,23 @@ constexpr static inline uint32_t rotl32(uint32_t v, int c) { return (v << c) | (\n #define REPEAT10(a) do { {a}; {a}; {a}; {a}; {a}; {a}; {a}; {a}; {a}; {a}; } while(0)\n \n static const unsigned char sigma[] = \"expand 32-byte k\";\n-static const unsigned char tau[] = \"expand 16-byte k\";\n \n void ChaCha20::SetKey(const unsigned char* k, size_t keylen)\n {\n-    const unsigned char *constants;\n+    assert(keylen == 32);\n \n+    input[0] = ReadLE32(sigma + 0);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25712#discussion_r952954376",
       "id" : 952954376,
-      "line" : 30,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5844zO4I",
       "original_commit_id" : "88d2b510faa3498202e3e7b66d5b0ae05e989cf8",
       "original_line" : 30,
       "original_position" : 21,
       "original_start_line" : null,
       "path" : "src/crypto/chacha20.cpp",
-      "position" : 21,
+      "position" : null,
       "pull_request_review_id" : 1082618711,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25712",
       "reactions" : {
@@ -175,6 +175,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-23T17:57:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/952954376",
       "user" : {
@@ -210,9 +211,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/953195537"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Or even better: make the input variable only 12 long, and replace accesses to input 0..3 with these constants.\r\n\r\nThanks, done.",
-      "commit_id" : "586330e83887ec081c50c2184f6c89fd611fff5c",
+      "commit_id" : "0f17395123e55ebcd495c2a65730be085a7fa066",
       "created_at" : "2022-08-23T23:48:44Z",
       "diff_hunk" : "@@ -21,30 +22,23 @@ constexpr static inline uint32_t rotl32(uint32_t v, int c) { return (v << c) | (\n #define REPEAT10(a) do { {a}; {a}; {a}; {a}; {a}; {a}; {a}; {a}; {a}; {a}; } while(0)\n \n static const unsigned char sigma[] = \"expand 32-byte k\";\n-static const unsigned char tau[] = \"expand 16-byte k\";\n \n void ChaCha20::SetKey(const unsigned char* k, size_t keylen)\n {\n-    const unsigned char *constants;\n+    assert(keylen == 32);\n \n+    input[0] = ReadLE32(sigma + 0);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25712#discussion_r953195537",
@@ -243,6 +244,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-23T23:48:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/953195537",
       "user" : {
@@ -267,7 +269,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Force-pushed, reduced the `input` array size from 16 to 12 elements by using the sigma constants directly where previously `input[0..3]` was accessed, [as suggested by sipa](https://github.com/bitcoin/bitcoin/pull/25712#discussion_r952954376). As a consequence, the indices of all other `input` accesses are reduced by 4 (s/input[4]/input[0]/, s/input[5]/input[1]/ ... s/input[15]/input[11]/).",
       "created_at" : "2022-08-23T23:48:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25712#issuecomment-1225000077",
@@ -355,7 +357,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> ```\r\n> fuzz: test/fuzz/crypto_diff_fuzz_chacha20.cpp:317: auto crypto_diff_fuzz_chacha20_fuzz_target(FuzzBufferType)::(anonymous class)::operator()() const: Assertion `output == djb_output' failed.\r\n> ```\r\n\r\nThis seems to be triggered on the empty ctor-case, when no key has been set yet. Since I don't want to fiddle around too much in the differential fuzz test (setting `ctx.input[0..3]` to the sigma constant values would probably do the trick), I reverted to a simpler version without input array size change in the latest force-push.",
       "created_at" : "2022-08-25T01:19:33Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25712#issuecomment-1226662411",
@@ -399,7 +401,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Closed in favour or #26153 (includes removing 16-byte key support).",
       "created_at" : "2022-10-02T22:34:06Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25712#issuecomment-1264748662",

@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I guess I'd be curious to see real examples of where it is useful. It seems to me like most of the places where you could use `not_null<T*>` you could use `T&` instead and references seem nicer to me aesthetically, and I like how they limit what you can do with the variable (just access the data not do mess with pointer or ownership). The only cases where `not_null` seems really useful is when when you need the pointer variable to be able change which object it is pointing to. This could be better in some data structures than raw pointers or reference_wrappers (https://stackoverflow.com/questions/33306553/gslnot-nullt-vs-stdreference-wrappert-vs-t), but I don't think these cases are very common in our codebase. \r\n\r\nI think in general replacing `T&` with `not_null<T*>` would be bad, while using `not_null<T*>` in certain data structures could be good. A more neutral case could be replacing things like:\r\n\r\n```c++\r\nconst CChain& active = Assert(m_node.chainman)->ActiveChain();\r\n```\r\n\r\nwith\r\n\r\n```c++\r\nconst CChain& active = m_node.chainman->ActiveChain();\r\n```\r\n\r\nYou get same runtime assert in either case here, but in first case author is clearly stating intention for chainman to be not null **here** at this line of the code, while in second case with `not_null` author is just saying the pointer shouldn't be null any place it is dereferenced, which isn't saying much. I could see people preferring the second version though.",
       "created_at" : "2022-02-23T13:43:37Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24423#issuecomment-1048795957",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> To turn runtime errors into compile errors #19273 ?\r\n\r\nIs #19273 the right issue? I think point of not_null has more to do with safety around accessing data, not allocating objects.\r\n\r\nTo be clear why I was asking for examples, I don't have any problem not_null, but I do think references are better than not_nulls in most cases and am responding to \"In many such cases, we may want to avoid needing to handle the pointer being null, or make it clear in the function contract that we require a non-null pointer\" in the issue description.",
       "created_at" : "2022-02-23T14:04:42Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24423#issuecomment-1048814606",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> So you are saying there should be a `UniqueReference` (similar to `std::unique_ptr` when it comes to memory management and similar to `std::reference_wrapper` when it comes to accessing data)?\r\n\r\nI think the point of references is that they are transparent aliases to data somewhere that you should just access and not try to do memory management with. So if you are writing a function that just needs to access data \r\n`f(Data& data)` is better than `f(not_null<Data*> data)` or `f(not_null<unique_ptr<Data>> data)`.  I could imagine `not_null<unique_ptr>`  and `not_null<shared_ptr>` stuff being useful in some places, just not a lot of places, so I'm asking what the motivating examples are to see if they are really calling for `not_null`.",
       "created_at" : "2022-02-23T14:45:57Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24423#issuecomment-1048859022",
@@ -264,7 +264,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I can see how references and reference_wrapper (which I didn't know was zero-cost until today) can solve most of the cases. I do think that `not_null<unique_ptr>` and `not_null<shared_ptr>` are useful when we're passing around (shared) ownership and perhaps we can focus on those use-cases (e.g. `RegisterSharedValidationInterface`)",
       "created_at" : "2022-02-23T19:29:35Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24423#issuecomment-1049136761",
@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I think @dongcarl pointed to a concrete example of where passing a reference or `std::reference_wrapper` won't work as an access model: when inheritance is needed. So, I can imagine `not_null<BaseClass*>` potentially being a useful pattern there.\r\n\r\nI'm curious about this, but I don't see what it is referring to. It seems like inheritance should be orthogonal to nullability and which pointer or reference mechanism is used.\r\n\r\n> I'm curious though, is this better than using the [nonnull](https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html) attribute when needed? In terms of expressiveness, it seems to me that it might be more useful to peg the property to a specific parameter and locale than a storage duration. It wouldn't be correct-by-construction that way, but we could still get warnings/errors.\r\n> \r\n> So I guess my question is: is it more useful to enforce as part of the function signature, or storage duration?\r\n\r\nIt seems like ideal thing would be for the `not_null` type to automatically apply the `nonnull` compiler hint. Question of which is \"more useful\" is probably hard to answer without knowing specifics of a situation, and what level of analysis and optimization compiler will do, but I think it should be safe to say both are useful, and have some overlapping benefits, and some non-overlapping benefits.\r\n\r\nOn larger issue I definitely think `not_null` is useful in some cases. Just not very many cases I'm aware of. And in most cases where it is possible to use references, I think it is better to use references.",
       "created_at" : "2022-02-24T10:54:41Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24423#issuecomment-1049734226",
@@ -396,7 +396,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In any case, I think having not_null for `not_null<unqiue_ptr<T>>` is quite useful in itself as we incrementally move towards having clearer ownership semantics.",
       "created_at" : "2022-03-02T17:57:05Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/24423#issuecomment-1057214321",

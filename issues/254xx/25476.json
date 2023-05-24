@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "This removes generation of 6 blocks and replaces is with a `sync_all` in the `importdescriptors` test.\r\n\r\nThe generated blocks themself don't seem to serve any purpose in the test. Instead they could make the test flaky (although I did not find open issues pointing to this happening in practice in the CI). Right before the blocks being generated a transaction is created (L454) and later in the test this tx is assumed to be still in the mempool. If the nodes were to sync their mempools before the blocks are generated, the test fails. It currently only seems to work because one node sends the tx while the other generates the blocks and the mempools are not synced fast enough.\r\n\r\nThe `sync_all` is still needed to let nodes catch up at that point. Otherwise races happen further below which the generate call seems to have prevented so far.",
    "closed_at" : "2022-06-27T06:18:15Z",
    "closed_by" : {

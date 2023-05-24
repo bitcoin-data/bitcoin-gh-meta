@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [MarcoFalke](https://github.com/bitcoin/bitcoin/pull/26628#pullrequestreview-1213233538), [kristapsk](https://github.com/bitcoin/bitcoin/pull/26628#pullrequestreview-1215302559), [stickies-v](https://github.com/bitcoin/bitcoin/pull/26628#pullrequestreview-1215943021) |\n| Concept ACK | [luke-jr](https://github.com/bitcoin/bitcoin/pull/26628#issuecomment-1340616084) |\n| Stale ACK | [promag](https://github.com/bitcoin/bitcoin/pull/26628#pullrequestreview-1209198527) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#26612](https://github.com/bitcoin/bitcoin/pull/26612) ([WIP] refactor: RPC: pass named argument as string_view by stickies-v)\n* [#26506](https://github.com/bitcoin/bitcoin/pull/26506) (refactor: rpc: use convenience fn to auto parse non-string parameters by stickies-v)\n* [#26485](https://github.com/bitcoin/bitcoin/pull/26485) (RPC: Add support for name-only parameters by ryanofsky)\n* [#19949](https://github.com/bitcoin/bitcoin/pull/19949) (cli: Parse and allow hash value by fjahr)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2022-12-03T00:00:13Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26628#issuecomment-1335973008",
@@ -57,7 +57,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "nit: Could fix https://github.com/bitcoin/bitcoin/pull/19762#discussion_r1035955247 here as well?",
-      "commit_id" : "763d3947d34fa71f1a0816c95fb6e206507e2ece",
+      "commit_id" : "8c3ff7d52ae3314959e1e66da8718a3f0d30abaa",
       "created_at" : "2022-12-03T11:27:55Z",
       "diff_hunk" : "@@ -89,6 +89,10 @@ BOOST_AUTO_TEST_CASE(rpc_namedparams)\n     // Make sure named arguments are transformed into positional arguments in correct places separated by nulls\n     BOOST_CHECK_EQUAL(TransformParams(JSON(R\"({\"arg2\": 2, \"arg4\": 4})\"), arg_names).write(), \"[null,2,null,4]\");\n \n+    // Make sure named argument specified multiple times raises an exception\n+    BOOST_CHECK_EXCEPTION(TransformParams(JSON(R\"({\"arg2\": 2, \"arg2\": 4})\"), arg_names), UniValue,\n+                          HasJSON(R\"({\"code\":-8,\"message\":\"Parameter arg2 specified multiple times\"})\"));\n+\n     // Make sure named and positional arguments can be combined.\n     BOOST_CHECK_EQUAL(TransformParams(JSON(R\"({\"arg5\": 5, \"args\": [1, 2], \"arg4\": 4})\"), arg_names).write(), \"[1,2,null,4,5]\");\n ",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26628#discussion_r1038765894",
@@ -69,7 +69,7 @@
       "original_position" : 10,
       "original_start_line" : null,
       "path" : "src/test/rpc_tests.cpp",
-      "position" : 10,
+      "position" : 16,
       "pull_request_review_id" : 1203454843,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26628",
       "reactions" : {
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-03T11:28:56Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1038765894",
       "user" : {
@@ -124,19 +125,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "```suggestion\r\nThe JSON-RPC server now rejects requests where same named parameter is specified multiple times, instead of silently overwriting earlier parameter values with later ones. (#26628)\r\n```",
-      "commit_id" : "763d3947d34fa71f1a0816c95fb6e206507e2ece",
+      "commit_id" : "8c3ff7d52ae3314959e1e66da8718a3f0d30abaa",
       "created_at" : "2022-12-03T11:28:42Z",
       "diff_hunk" : "@@ -0,0 +1,4 @@\n+JSON-RPC\n+---\n+\n+The JSON-RPC server now rejects requests where same named parameter is specified multiple times, instead of silently overwriting earlier parameter values with later ones.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26628#discussion_r1038765948",
       "id" : 1038765948,
-      "line" : 4,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII58496k98",
       "original_commit_id" : "763d3947d34fa71f1a0816c95fb6e206507e2ece",
       "original_line" : 4,
       "original_position" : 4,
       "original_start_line" : null,
       "path" : "doc/release-notes-xxxxx.md",
-      "position" : 4,
+      "position" : null,
       "pull_request_review_id" : 1203454843,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26628",
       "reactions" : {
@@ -154,6 +155,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-03T11:28:56Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1038765948",
       "user" : {
@@ -189,21 +191,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1040866303"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "```suggestion\r\nThe JSON-RPC server now rejects requests where a parameter is specified multiple times with the same name, instead of silently overwriting earlier parameter values with later ones.\r\n```",
-      "commit_id" : "763d3947d34fa71f1a0816c95fb6e206507e2ece",
+      "commit_id" : "8c3ff7d52ae3314959e1e66da8718a3f0d30abaa",
       "created_at" : "2022-12-06T11:43:48Z",
       "diff_hunk" : "@@ -0,0 +1,4 @@\n+JSON-RPC\n+---\n+\n+The JSON-RPC server now rejects requests where same named parameter is specified multiple times, instead of silently overwriting earlier parameter values with later ones.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26628#discussion_r1040866303",
       "id" : 1040866303,
-      "line" : 4,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584-Clv_",
       "original_commit_id" : "763d3947d34fa71f1a0816c95fb6e206507e2ece",
       "original_line" : 4,
       "original_position" : 4,
       "original_start_line" : null,
       "path" : "doc/release-notes-xxxxx.md",
-      "position" : 4,
+      "position" : null,
       "pull_request_review_id" : 1206430983,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26628",
       "reactions" : {
@@ -221,6 +223,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-06T12:32:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1040866303",
       "user" : {
@@ -256,9 +259,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1040886210"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I'm not sure if it's worth changing, but seeing this test made me realize this error message could be confusing feedback to a user? They're not specifying `args` multiple times _explicitly_ - the fact that it's labelled `args` internally may not be immediately obvious? But also maybe it's a bit unnecessary to add special error handling for the `args` case. ",
-      "commit_id" : "763d3947d34fa71f1a0816c95fb6e206507e2ece",
+      "commit_id" : "8c3ff7d52ae3314959e1e66da8718a3f0d30abaa",
       "created_at" : "2022-12-06T12:03:19Z",
       "diff_hunk" : "@@ -90,6 +90,10 @@ def run_test(self):\n         assert_raises_rpc_error(-8, \"Parameter arg1 specified twice both as positional and named argument\", self.nodes[0].cli.echo, 0, 1, arg1=1)\n         assert_raises_rpc_error(-8, \"Parameter arg1 specified twice both as positional and named argument\", self.nodes[0].cli.echo, 0, None, 2, arg1=1)\n \n+        self.log.info(\"Test that later cli named arguments values silently overwrite earlier ones\")\n+        assert_equal(self.nodes[0].cli(\"-named\", \"echo\", \"arg0=0\", \"arg1=1\", \"arg2=2\", \"arg1=3\").send_cli(), ['0', '3', '2'])\n+        assert_raises_rpc_error(-8, \"Parameter args specified multiple times\", self.nodes[0].cli(\"-named\", \"echo\", \"args=[0,1,2,3]\", \"4\", \"5\", \"6\", ).send_cli)",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26628#discussion_r1040886210",
@@ -288,6 +291,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-06T12:32:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1040886210",
       "user" : {
@@ -323,21 +327,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1040912934"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: I think it's reasonable enough to skip using the intermediate `inserted` variable entirely, but if you think it's better for readability I'd suggest going all the way and make `inserted` the actual boolean directly?\r\n```suggestion\r\n        auto [_, inserted] = argsIn.emplace(keys[i], &values[i]);\r\n        if (!inserted) {\r\n```",
-      "commit_id" : "763d3947d34fa71f1a0816c95fb6e206507e2ece",
+      "commit_id" : "8c3ff7d52ae3314959e1e66da8718a3f0d30abaa",
       "created_at" : "2022-12-06T12:29:18Z",
       "diff_hunk" : "@@ -399,7 +399,10 @@ static inline JSONRPCRequest transformNamedArguments(const JSONRPCRequest& in, c\n     const std::vector<UniValue>& values = in.params.getValues();\n     std::unordered_map<std::string, const UniValue*> argsIn;\n     for (size_t i=0; i<keys.size(); ++i) {\n-        argsIn[keys[i]] = &values[i];\n+        auto inserted = argsIn.emplace(keys[i], &values[i]);\n+        if (!inserted.second) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26628#discussion_r1040912934",
       "id" : 1040912934,
-      "line" : 403,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584-CxIm",
       "original_commit_id" : "763d3947d34fa71f1a0816c95fb6e206507e2ece",
       "original_line" : 403,
       "original_position" : 6,
       "original_start_line" : 402,
       "path" : "src/rpc/server.cpp",
-      "position" : 6,
+      "position" : null,
       "pull_request_review_id" : 1206430983,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26628",
       "reactions" : {
@@ -353,8 +357,9 @@
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1040912934/reactions"
       },
       "side" : "RIGHT",
-      "start_line" : 402,
+      "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-12-06T12:32:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1040912934",
       "user" : {
@@ -390,22 +395,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1040914210"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "File name still has to be updated too",
-      "commit_id" : "763d3947d34fa71f1a0816c95fb6e206507e2ece",
+      "commit_id" : "8c3ff7d52ae3314959e1e66da8718a3f0d30abaa",
       "created_at" : "2022-12-06T12:30:01Z",
       "diff_hunk" : "@@ -0,0 +1,4 @@\n+JSON-RPC\n+---\n+\n+The JSON-RPC server now rejects requests where same named parameter is specified multiple times, instead of silently overwriting earlier parameter values with later ones.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26628#discussion_r1040914210",
       "id" : 1040914210,
       "in_reply_to_id" : 1038765948,
-      "line" : 4,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584-Cxci",
       "original_commit_id" : "763d3947d34fa71f1a0816c95fb6e206507e2ece",
       "original_line" : 4,
       "original_position" : 4,
       "original_start_line" : null,
       "path" : "doc/release-notes-xxxxx.md",
-      "position" : 4,
+      "position" : null,
       "pull_request_review_id" : 1206430983,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26628",
       "reactions" : {
@@ -423,6 +428,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-06T12:32:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1040914210",
       "user" : {
@@ -504,19 +510,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "763d3947d34fa71f1a0816c95fb6e206507e2ece\r\n\r\nUsing `args=` is fine but not when used along with positional arguments. Agree with @stickies-v, it's not that clear from the error message what the user should do.\r\n\r\nAn alternative is to fail here if `params` already contain `args`.",
-      "commit_id" : "763d3947d34fa71f1a0816c95fb6e206507e2ece",
+      "commit_id" : "8c3ff7d52ae3314959e1e66da8718a3f0d30abaa",
       "created_at" : "2022-12-07T22:16:15Z",
       "diff_hunk" : "@@ -299,7 +299,7 @@ UniValue RPCConvertNamedValues(const std::string &strMethod, const std::vector<s\n     }\n \n     if (!positional_args.empty()) {\n-        params.pushKV(\"args\", positional_args);\n+        params.__pushKV(\"args\", positional_args);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26628#discussion_r1042735740",
       "id" : 1042735740,
-      "line" : 302,
+      "line" : 308,
       "node_id" : "PRRC_kwDOABII584-JuJ8",
       "original_commit_id" : "763d3947d34fa71f1a0816c95fb6e206507e2ece",
-      "original_line" : 302,
+      "original_line" : 308,
       "original_position" : 5,
       "original_start_line" : null,
       "path" : "src/rpc/client.cpp",
-      "position" : 5,
+      "position" : 18,
       "pull_request_review_id" : 1209198527,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26628",
       "reactions" : {
@@ -534,6 +540,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-07T22:18:27Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1042735740",
       "user" : {
@@ -613,7 +620,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1044569895"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/26628#discussion_r1038765894\r\n\r\n> nit: Could fix [#19762 (comment)](https://github.com/bitcoin/bitcoin/pull/19762#discussion_r1035955247) here as well?\r\n\r\nThanks, added commit with fixups suggested in #19762",
       "commit_id" : "8c3ff7d52ae3314959e1e66da8718a3f0d30abaa",
       "created_at" : "2022-12-09T15:30:58Z",
@@ -646,6 +653,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-09T16:54:17Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1044569895",
       "user" : {
@@ -681,7 +689,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1044579549"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/26628#discussion_r1038765948\r\n\r\n> File name still has to be updated too\r\n\r\nThanks, applied both suggestions",
       "commit_id" : "8c3ff7d52ae3314959e1e66da8718a3f0d30abaa",
       "created_at" : "2022-12-09T15:41:58Z",
@@ -714,6 +722,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-09T16:54:17Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1044579549",
       "user" : {
@@ -749,7 +758,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1044579792"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/26628#discussion_r1040866303\r\n\r\nThanks, applied suggestion",
       "commit_id" : "8c3ff7d52ae3314959e1e66da8718a3f0d30abaa",
       "created_at" : "2022-12-09T15:42:16Z",
@@ -782,6 +791,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-09T16:54:17Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1044579792",
       "user" : {
@@ -817,7 +827,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1044580697"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> [763d394](https://github.com/bitcoin/bitcoin/commit/763d3947d34fa71f1a0816c95fb6e206507e2ece)\r\n> \r\n> Using `args=` is fine but not when used along with positional arguments. Agree with @stickies-v, it's not that clear from the error message what the user should do.\r\n> \r\n> An alternative is to fail here if `params` already contain `args`.\r\n\r\nSee other thread https://github.com/bitcoin/bitcoin/pull/26628#discussion_r1040886210, but I think the message is accurate and not likely in practice to confuse anyone. If this is wrong, there is room to add a special message like the one you're describing later.",
       "commit_id" : "8c3ff7d52ae3314959e1e66da8718a3f0d30abaa",
       "created_at" : "2022-12-09T15:43:15Z",
@@ -850,6 +860,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-09T16:54:17Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1044580697",
       "user" : {
@@ -885,7 +896,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1044583066"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/26628#discussion_r1040912934\r\n\r\n> nit: I think it's reasonable enough to skip using the intermediate `inserted` variable entirely, but if you think it's better for readability I'd suggest going all the way and make `inserted` the actual boolean directly?\r\n\r\nThanks, applied suggestion. Agree it's better to avoid less descriptive \"first\" and \"second\" variables.",
       "commit_id" : "8c3ff7d52ae3314959e1e66da8718a3f0d30abaa",
       "created_at" : "2022-12-09T15:45:52Z",
@@ -918,6 +929,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2022-12-09T16:54:17Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1044583066",
       "user" : {
@@ -953,7 +965,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1044583386"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/26628#discussion_r1040886210\r\n\r\n> I'm not sure if it's worth changing, but seeing this test made me realize this error message could be confusing feedback to a user? They're not specifying `args` multiple times _explicitly_ - the fact that it's labelled `args` internally may not be immediately obvious? But also maybe it's a bit unnecessary to add special error handling for the `args` case.\r\n\r\nPractically speaking, I don't think this is an error case any human is going to see. It's a corner case Marco found in https://github.com/bitcoin/bitcoin/pull/19762#discussion_r1035761471 that was triggering unintended behavior in a newly added feature. Even if a bitcoin-cli user does manage to trigger this, I think the error message is accurate and helpful enough for finding the problem. I wouldn't object to making a change here if there is a specific suggestion, but I also think the current behavior is ok, and there is room to add a special message later if the generic message turns out to be confusing.",
       "commit_id" : "8c3ff7d52ae3314959e1e66da8718a3f0d30abaa",
       "created_at" : "2022-12-09T15:46:14Z",
@@ -986,6 +998,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-12-09T16:54:17Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1044583386",
       "user" : {
@@ -1019,7 +1032,7 @@
       "node_id" : "IC_kwDOABII585RnRy3",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1027,7 +1040,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1369250999/reactions"
       },
       "updated_at" : "2023-01-02T22:36:48Z",

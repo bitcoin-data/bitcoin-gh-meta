@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "<!-- Describe the issue -->\r\n\r\nWhen our chainstate activation sequence fails and we're running the GUI, we ask the user via a question box whether or not they'd like to re-run the sequence with `fReindex = true`. Fun fact: despite the fact that this sequence is wrapped in a while loop, we only run it twice at most.\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/7ecb309c4ed1bb9ae6b9a12cbb4f083328edc125/src/init.cpp#L1539-L1556\r\n\r\nIf they answer yes, the sequence will always fail, because a chainstate will have already been initialized in the original run and `InitializeChainstate` will throw a `std::logic_error`:\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/7ecb309c4ed1bb9ae6b9a12cbb4f083328edc125/src/validation.cpp#L4573-L4594\r\n\r\nThis always reproduces. To reproduce:\r\n```\r\ngdb ./src/qt/bitcoin-qt\r\n(gdb) b InitializeChainstate\r\n(gdb) # add breakpoint for the \"if (!fLoaded && !ShutdownRequested()) {\" line\r\n(gdb) r  # should stop at the breakpoint for InitializeChainstate\r\n(gdb) c  # to advance to the breakpoint for the \"if (!fLoaded && !ShutdownRequested()) {\" line\r\n(gdb) set fLoaded=false\r\n(gdb) c  # should stop at the breakpoint for InitializeChainstate\r\n(gdb) n  # step through InitializeChainstate to see that it throws\r\n```\r\n\r\nWe expect the re-run of the chainstate activation sequence to not always fail.\r\n",
    "closed_at" : "2022-04-28T10:16:13Z",
    "closed_by" : {
@@ -43,7 +43,7 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22964/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "MDU6SXNzdWU5OTUyOTE5Mzg=",
    "number" : 22964,
@@ -62,9 +62,10 @@
    },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : "completed",
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22964/timeline",
    "title" : "bug: Reindex started via `ThreadSafeQuestion` will always fail",
-   "updated_at" : "2022-04-28T10:16:13Z",
+   "updated_at" : "2023-04-28T09:59:11Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/22964",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/3445290?v=4",

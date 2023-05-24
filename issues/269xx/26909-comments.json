@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [sipa](https://github.com/bitcoin/bitcoin/pull/26909#issuecomment-1386183651), [naumenkogs](https://github.com/bitcoin/bitcoin/pull/26909#issuecomment-1396864509) |\n| Stale ACK | [MarcoFalke](https://github.com/bitcoin/bitcoin/pull/26909#issuecomment-1386063992) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25284](https://github.com/bitcoin/bitcoin/pull/25284) ([WIP] consensus: Remove dependency on net (BIP 155 / ADDRV2_FORMAT) by MarcoFalke)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2023-01-17T18:56:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26909#issuecomment-1385901144",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I also considered extending `CHashVerifier` instead of creating a new class, but that didn't work out of the box because of how that class is used in https://github.com/bitcoin/bitcoin/blob/01ec5308bf616740c804247043046b23b483df5c/src/node/blockstorage.cpp#L501 to write data into the hasher without serializing into the file - I'm not too experienced with our streams, so would be interested in opinions on this.",
       "created_at" : "2023-01-17T18:57:02Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26909#issuecomment-1385901501",
@@ -101,19 +101,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Nit: Starting with C++17 you don't need to specify redundant template parameters to constructor calls. Also some other style nits (feel free to ignore):\r\n\r\n```diff\r\ndiff --git a/src/addrdb.cpp b/src/addrdb.cpp\r\nindex cee8d5e66a..900ba41025 100644\r\n--- a/src/addrdb.cpp\r\n+++ b/src/addrdb.cpp\r\n@@ -34,7 +34,7 @@ bool SerializeDB(Stream& stream, const Data& data)\r\n {\r\n     // Write and commit header, data\r\n     try {\r\n-        CHashedSourceWriter<Stream> hashwriter(&stream);\r\n+        CHashedSourceWriter hashwriter{stream};\r\n         hashwriter << Params().MessageStart() << data;\r\n         hashwriter << hashwriter.GetHash();\r\n     } catch (const std::exception& e) {\r\ndiff --git a/src/hash.h b/src/hash.h\r\nindex 7b2f82c456..31370c301a 100644\r\n--- a/src/hash.h\r\n+++ b/src/hash.h\r\n@@ -6,6 +6,7 @@\r\n #ifndef BITCOIN_HASH_H\r\n #define BITCOIN_HASH_H\r\n \r\n+#include <attributes.h>\r\n #include <crypto/common.h>\r\n #include <crypto/ripemd160.h>\r\n #include <crypto/sha256.h>\r\n@@ -204,23 +205,22 @@ template <typename Source>\r\n class CHashedSourceWriter : public CHashWriter\r\n {\r\n private:\r\n-    Source* source;\r\n+    Source& m_source;\r\n \r\n public:\r\n-    explicit CHashedSourceWriter(Source* source_) : CHashWriter(source_->GetType(), source_->GetVersion()), source(source_) {}\r\n+    explicit CHashedSourceWriter(Source& source LIFETIMEBOUND) : CHashWriter{source.GetType(), source.GetVersion()}, m_source{source} {}\r\n \r\n     void write(Span<const std::byte> src)\r\n     {\r\n-        source->write(src);\r\n+        m_source.write(src);\r\n         CHashWriter::write(src);\r\n     }\r\n \r\n     template <typename T>\r\n     CHashedSourceWriter<Source>& operator<<(const T& obj)\r\n     {\r\n-        // Serialize to this stream\r\n         ::Serialize(*this, obj);\r\n-        return (*this);\r\n+        return *this;\r\n     }\r\n };\r\n \r\ndiff --git a/src/test/streams_tests.cpp b/src/test/streams_tests.cpp\r\nindex 7d2a1b6818..90ad61ca6c 100644\r\n--- a/src/test/streams_tests.cpp\r\n+++ b/src/test/streams_tests.cpp\r\n@@ -503,11 +503,11 @@ BOOST_AUTO_TEST_CASE(streams_buffered_file_rand)\r\n BOOST_AUTO_TEST_CASE(streams_hashed)\r\n {\r\n     CDataStream stream(SER_NETWORK, INIT_PROTO_VERSION);\r\n-    CHashedSourceWriter<CDataStream> hash_writer(&stream);\r\n+    CHashedSourceWriter hash_writer{stream};\r\n     const std::string data{\"bitcoin\"};\r\n     hash_writer << data;\r\n \r\n-    CHashVerifier<CDataStream> hash_verifier(&stream);\r\n+    CHashVerifier hash_verifier{stream};\r\n     std::string result;\r\n     hash_verifier >> result;\r\n     BOOST_CHECK_EQUAL(data, result);\r\n",
-      "commit_id" : "49f6fb6874e1e89336e94f3764ee236ec3f45537",
+      "commit_id" : "5eabb61b2386d00e93e6bbb2f493a56d1b326ad9",
       "created_at" : "2023-01-17T19:36:47Z",
       "diff_hunk" : "@@ -34,10 +34,9 @@ bool SerializeDB(Stream& stream, const Data& data)\n {\n     // Write and commit header, data\n     try {\n-        CHashWriter hasher(stream.GetType(), stream.GetVersion());\n-        stream << Params().MessageStart() << data;\n-        hasher << Params().MessageStart() << data;\n-        stream << hasher.GetHash();\n+        CHashedSourceWriter<Stream> hashwriter(&stream);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26909#discussion_r1072710601",
       "id" : 1072710601,
-      "line" : 37,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584_8EPJ",
       "original_commit_id" : "49f6fb6874e1e89336e94f3764ee236ec3f45537",
       "original_line" : 37,
       "original_position" : 8,
       "original_start_line" : null,
       "path" : "src/addrdb.cpp",
-      "position" : 8,
+      "position" : null,
       "pull_request_review_id" : 1252318796,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26909",
       "reactions" : {
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-17T19:42:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072710601",
       "user" : {
@@ -254,7 +255,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072833395"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks, I took your suggestions (except keeping the `&` in the last line for `CHashVerifier`).",
       "commit_id" : "5eabb61b2386d00e93e6bbb2f493a56d1b326ad9",
       "created_at" : "2023-01-17T21:19:47Z",
@@ -287,6 +288,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-17T21:19:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072833395",
       "user" : {
@@ -311,7 +313,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> This is removed in https://github.com/bitcoin/bitcoin/pull/26649, but your approach seems fine, since it targets a backport?\r\n\r\nYes, I agree it would be nice to backport this, maybe `HashedSourceWriter` and `CHashVerifier` could be merged at some later point after #26649.",
       "created_at" : "2023-01-17T21:22:17Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26909#issuecomment-1386067591",
@@ -398,6 +400,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-17T21:27:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072841096",
       "user" : {
@@ -465,6 +468,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-17T21:27:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072842454",
       "user" : {
@@ -532,6 +536,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-17T21:27:38Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072843330",
       "user" : {
@@ -600,6 +605,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-17T21:33:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072851958",
       "user" : {
@@ -668,6 +674,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-17T22:12:27Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072881630",
       "user" : {
@@ -703,7 +710,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072888425"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "removed the `C`",
       "commit_id" : "5eabb61b2386d00e93e6bbb2f493a56d1b326ad9",
       "created_at" : "2023-01-17T22:22:29Z",
@@ -736,6 +743,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-17T22:22:30Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072888425",
       "user" : {
@@ -771,7 +779,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072889304"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "yes, it compiles fine, so I changed it.",
       "commit_id" : "5eabb61b2386d00e93e6bbb2f493a56d1b326ad9",
       "created_at" : "2023-01-17T22:23:49Z",
@@ -804,6 +812,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-17T22:23:50Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072889304",
       "user" : {
@@ -839,7 +848,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072889373"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "done",
       "commit_id" : "5eabb61b2386d00e93e6bbb2f493a56d1b326ad9",
       "created_at" : "2023-01-17T22:23:55Z",
@@ -872,6 +881,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-17T22:23:56Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1072889373",
       "user" : {

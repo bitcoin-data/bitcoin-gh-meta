@@ -352,7 +352,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Haven't reviewed the code at all, but e673d8b475995075b696208386c9e45ae7ca3e20 reduces the runtime of the WalletLoadingDescriptors test from 4m25s to 0.1s for me",
       "created_at" : "2022-05-10T16:05:43Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24924#issuecomment-1122595413",
@@ -396,7 +396,7 @@
       }
    },
    {
-      "author_association" : "NONE",
+      "author_association" : "CONTRIBUTOR",
       "body" : "tACK e673d8b475995075b696208386c9e45ae7ca3e20\r\n\r\nThis solves the `make check` issue with `bench_bitcoin` reported [here](https://github.com/bitcoin/bitcoin/issues/25185)",
       "created_at" : "2022-05-22T05:20:11Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24924#issuecomment-1133820981",
@@ -451,7 +451,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/881777393"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "In 4af3547e:\r\n\r\nI'm not so sure why do we need to update the database here, guess that what you wanted to do is rollback the db to the first mocked database created at line 103 and not the recently loaded one? So in case of any modification, we ensure that the benchmark is always running from the same static db input?",
       "commit_id" : "e673d8b475995075b696208386c9e45ae7ca3e20",
       "created_at" : "2022-05-25T15:10:47Z",
@@ -483,6 +483,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-25T15:38:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/881777393",
       "user" : {
@@ -551,6 +552,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-26T16:52:15Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/882878063",
       "user" : {
@@ -630,7 +632,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/883602515"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "k, that is because of the db destructor, good.",
       "commit_id" : "e673d8b475995075b696208386c9e45ae7ca3e20",
       "created_at" : "2022-05-27T13:12:56Z",
@@ -663,6 +665,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-05-27T13:12:57Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/883602515",
       "user" : {
@@ -687,7 +690,75 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/24924#discussion_r903505151"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24924"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/903505151"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "In a1080802f8d7c3d1251ec6f2be33031f568deafa \"walletdb: Create a mock database of specific type \": I hit this line in testing with both `USE_SQLITE` and `USE_BDB` off? I may have just messed something up, but does this need e673d8b475995075b696208386c9e45ae7ca3e20 \"Enable loading benchmarks depending on what's compiled \" squashed in?",
+      "commit_id" : "e673d8b475995075b696208386c9e45ae7ca3e20",
+      "created_at" : "2022-06-22T09:26:33Z",
+      "diff_hunk" : "@@ -1187,13 +1187,36 @@ std::unique_ptr<WalletDatabase> CreateDummyWalletDatabase()\n }\n \n /** Return object for accessing temporary in-memory database. */\n-std::unique_ptr<WalletDatabase> CreateMockWalletDatabase()\n+std::unique_ptr<WalletDatabase> CreateMockWalletDatabase(DatabaseOptions& options)\n {\n-    DatabaseOptions options;\n+\n+    std::optional<DatabaseFormat> format;\n+    if (options.require_format) format = options.require_format;\n+    if (!format) {\n+#ifdef USE_BDB\n+        format = DatabaseFormat::BERKELEY;\n+#endif\n #ifdef USE_SQLITE\n-    return std::make_unique<SQLiteDatabase>(\"\", \"\", options, true);\n-#elif USE_BDB\n+        format = DatabaseFormat::SQLITE;\n+#endif\n+    }\n+\n+    if (format == DatabaseFormat::SQLITE) {\n+#ifdef USE_SQLITE\n+        return std::make_unique<SQLiteDatabase>(\"\", \"\", options, true);\n+#endif\n+        assert(false);\n+    }\n+\n+#ifdef USE_BDB\n     return std::make_unique<BerkeleyDatabase>(std::make_shared<BerkeleyEnvironment>(), \"\", options);\n #endif\n+    assert(false);",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/24924#discussion_r903505151",
+      "id" : 903505151,
+      "line" : 1214,
+      "node_id" : "PRRC_kwDOABII58412mT_",
+      "original_commit_id" : "a1080802f8d7c3d1251ec6f2be33031f568deafa",
+      "original_line" : 1214,
+      "original_position" : 32,
+      "original_start_line" : null,
+      "path" : "src/wallet/walletdb.cpp",
+      "position" : 32,
+      "pull_request_review_id" : 1014837768,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24924",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/903505151/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2022-06-22T09:52:31Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/903505151",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/25183001?v=4",
+         "events_url" : "https://api.github.com/users/glozow/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/glozow/followers",
+         "following_url" : "https://api.github.com/users/glozow/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/glozow/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/glozow",
+         "id" : 25183001,
+         "login" : "glozow",
+         "node_id" : "MDQ6VXNlcjI1MTgzMDAx",
+         "organizations_url" : "https://api.github.com/users/glozow/orgs",
+         "received_events_url" : "https://api.github.com/users/glozow/received_events",
+         "repos_url" : "https://api.github.com/users/glozow/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/glozow/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/glozow/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/glozow"
+      }
+   },
+   {
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25466](https://github.com/bitcoin/bitcoin/pull/25466) (ci: add unused-using-decls to clang-tidy by fanquake)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-06-25T06:32:06Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24924#issuecomment-1166204389",

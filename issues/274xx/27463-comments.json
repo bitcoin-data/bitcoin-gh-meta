@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I think at a high level, the \"package relay\" part looks like:\r\n\r\n - [x] make package mempool acceptance available via rpc in regtest\r\n - [ ] fix up package acceptance/retention/mining policies to be free from DoS vectors and to behave sensibly\r\n - [ ] behave sensibly with arbitrary txs in a package\r\n - [ ] implement bip331 to expose package relay over p2p not just rpc\r\n\r\nAnd relatedly:\r\n\r\n - [ ] version 3 acceptance/rbf policies to limit pinnability\r\n - [ ] ephemeral anchors\r\n\r\nParticularly if #26933 is applied, is there any reason not to make `submitpackage` available on all chains? It should behave no differently to submitting the transactions individually with a non-full mempool, no?",
       "created_at" : "2023-04-17T05:21:10Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/27463#issuecomment-1510719846",
@@ -97,7 +97,7 @@
       "node_id" : "IC_kwDOABII585aC8Fm",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -105,7 +105,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1510719846/reactions"
       },
       "updated_at" : "2023-04-17T05:21:10Z",
@@ -132,7 +132,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "FWIW, I don't think \"incentive compatibility\" is a good description of our goal here -- I think there's three goals we want:\r\n\r\n - for most normal use cases (including newly invented ones) just submitting your txs over p2p should work fine\r\n   - (otherwise people will tend to use centralised tx submission methods, which creates a chokepoint that will attract censorship)\r\n - running a plain bitcoind should get you block templates within 90%-99% of optimal, depending on the resources you can allocate to your node\r\n   - (otherwise miners will outsource block template construction to proprietary services in order to be competitive, which again creates a censorship chokepoint)\r\n - mempool/relay behaviour should be as simple to understand as possible -- for wallet designers, bitcoin users, node operators and miners\r\n   - (otherwise bitcoin will only be usable in theory, not in practice)\r\n\r\nI think most of the \"incentive compatible\" things above aren't really making anything more incentive compatible (miners can just raise their mempool limits to keep the transactions; non-mining nodes aren't receiving any incentives in the first place) but rather making mempool behaviour easier to understand (eg \"we removed this tx because there was a race condition when loading the mempool\" vs \"we removed this tx because it wouldn't be included in any of the next 100 optimal blocks, even if no new txs are submitted\").",
       "created_at" : "2023-04-17T07:23:22Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/27463#issuecomment-1510836263",
@@ -220,7 +220,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Also, mempools _are_ full on mainnet\r\n\r\nMy mempool isn't full, and (I think) hasn't been full this year. (It has a 1GB limit; though there's only ~40MB of txs now anyway)\r\n\r\nSubmitting a low-feerate tx with a high mempool limit already means your tx won't relay without a cpfp tx, but we expect people to be who are clever enough to do that to also deal with the consequences. (If you do cpfp the low feerate tx, it'll be broadcast via orphan handling, so won't appear in the unbroadcast set any longer, but also won't successfully relay without package processing, so you'll end up in the exact same state, I think)",
       "created_at" : "2023-04-19T15:09:55Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/issues/27463#issuecomment-1514909267",

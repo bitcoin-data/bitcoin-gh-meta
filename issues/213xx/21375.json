@@ -1,8 +1,8 @@
 {
-   "active_lock_reason" : null,
+   "active_lock_reason" : "resolved",
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "This PR addresses a few hiccups encountered by the brave souls who've been experimenting with the Guix scripts:\r\n- Resolves confusion between `--cores=` and `--max-jobs=`\r\n  - `guix`'s `--cores=` actually corresponds to make's `--jobs=`, so let's just control `--cores=` with our overridable env var\r\n- `git-describe` will scream `fatal: no tag exactly matches '<hash>'` when looking for a tag, but we don't care, so silence that\r\n- `windeploy/unsigned` should be inside `distsrc-*` and created idempotently (sorry I know this one annoyed people)\r\n- Add troubleshooting documentation to `README.md`\r\n- Add early health check for `guix-daemon` in case user forgot to start a `guix-daemon`\r\n- Depending on configuration, a `--fallback` flag may be needed to tell Guix to not fail if substitutes fail but fallback to building locally\r\n- `codesign_allocate` and `pagestuff` are now unnecessary for codesigning as we're now using `signapple`\r\n\r\nA few robustness changes are also included:\r\n- We supply the `--link-profile` flag, as some Guix packages may expect the profile to be available under `$HOME/.guix-profile`\r\n- We now clear and manually set all toolchain-related env vars (e.g. `C*_INCLUDE_PATH`) ourselves, after patching a Qt::moc bug\r\n- We use the native `clang-toolchain` package for darwin builds instead of `clang`, lining up with all our other toolchain packages.\r\n\r\nFinally, we restructure the guix building hierarchy such that it looks something like:\r\n```\r\nguix-build-<short-hash-or-version-tag>\r\nâââ distsrc-<short-hash-or-version-tag>-${HOST}\r\nâ   âââ contrib\r\nâ   âââ depends\r\nâ   âââ src\r\nâ   âââ ...\r\nâââ distsrc-<short-hash-or-version-tag>-...\r\nâââ output\r\n    âââ dist-archive\r\n    â   âââ bitcoin-<short-hash-or-version-tag>.tar.gz\r\n    âââ *-linux-*\r\n    â   âââ bitcoin-<short-hash-or-version-tag>-*-linux-*-debug.tar.gz\r\n    â   âââ bitcoin-<short-hash-or-version-tag>-*-linux-*.tar.gz\r\n    âââ x86_64-apple-darwin18\r\n    â   âââ bitcoin-<short-hash-or-version-tag>-osx64.tar.gz\r\n    â   âââ bitcoin-<short-hash-or-version-tag>-osx-unsigned.dmg\r\n    â   âââ bitcoin-<short-hash-or-version-tag>-osx-unsigned.tar.gz\r\n    âââ x86_64-w64-mingw32\r\n        âââ bitcoin-<short-hash-or-version-tag>-win64-debug.zip\r\n        âââ bitcoin-<short-hash-or-version-tag>-win64-setup-unsigned.exe\r\n        âââ bitcoin-<short-hash-or-version-tag>-win64.zip\r\n        âââ bitcoin-<short-hash-or-version-tag>-win-unsigned.tar.gz\r\n```\r\nSeparating guix builds by their version identifier (basically namespacing them) allows us to change the layout in the future without worry about potential naming conflicts.",
    "closed_at" : "2021-04-05T23:00:56Z",
    "closed_by" : {
@@ -25,9 +25,10 @@
       "type" : "User",
       "url" : "https://api.github.com/users/laanwj"
    },
-   "comments" : 22,
+   "comments" : 23,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21375/comments",
    "created_at" : "2021-03-05T23:35:42Z",
+   "draft" : false,
    "events_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21375/events",
    "html_url" : "https://github.com/bitcoin/bitcoin/pull/21375",
    "id" : 823492256,
@@ -52,7 +53,7 @@
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21375/labels{/name}",
-   "locked" : false,
+   "locked" : true,
    "milestone" : null,
    "node_id" : "MDExOlB1bGxSZXF1ZXN0NTg1OTQyOTE1",
    "number" : 21375,
@@ -60,13 +61,28 @@
    "pull_request" : {
       "diff_url" : "https://github.com/bitcoin/bitcoin/pull/21375.diff",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/21375",
+      "merged_at" : "2021-04-05T23:00:56Z",
       "patch_url" : "https://github.com/bitcoin/bitcoin/pull/21375.patch",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/21375"
    },
+   "reactions" : {
+      "+1" : 1,
+      "-1" : 0,
+      "confused" : 0,
+      "eyes" : 0,
+      "heart" : 0,
+      "hooray" : 0,
+      "laugh" : 0,
+      "rocket" : 0,
+      "total_count" : 1,
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21375/reactions"
+   },
    "repository_url" : "https://api.github.com/repos/bitcoin/bitcoin",
    "state" : "closed",
+   "state_reason" : null,
+   "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21375/timeline",
    "title" : "guix: Misc feedback-based fixes + hier restructuring",
-   "updated_at" : "2021-04-05T23:00:57Z",
+   "updated_at" : "2022-08-16T17:07:41Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/21375",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/3445290?v=4",

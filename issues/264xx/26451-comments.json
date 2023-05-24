@@ -409,19 +409,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "I think this type of policy changes would benefit from a more binding definition of \"incentive compatibility\". If we speak about a world where the network mempools backlog is always superior to `MAX_BLOCK_WEIGHT`, optimizing for mining score based on feerate sounds the most obvious. If we add the dimension of mempools congestion variance where emptyness is a non-null outcome, I think a miner could adopt a \"pure-replace-by-fee\" mempool acceptance policy until reaching `MAX_BLOCK_WEIGHT`.\r\n\r\nAnother layer of complexity in devising \"incentive compatibility\" could be to realize the best feerate mempool plausible is a combination of the replacement policy and an order of events. E.g, if you evict 2sat/vb A for 4sat/vb A' though after 1 min you receive 4 sat/vb B child of A, your mempool is at loss. This scenario sounds far from unplausible to me in a shared-utxo future (e.g 2-of-2 LN channels), where spenders are building chain of transactions in blindness of every co-spender. A miner mempool optimization could be to run a cache of all the replacements.\r\n\r\nOn this subject, earlier this year on the ML: https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2022-February/019921.html\r\n\r\nOf course, we could make abstraction of order of events complexity by assuming all received transactions are following templates (e.g nversion=3) where the design assumes only the most efficient package/chain of transactions propagate. However, I'm not sure how much our network transaction-relay \"transaction patterns\" (current and future) are realistic of potential miner mempools running with `DEFAULT_ANCESTOR_LIMIT=$HUGE` and out-of-band transaction-relay. If our design give margin for non-marginal fee asymmetries, in a future where fees are significantly contributing to block reward, you should expect some miners doing the efforts of capturing them.\r\n\r\nAll thoughts for future works, I think this is a good improvement for now.",
-      "commit_id" : "ff77ab34fb219cf4e626690f4c9f919c18dc1045",
+      "commit_id" : "41b0a23433b545ac6e6576a2e85df929e4635323",
       "created_at" : "2022-11-05T03:36:09Z",
       "diff_hunk" : "@@ -922,30 +922,34 @@ bool MemPoolAccept::ReplacementChecks(Workspace& ws)\n     const uint256& hash = ws.m_hash;\n     TxValidationState& state = ws.m_state;\n \n+    // Calculate the predicted mining score of the new transaction.\n+    int64_t ancestor_size{0};\n+    CAmount ancestor_modified_fees{0};\n+    for (CTxMemPool::txiter it : ws.m_ancestors) {\n+        ancestor_size += it->GetTxSize();\n+        ancestor_modified_fees += it->GetModifiedFee();\n+    }\n+\n     CFeeRate newFeeRate(ws.m_modified_fees, ws.m_vsize);\n-    // Enforce Rule #6. The replacement transaction must have a higher feerate than its direct conflicts.\n-    // - The motivation for this check is to ensure that the replacement transaction is preferable for\n-    //   block-inclusion, compared to what would be removed from the mempool.\n-    // - This logic predates ancestor feerate-based transaction selection, which is why it doesn't\n-    //   consider feerates of descendants.\n-    // - Note: Ancestor feerate-based transaction selection has made this comparison insufficient to\n-    //   guarantee that this is incentive-compatible for miners, because it is possible for a\n-    //   descendant transaction of a direct conflict to pay a higher feerate than the transaction that\n-    //   might replace them, under these rules.\n-    if (const auto err_string{PaysMoreThanConflicts(ws.m_iters_conflicting, newFeeRate, hash)}) {\n-        return state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY, \"insufficient fee\", *err_string);\n+    if (ancestor_modified_fees * ws.m_vsize < ws.m_modified_fees * ancestor_size) {\n+        newFeeRate = CFeeRate(ancestor_modified_fees, ancestor_size);\n     }\n \n     // Calculate all conflicting entries and enforce Rule #5.\n     if (const auto err_string{GetEntriesForConflicts(tx, m_pool, ws.m_iters_conflicting, ws.m_all_conflicting)}) {\n         return state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY,\n                              \"too many potential replacements\", *err_string);\n     }\n-    // Enforce Rule #2.\n-    if (const auto err_string{HasNoNewUnconfirmed(tx, m_pool, ws.m_iters_conflicting)}) {\n-        return state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY,\n-                             \"replacement-adds-unconfirmed\", *err_string);\n+\n+    // Enforce feerate incentive compatibility. The replacement transaction\n+    // must have a higher mining score (= min(feerate, ancestor feerate)) than\n+    // the highest possible mining score of all its conflicts.\n+    // - The motivation for this check is to ensure that the replacement transaction is preferable for\n+    //   block-inclusion, compared to what would be removed from the mempool.\n+    if (const auto err_string{PaysMoreThanConflicts(ws.m_all_conflicting, newFeeRate, hash)}) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26451#discussion_r1014556765",
       "id" : 1014556765,
-      "line" : 949,
+      "line" : 968,
       "node_id" : "PRRC_kwDOABII5848eOhd",
       "original_commit_id" : "ff77ab34fb219cf4e626690f4c9f919c18dc1045",
-      "original_line" : 949,
+      "original_line" : 968,
       "original_position" : 43,
       "original_start_line" : null,
       "path" : "src/validation.cpp",
-      "position" : 43,
+      "position" : 63,
       "pull_request_review_id" : 1169301807,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26451",
       "reactions" : {
@@ -439,6 +439,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-05T03:36:21Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1014556765",
       "user" : {
@@ -463,7 +464,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Would it be better to make this change as part of a rethink for package rbf?\r\n\r\n> Currently it's possible in our RBF rules to evict a transaction with higher mining score from our mempool, in favor of a transaction with a higher total fee but lower feerate.\r\n\r\nIn particular, doesn't this block some cases where you could currently replace a pair of txs [A,B] \r\nwith [C,D]  (A and C conflicting; B spending A, and D spending C) where D has the highest mining score? That is, without package relay, you have to consider whether to evict both of A,B while only considering C, which will often lead you to make a suboptimal choice. With package relay, you can wait and consider C's inclusion only when you also have D available, and use that extra information to make a better decision...\r\n\r\nGetting the incentive compatible answer here seems hard even with package relay (if you receive C on its own first, you should reject it; but if you add its txid to a hard reject filter and forget it, then when D arrives you'll reject it for having a rejected parent, rather than recalculating the fee and seeing that it is worth replacing). Incentive compatibility may also result in the mempool repeatedly swapping between A and C, eg if they were pre-signed transactions being CPFPed by a series of B1/D1/B2/D2/.. CPFP txs taking a scorched earth approach of incrementally burning the potential profits to fees, though that's presumably solved by requiring Bn/Dn to pay an incremental relay fee for the package, not just itself.\r\n\r\nOther than that, this seems reasonable to me.\r\n\r\n> Based on discussions, I think the issue is that a new unconfirmed input could be included that actually would have been mined anyways, thus giving the replacement child a higher estimated miner score than it otherwise should have. Raising the \"min\" in the function between the ancestor and individual score.\r\n\r\nCan you give a concrete example of this? As far as I can see that case only works when the new conflict C replacing A+B, spends some new unconfirmed tx Y, and \"Y + X + C\" has a lower fee rate than \"Y + X + A + B\". But we compare C's feerate with A and B's raw feerate, and only accept the replacement if that's larger; and having Y as a parent can only serve to reduce C's feerate from raw? So having mined Y and X, it seems to me that mining C is always superior to A or A+B, except in the edge case where you've run out of block space.",
       "created_at" : "2022-11-05T09:10:51Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26451#issuecomment-1304451884",
@@ -520,20 +521,20 @@
       },
       "author_association" : "MEMBER",
       "body" : "> If our design give margin for non-marginal fee asymmetries\r\n\r\nThere will always be a margin whatever design we pick as you can imagine a spending pattern that doesn't fit; we can try to shrink it as best we can.",
-      "commit_id" : "ff77ab34fb219cf4e626690f4c9f919c18dc1045",
+      "commit_id" : "41b0a23433b545ac6e6576a2e85df929e4635323",
       "created_at" : "2022-11-05T14:23:40Z",
       "diff_hunk" : "@@ -922,30 +922,34 @@ bool MemPoolAccept::ReplacementChecks(Workspace& ws)\n     const uint256& hash = ws.m_hash;\n     TxValidationState& state = ws.m_state;\n \n+    // Calculate the predicted mining score of the new transaction.\n+    int64_t ancestor_size{0};\n+    CAmount ancestor_modified_fees{0};\n+    for (CTxMemPool::txiter it : ws.m_ancestors) {\n+        ancestor_size += it->GetTxSize();\n+        ancestor_modified_fees += it->GetModifiedFee();\n+    }\n+\n     CFeeRate newFeeRate(ws.m_modified_fees, ws.m_vsize);\n-    // Enforce Rule #6. The replacement transaction must have a higher feerate than its direct conflicts.\n-    // - The motivation for this check is to ensure that the replacement transaction is preferable for\n-    //   block-inclusion, compared to what would be removed from the mempool.\n-    // - This logic predates ancestor feerate-based transaction selection, which is why it doesn't\n-    //   consider feerates of descendants.\n-    // - Note: Ancestor feerate-based transaction selection has made this comparison insufficient to\n-    //   guarantee that this is incentive-compatible for miners, because it is possible for a\n-    //   descendant transaction of a direct conflict to pay a higher feerate than the transaction that\n-    //   might replace them, under these rules.\n-    if (const auto err_string{PaysMoreThanConflicts(ws.m_iters_conflicting, newFeeRate, hash)}) {\n-        return state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY, \"insufficient fee\", *err_string);\n+    if (ancestor_modified_fees * ws.m_vsize < ws.m_modified_fees * ancestor_size) {\n+        newFeeRate = CFeeRate(ancestor_modified_fees, ancestor_size);\n     }\n \n     // Calculate all conflicting entries and enforce Rule #5.\n     if (const auto err_string{GetEntriesForConflicts(tx, m_pool, ws.m_iters_conflicting, ws.m_all_conflicting)}) {\n         return state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY,\n                              \"too many potential replacements\", *err_string);\n     }\n-    // Enforce Rule #2.\n-    if (const auto err_string{HasNoNewUnconfirmed(tx, m_pool, ws.m_iters_conflicting)}) {\n-        return state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY,\n-                             \"replacement-adds-unconfirmed\", *err_string);\n+\n+    // Enforce feerate incentive compatibility. The replacement transaction\n+    // must have a higher mining score (= min(feerate, ancestor feerate)) than\n+    // the highest possible mining score of all its conflicts.\n+    // - The motivation for this check is to ensure that the replacement transaction is preferable for\n+    //   block-inclusion, compared to what would be removed from the mempool.\n+    if (const auto err_string{PaysMoreThanConflicts(ws.m_all_conflicting, newFeeRate, hash)}) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26451#discussion_r1014642326",
       "id" : 1014642326,
       "in_reply_to_id" : 1014556765,
-      "line" : 949,
+      "line" : 968,
       "node_id" : "PRRC_kwDOABII5848ejaW",
       "original_commit_id" : "ff77ab34fb219cf4e626690f4c9f919c18dc1045",
-      "original_line" : 949,
+      "original_line" : 968,
       "original_position" : 43,
       "original_start_line" : null,
       "path" : "src/validation.cpp",
-      "position" : 43,
+      "position" : 63,
       "pull_request_review_id" : 1169416543,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26451",
       "reactions" : {
@@ -551,6 +552,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-05T14:23:40Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1014642326",
       "user" : {
@@ -619,7 +621,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "fwiw: I came across a bunch of mainnet replacements recently that would be affected by this restricting of rule 6. Let me know if numbers or examples would be helpful.",
       "created_at" : "2022-11-05T16:48:14Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26451#issuecomment-1304585306",
@@ -751,8 +753,8 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| Concept ACK | [instagibbs](https://github.com/bitcoin/bitcoin/pull/26451#issuecomment-1303632960), [glozow](https://github.com/bitcoin/bitcoin/pull/26451#pullrequestreview-1168669438), [ariard](https://github.com/bitcoin/bitcoin/pull/26451#pullrequestreview-1169301807) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#26525](https://github.com/bitcoin/bitcoin/pull/26525) (Remove -mempoolfullrbf option by BitcoinErrorLog)\n* [#24007](https://github.com/bitcoin/bitcoin/pull/24007) ([mempool] allow tx replacement by smaller witness by LarryRuane)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| Concept ACK | [instagibbs](https://github.com/bitcoin/bitcoin/pull/26451#issuecomment-1303632960), [glozow](https://github.com/bitcoin/bitcoin/pull/26451#pullrequestreview-1168669438), [ariard](https://github.com/bitcoin/bitcoin/pull/26451#pullrequestreview-1169301807) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#26525](https://github.com/bitcoin/bitcoin/pull/26525) (Remove -mempoolfullrbf option by BitcoinErrorLog)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2022-11-06T23:48:03Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26451#issuecomment-1304930262",
       "id" : 1304930262,
@@ -771,7 +773,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304930262/reactions"
       },
-      "updated_at" : "2022-12-08T23:45:50Z",
+      "updated_at" : "2023-05-09T21:49:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1304930262",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -808,20 +810,20 @@
       },
       "author_association" : "MEMBER",
       "body" : "> There will always be a margin whatever design we pick as you can imagine a spending pattern that doesn't fit; we can try to shrink it as best we can.\r\n\r\nYes I think we should try to shrink it as best we can. Note the goal of avoiding non-marginal fee asymmetries that we might allow with policy changes such as nVersion=3. ",
-      "commit_id" : "f635db67895153f8d1322257f4f64a8bd47648c7",
+      "commit_id" : "41b0a23433b545ac6e6576a2e85df929e4635323",
       "created_at" : "2022-11-07T00:02:42Z",
       "diff_hunk" : "@@ -922,30 +922,34 @@ bool MemPoolAccept::ReplacementChecks(Workspace& ws)\n     const uint256& hash = ws.m_hash;\n     TxValidationState& state = ws.m_state;\n \n+    // Calculate the predicted mining score of the new transaction.\n+    int64_t ancestor_size{0};\n+    CAmount ancestor_modified_fees{0};\n+    for (CTxMemPool::txiter it : ws.m_ancestors) {\n+        ancestor_size += it->GetTxSize();\n+        ancestor_modified_fees += it->GetModifiedFee();\n+    }\n+\n     CFeeRate newFeeRate(ws.m_modified_fees, ws.m_vsize);\n-    // Enforce Rule #6. The replacement transaction must have a higher feerate than its direct conflicts.\n-    // - The motivation for this check is to ensure that the replacement transaction is preferable for\n-    //   block-inclusion, compared to what would be removed from the mempool.\n-    // - This logic predates ancestor feerate-based transaction selection, which is why it doesn't\n-    //   consider feerates of descendants.\n-    // - Note: Ancestor feerate-based transaction selection has made this comparison insufficient to\n-    //   guarantee that this is incentive-compatible for miners, because it is possible for a\n-    //   descendant transaction of a direct conflict to pay a higher feerate than the transaction that\n-    //   might replace them, under these rules.\n-    if (const auto err_string{PaysMoreThanConflicts(ws.m_iters_conflicting, newFeeRate, hash)}) {\n-        return state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY, \"insufficient fee\", *err_string);\n+    if (ancestor_modified_fees * ws.m_vsize < ws.m_modified_fees * ancestor_size) {\n+        newFeeRate = CFeeRate(ancestor_modified_fees, ancestor_size);\n     }\n \n     // Calculate all conflicting entries and enforce Rule #5.\n     if (const auto err_string{GetEntriesForConflicts(tx, m_pool, ws.m_iters_conflicting, ws.m_all_conflicting)}) {\n         return state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY,\n                              \"too many potential replacements\", *err_string);\n     }\n-    // Enforce Rule #2.\n-    if (const auto err_string{HasNoNewUnconfirmed(tx, m_pool, ws.m_iters_conflicting)}) {\n-        return state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY,\n-                             \"replacement-adds-unconfirmed\", *err_string);\n+\n+    // Enforce feerate incentive compatibility. The replacement transaction\n+    // must have a higher mining score (= min(feerate, ancestor feerate)) than\n+    // the highest possible mining score of all its conflicts.\n+    // - The motivation for this check is to ensure that the replacement transaction is preferable for\n+    //   block-inclusion, compared to what would be removed from the mempool.\n+    if (const auto err_string{PaysMoreThanConflicts(ws.m_all_conflicting, newFeeRate, hash)}) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26451#discussion_r1014918120",
       "id" : 1014918120,
       "in_reply_to_id" : 1014556765,
-      "line" : 949,
+      "line" : 968,
       "node_id" : "PRRC_kwDOABII5848fmvo",
       "original_commit_id" : "ff77ab34fb219cf4e626690f4c9f919c18dc1045",
-      "original_line" : 949,
+      "original_line" : 968,
       "original_position" : 43,
       "original_start_line" : null,
       "path" : "src/validation.cpp",
-      "position" : 43,
+      "position" : 63,
       "pull_request_review_id" : 1169677717,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26451",
       "reactions" : {
@@ -839,6 +841,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-11-07T00:02:43Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1014918120",
       "user" : {
@@ -872,7 +875,7 @@
       "node_id" : "IC_kwDOABII585N0ZAH",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -880,7 +883,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1305579527/reactions"
       },
       "updated_at" : "2022-11-07T12:59:09Z",
@@ -907,7 +910,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> @instagibbs I pushed up a test that I believe shows the insufficiency of the logic. Sorry if the test is a little ugly, but if you inspect you'll see that there are three initial unrelated transactions in the mempool: txA - feerate 961 sat/vbyte txP1 - feerate 9.6 sat/vbyte txP2 - feerate 9615 sat/vbyte\r\n> \r\n> Then we construct transaction A' that conflicts with A but spends P1 and P2. The feerate of A' by itself is 1073 sat/vbyte, but the feerate of (A', P1) is 715 sat/vbyte. So assuming blocks are full with other similarly good transactions, a miner would rather include P2 + A in a block than include P2 + P1 + A'.\r\n\r\nI think with rounder numbers this looks like:\r\n\r\n * P2 1000vb, 10Msat (10,000sat/vb)\r\n * A 1000vb, 1Msat (1,000sat/vb)\r\n * B 1000vb, 1.1Msat (1,100sat/vb)  (conflicts with A, spends P1 and P2)\r\n * C 1000vb, 600ksat (600sat/vb\r\n * P1 1000vb, 10ksat (10sat/vb)\r\n\r\nWith A in the mempool, your block ordering would be [P2, A, C, P1]. With B in the mempool, your block ordering would be [P2, C, P1, B]. That has the usual complexities with limited block sizes -- if we were at the last 2000vb or 3000vb in the block, we'd prefer to have A; but if we had 4000vb in the block (and no other txs), we'd prefer B.\r\n\r\nEven if we fixed that, and only counted P1 towards B's score and thus chose to keep A, we could just go a layer down due to the possibility of another tx cpfp'ing P1: if we added a tx,\r\n\r\n * D 1000vb, 100Msat (100,000 sat/vb) (spends P1, doesn't conflict with anything)\r\n\r\nthen our block ordering would be [P1, D, P2, A, C] or [P1, D, P2, B, C] and we would always prefer to have B in our mempool, no matter how much space we had left in the block. And then if a tx E came in, that conflicts with D, but doesn't spend P1, we'd go back to preferring A rather than B.\r\n\r\nThat is to say: there are at least two \"non-local\" issues that affect whether we prefer A or B: how close A or B would be to the end of the block, and whether other higher-scoring transactions are already cpfp'ing in-mempool parents.\r\n\r\nI think maybe what we're trying to achieve is something more simple, like \"relay tx replacements if and only if they're obviously sensible\", ie:\r\n\r\n * if the signers of a tx are willing to spend more in fees (rules 3/4) on a replacement tx\r\n * and we're sure the replacement tx is more attractive to miners than the original (rules 2/5/6)\r\n * then include it in our mempool and relay it onwards\r\n\r\nIf we can't be sure which of A/B is best because it could change depending on unrelated txs in the mempool, then we just don't do anything, though of course the signers could always contact miners directly. We'll still get this wrong at edge cases due to the block limit (a larger replacement with more fees might not fit in a block when the smaller original would, and despite having lower fees, the next best alternative might be even lower than that), but the only way to avoid that would be to require the tx always be smaller, which seems unreasonably limiting.\r\n\r\nIn light of that, rather than just doing away with rule 2, maybe examining it explicitly might be better? If you're replacing A with B, and A's in-mempool parents are X,Y and B's are X,Z; then maybe you want to compare the minimum score of (B, B+Z.ancestor_score) compared to the minimum score of (A, A+Y.ancestor_score)? For multiple parents, I think you'd want to sort them by their ancestors scores (smallest to largest), and continue until your accumulated score is lower than next parent's ancestor score. That will have some false negatives still, but I think it would avoid false positives (allowing replacements that are less appealing to miners) and might not be too complicated?",
       "created_at" : "2022-11-07T14:19:25Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26451#issuecomment-1305686122",
@@ -1039,7 +1042,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> I don't think this works, because ...\r\n\r\nAh, yeah, I wondered why it wasn't comparing max(..) < min(..) when I was writing it.\r\n\r\n> The symmetric comparison seems easier to reason about, in that we can switch the sides around from an ordering perspective, and you get identical results, i.e. not seeming to introduce pinning vector.\r\n\r\nIf the goal is just \"relay tx replacements if and only if they're obviously sensible\",  I think preventing pinning vectors is out of scope: all you need to do to create a pinning vector is have your transactions be \"non-obvious\". To prevent them, I think you need a different goal, eg \"relay tx replacements in all circumstances, picking a consistent winner even when it's not obvious that's necessarily sensible\". That is, there's a big difference between designing something that just tries to maximise the \"obvious\" cases and one that prevents attackers from being able to find and take advantage of a \"non-obvious\" case.",
       "created_at" : "2022-11-08T03:20:30Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26451#issuecomment-1306572553",
@@ -1127,7 +1130,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> @ajtowns it's a two part optimization, ideally.\r\n> \r\n> Of course in this circumstance, we have outright prohibition of new unconfirmed inputs today, so it's no worse at least. I am trying to decide if opening this door actually helps any real usage patterns.\r\n\r\nYou were CPFPing one thing, and now you want to CPFP two things?",
       "created_at" : "2022-11-08T14:47:53Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26451#issuecomment-1307335122",
@@ -1215,7 +1218,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> > You were CPFPing one thing, and now you want to CPFP two things?\r\n> \r\n> There are a bunch of cases where this won't be practical due to the pinning asymmetry, even just accidentally against yourself. Considering the best case scenario of same size transactions:\r\n\r\nHmm, true. If you go from (A+C) to (A+B+C2) with (A+B+C2) having to have a greater feerate than C alone did, that ends up pretty crazy -- if A was 10kvb and C was 100vb, and C's paying most of the fees, then C's feerate will be 100x A+C's, and A+B+C2's feerate is greater still, so you're forced to do a 100x fee bump. Still clearly safe, and no worse than saying \"you can't add an input ever\", but maybe not worth the effort of coding :(\r\n",
       "created_at" : "2022-11-08T16:06:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26451#issuecomment-1307457012",
@@ -1391,7 +1394,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "I've searched through my RBF data specifically for replacements with a negative feerate deltas. I've looked at data from 2022-02-11 to 2022-10-31 captured with a Bitcoin Core node with a [patched ZMQ interface](https://github.com/0xB10C/bitcoin-zmq-mempool-chain-events/blob/v23.0-zmce/PATCH.md) running with default parameters for mempool and policy. During this period my node has seen 1.65M transactions being replaced in 363k RBF-sequences (multiple replacements related by conflicting inputs). Out of these RBF-sequences, only 223 included a replacement where the replaced-transactions feerate was higher than the replacement-transactions feerate (i.e. negative feerate delta).\r\n\r\nInitially, I thought there might be a single entity with a clear pattern doing these negative feerate delta replacements on purpose. However, by categorizing by transaction versions and transaction locktime (set or unset) showed various combinations of transactions being replaced. Additionally, the transactions are a mix of simple payment transactions (few inputs, few outputs), consolidation transactions (high input to output ratio), and _payout_ transactions (high output to input ratio). I don't think they come from the same source given the different wallet fingerprints. My thesis is, that **most of these are probably cases where unconfirmed outputs are spent by a different party and the original sender (maybe unaware of the child transactions) replaces and \"cancels\" them**.\r\n\r\nGiven that there's no real pattern, I've picked out some examples.\r\n\r\n![image](https://user-images.githubusercontent.com/19157360/201697803-5962223a-c942-49a3-bd31-dff7f26a07e3.png)\r\n\r\nExample 1: This graph shows the RBF-sequence of a transaction confirming as [03a86cf6..](https://blockstream.info/tx/03a86cf631ce9e57ba2d43e670653d9e4b0722cfb6a1ed8cd128aff490557279)(tx2 here). First, tx0 (version=2, inputs=4, outputs=2, likely a payment, locktime set) was broadcast with a feerate of 2.92 sat/vByte. About 25 min later tx1 (version=**1**, inputs/outputs=2, likely also a payment, locktime unset) was broadcast at 15.9 sat/vByte spending an unconfirmed UTXO of tx0. Half an hour later, tx2 (version=2, inputs=4, outputs=2, likely a payment, locktime set) was broadcast at 12.37 sat/vByte which replaced both tx0 and tx1. The inputs and output scripts of tx0 and tx2 are equal, the only thing that changed was the fee: this is a simple fee bump. However, the outputs of tx1 are not contained in tx2. This transaction is effectively removed from the network before it could confirm (i.e cancelled). The feerate delta between tx1 and tx2 is negative. This is possible because we don't check the feerate of children in our RBF rule 6 checks. With the proposed change in this PR, tx2 would have had to pay more than tx1's feerate of 15.9 sat/vByte. \r\n\r\n\r\n![image](https://user-images.githubusercontent.com/19157360/201697920-b1f958d1-c3dd-4a3b-8dda-7840439639ba.png)\r\n\r\nExample 2: This example shows a fee bump from 1 sat/vByte to 5 sat/vByte of a consolidation (tx0 and [tx3](https://blockstream.info/tx/bf46e55fc81fb2ea34ea4f37f9a404a1d117b0bf2c933d27a59fae348fc71b0a); circle size grows with tx vsize). In between, tx1 as child of tx0 and tx2 as child of tx1 were broadcast with a higher feerate. Here, the fingerprints of tx1 and tx2 are the same as tx0 and tx2 so the sender of these might be the same (also you usually consolidate to your own wallet). We can't tell if tx1 and tx2 were canceled on purpose (double spent attempt?) or if that wasn't what the party expected to do by replacing tx0. Also, interesting to note is that tx1 has a locktime lower than tx0. This could mean that this transaction came from a Bitcoin Core or an Electrum wallet and it just happened to hit the 10% chance of setting the locktime to `currentHeight - rand(1, 100)` ([Bitcoin Core](https://github.com/bitcoin/bitcoin/blob/48174c0f287b19931ca110670610bd03a03eb914/src/wallet/spend.cpp#L725-L731), [Electrum](https://github.com/spesmilo/electrum/blob/b357391c4806acbc3d34a907b8f414601276b5fe/electrum/wallet.py#L222-L225)). A few potential learnings (~will create issues for this in Bitcoin Core and Electrum~):\r\n- ~Warn users if doing a fee-bump would cancel a child transaction.~ Bitcoin Core `bumpfee` RPC docs mention \"The command will fail if the wallet or mempool contains a transaction that spends one of T's outputs.\".\r\n- Don't set the locktime to `currentHeight - rand(1, 100)` when replacing a transaction. (https://github.com/bitcoin/bitcoin/issues/26526, https://github.com/spesmilo/electrum/issues/8073)\r\n- Don't set the locktime to `currentHeight - rand(1, 100)` when we are spending from unconfirmed transactions with a locktime set. The \"could be a pre-signed transaction\" argument doesn't work here as the parent has a higher locktime than the child indicating that the child was constructed before the parent. (https://github.com/bitcoin/bitcoin/issues/26527, https://github.com/spesmilo/electrum/issues/8073)\r\n\r\n![image](https://user-images.githubusercontent.com/19157360/201698034-aa354212-37f1-4942-a8d0-4268aa975031.png)\r\n\r\nExample 3: This is an example where tx1 could have somewhat cheaply pinned the consolidation transaction tx0. With the proposed change, the fee-bump [tx2](https://blockstream.info/tx/a3290913b632f24688758fc70ca7b3c638664c8f1ad22c59eaa52b9650fb8272) would have needed to pay more than 225 sat/vByte. However, as is a consolidation and the transactions share a fingerprint, these transactions might be from the same party. Not necessarily a malicious pin, but maybe one that would have happened on accident.\r\n\r\nA few complexer examples with less commentary:\r\n\r\n![image](https://user-images.githubusercontent.com/19157360/201698189-baad2acc-8139-4210-b7bd-cde6d30310ea.png)\r\nExample 4: Consolidation and payout transaction where (probably) multiple parties already spent their unconfirmed UTXOs before tx0 was replaced. [tx6](https://blockstream.info/tx/39dfa317f36fa47f96d3af717a96e88ca509d175c9332e042a7200dc03b851ec)\r\n\r\n![image](https://user-images.githubusercontent.com/19157360/201699269-1d449280-e7c0-4003-8c2d-83cf63864206.png)\r\nExample 5: [tx4](https://blockstream.info/tx/ce10b618ec9cdce8ad9814d84655658a62ac0834d3e4221c69c77d5525a711d5)\r\n\r\n![image](https://user-images.githubusercontent.com/19157360/201779475-eb6e7acc-0d04-4a4d-8294-9088a77d1653.png)\r\nExample 6: [tx8](https://blockstream.info/tx/85e81777a512ce01b746ef5ff719dfeefba419d8893ec7ca2946e531e44e0747)\r\n\r\nI don't have a strong opinion on this change yet. I think it's a trade-off between (accidental and malicious) pinning and incentive compatibility. Doesn't seems like implementing this change would impact too many current RBF sequences (223 out of 363k) based on the data from this year. Happy to take another look to answer follow-up questions.  ",
       "created_at" : "2022-11-14T15:28:53Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26451#issuecomment-1313934927",
@@ -1403,12 +1406,12 @@
          "+1" : 2,
          "-1" : 0,
          "confused" : 0,
-         "eyes" : 1,
+         "eyes" : 2,
          "heart" : 1,
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 2,
-         "total_count" : 6,
+         "total_count" : 7,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1313934927/reactions"
       },
       "updated_at" : "2022-11-17T17:44:32Z",
@@ -1444,7 +1447,7 @@
       "node_id" : "IC_kwDOABII585Pmyra",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 2,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -1452,7 +1455,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 2,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1335569114/reactions"
       },
       "updated_at" : "2022-12-02T17:30:18Z",

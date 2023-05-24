@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24361](https://github.com/bitcoin/bitcoin/pull/24361) (Descriptor unit tests and simplifications by sipa)\n* [#22838](https://github.com/bitcoin/bitcoin/pull/22838) (descriptors: Be able to specify change and receiving in a single descriptor string by achow101)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-02-15T01:25:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24343#issuecomment-1039752209",
@@ -57,7 +57,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "In 5e093e9604b9161088a44707694389b883842f4e \"Add tr() descriptor unit tests\"\r\n\r\nThis seems like a bug fix that should be in a commit separate from the tests?",
-      "commit_id" : "9f5c7830ee36e5a9fa9a8a816316fe01b62eb0de",
+      "commit_id" : "0683f377e1588758da86368f82efee765f89d890",
       "created_at" : "2022-02-15T16:45:43Z",
       "diff_hunk" : "@@ -259,7 +259,15 @@ class ConstPubkeyProvider final : public PubkeyProvider\n     bool ToPrivateString(const SigningProvider& arg, std::string& ret) const override\n     {\n         CKey key;\n-        if (!arg.GetKey(m_pubkey.GetID(), key)) return false;\n+        if (m_xonly) {\n+            for (const auto& keyid : XOnlyPubKey(m_pubkey).GetKeyIDs()) {\n+                arg.GetKey(keyid, key);\n+                if (key.IsValid()) break;\n+            }\n+        } else {\n+            arg.GetKey(m_pubkey.GetID(), key);\n+        }\n+        if (!key.IsValid()) return false;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24343#discussion_r807055176",
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : 262,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-15T16:45:43Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/807055176",
       "user" : {
@@ -124,7 +125,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Done. Also updated PR description.",
-      "commit_id" : "9f5c7830ee36e5a9fa9a8a816316fe01b62eb0de",
+      "commit_id" : "0683f377e1588758da86368f82efee765f89d890",
       "created_at" : "2022-02-15T17:01:11Z",
       "diff_hunk" : "@@ -259,7 +259,15 @@ class ConstPubkeyProvider final : public PubkeyProvider\n     bool ToPrivateString(const SigningProvider& arg, std::string& ret) const override\n     {\n         CKey key;\n-        if (!arg.GetKey(m_pubkey.GetID(), key)) return false;\n+        if (m_xonly) {\n+            for (const auto& keyid : XOnlyPubKey(m_pubkey).GetKeyIDs()) {\n+                arg.GetKey(keyid, key);\n+                if (key.IsValid()) break;\n+            }\n+        } else {\n+            arg.GetKey(m_pubkey.GetID(), key);\n+        }\n+        if (!key.IsValid()) return false;",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24343#discussion_r807078114",
@@ -155,6 +156,7 @@
       "side" : "RIGHT",
       "start_line" : 262,
       "start_side" : "LEFT",
+      "subject_type" : "line",
       "updated_at" : "2022-02-15T17:01:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/807078114",
       "user" : {
@@ -398,6 +400,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-18T23:54:27Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/810399377",
       "user" : {
@@ -465,6 +468,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-02-19T00:18:27Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/810405270",
       "user" : {

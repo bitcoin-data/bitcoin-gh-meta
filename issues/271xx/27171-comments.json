@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [glozow](https://github.com/bitcoin/bitcoin/pull/27171#pullrequestreview-1331143909), [MarcoFalke](https://github.com/bitcoin/bitcoin/pull/27171#pullrequestreview-1334770569) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n",
       "created_at" : "2023-02-28T00:44:06Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27171#issuecomment-1447354758",
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2023-03-06T17:43:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1126801973",
       "user" : {
@@ -122,7 +123,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1127302187"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "The intention was to express the implication of exceeding the sig-op limit from a user's perspective (tx is treated as larger than it's serialized vsize => more fees needed to reach the same fee-rate; or as PR desc of #8365 put it \"high-sigop transactions [...] need to pay a fee corresponding to the maximally-used resource.\"). Agree that the comment is rather misleading and not very helpful for the test, replaced it.\r\n\r\nGenerally struggled a bit with terminology for this PR (not even sure if talking about a \"limit\" is proper, usually we reject txs from mempool if limits are exceeded), suggestions of course very welcome.",
       "commit_id" : "89cd20cbedbba344bab92dd1d71dac9c84320a70",
       "created_at" : "2023-03-07T03:25:47Z",
@@ -155,6 +156,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2023-03-07T03:25:47Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1127302187",
       "user" : {
@@ -223,6 +225,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2023-03-08T17:24:05Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1129803993",
       "user" : {
@@ -244,6 +247,74 @@
          "subscriptions_url" : "https://api.github.com/users/glozow/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/glozow"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/27171#discussion_r1132304879"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/27171"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1132304879"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "for reference, usually `fAccurate` is set for witness scripts sigop counts, but omitting the k and n in the CMS imitates `fAccurate=false`.",
+      "commit_id" : "89cd20cbedbba344bab92dd1d71dac9c84320a70",
+      "created_at" : "2023-03-10T12:24:17Z",
+      "diff_hunk" : "@@ -0,0 +1,125 @@\n+#!/usr/bin/env python3\n+# Copyright (c) 2023 The Bitcoin Core developers\n+# Distributed under the MIT software license, see the accompanying\n+# file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\"\"\"Test sigop limit mempool policy (`-bytespersigop` parameter)\"\"\"\n+from math import ceil\n+\n+from test_framework.messages import (\n+    COutPoint,\n+    CTransaction,\n+    CTxIn,\n+    CTxInWitness,\n+    CTxOut,\n+    WITNESS_SCALE_FACTOR,\n+)\n+from test_framework.script import (\n+    CScript,\n+    OP_CHECKMULTISIG,\n+    OP_CHECKSIG,\n+    OP_ENDIF,\n+    OP_FALSE,\n+    OP_IF,\n+    OP_RETURN,\n+    OP_TRUE,\n+)\n+from test_framework.script_util import (\n+    script_to_p2wsh_script,\n+)\n+from test_framework.test_framework import BitcoinTestFramework\n+from test_framework.util import (\n+    assert_equal,\n+    assert_greater_than_or_equal,\n+)\n+from test_framework.wallet import MiniWallet\n+\n+\n+DEFAULT_BYTES_PER_SIGOP = 20  # default setting\n+\n+\n+class BytesPerSigOpTest(BitcoinTestFramework):\n+    def set_test_params(self):\n+        self.num_nodes = 1\n+        # allow large datacarrier output to pad transactions\n+        self.extra_args = [['-datacarriersize=100000']]\n+\n+    def create_p2wsh_spending_tx(self, witness_script, output_script):\n+        \"\"\"Create a 1-input-1-output P2WSH spending transaction with only the\n+           witness script in the witness stack and the given output script.\"\"\"\n+        # create P2WSH address and fund it via MiniWallet first\n+        txid, vout = self.wallet.send_to(\n+            from_node=self.nodes[0],\n+            scriptPubKey=script_to_p2wsh_script(witness_script),\n+            amount=1000000,\n+        )\n+\n+        # create spending transaction\n+        tx = CTransaction()\n+        tx.vin = [CTxIn(COutPoint(int(txid, 16), vout))]\n+        tx.wit.vtxinwit = [CTxInWitness()]\n+        tx.wit.vtxinwit[0].scriptWitness.stack = [bytes(witness_script)]\n+        tx.vout = [CTxOut(500000, output_script)]\n+        return tx\n+\n+    def test_sigops_limit(self, bytes_per_sigop, num_sigops):\n+        sigop_equivalent_vsize = ceil(num_sigops * bytes_per_sigop / WITNESS_SCALE_FACTOR)\n+        self.log.info(f\"- {num_sigops} sigops (equivalent size of {sigop_equivalent_vsize} vbytes)\")\n+\n+        # create a template tx with the specified sigop cost in the witness script\n+        # (note that the sigops count even though being in a branch that's not executed)\n+        num_multisigops = num_sigops // 20\n+        num_singlesigops = num_sigops % 20\n+        witness_script = CScript(\n+            [OP_FALSE, OP_IF] +\n+            [OP_CHECKMULTISIG]*num_multisigops +",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/27171#discussion_r1132304879",
+      "id" : 1132304879,
+      "line" : 74,
+      "node_id" : "PRRC_kwDOABII585DfZnv",
+      "original_commit_id" : "89cd20cbedbba344bab92dd1d71dac9c84320a70",
+      "original_line" : 74,
+      "original_position" : 74,
+      "original_start_line" : null,
+      "path" : "test/functional/mempool_sigoplimit.py",
+      "position" : 74,
+      "pull_request_review_id" : 1334770569,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/27171",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1132304879/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : null,
+      "start_side" : null,
+      "subject_type" : "line",
+      "updated_at" : "2023-03-10T12:26:44Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1132304879",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/6399679?v=4",
+         "events_url" : "https://api.github.com/users/MarcoFalke/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/MarcoFalke/followers",
+         "following_url" : "https://api.github.com/users/MarcoFalke/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/MarcoFalke/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/MarcoFalke",
+         "id" : 6399679,
+         "login" : "MarcoFalke",
+         "node_id" : "MDQ6VXNlcjYzOTk2Nzk=",
+         "organizations_url" : "https://api.github.com/users/MarcoFalke/orgs",
+         "received_events_url" : "https://api.github.com/users/MarcoFalke/received_events",
+         "repos_url" : "https://api.github.com/users/MarcoFalke/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/MarcoFalke/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/MarcoFalke/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/MarcoFalke"
       }
    },
    {
@@ -335,7 +406,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> @theStack could open a followup addressing anything here?\r\n> \r\n> > (Doesn't need to be in this PR) it could be worth checking that this vsize calculation is used for anc/desc limits as well?\r\n> \r\n> > for reference, usually fAccurate is set for witness scripts sigop counts, but omitting the k and n in the CMS imitates fAccurate=false.\r\n\r\nYes, I'm planning to do a follow-up next week, extending the checks on ancestor/descendant limits is definitely a good idea! Regarding Marco's explanation w.r.t. fAccurate, will consider adding a small explanation comment (something like e.g. \"if k and n are omitted, the sig-ops costs of OP_CMS are 20 even in witness spends\").",
       "created_at" : "2023-03-11T12:49:54Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27171#issuecomment-1464905433",

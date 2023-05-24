@@ -1,6 +1,6 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#25756](https://github.com/bitcoin/bitcoin/pull/25756) (rest: Remove support for a number of `-deprecatedrest` options by stickies-v)\n* [#25755](https://github.com/bitcoin/bitcoin/pull/25755) (rest: Use from_blockhash and txdetails query parameters by stickies-v)\n* [#25754](https://github.com/bitcoin/bitcoin/pull/25754) (rest: Extend HTTPRequest interface to support querying path (parameters) by stickies-v)\n* [#25753](https://github.com/bitcoin/bitcoin/pull/25753) (rest: Move format string from path-like parameter to query parameter by stickies-v)\n* [#25734](https://github.com/bitcoin/bitcoin/pull/25734) (wallet, refactor: #24584 follow-ups by josibake)\n* [#25722](https://github.com/bitcoin/bitcoin/pull/25722) (refactor: Use util::Result class for wallet loading by ryanofsky)\n* [#25685](https://github.com/bitcoin/bitcoin/pull/25685) (wallet: Faster transaction creation by removing pre-set-inputs fetching responsibility from Coin Selection by furszy)\n* [#25666](https://github.com/bitcoin/bitcoin/pull/25666) (refactor: wallet, do not translate init options names by furszy)\n* [#25665](https://github.com/bitcoin/bitcoin/pull/25665) (refactor: Add util::Result class and use it in LoadChainstate by ryanofsky)\n* [#25656](https://github.com/bitcoin/bitcoin/pull/25656) (refactor: wallet: return BResult from `GetReservedDestination` methods by theStack)\n* [#25616](https://github.com/bitcoin/bitcoin/pull/25616) (refactor: Return `BResult` from WalletLoader methods by w0xlt)\n* [#25297](https://github.com/bitcoin/bitcoin/pull/25297) (wallet: speedup transactions sync, rescan and load by grouping all independent db writes on a single batched db transaction by furszy)\n* [#25273](https://github.com/bitcoin/bitcoin/pull/25273) (wallet: Pass through transaction locktime and preset input sequences and scripts to CreateTransaction by achow101)\n* [#25269](https://github.com/bitcoin/bitcoin/pull/25269) (wallet: re-activate the not triggered  \"AmountWithFeeExceedsBalance\" error by furszy)\n* [#25183](https://github.com/bitcoin/bitcoin/pull/25183) (rpc: Filter inputs by type during CoinSelection by aureleoules)\n* [#24897](https://github.com/bitcoin/bitcoin/pull/24897) ([Draft / POC] Silent Payments by w0xlt)\n* [#19602](https://github.com/bitcoin/bitcoin/pull/19602) (wallet: Migrate legacy wallets to descriptor wallets by achow101)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-07-27T20:55:49Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#issuecomment-1197358050",
@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Updated 13aeab1cf6de1777db480ee7f568d78daecf49dd -> 2aa408b4ccc57539a7f6b383e6c98acac10e39c0 ([`pr/bresult-del.1`](https://github.com/ryanofsky/bitcoin/commits/pr/bresult-del.1) -> [`pr/bresult-del.2`](https://github.com/ryanofsky/bitcoin/commits/pr/bresult-del.2), [compare](https://github.com/ryanofsky/bitcoin/compare/pr/bresult-del.1..pr/bresult-del.2)) dropping dependency on #25665 as suggested https://github.com/bitcoin/bitcoin/pull/25665#issuecomment-1197289390\r\nUpdated 2aa408b4ccc57539a7f6b383e6c98acac10e39c0 -> e71b858bc0f30784191725d71a77bab4d280a6f9 ([`pr/bresult-del.2`](https://github.com/ryanofsky/bitcoin/commits/pr/bresult-del.2) -> [`pr/bresult-del.3`](https://github.com/ryanofsky/bitcoin/commits/pr/bresult-del.3), [compare](https://github.com/ryanofsky/bitcoin/compare/pr/bresult-del.2..pr/bresult-del.3)) adding missing test file\r\nUpdated e71b858bc0f30784191725d71a77bab4d280a6f9 -> 42f4f7d126f6729c4924b0630f67d171f4d0ac9b ([`pr/bresult-del.3`](https://github.com/ryanofsky/bitcoin/commits/pr/bresult-del.3) -> [`pr/bresult-del.4`](https://github.com/ryanofsky/bitcoin/commits/pr/bresult-del.4), [compare](https://github.com/ryanofsky/bitcoin/compare/pr/bresult-del.3..pr/bresult-del.4)) fixing comment",
       "created_at" : "2022-07-27T21:30:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#issuecomment-1197389847",
@@ -101,7 +101,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "For reference, this addresses my feedback from https://github.com/bitcoin/bitcoin/pull/25218#discussion_r906769777",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T14:14:12Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::move(obj)} {}\n+    Result(Error error) : m_variant{std::move(error.message)} {}\n+    template <typename OT>\n+    Result(Error error, Result<OT>&& other) : m_variant{std::move(std::get<0>(other.m_variant))} {}\n+\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const { assert(*this); return std::get<1>(m_variant); }\n+    T& value() { assert(*this); return std::get<1>(m_variant); }\n+    template <typename U>\n+    T value_or(const U& default_value) const { return has_value() ? value() : default_value; }\n+    operator bool() const { return has_value(); }\n+    const T* operator->() const { return &value(); }\n+    const T& operator*() const { return value(); }\n+    T* operator->() { return &value(); }\n+    T& operator*() { return value(); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934581369",
@@ -131,6 +131,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T15:40:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934581369",
       "user" : {
@@ -168,7 +169,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Missing LIFETIMEBOUND for any method that returns `&` or `*`?",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T14:18:41Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::move(obj)} {}\n+    Result(Error error) : m_variant{std::move(error.message)} {}\n+    template <typename OT>\n+    Result(Error error, Result<OT>&& other) : m_variant{std::move(std::get<0>(other.m_variant))} {}\n+\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const { assert(*this); return std::get<1>(m_variant); }\n+    T& value() { assert(*this); return std::get<1>(m_variant); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934585908",
@@ -198,6 +199,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T15:40:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934585908",
       "user" : {
@@ -235,7 +237,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "If the goal of this pull is to make the interface equal to std::optional, what is the point of keeping this line? If there is one, why not use `std::move`? See https://github.com/bitcoin/bitcoin/pull/25218#discussion_r918863838\r\n\r\n```suggestion\r\n        std::optional<CreatedTransactionResult> txr_grouped{res_tx_grouped ? std::make_optional(std::move(*res_tx_grouped)) : std::nullopt};\r\n```",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T14:23:07Z",
       "diff_hunk" : "@@ -947,36 +947,36 @@ static BResult<CreatedTransactionResult> CreateTransactionInternal(\n     return CreatedTransactionResult(tx, nFeeRet, nChangePosInOut, feeCalc);\n }\n \n-BResult<CreatedTransactionResult> CreateTransaction(\n+util::Result<CreatedTransactionResult> CreateTransaction(\n         CWallet& wallet,\n         const std::vector<CRecipient>& vecSend,\n         int change_pos,\n         const CCoinControl& coin_control,\n         bool sign)\n {\n     if (vecSend.empty()) {\n-        return _(\"Transaction must have at least one recipient\");\n+        return {util::Error{_(\"Transaction must have at least one recipient\")}};\n     }\n \n     if (std::any_of(vecSend.cbegin(), vecSend.cend(), [](const auto& recipient){ return recipient.nAmount < 0; })) {\n-        return _(\"Transaction amounts must not be negative\");\n+        return {util::Error{_(\"Transaction amounts must not be negative\")}};\n     }\n \n     LOCK(wallet.cs_wallet);\n \n     auto res = CreateTransactionInternal(wallet, vecSend, change_pos, coin_control, sign);\n-    TRACE4(coin_selection, normal_create_tx_internal, wallet.GetName().c_str(), res.HasRes(),\n-           res ? res.GetObj().fee : 0, res ? res.GetObj().change_pos : 0);\n+    TRACE4(coin_selection, normal_create_tx_internal, wallet.GetName().c_str(), bool(res),\n+           res ? res->fee : 0, res ? res->change_pos : 0);\n     if (!res) return res;\n-    const auto& txr_ungrouped = res.GetObj();\n+    const auto& txr_ungrouped = *res;\n     // try with avoidpartialspends unless it's enabled already\n     if (txr_ungrouped.fee > 0 /* 0 means non-functional fee rate estimation */ && wallet.m_max_aps_fee > -1 && !coin_control.m_avoid_partial_spends) {\n         TRACE1(coin_selection, attempting_aps_create_tx, wallet.GetName().c_str());\n         CCoinControl tmp_cc = coin_control;\n         tmp_cc.m_avoid_partial_spends = true;\n         auto res_tx_grouped = CreateTransactionInternal(wallet, vecSend, change_pos, tmp_cc, sign);\n         // Helper optional class for now\n-        std::optional<CreatedTransactionResult> txr_grouped{res_tx_grouped.HasRes() ? std::make_optional(res_tx_grouped.GetObj()) : std::nullopt};\n+        std::optional<CreatedTransactionResult> txr_grouped{res_tx_grouped ? std::make_optional(*res_tx_grouped) : std::nullopt};",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934590472",
@@ -265,6 +267,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T15:40:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934590472",
       "user" : {
@@ -302,7 +305,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "```suggestion\r\n    const auto& dest = *Assert(wallet.GetNewDestination(OutputType::BECH32, \"\"));\r\n```\r\n\r\nnit: Could remove the assert and `*` below, and add them to this line? (Though, it then might need a `std::move` to avoid a use-after-free?)",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T14:34:32Z",
       "diff_hunk" : "@@ -46,10 +46,10 @@ static void BenchUnloadWallet(std::shared_ptr<CWallet>&& wallet)\n static void AddTx(CWallet& wallet)\n {\n     const auto& dest = wallet.GetNewDestination(OutputType::BECH32, \"\");",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934602539",
@@ -332,6 +335,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T15:40:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934602539",
       "user" : {
@@ -369,7 +373,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "```suggestion\r\n        m_error_message = util::ErrorString(wallet);\r\n```\r\n\r\nnit?",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T14:37:21Z",
       "diff_hunk" : "@@ -393,8 +393,8 @@ void RestoreWalletActivity::restore(const fs::path& backup_file, const std::stri\n     QTimer::singleShot(0, worker(), [this, backup_file, wallet_name] {\n         auto wallet{node().walletLoader().restoreWallet(backup_file, wallet_name, m_warning_message)};\n \n-        m_error_message = wallet ? bilingual_str{} : wallet.GetError();\n-        if (wallet) m_wallet_model = m_wallet_controller->getOrCreateWallet(wallet.ReleaseObj());\n+        m_error_message = wallet ? bilingual_str{} : util::ErrorString(wallet);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934605504",
@@ -399,6 +403,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T15:40:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934605504",
       "user" : {
@@ -436,7 +441,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Any reason to change this to have several `;` on one line, when clang-format doesn't like that? Also if you kept this as `return std::get<T>(m_variant);`, the diff would be smaller by one line.",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T14:40:51Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::move(obj)} {}\n+    Result(Error error) : m_variant{std::move(error.message)} {}\n+    template <typename OT>\n+    Result(Error error, Result<OT>&& other) : m_variant{std::move(std::get<0>(other.m_variant))} {}\n+\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const { assert(*this); return std::get<1>(m_variant); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934609154",
@@ -466,6 +471,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T15:40:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934609154",
       "user" : {
@@ -503,7 +509,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Same: Use `Assert`?",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T14:46:26Z",
       "diff_hunk" : "@@ -21,9 +21,9 @@ std::string getnewaddress(CWallet& w)\n {\n     constexpr auto output_type = OutputType::BECH32;\n     auto op_dest = w.GetNewDestination(output_type, \"\");",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934615230",
@@ -533,6 +539,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T15:40:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934615230",
       "user" : {
@@ -570,7 +577,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "```suggestion\r\n//! messages either or result values.\r\n```\r\n\r\nThis reads like \"and\", but should be \"xor\", no?",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T14:50:22Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934619680",
@@ -600,6 +607,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T15:40:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934619680",
       "user" : {
@@ -637,19 +645,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "```suggestion\r\n    template <typename OT>\r\n```\r\n\r\nnit: Shouldn't this be named `OT`, as it is used in the move-constructor copying the error from `Result<OT>`?",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T15:12:29Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934642192",
       "id" : 934642192,
-      "line" : 37,
+      "line" : 40,
       "node_id" : "PRRC_kwDOABII5843tYIQ",
       "original_commit_id" : "42f4f7d126f6729c4924b0630f67d171f4d0ac9b",
-      "original_line" : 37,
+      "original_line" : 40,
       "original_position" : 33,
       "original_start_line" : null,
       "path" : "src/util/result.h",
-      "position" : 38,
+      "position" : 46,
       "pull_request_review_id" : 1057375116,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25721",
       "reactions" : {
@@ -667,6 +675,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T15:40:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934642192",
       "user" : {
@@ -704,7 +713,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Looks like this drops `error.message`, but I guess that's fine?",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T15:27:11Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::move(obj)} {}\n+    Result(Error error) : m_variant{std::move(error.message)} {}\n+    template <typename OT>\n+    Result(Error error, Result<OT>&& other) : m_variant{std::move(std::get<0>(other.m_variant))} {}",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934656466",
@@ -734,6 +743,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T15:40:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934656466",
       "user" : {
@@ -771,19 +781,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Any reason to not leave this as-is? `std::holds_alternative<T>(m_variant);`",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T15:28:33Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::move(obj)} {}\n+    Result(Error error) : m_variant{std::move(error.message)} {}\n+    template <typename OT>\n+    Result(Error error, Result<OT>&& other) : m_variant{std::move(std::get<0>(other.m_variant))} {}\n+\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934657900",
       "id" : 934657900,
-      "line" : 48,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5843tb9s",
       "original_commit_id" : "42f4f7d126f6729c4924b0630f67d171f4d0ac9b",
-      "original_line" : 48,
+      "original_line" : 49,
       "original_position" : 71,
       "original_start_line" : null,
       "path" : "src/util/result.h",
-      "position" : 74,
+      "position" : null,
       "pull_request_review_id" : 1057375116,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25721",
       "reactions" : {
@@ -801,6 +811,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T15:40:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934657900",
       "user" : {
@@ -838,7 +849,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "This doesn't compile, so my recommendation would be to remove dead code and only add it when it is needed.\r\n\r\n\r\n```\r\n./util/result.h:53:69: error: call to implicitly-deleted copy constructor of 'const result_tests::NoCopy'\r\n    T value_or(const U& default_value) const { return has_value() ? value() : default_value; }\r\n                                                                    ^~~~~~~\r\ntest/result_tests.cpp:74:27: note: in instantiation of function template specialization 'util::Result<result_tests::NoCopy>::value_or<int>' requested here\r\n    BOOST_CHECK_EQUAL(obj.value_or(1), 5);\r\n                          ^\r\ntest/result_tests.cpp:14:26: note: copy constructor of 'NoCopy' is implicitly deleted because field 'm_n' has a deleted copy constructor\r\n    std::unique_ptr<int> m_n;\r\n                         ^\r\n```\r\n\r\n```diff\r\ndiff --git a/src/test/result_tests.cpp b/src/test/result_tests.cpp\r\nindex 5118571e23..bfd5672045 100644\r\n--- a/src/test/result_tests.cpp\r\n+++ b/src/test/result_tests.cpp\r\n@@ -68,4 +68,11 @@ BOOST_AUTO_TEST_CASE(check_returned)\r\n     ExpectFail(NoCopyFn(5, false), Untranslated(\"nocopy 5 error.\"));\r\n }\r\n \r\n+BOOST_AUTO_TEST_CASE(check_value_or)\r\n+{\r\n+    auto obj{NoCopyFn(5, true)};\r\n+    BOOST_CHECK_EQUAL(obj.value_or(1), 5);\r\n+    obj=NoCopyFn(5, false);\r\n+    BOOST_CHECK_EQUAL(obj.value_or(1), 1);\r\n+}\r\n BOOST_AUTO_TEST_SUITE_END()\r\ndiff --git a/src/util/result.h b/src/util/result.h\r\nindex b9e490025b..71aec57237 100644\r\n--- a/src/util/result.h\r\n+++ b/src/util/result.h\r\n@@ -49,8 +49,6 @@ public:\r\n     bool has_value() const { return m_variant.index() == 1; }\r\n     const T& value() const { assert(*this); return std::get<1>(m_variant); }\r\n     T& value() { assert(*this); return std::get<1>(m_variant); }\r\n-    template <typename U>\r\n-    T value_or(const U& default_value) const { return has_value() ? value() : default_value; }\r\n     operator bool() const { return has_value(); }\r\n     const T* operator->() const { return &value(); }\r\n     const T& operator*() const { return value(); }\r\n",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T15:33:21Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::move(obj)} {}\n+    Result(Error error) : m_variant{std::move(error.message)} {}\n+    template <typename OT>\n+    Result(Error error, Result<OT>&& other) : m_variant{std::move(std::get<0>(other.m_variant))} {}\n+\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const { assert(*this); return std::get<1>(m_variant); }\n+    T& value() { assert(*this); return std::get<1>(m_variant); }\n+    template <typename U>\n+    T value_or(const U& default_value) const { return has_value() ? value() : default_value; }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934662743",
@@ -868,6 +879,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T15:40:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934662743",
       "user" : {
@@ -905,7 +917,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "why remove `explicit`?",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T15:37:07Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::move(obj)} {}\n+    Result(Error error) : m_variant{std::move(error.message)} {}\n+    template <typename OT>\n+    Result(Error error, Result<OT>&& other) : m_variant{std::move(std::get<0>(other.m_variant))} {}\n+\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const { assert(*this); return std::get<1>(m_variant); }\n+    T& value() { assert(*this); return std::get<1>(m_variant); }\n+    template <typename U>\n+    T value_or(const U& default_value) const { return has_value() ? value() : default_value; }\n+    operator bool() const { return has_value(); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934666224",
@@ -935,6 +947,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T15:40:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934666224",
       "user" : {
@@ -972,7 +985,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Maybe assert(error.message.empty()) for now?",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T15:41:12Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::move(obj)} {}\n+    Result(Error error) : m_variant{std::move(error.message)} {}\n+    template <typename OT>\n+    Result(Error error, Result<OT>&& other) : m_variant{std::move(std::get<0>(other.m_variant))} {}",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934670040",
@@ -1003,6 +1016,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T15:41:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934670040",
       "user" : {
@@ -1040,7 +1054,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Could move the Assert and `*` into the previous line? (Might need a `std::move`)",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T15:46:46Z",
       "diff_hunk" : "@@ -75,8 +75,8 @@ static void add_coin(std::vector<COutput>& coins, CWallet& wallet, const CAmount\n     tx.vout[nInput].nValue = nValue;\n     if (spendable) {\n         auto op_dest = wallet.GetNewDestination(OutputType::BECH32, \"\");\n-        assert(op_dest.HasRes());\n-        tx.vout[nInput].scriptPubKey = GetScriptForDestination(op_dest.GetObj());\n+        assert(op_dest);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934675169",
@@ -1070,6 +1084,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T15:48:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934675169",
       "user" : {
@@ -1107,7 +1122,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Could move the Assert down by one line?",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T15:47:43Z",
       "diff_hunk" : "@@ -69,14 +69,14 @@ struct FuzzedWallet {\n     CScript GetScriptPubKey(FuzzedDataProvider& fuzzed_data_provider)\n     {\n         auto type{fuzzed_data_provider.PickValueInArray(OUTPUT_TYPES)};\n-        BResult<CTxDestination> op_dest;\n+        util::Result<CTxDestination> op_dest{util::Error{}};\n         if (fuzzed_data_provider.ConsumeBool()) {\n             op_dest = wallet->GetNewDestination(type, \"\");\n         } else {\n             op_dest = wallet->GetNewChangeDestination(type);\n         }\n-        assert(op_dest.HasRes());\n-        return GetScriptForDestination(op_dest.GetObj());\n+        assert(op_dest);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934676040",
@@ -1137,6 +1152,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T15:48:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934676040",
       "user" : {
@@ -1172,9 +1188,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934737031"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934602539\r\n\r\n> nit: Could remove the assert and `*` below, and add them to this line? (Though, it then might need a `std::move` to avoid a use-after-free?)\r\n\r\nSure, this does seem like a good additional simplification. Added `*Assert` and dropped `&` to avoid use-after-free this would cause (std::move is just a type-cast and wouldn't extend the return value lifetime after the Assert)",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T16:59:15Z",
       "diff_hunk" : "@@ -46,10 +46,10 @@ static void BenchUnloadWallet(std::shared_ptr<CWallet>&& wallet)\n static void AddTx(CWallet& wallet)\n {\n     const auto& dest = wallet.GetNewDestination(OutputType::BECH32, \"\");",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934737031",
@@ -1205,6 +1221,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T19:04:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934737031",
       "user" : {
@@ -1240,9 +1257,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934737427"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934585908\r\n\r\n> Missing LIFETIMEBOUND for any method that returns `&` or `*`?\r\n\r\nThanks, added\r\n",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T16:59:42Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::move(obj)} {}\n+    Result(Error error) : m_variant{std::move(error.message)} {}\n+    template <typename OT>\n+    Result(Error error, Result<OT>&& other) : m_variant{std::move(std::get<0>(other.m_variant))} {}\n+\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const { assert(*this); return std::get<1>(m_variant); }\n+    T& value() { assert(*this); return std::get<1>(m_variant); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934737427",
@@ -1273,6 +1290,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T19:04:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934737427",
       "user" : {
@@ -1308,9 +1326,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934737835"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934590472\r\n\r\n> If the goal of this pull is to make the interface equal to std::optional, what is the point of keeping this line? If there is one, why not use `std::move`? See [#25218 (comment)](https://github.com/bitcoin/bitcoin/pull/25218#discussion_r918863838)\r\n\r\nThanks! Dropped the line. I just didn't notice this chance to simplify.\r\n",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T17:00:13Z",
       "diff_hunk" : "@@ -947,36 +947,36 @@ static BResult<CreatedTransactionResult> CreateTransactionInternal(\n     return CreatedTransactionResult(tx, nFeeRet, nChangePosInOut, feeCalc);\n }\n \n-BResult<CreatedTransactionResult> CreateTransaction(\n+util::Result<CreatedTransactionResult> CreateTransaction(\n         CWallet& wallet,\n         const std::vector<CRecipient>& vecSend,\n         int change_pos,\n         const CCoinControl& coin_control,\n         bool sign)\n {\n     if (vecSend.empty()) {\n-        return _(\"Transaction must have at least one recipient\");\n+        return {util::Error{_(\"Transaction must have at least one recipient\")}};\n     }\n \n     if (std::any_of(vecSend.cbegin(), vecSend.cend(), [](const auto& recipient){ return recipient.nAmount < 0; })) {\n-        return _(\"Transaction amounts must not be negative\");\n+        return {util::Error{_(\"Transaction amounts must not be negative\")}};\n     }\n \n     LOCK(wallet.cs_wallet);\n \n     auto res = CreateTransactionInternal(wallet, vecSend, change_pos, coin_control, sign);\n-    TRACE4(coin_selection, normal_create_tx_internal, wallet.GetName().c_str(), res.HasRes(),\n-           res ? res.GetObj().fee : 0, res ? res.GetObj().change_pos : 0);\n+    TRACE4(coin_selection, normal_create_tx_internal, wallet.GetName().c_str(), bool(res),\n+           res ? res->fee : 0, res ? res->change_pos : 0);\n     if (!res) return res;\n-    const auto& txr_ungrouped = res.GetObj();\n+    const auto& txr_ungrouped = *res;\n     // try with avoidpartialspends unless it's enabled already\n     if (txr_ungrouped.fee > 0 /* 0 means non-functional fee rate estimation */ && wallet.m_max_aps_fee > -1 && !coin_control.m_avoid_partial_spends) {\n         TRACE1(coin_selection, attempting_aps_create_tx, wallet.GetName().c_str());\n         CCoinControl tmp_cc = coin_control;\n         tmp_cc.m_avoid_partial_spends = true;\n         auto res_tx_grouped = CreateTransactionInternal(wallet, vecSend, change_pos, tmp_cc, sign);\n         // Helper optional class for now\n-        std::optional<CreatedTransactionResult> txr_grouped{res_tx_grouped.HasRes() ? std::make_optional(res_tx_grouped.GetObj()) : std::nullopt};\n+        std::optional<CreatedTransactionResult> txr_grouped{res_tx_grouped ? std::make_optional(*res_tx_grouped) : std::nullopt};",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934737835",
@@ -1341,6 +1359,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T19:04:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934737835",
       "user" : {
@@ -1376,9 +1395,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934739670"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934605504\r\n\r\n> nit?\r\n\r\nThanks, added simplification",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T17:02:34Z",
       "diff_hunk" : "@@ -393,8 +393,8 @@ void RestoreWalletActivity::restore(const fs::path& backup_file, const std::stri\n     QTimer::singleShot(0, worker(), [this, backup_file, wallet_name] {\n         auto wallet{node().walletLoader().restoreWallet(backup_file, wallet_name, m_warning_message)};\n \n-        m_error_message = wallet ? bilingual_str{} : wallet.GetError();\n-        if (wallet) m_wallet_model = m_wallet_controller->getOrCreateWallet(wallet.ReleaseObj());\n+        m_error_message = wallet ? bilingual_str{} : util::ErrorString(wallet);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934739670",
@@ -1409,6 +1428,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T19:04:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934739670",
       "user" : {
@@ -1444,9 +1464,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934739867"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934609154\r\n\r\n> Any reason to change this to have several `;` on one line, when clang-format doesn't like that? \r\n\r\nIt's easier to see what the methods supports if you can look down the left column and see the method names and  arguments and return values. The actual method bodies are trivial and probably not helpful to someone trying to use the class, so this convention puts the useful information all in one place instead of alternating useful and useless information and making declarations difficult to skim.\r\n\r\nI actually started using this convention because I saw clang-format unwrap lines similarly in other places. We do have `AllowShortFunctionsOnASingleLine: All` enabled, so I'm not sure why it would not be kicking in here, but I didn't look into it.\r\n\r\n> Also if you kept this as `return std::get<T>(m_variant);`, the diff would be smaller by one line.\r\n\r\nMotivation for changing `get<T>` to `get<1>` is to resolve ambiguity here if `T` is a `bilingual_str`, in which case `get<T>` would not compile. Also it seems more direct and possibly more efficient at compile time to retrieve the variant by index and not rely on template type comparisons.\r\n",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T17:02:51Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::move(obj)} {}\n+    Result(Error error) : m_variant{std::move(error.message)} {}\n+    template <typename OT>\n+    Result(Error error, Result<OT>&& other) : m_variant{std::move(std::get<0>(other.m_variant))} {}\n+\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const { assert(*this); return std::get<1>(m_variant); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934739867",
@@ -1477,6 +1497,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T19:08:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934739867",
       "user" : {
@@ -1512,9 +1533,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934740016"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934615230\r\n\r\n> Same: Use `Assert`?\r\n\r\nThanks, added this simplification\r\n",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T17:03:02Z",
       "diff_hunk" : "@@ -21,9 +21,9 @@ std::string getnewaddress(CWallet& w)\n {\n     constexpr auto output_type = OutputType::BECH32;\n     auto op_dest = w.GetNewDestination(output_type, \"\");",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934740016",
@@ -1545,6 +1566,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T19:08:36Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934740016",
       "user" : {
@@ -1580,9 +1602,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934740142"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934619680\r\n\r\n> This reads like \"and\", but should be \"xor\", no?\r\n\r\nI kind of did mean \"and\" because it does let functions return both, just not both simultaneously. But I agree \"either or\" works and could be clearer, so updated.\r\n",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T17:03:13Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934740142",
@@ -1613,6 +1635,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T19:04:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934740142",
       "user" : {
@@ -1648,22 +1671,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934740335"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934642192\r\n\r\n> nit: Shouldn't this be named `OT`, as it is used in the move-constructor copying the error from `Result<OT>`?\r\n\r\nHmm, the friend declaration is saying any `Result<FT>` is a friend of the `Result<T>`. This is regardless of whether the `Result<FT>` is ever moved from. The friend declaration is needed by the move-constructor but it doesn't have any direct relationship to the move constructor and could be used by any method. I could change `OT` to `FT` on just this line because the word \"other\" kind of makes sense for this parameter even if it isn't referencing the \"other\" move constructor argument. But that would make this friend declaration inconsistent with the friend declaration for ErrorString below where there is no \"other\". `FT` for friend type just seems like the straightforward naming.\r\n\r\n",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T17:03:29Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934740335",
       "id" : 934740335,
       "in_reply_to_id" : 934642192,
-      "line" : 37,
+      "line" : 40,
       "node_id" : "PRRC_kwDOABII5843twFv",
       "original_commit_id" : "42f4f7d126f6729c4924b0630f67d171f4d0ac9b",
-      "original_line" : 37,
+      "original_line" : 40,
       "original_position" : 33,
       "original_start_line" : null,
       "path" : "src/util/result.h",
-      "position" : 38,
+      "position" : 46,
       "pull_request_review_id" : 1057601416,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25721",
       "reactions" : {
@@ -1681,6 +1704,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T19:04:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934740335",
       "user" : {
@@ -1716,9 +1740,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934740485"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934656466\r\n\r\n> Looks like this drops `error.message`, but I guess that's fine?\r\n\r\nIt is ok because `error.message` is always empty right now and #25665 is supposed to allow combining error messages so it can be non-empty. But since this constructor is only used one place right now, it seems easier and less confusing to drop it, so latest push does that.",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T17:03:41Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::move(obj)} {}\n+    Result(Error error) : m_variant{std::move(error.message)} {}\n+    template <typename OT>\n+    Result(Error error, Result<OT>&& other) : m_variant{std::move(std::get<0>(other.m_variant))} {}",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934740485",
@@ -1749,6 +1773,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T19:04:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934740485",
       "user" : {
@@ -1784,22 +1809,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934740635"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934657900\r\n\r\n> Any reason to not leave this as-is? `std::holds_alternative<T>(m_variant);`\r\n\r\nIt's just less direct and ambiguous if `T` is a `bilingual_str`.",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T17:03:52Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::move(obj)} {}\n+    Result(Error error) : m_variant{std::move(error.message)} {}\n+    template <typename OT>\n+    Result(Error error, Result<OT>&& other) : m_variant{std::move(std::get<0>(other.m_variant))} {}\n+\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934740635",
       "id" : 934740635,
       "in_reply_to_id" : 934657900,
-      "line" : 48,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5843twKb",
       "original_commit_id" : "42f4f7d126f6729c4924b0630f67d171f4d0ac9b",
-      "original_line" : 48,
+      "original_line" : 49,
       "original_position" : 71,
       "original_start_line" : null,
       "path" : "src/util/result.h",
-      "position" : 74,
+      "position" : null,
       "pull_request_review_id" : 1057601416,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25721",
       "reactions" : {
@@ -1817,6 +1842,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T19:04:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934740635",
       "user" : {
@@ -1852,9 +1878,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934740929"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934662743\r\n\r\n> This doesn't compile, so my recommendation would be to remove dead code and only add it when it is needed.\r\n\r\nAdded unit test to cover the `value_or` method instead of removing the method. There was a problem with move-only types which is also fixed",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T17:04:16Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::move(obj)} {}\n+    Result(Error error) : m_variant{std::move(error.message)} {}\n+    template <typename OT>\n+    Result(Error error, Result<OT>&& other) : m_variant{std::move(std::get<0>(other.m_variant))} {}\n+\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const { assert(*this); return std::get<1>(m_variant); }\n+    T& value() { assert(*this); return std::get<1>(m_variant); }\n+    template <typename U>\n+    T value_or(const U& default_value) const { return has_value() ? value() : default_value; }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934740929",
@@ -1885,6 +1911,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T19:06:03Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934740929",
       "user" : {
@@ -1920,9 +1947,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934741258"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934675169\r\n\r\n> Could move the Assert and `*` into the previous line? (Might need a `std::move`)\r\n\r\nSure, switched to Assert",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T17:04:42Z",
       "diff_hunk" : "@@ -75,8 +75,8 @@ static void add_coin(std::vector<COutput>& coins, CWallet& wallet, const CAmount\n     tx.vout[nInput].nValue = nValue;\n     if (spendable) {\n         auto op_dest = wallet.GetNewDestination(OutputType::BECH32, \"\");\n-        assert(op_dest.HasRes());\n-        tx.vout[nInput].scriptPubKey = GetScriptForDestination(op_dest.GetObj());\n+        assert(op_dest);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934741258",
@@ -1953,6 +1980,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T19:13:26Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934741258",
       "user" : {
@@ -1988,9 +2016,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934741416"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934676040\r\n\r\n> Could move the Assert down by one line?\r\n\r\nThanks, switched to Assert",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T17:04:52Z",
       "diff_hunk" : "@@ -69,14 +69,14 @@ struct FuzzedWallet {\n     CScript GetScriptPubKey(FuzzedDataProvider& fuzzed_data_provider)\n     {\n         auto type{fuzzed_data_provider.PickValueInArray(OUTPUT_TYPES)};\n-        BResult<CTxDestination> op_dest;\n+        util::Result<CTxDestination> op_dest{util::Error{}};\n         if (fuzzed_data_provider.ConsumeBool()) {\n             op_dest = wallet->GetNewDestination(type, \"\");\n         } else {\n             op_dest = wallet->GetNewChangeDestination(type);\n         }\n-        assert(op_dest.HasRes());\n-        return GetScriptForDestination(op_dest.GetObj());\n+        assert(op_dest);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934741416",
@@ -2021,6 +2049,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T19:13:35Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934741416",
       "user" : {
@@ -2056,9 +2085,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934829512"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934666224\r\n\r\n> why remove `explicit`?\r\n\r\nAdded back, wasn't intentional",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-01T19:04:34Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::move(obj)} {}\n+    Result(Error error) : m_variant{std::move(error.message)} {}\n+    template <typename OT>\n+    Result(Error error, Result<OT>&& other) : m_variant{std::move(std::get<0>(other.m_variant))} {}\n+\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const { assert(*this); return std::get<1>(m_variant); }\n+    T& value() { assert(*this); return std::get<1>(m_variant); }\n+    template <typename U>\n+    T value_or(const U& default_value) const { return has_value() ? value() : default_value; }\n+    operator bool() const { return has_value(); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r934829512",
@@ -2089,6 +2118,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-01T19:04:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/934829512",
       "user" : {
@@ -2113,7 +2143,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Thanks for reviews!\r\n\r\nUpdated 42f4f7d126f6729c4924b0630f67d171f4d0ac9b -> e0289b1cdfe80644cb7045f74e6bd63562e092f8 ([`pr/bresult-del.4`](https://github.com/ryanofsky/bitcoin/commits/pr/bresult-del.4) -> [`pr/bresult-del.5`](https://github.com/ryanofsky/bitcoin/commits/pr/bresult-del.5), [compare](https://github.com/ryanofsky/bitcoin/compare/pr/bresult-del.4..pr/bresult-del.5)) with suggestions\r\n\r\nre: https://github.com/bitcoin/bitcoin/pull/25721#pullrequestreview-1056186962\r\n\r\n> maybe the changes can be split in two or more commits.\r\n\r\nI'm not so sure there is a way to do this that's a clear improvement. It would be possible to split by adding the new result interface and changing the old result interface to wrap the new interface in one commit, then deleting the old interface and changing usages to call the new interface in a second commit. This would split up the PR but also make it a little more complicated. Wouldn't oppose this, just not sure it would be worth it",
       "created_at" : "2022-08-01T19:30:07Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#issuecomment-1201624044",
@@ -2157,7 +2187,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "Rebased e0289b1cdfe80644cb7045f74e6bd63562e092f8 -> 3262acf70a9fdd6b4191812f928ed374dfcf32e1 ([`pr/bresult-del.5`](https://github.com/ryanofsky/bitcoin/commits/pr/bresult-del.5) -> [`pr/bresult-del.6`](https://github.com/ryanofsky/bitcoin/commits/pr/bresult-del.6), [compare](https://github.com/ryanofsky/bitcoin/compare/pr/bresult-del.5-rebase..pr/bresult-del.6)) due to silent conflict with #24584",
       "created_at" : "2022-08-02T04:02:38Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#issuecomment-1201989143",
@@ -2214,7 +2244,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Sure, but now this creates a copy without the `std::move`, right?",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T11:36:13Z",
       "diff_hunk" : "@@ -46,10 +46,10 @@ static void BenchUnloadWallet(std::shared_ptr<CWallet>&& wallet)\n static void AddTx(CWallet& wallet)\n {\n     const auto& dest = wallet.GetNewDestination(OutputType::BECH32, \"\");",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935461458",
@@ -2245,6 +2275,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T11:36:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935461458",
       "user" : {
@@ -2282,20 +2313,20 @@
       },
       "author_association" : "MEMBER",
       "body" : "I didn't read your reply, but now it is unused and can be removed:\r\n\r\n\r\n```diff\r\ndiff --git a/src/util/result.h b/src/util/result.h\r\nindex d038ffe133..cddc8a0819 100644\r\n--- a/src/util/result.h\r\n+++ b/src/util/result.h\r\n@@ -34,8 +34,6 @@ class Result {\r\n private:\r\n     std::variant<bilingual_str, T> m_variant;\r\n \r\n-    template <typename FT>\r\n-    friend class Result;\r\n     template <typename FT>\r\n     friend bilingual_str ErrorString(const Result<FT>& result);\r\n \r\n",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T12:11:31Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935502938",
       "id" : 935502938,
       "in_reply_to_id" : 934642192,
-      "line" : 37,
+      "line" : 40,
       "node_id" : "PRRC_kwDOABII5843wqRa",
       "original_commit_id" : "42f4f7d126f6729c4924b0630f67d171f4d0ac9b",
-      "original_line" : 37,
+      "original_line" : 40,
       "original_position" : 33,
       "original_start_line" : null,
       "path" : "src/util/result.h",
-      "position" : 38,
+      "position" : 46,
       "pull_request_review_id" : 1058653836,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25721",
       "reactions" : {
@@ -2313,6 +2344,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T12:11:31Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935502938",
       "user" : {
@@ -2350,19 +2382,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "remove this line?",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T12:13:43Z",
       "diff_hunk" : "@@ -1053,44 +1053,43 @@ static BResult<CreatedTransactionResult> CreateTransactionInternal(\n     return CreatedTransactionResult(tx, nFeeRet, nChangePosInOut, feeCalc);\n }\n \n-BResult<CreatedTransactionResult> CreateTransaction(\n+util::Result<CreatedTransactionResult> CreateTransaction(\n         CWallet& wallet,\n         const std::vector<CRecipient>& vecSend,\n         int change_pos,\n         const CCoinControl& coin_control,\n         bool sign)\n {\n     if (vecSend.empty()) {\n-        return _(\"Transaction must have at least one recipient\");\n+        return {util::Error{_(\"Transaction must have at least one recipient\")}};\n     }\n \n     if (std::any_of(vecSend.cbegin(), vecSend.cend(), [](const auto& recipient){ return recipient.nAmount < 0; })) {\n-        return _(\"Transaction amounts must not be negative\");\n+        return {util::Error{_(\"Transaction amounts must not be negative\")}};\n     }\n \n     LOCK(wallet.cs_wallet);\n \n     auto res = CreateTransactionInternal(wallet, vecSend, change_pos, coin_control, sign);\n-    TRACE4(coin_selection, normal_create_tx_internal, wallet.GetName().c_str(), res.HasRes(),\n-           res ? res.GetObj().fee : 0, res ? res.GetObj().change_pos : 0);\n+    TRACE4(coin_selection, normal_create_tx_internal, wallet.GetName().c_str(), bool(res),\n+           res ? res->fee : 0, res ? res->change_pos : 0);\n     if (!res) return res;\n-    const auto& txr_ungrouped = res.GetObj();\n+    const auto& txr_ungrouped = *res;\n     // try with avoidpartialspends unless it's enabled already\n     if (txr_ungrouped.fee > 0 /* 0 means non-functional fee rate estimation */ && wallet.m_max_aps_fee > -1 && !coin_control.m_avoid_partial_spends) {\n         TRACE1(coin_selection, attempting_aps_create_tx, wallet.GetName().c_str());\n         CCoinControl tmp_cc = coin_control;\n         tmp_cc.m_avoid_partial_spends = true;\n-        auto res_tx_grouped = CreateTransactionInternal(wallet, vecSend, change_pos, tmp_cc, sign);\n+        auto txr_grouped = CreateTransactionInternal(wallet, vecSend, change_pos, tmp_cc, sign);\n         // Helper optional class for now",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935505612",
       "id" : 935505612,
-      "line" : 1084,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5843wq7M",
       "original_commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
       "original_line" : 1084,
       "original_position" : 145,
       "original_start_line" : null,
       "path" : "src/wallet/spend.cpp",
-      "position" : 145,
+      "position" : null,
       "pull_request_review_id" : 1058656696,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25721",
       "reactions" : {
@@ -2380,6 +2412,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T12:50:41Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935505612",
       "user" : {
@@ -2417,19 +2450,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Same: this also creates a copy without a `std::move`?\r\n\r\nIf yes, maybe use the same you used in the fuzz test:\r\n\r\n\r\n`GetScriptForDestination(*Assert(op_dest))`?",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T12:17:30Z",
       "diff_hunk" : "@@ -74,9 +74,8 @@ static void add_coin(CoinsResult& available_coins, CWallet& wallet, const CAmoun\n     tx.vout.resize(nInput + 1);\n     tx.vout[nInput].nValue = nValue;\n     if (spendable) {\n-        auto op_dest = wallet.GetNewDestination(OutputType::BECH32, \"\");\n-        assert(op_dest.HasRes());\n-        tx.vout[nInput].scriptPubKey = GetScriptForDestination(op_dest.GetObj());\n+        auto op_dest = *(Assert(wallet.GetNewDestination(OutputType::BECH32, \"\")));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935510002",
       "id" : 935510002,
-      "line" : 77,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5843wr_y",
       "original_commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
       "original_line" : 77,
       "original_position" : 7,
       "original_start_line" : null,
       "path" : "src/wallet/test/coinselector_tests.cpp",
-      "position" : 7,
+      "position" : null,
       "pull_request_review_id" : 1058656696,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25721",
       "reactions" : {
@@ -2447,6 +2480,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T12:50:41Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935510002",
       "user" : {
@@ -2484,19 +2518,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "could avoid adl?",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T12:24:05Z",
       "diff_hunk" : "@@ -0,0 +1,96 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\n+#include <util/result.h>\n+\n+#include <boost/test/unit_test.hpp>\n+\n+bool operator==(const bilingual_str& a, const bilingual_str& b)\n+{\n+    return a.original == b.original && a.translated == b.translated;\n+}\n+\n+std::ostream& operator<<(std::ostream& os, const bilingual_str& s)\n+{\n+    return os << \"bilingual_str('\" << s.original << \"' , '\" << s.translated << \"')\";\n+}\n+\n+BOOST_AUTO_TEST_SUITE(result_tests)\n+\n+struct NoCopy\n+{\n+    NoCopy(int n) : m_n{std::make_unique<int>(n)} {}\n+    std::unique_ptr<int> m_n;\n+};\n+\n+bool operator==(const NoCopy& a, const NoCopy& b)\n+{\n+    return *a.m_n == *b.m_n;\n+}\n+\n+std::ostream& operator<<(std::ostream& os, const NoCopy& o)\n+{\n+    if (o.m_n) os << \"NoCopy(\" << *o.m_n << \")\"; else os << \"NoCopy(nullptr)\";\n+    return os;\n+}\n+\n+util::Result<int> IntFn(int i, bool success)\n+{\n+    if (success) return i;\n+    return {util::Error{Untranslated(strprintf(\"int %i error.\", i))}};\n+}\n+\n+util::Result<bilingual_str> StrFn(bilingual_str s, bool success)\n+{\n+    if (success) return s;\n+    return {util::Error{strprintf(Untranslated(\"str %s error.\"), s.original)}};\n+}\n+\n+util::Result<NoCopy> NoCopyFn(int i, bool success)\n+{\n+    if (success) return {i};\n+    return {util::Error{Untranslated(strprintf(\"nocopy %i error.\", i))}};\n+}\n+\n+template<typename T>\n+void ExpectResult(const util::Result<T>& result, bool success, const bilingual_str& str)\n+{\n+    BOOST_CHECK_EQUAL(bool(result), success);\n+    BOOST_CHECK_EQUAL(ErrorString(result), str);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935518026",
       "id" : 935518026,
-      "line" : 60,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5843wt9K",
       "original_commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
       "original_line" : 60,
       "original_position" : 60,
       "original_start_line" : null,
       "path" : "src/test/result_tests.cpp",
-      "position" : 60,
+      "position" : null,
       "pull_request_review_id" : 1058656696,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25721",
       "reactions" : {
@@ -2514,6 +2548,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T12:50:41Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935518026",
       "user" : {
@@ -2551,19 +2586,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Was about to ask to add LIFETIMEBOUND, but for some reason it doesn't do anything for `->` :man_shrugging: \r\n\r\n\r\n```diff\r\ndiff --git a/src/test/result_tests.cpp b/src/test/result_tests.cpp\r\nindex 5737434b12..25de1eb6bc 100644\r\n--- a/src/test/result_tests.cpp\r\n+++ b/src/test/result_tests.cpp\r\n@@ -89,7 +89,10 @@ BOOST_AUTO_TEST_CASE(check_value_or)\r\n {\r\n     BOOST_CHECK_EQUAL(IntFn(10, true).value_or(20), 10);\r\n     BOOST_CHECK_EQUAL(IntFn(10, false).value_or(20), 20);\r\n-    BOOST_CHECK_EQUAL(NoCopyFn(10, true).value_or(20), 10);\r\n+    const auto& a{NoCopyFn(10, true)->m_n};\r\n+    BOOST_CHECK_EQUAL(*a, 10);\r\n+    const auto& b{NoCopyFn(10, true).value().m_n};\r\n+    BOOST_CHECK_EQUAL(*b, 10);\r\n     BOOST_CHECK_EQUAL(NoCopyFn(10, false).value_or(20), 20);\r\n }\r\n \r\ndiff --git a/src/util/result.h b/src/util/result.h\r\nindex d038ffe133..cc1947e860 100644\r\n--- a/src/util/result.h\r\n+++ b/src/util/result.h\r\n@@ -49,9 +47,9 @@ public:\r\n     const T& value() const LIFETIMEBOUND { assert(*this); return std::get<1>(m_variant); }\r\n     T& value() LIFETIMEBOUND { assert(*this); return std::get<1>(m_variant); }\r\n     explicit operator bool() const { return has_value(); }\r\n-    const T* operator->() const { return &value(); }\r\n+    const T* operator->() const LIFETIMEBOUND { return &value(); }\r\n     const T& operator*() const LIFETIMEBOUND { return value(); }\r\n-    T* operator->() { return &value(); }\r\n+    T* operator->() LIFETIMEBOUND { return &value(); }\r\n     T& operator*() LIFETIMEBOUND { return value(); }\r\n     template <class U>\r\n     constexpr T value_or(U&& default_value) const& { return has_value() ? value() : std::forward<U>(default_value); }\r\n",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T12:46:12Z",
       "diff_hunk" : "@@ -5,45 +5,65 @@\n #ifndef BITCOIN_UTIL_RESULT_H\n #define BITCOIN_UTIL_RESULT_H\n \n+#include <attributes.h>\n #include <util/translation.h>\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return\n+//! either error messages or result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::in_place_index_t<1>{}, std::move(obj)} {}\n+    Result(Error error) : m_variant{std::in_place_index_t<0>{}, std::move(error.message)} {}\n+\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const LIFETIMEBOUND { assert(*this); return std::get<1>(m_variant); }\n+    T& value() LIFETIMEBOUND { assert(*this); return std::get<1>(m_variant); }\n+    explicit operator bool() const { return has_value(); }\n+    const T* operator->() const { return &value(); }\n+    const T& operator*() const LIFETIMEBOUND { return value(); }\n+    T* operator->() { return &value(); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935541678",
       "id" : 935541678,
-      "line" : 54,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5843wzuu",
       "original_commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
       "original_line" : 54,
       "original_position" : 80,
       "original_start_line" : null,
       "path" : "src/util/result.h",
-      "position" : 80,
+      "position" : null,
       "pull_request_review_id" : 1058656696,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25721",
       "reactions" : {
@@ -2581,6 +2616,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T12:50:41Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935541678",
       "user" : {
@@ -2618,19 +2654,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "```suggestion\r\n    constexpr T value_or(U&& default_value) && { return has_value() ? std::move(value()) : std::forward<U>(default_value); }\r\n```\r\n\r\nfor symmetry with the previous line and to avoid one more function call",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T12:49:32Z",
       "diff_hunk" : "@@ -5,45 +5,65 @@\n #ifndef BITCOIN_UTIL_RESULT_H\n #define BITCOIN_UTIL_RESULT_H\n \n+#include <attributes.h>\n #include <util/translation.h>\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return\n+//! either error messages or result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::in_place_index_t<1>{}, std::move(obj)} {}\n+    Result(Error error) : m_variant{std::in_place_index_t<0>{}, std::move(error.message)} {}\n+\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const LIFETIMEBOUND { assert(*this); return std::get<1>(m_variant); }\n+    T& value() LIFETIMEBOUND { assert(*this); return std::get<1>(m_variant); }\n+    explicit operator bool() const { return has_value(); }\n+    const T* operator->() const { return &value(); }\n+    const T& operator*() const LIFETIMEBOUND { return value(); }\n+    T* operator->() { return &value(); }\n+    T& operator*() LIFETIMEBOUND { return value(); }\n+    template <class U>\n+    constexpr T value_or(U&& default_value) const& { return has_value() ? value() : std::forward<U>(default_value); }\n+    template <class U>\n+    constexpr T value_or(U&& default_value) && { return has_value() ? std::move(**this) : std::forward<U>(default_value); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935544957",
       "id" : 935544957,
-      "line" : 59,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5843w0h9",
       "original_commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
       "original_line" : 59,
       "original_position" : 85,
       "original_start_line" : null,
       "path" : "src/util/result.h",
-      "position" : 85,
+      "position" : null,
       "pull_request_review_id" : 1058656696,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25721",
       "reactions" : {
@@ -2648,6 +2684,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T12:50:41Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935544957",
       "user" : {
@@ -2685,7 +2722,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "If yes, maybe use the same you used in the fuzz test:\r\n\r\nGetScriptForDestination(*Assert(op_dest))?",
-      "commit_id" : "3262acf70a9fdd6b4191812f928ed374dfcf32e1",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T12:58:28Z",
       "diff_hunk" : "@@ -46,10 +46,10 @@ static void BenchUnloadWallet(std::shared_ptr<CWallet>&& wallet)\n static void AddTx(CWallet& wallet)\n {\n     const auto& dest = wallet.GetNewDestination(OutputType::BECH32, \"\");",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935555218",
@@ -2716,6 +2753,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T12:58:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935555218",
       "user" : {
@@ -2751,9 +2789,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935708710"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935518026\r\n\r\n> could avoid adl?\r\n\r\nFixed",
-      "commit_id" : "6777df621a8c3deef033fcf815b297ee4bf3ee0f",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T15:02:17Z",
       "diff_hunk" : "@@ -0,0 +1,96 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\n+#include <util/result.h>\n+\n+#include <boost/test/unit_test.hpp>\n+\n+bool operator==(const bilingual_str& a, const bilingual_str& b)\n+{\n+    return a.original == b.original && a.translated == b.translated;\n+}\n+\n+std::ostream& operator<<(std::ostream& os, const bilingual_str& s)\n+{\n+    return os << \"bilingual_str('\" << s.original << \"' , '\" << s.translated << \"')\";\n+}\n+\n+BOOST_AUTO_TEST_SUITE(result_tests)\n+\n+struct NoCopy\n+{\n+    NoCopy(int n) : m_n{std::make_unique<int>(n)} {}\n+    std::unique_ptr<int> m_n;\n+};\n+\n+bool operator==(const NoCopy& a, const NoCopy& b)\n+{\n+    return *a.m_n == *b.m_n;\n+}\n+\n+std::ostream& operator<<(std::ostream& os, const NoCopy& o)\n+{\n+    if (o.m_n) os << \"NoCopy(\" << *o.m_n << \")\"; else os << \"NoCopy(nullptr)\";\n+    return os;\n+}\n+\n+util::Result<int> IntFn(int i, bool success)\n+{\n+    if (success) return i;\n+    return {util::Error{Untranslated(strprintf(\"int %i error.\", i))}};\n+}\n+\n+util::Result<bilingual_str> StrFn(bilingual_str s, bool success)\n+{\n+    if (success) return s;\n+    return {util::Error{strprintf(Untranslated(\"str %s error.\"), s.original)}};\n+}\n+\n+util::Result<NoCopy> NoCopyFn(int i, bool success)\n+{\n+    if (success) return {i};\n+    return {util::Error{Untranslated(strprintf(\"nocopy %i error.\", i))}};\n+}\n+\n+template<typename T>\n+void ExpectResult(const util::Result<T>& result, bool success, const bilingual_str& str)\n+{\n+    BOOST_CHECK_EQUAL(bool(result), success);\n+    BOOST_CHECK_EQUAL(ErrorString(result), str);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935708710",
@@ -2784,6 +2822,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T15:48:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935708710",
       "user" : {
@@ -2819,9 +2858,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935709112"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935505612\r\n\r\n> remove this line?\r\n\r\nGood catch, removed",
-      "commit_id" : "6777df621a8c3deef033fcf815b297ee4bf3ee0f",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T15:02:38Z",
       "diff_hunk" : "@@ -1053,44 +1053,43 @@ static BResult<CreatedTransactionResult> CreateTransactionInternal(\n     return CreatedTransactionResult(tx, nFeeRet, nChangePosInOut, feeCalc);\n }\n \n-BResult<CreatedTransactionResult> CreateTransaction(\n+util::Result<CreatedTransactionResult> CreateTransaction(\n         CWallet& wallet,\n         const std::vector<CRecipient>& vecSend,\n         int change_pos,\n         const CCoinControl& coin_control,\n         bool sign)\n {\n     if (vecSend.empty()) {\n-        return _(\"Transaction must have at least one recipient\");\n+        return {util::Error{_(\"Transaction must have at least one recipient\")}};\n     }\n \n     if (std::any_of(vecSend.cbegin(), vecSend.cend(), [](const auto& recipient){ return recipient.nAmount < 0; })) {\n-        return _(\"Transaction amounts must not be negative\");\n+        return {util::Error{_(\"Transaction amounts must not be negative\")}};\n     }\n \n     LOCK(wallet.cs_wallet);\n \n     auto res = CreateTransactionInternal(wallet, vecSend, change_pos, coin_control, sign);\n-    TRACE4(coin_selection, normal_create_tx_internal, wallet.GetName().c_str(), res.HasRes(),\n-           res ? res.GetObj().fee : 0, res ? res.GetObj().change_pos : 0);\n+    TRACE4(coin_selection, normal_create_tx_internal, wallet.GetName().c_str(), bool(res),\n+           res ? res->fee : 0, res ? res->change_pos : 0);\n     if (!res) return res;\n-    const auto& txr_ungrouped = res.GetObj();\n+    const auto& txr_ungrouped = *res;\n     // try with avoidpartialspends unless it's enabled already\n     if (txr_ungrouped.fee > 0 /* 0 means non-functional fee rate estimation */ && wallet.m_max_aps_fee > -1 && !coin_control.m_avoid_partial_spends) {\n         TRACE1(coin_selection, attempting_aps_create_tx, wallet.GetName().c_str());\n         CCoinControl tmp_cc = coin_control;\n         tmp_cc.m_avoid_partial_spends = true;\n-        auto res_tx_grouped = CreateTransactionInternal(wallet, vecSend, change_pos, tmp_cc, sign);\n+        auto txr_grouped = CreateTransactionInternal(wallet, vecSend, change_pos, tmp_cc, sign);\n         // Helper optional class for now",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935709112",
@@ -2852,6 +2891,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T15:48:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935709112",
       "user" : {
@@ -2887,9 +2927,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935710271"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935510002\r\n\r\n> Same: this also creates a copy without a `std::move`?\r\n\r\nThanks inlined to avoid copy.",
-      "commit_id" : "6777df621a8c3deef033fcf815b297ee4bf3ee0f",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T15:03:38Z",
       "diff_hunk" : "@@ -74,9 +74,8 @@ static void add_coin(CoinsResult& available_coins, CWallet& wallet, const CAmoun\n     tx.vout.resize(nInput + 1);\n     tx.vout[nInput].nValue = nValue;\n     if (spendable) {\n-        auto op_dest = wallet.GetNewDestination(OutputType::BECH32, \"\");\n-        assert(op_dest.HasRes());\n-        tx.vout[nInput].scriptPubKey = GetScriptForDestination(op_dest.GetObj());\n+        auto op_dest = *(Assert(wallet.GetNewDestination(OutputType::BECH32, \"\")));",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935710271",
@@ -2920,6 +2960,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T15:48:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935710271",
       "user" : {
@@ -2955,9 +2996,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935710947"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935541678\r\n\r\n> Was about to ask to add LIFETIMEBOUND, but for some reason it doesn't do anything for `->` man_shrugging\r\n\r\nOh, I just omitted it because I didn't know LIFETIMEBOUND worked for pointers. Seems correct to add even if it doesn't produce any diagnostics for now though, so I added it.",
-      "commit_id" : "6777df621a8c3deef033fcf815b297ee4bf3ee0f",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T15:04:14Z",
       "diff_hunk" : "@@ -5,45 +5,65 @@\n #ifndef BITCOIN_UTIL_RESULT_H\n #define BITCOIN_UTIL_RESULT_H\n \n+#include <attributes.h>\n #include <util/translation.h>\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return\n+//! either error messages or result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::in_place_index_t<1>{}, std::move(obj)} {}\n+    Result(Error error) : m_variant{std::in_place_index_t<0>{}, std::move(error.message)} {}\n+\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const LIFETIMEBOUND { assert(*this); return std::get<1>(m_variant); }\n+    T& value() LIFETIMEBOUND { assert(*this); return std::get<1>(m_variant); }\n+    explicit operator bool() const { return has_value(); }\n+    const T* operator->() const { return &value(); }\n+    const T& operator*() const LIFETIMEBOUND { return value(); }\n+    T* operator->() { return &value(); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935710947",
@@ -2988,6 +3029,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T15:48:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935710947",
       "user" : {
@@ -3023,9 +3065,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935711153"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935544957\r\n\r\n> for symmetry with the previous line and to avoid one more function call\r\n\r\nNice, thanks. I copied this code from https://en.cppreference.com/w/cpp/utility/optional/value_or and was a little careless with fixups\r\n",
-      "commit_id" : "6777df621a8c3deef033fcf815b297ee4bf3ee0f",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T15:04:26Z",
       "diff_hunk" : "@@ -5,45 +5,65 @@\n #ifndef BITCOIN_UTIL_RESULT_H\n #define BITCOIN_UTIL_RESULT_H\n \n+#include <attributes.h>\n #include <util/translation.h>\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return\n+//! either error messages or result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>\n+    friend class Result;\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n+\n public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n-\n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n-\n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n-    }\n-    T ReleaseObj()\n-    {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n-    }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n-    }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    Result(T obj) : m_variant{std::in_place_index_t<1>{}, std::move(obj)} {}\n+    Result(Error error) : m_variant{std::in_place_index_t<0>{}, std::move(error.message)} {}\n+\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const LIFETIMEBOUND { assert(*this); return std::get<1>(m_variant); }\n+    T& value() LIFETIMEBOUND { assert(*this); return std::get<1>(m_variant); }\n+    explicit operator bool() const { return has_value(); }\n+    const T* operator->() const { return &value(); }\n+    const T& operator*() const LIFETIMEBOUND { return value(); }\n+    T* operator->() { return &value(); }\n+    T& operator*() LIFETIMEBOUND { return value(); }\n+    template <class U>\n+    constexpr T value_or(U&& default_value) const& { return has_value() ? value() : std::forward<U>(default_value); }\n+    template <class U>\n+    constexpr T value_or(U&& default_value) && { return has_value() ? std::move(**this) : std::forward<U>(default_value); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935711153",
@@ -3056,6 +3098,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T15:48:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935711153",
       "user" : {
@@ -3091,9 +3134,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935741692"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935461458\r\n\r\n> Sure, but now this creates a copy without the `std::move`, right?\r\n>\r\n> If yes, maybe use the same you used in the fuzz test:\r\n\r\nYes it does, inlined now",
-      "commit_id" : "6777df621a8c3deef033fcf815b297ee4bf3ee0f",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T15:32:00Z",
       "diff_hunk" : "@@ -46,10 +46,10 @@ static void BenchUnloadWallet(std::shared_ptr<CWallet>&& wallet)\n static void AddTx(CWallet& wallet)\n {\n     const auto& dest = wallet.GetNewDestination(OutputType::BECH32, \"\");",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935741692",
@@ -3124,6 +3167,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T15:48:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935741692",
       "user" : {
@@ -3159,22 +3203,22 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935747685"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935502938\r\n\r\n> I didn't read your reply, but now it is unused and can be removed:\r\n\r\nNice catch. It's gone",
-      "commit_id" : "6777df621a8c3deef033fcf815b297ee4bf3ee0f",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T15:37:44Z",
       "diff_hunk" : "@@ -9,41 +9,60 @@\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n+namespace util {\n+\n+struct Error { bilingual_str message; };\n+\n+//! The util::Result class provides a standard way for functions to return error\n+//! messages in addition to optional result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n template<class T>\n-class BResult {\n+class Result {\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n+    template <typename FT>",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935747685",
       "id" : 935747685,
       "in_reply_to_id" : 934642192,
-      "line" : 37,
+      "line" : 40,
       "node_id" : "PRRC_kwDOABII5843xmBl",
       "original_commit_id" : "42f4f7d126f6729c4924b0630f67d171f4d0ac9b",
-      "original_line" : 37,
+      "original_line" : 40,
       "original_position" : 33,
       "original_start_line" : null,
       "path" : "src/util/result.h",
-      "position" : 38,
+      "position" : 46,
       "pull_request_review_id" : 1058935631,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25721",
       "reactions" : {
@@ -3192,6 +3236,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T15:48:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935747685",
       "user" : {
@@ -3273,7 +3318,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "nit: nullptr is dead code, otherwise the above operator== would be UB. So if you retouch:\r\n\r\n\r\n```cpp\r\nos << \"NoCopy(\" << *o.m_n << \")\";\r\n```\r\n\r\nAlso: clang-format for me:\r\n\r\n\r\n```diff\r\ndiff --git a/src/test/result_tests.cpp b/src/test/result_tests.cpp\r\nindex 847f68121d..6d688f7b74 100644\r\n--- a/src/test/result_tests.cpp\r\n+++ b/src/test/result_tests.cpp\r\n@@ -18,8 +18,7 @@ inline std::ostream& operator<<(std::ostream& os, const bilingual_str& s)\r\n \r\n BOOST_AUTO_TEST_SUITE(result_tests)\r\n \r\n-struct NoCopy\r\n-{\r\n+struct NoCopy {\r\n     NoCopy(int n) : m_n{std::make_unique<int>(n)} {}\r\n     std::unique_ptr<int> m_n;\r\n };\r\n@@ -31,7 +30,10 @@ bool operator==(const NoCopy& a, const NoCopy& b)\r\n \r\n std::ostream& operator<<(std::ostream& os, const NoCopy& o)\r\n {\r\n-    if (o.m_n) os << \"NoCopy(\" << *o.m_n << \")\"; else os << \"NoCopy(nullptr)\";\r\n+    if (o.m_n)\r\n+        os << \"NoCopy(\" << *o.m_n << \")\";\r\n+    else\r\n+        os << \"NoCopy(nullptr)\";\r\n     return os;\r\n }\r\n \r\n@@ -53,14 +55,14 @@ util::Result<NoCopy> NoCopyFn(int i, bool success)\r\n     return {util::Error{Untranslated(strprintf(\"nocopy %i error.\", i))}};\r\n }\r\n \r\n-template<typename T>\r\n+template <typename T>\r\n void ExpectResult(const util::Result<T>& result, bool success, const bilingual_str& str)\r\n {\r\n     BOOST_CHECK_EQUAL(bool(result), success);\r\n     BOOST_CHECK_EQUAL(util::ErrorString(result), str);\r\n }\r\n \r\n-template<typename T, typename... Args>\r\n+template <typename T, typename... Args>\r\n void ExpectSuccess(const util::Result<T>& result, const bilingual_str& str, Args&&... args)\r\n {\r\n     ExpectResult(result, true, str);\r\n@@ -69,7 +71,7 @@ void ExpectSuccess(const util::Result<T>& result, const bilingual_str& str, Args\r\n     BOOST_CHECK_EQUAL(&result.value(), &*result);\r\n }\r\n \r\n-template<typename T, typename... Args>\r\n+template <typename T, typename... Args>\r\n void ExpectFail(const util::Result<T>& result, const bilingual_str& str)\r\n {\r\n     ExpectResult(result, false, str);\r\ndiff --git a/src/util/result.h b/src/util/result.h\r\nindex 8f100b7933..a87627a589 100644\r\n--- a/src/util/result.h\r\n+++ b/src/util/result.h\r\n@@ -12,7 +12,9 @@\r\n \r\n namespace util {\r\n \r\n-struct Error { bilingual_str message; };\r\n+struct Error {\r\n+    bilingual_str message;\r\n+};\r\n \r\n //! The util::Result class provides a standard way for functions to return\r\n //! either error messages or result values.\r\n@@ -29,8 +31,9 @@ struct Error { bilingual_str message; };\r\n //! `std::optional<T>` can be updated to return `util::Result<T>` and return\r\n //! error strings usually just replacing `return std::nullopt;` with `return\r\n //! util::Error{error_string};`.\r\n-template<class T>\r\n-class Result {\r\n+template <class T>\r\n+class Result\r\n+{\r\n private:\r\n     std::variant<bilingual_str, T> m_variant;\r\n \r\n@@ -44,17 +47,31 @@ public:\r\n     //! std::optional methods, so functions returning optional<T> can change to\r\n     //! return Result<T> with minimal changes to existing code, and vice versa.\r\n     bool has_value() const { return m_variant.index() == 1; }\r\n-    const T& value() const LIFETIMEBOUND { assert(*this); return std::get<1>(m_variant); }\r\n-    T& value() LIFETIMEBOUND { assert(*this); return std::get<1>(m_variant); }\r\n+    const T& value() const LIFETIMEBOUND\r\n+    {\r\n+        assert(*this);\r\n+        return std::get<1>(m_variant);\r\n+    }\r\n+    T& value() LIFETIMEBOUND\r\n+    {\r\n+        assert(*this);\r\n+        return std::get<1>(m_variant);\r\n+    }\r\n     explicit operator bool() const { return has_value(); }\r\n     const T* operator->() const LIFETIMEBOUND { return &value(); }\r\n     const T& operator*() const LIFETIMEBOUND { return value(); }\r\n     T* operator->() LIFETIMEBOUND { return &value(); }\r\n     T& operator*() LIFETIMEBOUND { return value(); }\r\n     template <class U>\r\n-    T value_or(U&& default_value) const& { return has_value() ? value() : std::forward<U>(default_value); }\r\n+    T value_or(U&& default_value) const&\r\n+    {\r\n+        return has_value() ? value() : std::forward<U>(default_value);\r\n+    }\r\n     template <class U>\r\n-    T value_or(U&& default_value) && { return has_value() ? std::move(value()) : std::forward<U>(default_value); }\r\n+    T value_or(U&& default_value) &&\r\n+    {\r\n+        return has_value() ? std::move(value()) : std::forward<U>(default_value);\r\n+    }\r\n };\r\n \r\n template <typename T>\r\n",
-      "commit_id" : "7b249b3a163effc08c9faca841647c936d22ee7a",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T16:06:53Z",
       "diff_hunk" : "@@ -0,0 +1,96 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\n+#include <util/result.h>\n+\n+#include <boost/test/unit_test.hpp>\n+\n+inline bool operator==(const bilingual_str& a, const bilingual_str& b)\n+{\n+    return a.original == b.original && a.translated == b.translated;\n+}\n+\n+inline std::ostream& operator<<(std::ostream& os, const bilingual_str& s)\n+{\n+    return os << \"bilingual_str('\" << s.original << \"' , '\" << s.translated << \"')\";\n+}\n+\n+BOOST_AUTO_TEST_SUITE(result_tests)\n+\n+struct NoCopy\n+{\n+    NoCopy(int n) : m_n{std::make_unique<int>(n)} {}\n+    std::unique_ptr<int> m_n;\n+};\n+\n+bool operator==(const NoCopy& a, const NoCopy& b)\n+{\n+    return *a.m_n == *b.m_n;\n+}\n+\n+std::ostream& operator<<(std::ostream& os, const NoCopy& o)\n+{\n+    if (o.m_n) os << \"NoCopy(\" << *o.m_n << \")\"; else os << \"NoCopy(nullptr)\";",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935777262",
@@ -3303,6 +3348,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T16:06:54Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935777262",
       "user" : {
@@ -3338,9 +3384,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935833853"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935777262\r\n\r\n> nit: nullptr is dead code, otherwise the above operator== would be UB. So if you retouch:\r\n\r\nThanks, applied all suggestions",
-      "commit_id" : "7b249b3a163effc08c9faca841647c936d22ee7a",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T17:07:40Z",
       "diff_hunk" : "@@ -0,0 +1,96 @@\n+// Copyright (c) 2022 The Bitcoin Core developers\n+// Distributed under the MIT software license, see the accompanying\n+// file COPYING or http://www.opensource.org/licenses/mit-license.php.\n+\n+#include <util/result.h>\n+\n+#include <boost/test/unit_test.hpp>\n+\n+inline bool operator==(const bilingual_str& a, const bilingual_str& b)\n+{\n+    return a.original == b.original && a.translated == b.translated;\n+}\n+\n+inline std::ostream& operator<<(std::ostream& os, const bilingual_str& s)\n+{\n+    return os << \"bilingual_str('\" << s.original << \"' , '\" << s.translated << \"')\";\n+}\n+\n+BOOST_AUTO_TEST_SUITE(result_tests)\n+\n+struct NoCopy\n+{\n+    NoCopy(int n) : m_n{std::make_unique<int>(n)} {}\n+    std::unique_ptr<int> m_n;\n+};\n+\n+bool operator==(const NoCopy& a, const NoCopy& b)\n+{\n+    return *a.m_n == *b.m_n;\n+}\n+\n+std::ostream& operator<<(std::ostream& os, const NoCopy& o)\n+{\n+    if (o.m_n) os << \"NoCopy(\" << *o.m_n << \")\"; else os << \"NoCopy(nullptr)\";",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935833853",
@@ -3371,6 +3417,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T17:08:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935833853",
       "user" : {
@@ -3408,19 +3455,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "`noexcept`, per https://en.cppreference.com/w/cpp/utility/optional/operator_bool",
-      "commit_id" : "7b249b3a163effc08c9faca841647c936d22ee7a",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T17:32:13Z",
       "diff_hunk" : "@@ -5,45 +5,80 @@\n #ifndef BITCOIN_UTIL_RESULT_H\n #define BITCOIN_UTIL_RESULT_H\n \n+#include <attributes.h>\n #include <util/translation.h>\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n-template<class T>\n-class BResult {\n+namespace util {\n+\n+struct Error {\n+    bilingual_str message;\n+};\n+\n+//! The util::Result class provides a standard way for functions to return\n+//! either error messages or result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n+template <class T>\n+class Result\n+{\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n-public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n \n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n+public:\n+    Result(T obj) : m_variant{std::in_place_index_t<1>{}, std::move(obj)} {}\n+    Result(Error error) : m_variant{std::in_place_index_t<0>{}, std::move(error.message)} {}\n \n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935854842",
       "id" : 935854842,
-      "line" : 49,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5843yAL6",
       "original_commit_id" : "7b249b3a163effc08c9faca841647c936d22ee7a",
       "original_line" : 49,
       "original_position" : 61,
       "original_start_line" : null,
       "path" : "src/util/result.h",
-      "position" : 61,
+      "position" : null,
       "pull_request_review_id" : 1059146733,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25721",
       "reactions" : {
@@ -3438,6 +3485,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T17:34:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935854842",
       "user" : {
@@ -3475,7 +3523,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "same?",
-      "commit_id" : "7b249b3a163effc08c9faca841647c936d22ee7a",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T17:32:19Z",
       "diff_hunk" : "@@ -5,45 +5,80 @@\n #ifndef BITCOIN_UTIL_RESULT_H\n #define BITCOIN_UTIL_RESULT_H\n \n+#include <attributes.h>\n #include <util/translation.h>\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n-template<class T>\n-class BResult {\n+namespace util {\n+\n+struct Error {\n+    bilingual_str message;\n+};\n+\n+//! The util::Result class provides a standard way for functions to return\n+//! either error messages or result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n+template <class T>\n+class Result\n+{\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n-public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n \n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n+public:\n+    Result(T obj) : m_variant{std::in_place_index_t<1>{}, std::move(obj)} {}\n+    Result(Error error) : m_variant{std::in_place_index_t<0>{}, std::move(error.message)} {}\n \n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const LIFETIMEBOUND",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935854933",
@@ -3505,6 +3553,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T17:34:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935854933",
       "user" : {
@@ -3542,7 +3591,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "same?",
-      "commit_id" : "7b249b3a163effc08c9faca841647c936d22ee7a",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T17:32:26Z",
       "diff_hunk" : "@@ -5,45 +5,80 @@\n #ifndef BITCOIN_UTIL_RESULT_H\n #define BITCOIN_UTIL_RESULT_H\n \n+#include <attributes.h>\n #include <util/translation.h>\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n-template<class T>\n-class BResult {\n+namespace util {\n+\n+struct Error {\n+    bilingual_str message;\n+};\n+\n+//! The util::Result class provides a standard way for functions to return\n+//! either error messages or result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n+template <class T>\n+class Result\n+{\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n-public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n \n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n+public:\n+    Result(T obj) : m_variant{std::in_place_index_t<1>{}, std::move(obj)} {}\n+    Result(Error error) : m_variant{std::in_place_index_t<0>{}, std::move(error.message)} {}\n \n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const LIFETIMEBOUND\n+    {\n+        assert(has_value());\n+        return std::get<1>(m_variant);\n     }\n-    T ReleaseObj()\n+    T& value() LIFETIMEBOUND",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935855035",
@@ -3572,6 +3621,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T17:34:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935855035",
       "user" : {
@@ -3609,19 +3659,19 @@
       },
       "author_association" : "MEMBER",
       "body" : "Same?",
-      "commit_id" : "7b249b3a163effc08c9faca841647c936d22ee7a",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T17:32:42Z",
       "diff_hunk" : "@@ -5,45 +5,80 @@\n #ifndef BITCOIN_UTIL_RESULT_H\n #define BITCOIN_UTIL_RESULT_H\n \n+#include <attributes.h>\n #include <util/translation.h>\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n-template<class T>\n-class BResult {\n+namespace util {\n+\n+struct Error {\n+    bilingual_str message;\n+};\n+\n+//! The util::Result class provides a standard way for functions to return\n+//! either error messages or result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n+template <class T>\n+class Result\n+{\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n-public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n \n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n+public:\n+    Result(T obj) : m_variant{std::in_place_index_t<1>{}, std::move(obj)} {}\n+    Result(Error error) : m_variant{std::in_place_index_t<0>{}, std::move(error.message)} {}\n \n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const LIFETIMEBOUND\n+    {\n+        assert(has_value());\n+        return std::get<1>(m_variant);\n     }\n-    T ReleaseObj()\n+    T& value() LIFETIMEBOUND\n     {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n+        assert(has_value());\n+        return std::get<1>(m_variant);\n     }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n+    template <class U>\n+    T value_or(U&& default_value) const&\n+    {\n+        return has_value() ? value() : std::forward<U>(default_value);\n     }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    template <class U>\n+    T value_or(U&& default_value) &&\n+    {\n+        return has_value() ? std::move(value()) : std::forward<U>(default_value);\n+    }\n+    explicit operator bool() const { return has_value(); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935855245",
       "id" : 935855245,
-      "line" : 70,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII5843yASN",
       "original_commit_id" : "7b249b3a163effc08c9faca841647c936d22ee7a",
       "original_line" : 70,
       "original_position" : 92,
       "original_start_line" : null,
       "path" : "src/util/result.h",
-      "position" : 92,
+      "position" : null,
       "pull_request_review_id" : 1059146733,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/25721",
       "reactions" : {
@@ -3639,6 +3689,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T17:34:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935855245",
       "user" : {
@@ -3676,7 +3727,7 @@
       },
       "author_association" : "MEMBER",
       "body" : "Same, per https://en.cppreference.com/w/cpp/utility/optional/operator*",
-      "commit_id" : "7b249b3a163effc08c9faca841647c936d22ee7a",
+      "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-02T17:33:12Z",
       "diff_hunk" : "@@ -5,45 +5,80 @@\n #ifndef BITCOIN_UTIL_RESULT_H\n #define BITCOIN_UTIL_RESULT_H\n \n+#include <attributes.h>\n #include <util/translation.h>\n \n #include <variant>\n \n-/*\n- * 'BResult' is a generic class useful for wrapping a return object\n- * (in case of success) or propagating the error cause.\n-*/\n-template<class T>\n-class BResult {\n+namespace util {\n+\n+struct Error {\n+    bilingual_str message;\n+};\n+\n+//! The util::Result class provides a standard way for functions to return\n+//! either error messages or result values.\n+//!\n+//! It is intended for high-level functions that need to report error strings to\n+//! end users. Lower-level functions that don't need this error-reporting and\n+//! only need error-handling should avoid util::Result and instead use standard\n+//! classes like std::optional, std::variant, and std::tuple, or custom structs\n+//! and enum types to return function results.\n+//!\n+//! Usage examples can be found in \\example ../test/result_tests.cpp, but in\n+//! general code returning `util::Result<T>` values is very similar to code\n+//! returning `std::optional<T>` values. Existing functions returning\n+//! `std::optional<T>` can be updated to return `util::Result<T>` and return\n+//! error strings usually just replacing `return std::nullopt;` with `return\n+//! util::Error{error_string};`.\n+template <class T>\n+class Result\n+{\n private:\n     std::variant<bilingual_str, T> m_variant;\n \n-public:\n-    BResult() : m_variant{Untranslated(\"\")} {}\n-    BResult(T obj) : m_variant{std::move(obj)} {}\n-    BResult(bilingual_str error) : m_variant{std::move(error)} {}\n+    template <typename FT>\n+    friend bilingual_str ErrorString(const Result<FT>& result);\n \n-    /* Whether the function succeeded or not */\n-    bool HasRes() const { return std::holds_alternative<T>(m_variant); }\n+public:\n+    Result(T obj) : m_variant{std::in_place_index_t<1>{}, std::move(obj)} {}\n+    Result(Error error) : m_variant{std::in_place_index_t<0>{}, std::move(error.message)} {}\n \n-    /* In case of success, the result object */\n-    const T& GetObj() const {\n-        assert(HasRes());\n-        return std::get<T>(m_variant);\n+    //! std::optional methods, so functions returning optional<T> can change to\n+    //! return Result<T> with minimal changes to existing code, and vice versa.\n+    bool has_value() const { return m_variant.index() == 1; }\n+    const T& value() const LIFETIMEBOUND\n+    {\n+        assert(has_value());\n+        return std::get<1>(m_variant);\n     }\n-    T ReleaseObj()\n+    T& value() LIFETIMEBOUND\n     {\n-        assert(HasRes());\n-        return std::move(std::get<T>(m_variant));\n+        assert(has_value());\n+        return std::get<1>(m_variant);\n     }\n-\n-    /* In case of failure, the error cause */\n-    const bilingual_str& GetError() const {\n-        assert(!HasRes());\n-        return std::get<bilingual_str>(m_variant);\n+    template <class U>\n+    T value_or(U&& default_value) const&\n+    {\n+        return has_value() ? value() : std::forward<U>(default_value);\n     }\n-\n-    explicit operator bool() const { return HasRes(); }\n+    template <class U>\n+    T value_or(U&& default_value) &&\n+    {\n+        return has_value() ? std::move(value()) : std::forward<U>(default_value);\n+    }\n+    explicit operator bool() const { return has_value(); }\n+    const T* operator->() const LIFETIMEBOUND { return &value(); }",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935855649",
@@ -3706,6 +3757,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-02T17:34:18Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/935855649",
       "user" : {
@@ -3730,7 +3782,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Some nits, but please don't take them or I might leave more\r\n\r\nOk, will skip noexcept stuff for now unless there is another push. If I rebase #25665 on top of this PR, that would be another chance to make noexcept or constexpr or similar improvements.",
       "created_at" : "2022-08-02T17:46:04Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/25721#issuecomment-1203033503",
@@ -3785,7 +3837,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936208104"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "What is the reason behind the extra brackets?\r\n\r\nCould just return `util::Error{_(\"something bad\")};`\r\n\r\n(same for the others in this file)\r\n\r\n",
       "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-03T03:44:59Z",
@@ -3817,6 +3869,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-03T04:08:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936208104",
       "user" : {
@@ -3852,7 +3905,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936216252"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "styling nit: what about creating an enum for the indexes?\r\n```c++\r\nenum { ERR=0, VAL=1 };\r\n// then\r\nstd::in_place_index_t<VAL>{} \r\n```",
       "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-03T04:07:33Z",
@@ -3884,6 +3937,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-03T04:08:45Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936216252",
       "user" : {
@@ -3919,7 +3973,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936679580"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r936208104\r\n\r\n> What is the reason behind the extra brackets?\r\n\r\nGood catch. Brackets aren't necessary here so I removed them. In general, brackets are useful after #25665 to call multi-argument constructors. They are used to construct failure values:\r\n\r\n```c++\r\nreturn {util::Error{_(\"Incorrect or no genesis block found. Wrong datadir for network?\")},\r\n        ChainstateLoadError::FAILURE_INCOMPATIBLE_DB};\r\n```\r\n\r\nAnd to chain multiple errors and warnings:\r\n\r\n```c++\r\nreturn {util::Error{\"Error 1.\"}, util::Error{\"Error 2.\"}, util::Warning{\"Warning.\"}, std::move(chained_result)};\r\n```\r\n\r\nAnd to call value constructors with more than 1 argument (since values are constructed in-place and there is no longer any requirement for them to be copyable or movable).",
       "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-03T13:42:10Z",
@@ -3952,6 +4006,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-03T15:44:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936679580",
       "user" : {
@@ -3987,7 +4042,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936679726"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r936216252\r\n\r\n> ```c++\r\n> enum { ERR=0, VAL=1 };\r\n> // then\r\n> std::in_place_index_t<VAL>{} \r\n> ```\r\n\r\n#25665 should drop the std::variant entirely making this moot, but using enum for this seems more indirect and fragile since nothing keeps enum and variant declarations lined up. I'm not against adding this, but would prefer not to unless there is more demand",
       "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-03T13:42:16Z",
@@ -4020,6 +4075,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-03T15:44:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936679726",
       "user" : {
@@ -4055,7 +4111,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936768700"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935854842\r\n\r\n> `noexcept`, per https://en.cppreference.com/w/cpp/utility/optional/operator_bool\r\n\r\nAdded",
       "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-03T14:55:37Z",
@@ -4088,6 +4144,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-03T15:44:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936768700",
       "user" : {
@@ -4123,7 +4180,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936771023"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935854933\r\n\r\n> same?\r\n\r\nCan throw bad_variant_access according to https://en.cppreference.com/w/cpp/utility/variant/get. The equivalent std::optional method can also throw https://en.cppreference.com/w/cpp/utility/optional/value",
       "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-03T14:57:35Z",
@@ -4156,6 +4213,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-03T15:44:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936771023",
       "user" : {
@@ -4191,7 +4249,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936772895"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935855035\r\n\r\n> same?\r\n\r\nSame as above, variant get can throw",
       "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-03T14:59:10Z",
@@ -4224,6 +4282,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-03T15:44:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936772895",
       "user" : {
@@ -4259,7 +4318,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936773407"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935855245\r\n\r\n> Same?\r\n\r\nThanks added noexcept",
       "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-03T14:59:34Z",
@@ -4292,6 +4351,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-03T15:44:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936773407",
       "user" : {
@@ -4327,7 +4387,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936778280"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "re: https://github.com/bitcoin/bitcoin/pull/25721#discussion_r935855649\r\n\r\n> Same, per https://en.cppreference.com/w/cpp/utility/optional/operator*\r\n\r\nI guess this is a difference between std::optional and std::variant. It doesn't seem like there is a way to get the address of an object inside a variant that is noexcept. it would be possible to make this noexcept in followup #25665 which removes the std::variant.",
       "commit_id" : "a23cca56c0a7f4a267915b4beba3af3454c51603",
       "created_at" : "2022-08-03T15:04:00Z",
@@ -4360,6 +4420,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-03T15:44:58Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936778280",
       "user" : {
@@ -4428,6 +4489,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-03T16:00:25Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936842826",
       "user" : {
@@ -4496,6 +4558,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-03T16:01:12Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/936843785",
       "user" : {
@@ -4563,6 +4626,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-05T12:31:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/938738498",
       "user" : {
@@ -4630,6 +4694,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-05T12:31:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/938740402",
       "user" : {
@@ -4697,6 +4762,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-05T12:31:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/938747475",
       "user" : {
@@ -4764,6 +4830,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-05T12:31:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/938758842",
       "user" : {
@@ -4831,6 +4898,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-05T12:31:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/938759439",
       "user" : {
@@ -4898,6 +4966,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-05T12:31:08Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/938763403",
       "user" : {
@@ -5010,6 +5079,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-05T13:36:01Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/938822671",
       "user" : {
@@ -5078,6 +5148,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-05T13:38:37Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/938825139",
       "user" : {
@@ -5146,6 +5217,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-09T06:12:44Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/940935080",
       "user" : {
@@ -5214,6 +5286,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-09T06:12:34Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/940935255",
       "user" : {
@@ -5282,6 +5355,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-08-09T06:13:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/940935655",
       "user" : {

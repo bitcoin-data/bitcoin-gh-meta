@@ -8,10 +8,22 @@
       "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20113",
       "node_id" : "MDEyOklzc3VlQ29tbWVudDcwNjYxMzkwNw==",
       "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/706613907/reactions"
+      },
       "updated_at" : "2020-10-10T21:27:39Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/706613907",
       "user" : {
-         "avatar_url" : "https://avatars3.githubusercontent.com/u/60858013?v=4",
+         "avatar_url" : "https://avatars.githubusercontent.com/u/60858013?v=4",
          "events_url" : "https://api.github.com/users/wpeckr/events{/privacy}",
          "followers_url" : "https://api.github.com/users/wpeckr/followers",
          "following_url" : "https://api.github.com/users/wpeckr/following{/other_user}",
@@ -29,6 +41,50 @@
          "subscriptions_url" : "https://api.github.com/users/wpeckr/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/wpeckr"
+      }
+   },
+   {
+      "author_association" : "NONE",
+      "body" : "No, I think it is not relevant anymore. Thanks for pointing that out.\r\n\r\nFrom https://manpages.debian.org/buster/manpages-dev/posix_fallocate.3.en.html:\r\n> NOTES\r\n> In the glibc implementation, posix_fallocate() is implemented using the fallocate(2) system call, which is MT-safe. If the underlying filesystem does not support fallocate(2), then the operation is emulated with the following caveats:\r\n>  - The emulation is inefficient.\r\n>  - â¦\r\n\r\nWhile I thought it is still relevant I was about to write all of following:\r\n\r\n> Currently, glibc provides an interface called posix_fallocate() which\r\n> can be used for similar cause. Though this has the advantage of working\r\n> on all file systems, but it is quite slow (since it writes zeroes to\r\n> each block that has to be preallocated). Without a doubt, file systems\r\n> can do this more efficiently within the kernel, by implementing\r\n> the proposed fallocate() system call. It is expected that\r\n> posix_fallocate() will be modified to call this new system call first\r\n> and incase the kernel/filesystem does not implement it, it should fall\r\n> back to the current implementation of writing zeroes to the new blocks.\r\n\r\nFor more info see https://lwn.net/Articles/239738/ (source of above quote)\r\nand [upstream commit to glibc](http://sourceware.org/git/?p=glibc.git;a=blob;f=sysdeps/unix/sysv/linux/i386/posix_fallocate.c;h=c974d06afc6c04a831c054c0490448f04764c8b0;hb=5e0923ab31aa77bbd46737c4b8b327dbe2494b00)\r\n\r\nIt seems to me that [WIN32](https://github.com/bitcoin/bitcoin/blob/master/src/util/system.cpp#L1084) and [MAC_OSX](https://github.com/bitcoin/bitcoin/blob/master/src/util/system.cpp#L1093) have an unfair advantage of already using some optimizations in `src/util/system.cpp` for file allocation, while Linux uses `posix_fallocate` which works but is clearly not optimal and does not provide a way for filesystem maintainers to offer their own best practices.",
+      "created_at" : "2020-10-12T11:25:49Z",
+      "html_url" : "https://github.com/bitcoin/bitcoin/issues/20113#issuecomment-707061072",
+      "id" : 707061072,
+      "issue_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/20113",
+      "node_id" : "MDEyOklzc3VlQ29tbWVudDcwNzA2MTA3Mg==",
+      "performed_via_github_app" : null,
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/707061072/reactions"
+      },
+      "updated_at" : "2020-10-12T11:25:49Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/707061072",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/244565?v=4",
+         "events_url" : "https://api.github.com/users/jsarenik/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/jsarenik/followers",
+         "following_url" : "https://api.github.com/users/jsarenik/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/jsarenik/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/jsarenik",
+         "id" : 244565,
+         "login" : "jsarenik",
+         "node_id" : "MDQ6VXNlcjI0NDU2NQ==",
+         "organizations_url" : "https://api.github.com/users/jsarenik/orgs",
+         "received_events_url" : "https://api.github.com/users/jsarenik/received_events",
+         "repos_url" : "https://api.github.com/users/jsarenik/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/jsarenik/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/jsarenik/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/jsarenik"
       }
    }
 ]

@@ -1,7 +1,7 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| Concept ACK | [mzumsande](https://github.com/bitcoin/bitcoin/pull/26898#pullrequestreview-1254130211), [sipa](https://github.com/bitcoin/bitcoin/pull/26898#issuecomment-1398630808) |\n| Stale ACK | [MarcoFalke](https://github.com/bitcoin/bitcoin/pull/26898#pullrequestreview-1265301293) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| ACK | [mzumsande](https://github.com/bitcoin/bitcoin/pull/26898#pullrequestreview-1266335500), [MarcoFalke](https://github.com/bitcoin/bitcoin/pull/26898#pullrequestreview-1267330529) |\n| Concept ACK | [sipa](https://github.com/bitcoin/bitcoin/pull/26898#issuecomment-1398630808) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n",
       "created_at" : "2023-01-16T15:39:52Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26898#issuecomment-1384227723",
       "id" : 1384227723,
@@ -20,7 +20,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1384227723/reactions"
       },
-      "updated_at" : "2023-01-23T16:32:41Z",
+      "updated_at" : "2023-01-24T11:34:13Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1384227723",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -55,9 +55,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1073956267"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: etxra -> extra",
-      "commit_id" : "b350ffd07c04d3b499f5960973d664d699341ec1",
+      "commit_id" : "a1c36275b5a27ae685f49ff02dabff0adbf51aa1",
       "created_at" : "2023-01-18T19:00:48Z",
       "diff_hunk" : "@@ -0,0 +1,119 @@\n+#include <blockencodings.h>\n+#include <consensus/merkle.h>\n+#include <consensus/validation.h>\n+#include <primitives/block.h>\n+#include <primitives/transaction.h>\n+#include <test/fuzz/FuzzedDataProvider.h>\n+#include <test/fuzz/fuzz.h>\n+#include <test/fuzz/util.h>\n+#include <test/fuzz/util/mempool.h>\n+#include <test/util/setup_common.h>\n+#include <test/util/txmempool.h>\n+#include <txmempool.h>\n+\n+#include <cstddef>\n+#include <cstdint>\n+#include <limits>\n+#include <memory>\n+#include <optional>\n+#include <set>\n+#include <vector>\n+\n+namespace {\n+const TestingSetup* g_setup;\n+} // namespace\n+\n+void initialize_pdb()\n+{\n+    static const auto testing_setup = MakeNoLogFileContext<const TestingSetup>();\n+    g_setup = testing_setup.get();\n+}\n+\n+PartiallyDownloadedBlock::CheckBlockFn FuzzedCheckBlock(std::optional<BlockValidationResult> result)\n+{\n+    return [result](const CBlock& block, BlockValidationState& state, const Consensus::Params& params, bool check_pow, bool check_merkle_root) {\n+        if (result) {\n+            return state.Invalid(*result);\n+        }\n+\n+        return true;\n+    };\n+}\n+\n+FUZZ_TARGET_INIT(partially_downloaded_block, initialize_pdb)\n+{\n+    FuzzedDataProvider fuzzed_data_provider{buffer.data(), buffer.size()};\n+\n+    auto block{ConsumeDeserializable<CBlock>(fuzzed_data_provider)};\n+    if (!block || block->vtx.size() == 0 ||\n+        block->vtx.size() >= std::numeric_limits<uint16_t>::max()) {\n+        return;\n+    }\n+\n+    CBlockHeaderAndShortTxIDs cmpctblock{*block};\n+\n+    CTxMemPool pool{MemPoolOptionsForTest(g_setup->m_node)};\n+    PartiallyDownloadedBlock pdb{&pool};\n+\n+    // Set of available transactions (mempool or extra_txn)\n+    std::set<uint16_t> available;\n+    // The coinbase is always available\n+    available.insert(0);\n+\n+    std::vector<std::pair<uint256, CTransactionRef>> extra_txn;\n+    for (size_t i = 1; i < block->vtx.size(); ++i) {\n+        auto tx{block->vtx[i]};\n+\n+        bool add_to_etxra_txn{fuzzed_data_provider.ConsumeBool()};",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26898#discussion_r1073956267",
@@ -87,6 +87,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-18T23:32:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1073956267",
       "user" : {
@@ -122,9 +123,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1073984596"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "maybe add named arguments for the bools",
-      "commit_id" : "b350ffd07c04d3b499f5960973d664d699341ec1",
+      "commit_id" : "a1c36275b5a27ae685f49ff02dabff0adbf51aa1",
       "created_at" : "2023-01-18T19:31:12Z",
       "diff_hunk" : "@@ -197,7 +197,8 @@ ReadStatus PartiallyDownloadedBlock::FillBlock(CBlock& block, const std::vector<\n         return READ_STATUS_INVALID;\n \n     BlockValidationState state;\n-    if (!CheckBlock(block, state, Params().GetConsensus())) {\n+    CheckBlockFn check_block = check_block_mock ? check_block_mock : CheckBlock;\n+    if (!check_block(block, state, Params().GetConsensus(), true, true)) {",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26898#discussion_r1073984596",
@@ -154,6 +155,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-18T23:32:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1073984596",
       "user" : {
@@ -189,21 +191,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1080665669"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "maybe we could memorize if we decided to skip an unavailable tx (i.e. one we were supposed to include in `missing`), and later assert that the FillBlock result must not be `READ_STATUS_OK` in this case?",
-      "commit_id" : "b350ffd07c04d3b499f5960973d664d699341ec1",
+      "commit_id" : "a1c36275b5a27ae685f49ff02dabff0adbf51aa1",
       "created_at" : "2023-01-18T23:28:56Z",
       "diff_hunk" : "@@ -0,0 +1,119 @@\n+#include <blockencodings.h>\n+#include <consensus/merkle.h>\n+#include <consensus/validation.h>\n+#include <primitives/block.h>\n+#include <primitives/transaction.h>\n+#include <test/fuzz/FuzzedDataProvider.h>\n+#include <test/fuzz/fuzz.h>\n+#include <test/fuzz/util.h>\n+#include <test/fuzz/util/mempool.h>\n+#include <test/util/setup_common.h>\n+#include <test/util/txmempool.h>\n+#include <txmempool.h>\n+\n+#include <cstddef>\n+#include <cstdint>\n+#include <limits>\n+#include <memory>\n+#include <optional>\n+#include <set>\n+#include <vector>\n+\n+namespace {\n+const TestingSetup* g_setup;\n+} // namespace\n+\n+void initialize_pdb()\n+{\n+    static const auto testing_setup = MakeNoLogFileContext<const TestingSetup>();\n+    g_setup = testing_setup.get();\n+}\n+\n+PartiallyDownloadedBlock::CheckBlockFn FuzzedCheckBlock(std::optional<BlockValidationResult> result)\n+{\n+    return [result](const CBlock& block, BlockValidationState& state, const Consensus::Params& params, bool check_pow, bool check_merkle_root) {\n+        if (result) {\n+            return state.Invalid(*result);\n+        }\n+\n+        return true;\n+    };\n+}\n+\n+FUZZ_TARGET_INIT(partially_downloaded_block, initialize_pdb)\n+{\n+    FuzzedDataProvider fuzzed_data_provider{buffer.data(), buffer.size()};\n+\n+    auto block{ConsumeDeserializable<CBlock>(fuzzed_data_provider)};\n+    if (!block || block->vtx.size() == 0 ||\n+        block->vtx.size() >= std::numeric_limits<uint16_t>::max()) {\n+        return;\n+    }\n+\n+    CBlockHeaderAndShortTxIDs cmpctblock{*block};\n+\n+    CTxMemPool pool{MemPoolOptionsForTest(g_setup->m_node)};\n+    PartiallyDownloadedBlock pdb{&pool};\n+\n+    // Set of available transactions (mempool or extra_txn)\n+    std::set<uint16_t> available;\n+    // The coinbase is always available\n+    available.insert(0);\n+\n+    std::vector<std::pair<uint256, CTransactionRef>> extra_txn;\n+    for (size_t i = 1; i < block->vtx.size(); ++i) {\n+        auto tx{block->vtx[i]};\n+\n+        bool add_to_etxra_txn{fuzzed_data_provider.ConsumeBool()};\n+        bool add_to_mempool{fuzzed_data_provider.ConsumeBool()};\n+\n+        if (add_to_etxra_txn) {\n+            extra_txn.emplace_back(tx->GetWitnessHash(), tx);\n+            available.insert(i);\n+        }\n+\n+        if (add_to_mempool) {\n+            LOCK2(cs_main, pool.cs);\n+            pool.addUnchecked(ConsumeTxMemPoolEntry(fuzzed_data_provider, *tx));\n+            available.insert(i);\n+        }\n+    }\n+\n+    auto init_status{pdb.InitData(cmpctblock, extra_txn)};\n+\n+    std::vector<CTransactionRef> missing;\n+    for (size_t i = 0; i < cmpctblock.BlockTxCount(); i++) {\n+        bool skip{fuzzed_data_provider.ConsumeBool()};\n+        assert(init_status != READ_STATUS_OK ||\n+               (available.count(i) == 1) == pdb.IsTxAvailable(i));\n+        if (!pdb.IsTxAvailable(i) && !skip && i < block->vtx.size()) {\n+            missing.push_back(block->vtx[i]);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26898#discussion_r1080665669",
       "id" : 1080665669,
-      "line" : 100,
+      "line" : 101,
       "node_id" : "PRRC_kwDOABII585AaaZF",
       "original_commit_id" : "1105efe46170c7edb3c4d5918ba573ff3aa49967",
-      "original_line" : 100,
+      "original_line" : 101,
       "original_position" : 90,
       "original_start_line" : null,
       "path" : "src/test/fuzz/partially_downloaded_block.cpp",
-      "position" : 100,
+      "position" : 101,
       "pull_request_review_id" : 1254130211,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26898",
       "reactions" : {
@@ -221,6 +223,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-18T23:33:06Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1080665669",
       "user" : {
@@ -258,20 +261,20 @@
       },
       "author_association" : "MEMBER",
       "body" : "Good idea, added an extra commit for this",
-      "commit_id" : "b350ffd07c04d3b499f5960973d664d699341ec1",
+      "commit_id" : "a1c36275b5a27ae685f49ff02dabff0adbf51aa1",
       "created_at" : "2023-01-20T12:00:45Z",
       "diff_hunk" : "@@ -0,0 +1,119 @@\n+#include <blockencodings.h>\n+#include <consensus/merkle.h>\n+#include <consensus/validation.h>\n+#include <primitives/block.h>\n+#include <primitives/transaction.h>\n+#include <test/fuzz/FuzzedDataProvider.h>\n+#include <test/fuzz/fuzz.h>\n+#include <test/fuzz/util.h>\n+#include <test/fuzz/util/mempool.h>\n+#include <test/util/setup_common.h>\n+#include <test/util/txmempool.h>\n+#include <txmempool.h>\n+\n+#include <cstddef>\n+#include <cstdint>\n+#include <limits>\n+#include <memory>\n+#include <optional>\n+#include <set>\n+#include <vector>\n+\n+namespace {\n+const TestingSetup* g_setup;\n+} // namespace\n+\n+void initialize_pdb()\n+{\n+    static const auto testing_setup = MakeNoLogFileContext<const TestingSetup>();\n+    g_setup = testing_setup.get();\n+}\n+\n+PartiallyDownloadedBlock::CheckBlockFn FuzzedCheckBlock(std::optional<BlockValidationResult> result)\n+{\n+    return [result](const CBlock& block, BlockValidationState& state, const Consensus::Params& params, bool check_pow, bool check_merkle_root) {\n+        if (result) {\n+            return state.Invalid(*result);\n+        }\n+\n+        return true;\n+    };\n+}\n+\n+FUZZ_TARGET_INIT(partially_downloaded_block, initialize_pdb)\n+{\n+    FuzzedDataProvider fuzzed_data_provider{buffer.data(), buffer.size()};\n+\n+    auto block{ConsumeDeserializable<CBlock>(fuzzed_data_provider)};\n+    if (!block || block->vtx.size() == 0 ||\n+        block->vtx.size() >= std::numeric_limits<uint16_t>::max()) {\n+        return;\n+    }\n+\n+    CBlockHeaderAndShortTxIDs cmpctblock{*block};\n+\n+    CTxMemPool pool{MemPoolOptionsForTest(g_setup->m_node)};\n+    PartiallyDownloadedBlock pdb{&pool};\n+\n+    // Set of available transactions (mempool or extra_txn)\n+    std::set<uint16_t> available;\n+    // The coinbase is always available\n+    available.insert(0);\n+\n+    std::vector<std::pair<uint256, CTransactionRef>> extra_txn;\n+    for (size_t i = 1; i < block->vtx.size(); ++i) {\n+        auto tx{block->vtx[i]};\n+\n+        bool add_to_etxra_txn{fuzzed_data_provider.ConsumeBool()};\n+        bool add_to_mempool{fuzzed_data_provider.ConsumeBool()};\n+\n+        if (add_to_etxra_txn) {\n+            extra_txn.emplace_back(tx->GetWitnessHash(), tx);\n+            available.insert(i);\n+        }\n+\n+        if (add_to_mempool) {\n+            LOCK2(cs_main, pool.cs);\n+            pool.addUnchecked(ConsumeTxMemPoolEntry(fuzzed_data_provider, *tx));\n+            available.insert(i);\n+        }\n+    }\n+\n+    auto init_status{pdb.InitData(cmpctblock, extra_txn)};\n+\n+    std::vector<CTransactionRef> missing;\n+    for (size_t i = 0; i < cmpctblock.BlockTxCount(); i++) {\n+        bool skip{fuzzed_data_provider.ConsumeBool()};\n+        assert(init_status != READ_STATUS_OK ||\n+               (available.count(i) == 1) == pdb.IsTxAvailable(i));\n+        if (!pdb.IsTxAvailable(i) && !skip && i < block->vtx.size()) {\n+            missing.push_back(block->vtx[i]);",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/26898#discussion_r1082418099",
       "id" : 1082418099,
       "in_reply_to_id" : 1080665669,
-      "line" : 100,
+      "line" : 101,
       "node_id" : "PRRC_kwDOABII585AhGOz",
       "original_commit_id" : "1105efe46170c7edb3c4d5918ba573ff3aa49967",
-      "original_line" : 100,
+      "original_line" : 101,
       "original_position" : 90,
       "original_start_line" : null,
       "path" : "src/test/fuzz/partially_downloaded_block.cpp",
-      "position" : 100,
+      "position" : 101,
       "pull_request_review_id" : 1263469523,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/26898",
       "reactions" : {
@@ -289,6 +292,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-20T12:00:46Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1082418099",
       "user" : {
@@ -400,6 +404,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-23T15:02:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1083856840",
       "user" : {
@@ -467,6 +472,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-23T15:02:19Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1084094778",
       "user" : {
@@ -534,6 +540,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-23T15:02:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1084151062",
       "user" : {
@@ -601,6 +608,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-23T15:02:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1084151594",
       "user" : {
@@ -668,6 +676,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-23T15:02:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1084152813",
       "user" : {
@@ -735,6 +744,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-23T15:02:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1084157755",
       "user" : {
@@ -803,6 +813,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-23T15:02:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1084159761",
       "user" : {
@@ -870,6 +881,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-23T15:02:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1084163667",
       "user" : {
@@ -938,6 +950,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-23T16:33:29Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1084282052",
       "user" : {
@@ -1006,6 +1019,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-23T16:34:15Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1084283041",
       "user" : {
@@ -1074,6 +1088,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-23T16:34:28Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1084283397",
       "user" : {
@@ -1185,6 +1200,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-24T11:34:10Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1085160437",
       "user" : {
@@ -1252,6 +1268,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2023-01-25T09:33:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1086378266",
       "user" : {
@@ -1319,6 +1336,7 @@
       "side" : "RIGHT",
       "start_line" : 95,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2023-01-25T09:33:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1086382332",
       "user" : {
@@ -1386,6 +1404,7 @@
       "side" : "RIGHT",
       "start_line" : 100,
       "start_side" : "RIGHT",
+      "subject_type" : "line",
       "updated_at" : "2023-01-25T09:33:55Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1086386318",
       "user" : {

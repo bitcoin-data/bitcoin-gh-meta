@@ -2,7 +2,7 @@
    "active_lock_reason" : null,
    "assignee" : null,
    "assignees" : [],
-   "author_association" : "CONTRIBUTOR",
+   "author_association" : "MEMBER",
    "body" : "The mutex `cs_sendProcessing` is currently only acquired at one location in the code:\r\n\r\nhttps://github.com/bitcoin/bitcoin/blob/7d258ee8bc3bff439881064dd6234f7b04982783/src/net.cpp#L1998-L2001\r\n\r\napparently with the intention to execute the method for sending messages (`NetEventsInterface::SendMessages(...)`) in serial order, in the case that we ever had more than one message handling thread. With no possibility to re-acquire the mutex in the same thread, there is no reason for it to be a RecursiveMutex, so we can change it to an ordinary Mutex instead.\r\n\r\n(An alternative would be to just get rid of the mutex, as it currently doesn't serve any purpose, as long as we only have one message handling thread.)",
    "closed_at" : "2022-10-12T19:47:40Z",
    "closed_by" : {

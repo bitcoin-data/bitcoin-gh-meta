@@ -1,7 +1,7 @@
 [
    {
-      "author_association" : "CONTRIBUTOR",
-      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\nA summary of reviews will appear here.\n",
+      "author_association" : "MEMBER",
+      "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--021abf342d371248e50ceaed478a90ca-->\n### Reviews\nSee [the guideline](https://github.com/bitcoin/bitcoin/blob/master/CONTRIBUTING.md#code-review) for information on the review process.\n| Type | Reviewers |\n| ---- | --------- |\n| Concept ACK | [pinheadmz](https://github.com/bitcoin/bitcoin/pull/27653#pullrequestreview-1427256339) |\n\nIf your review is incorrectly listed, please react with ð to this comment and the bot will ignore it on the next update.\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#26222](https://github.com/bitcoin/bitcoin/pull/26222) (Introduce secp256k1 module with field and group classes to test framework by sipa)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.\n",
       "created_at" : "2023-05-14T14:15:59Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/27653#issuecomment-1546910524",
       "id" : 1546910524,
@@ -20,7 +20,7 @@
          "total_count" : 0,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1546910524/reactions"
       },
-      "updated_at" : "2023-05-14T14:15:59Z",
+      "updated_at" : "2023-05-15T19:53:26Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1546910524",
       "user" : {
          "avatar_url" : "https://avatars.githubusercontent.com/u/39886733?v=4",
@@ -41,6 +41,74 @@
          "subscriptions_url" : "https://api.github.com/users/DrahtBot/subscriptions",
          "type" : "User",
          "url" : "https://api.github.com/users/DrahtBot"
+      }
+   },
+   {
+      "_links" : {
+         "html" : {
+            "href" : "https://github.com/bitcoin/bitcoin/pull/27653#discussion_r1194287587"
+         },
+         "pull_request" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/27653"
+         },
+         "self" : {
+            "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1194287587"
+         }
+      },
+      "author_association" : "MEMBER",
+      "body" : "IIUC we don't assert that the keys we expect to be invalid are marked correctly. Seems like we mine as well ensure that `generate_privkey()` is always valid but certain edge cases are not (`0`, `SECP256K1_ORDER`, and `2**256 - 1`)",
+      "commit_id" : "490874fec509ed3aa39432c7857a60370b0657a6",
+      "created_at" : "2023-05-15T19:38:58Z",
+      "diff_hunk" : "@@ -513,24 +513,33 @@ def sign_schnorr(key, msg, aux=None, flip_p=False, flip_r=False):\n     return R[0].to_bytes(32, 'big') + ((k + e * sec) % SECP256K1_ORDER).to_bytes(32, 'big')\n \n class TestFrameworkKey(unittest.TestCase):\n-    def test_schnorr(self):\n-        \"\"\"Test the Python Schnorr implementation.\"\"\"\n+    def test_ecdsa_and_schnorr(self):\n+        \"\"\"Test the Python ECDSA and Schnorr implementations.\"\"\"\n+        def random_bitflip(sig):\n+            sig = list(sig)\n+            sig[random.randrange(len(sig))] ^= (1 << (random.randrange(8)))\n+            return bytes(sig)\n+\n         byte_arrays = [generate_privkey() for _ in range(3)] + [v.to_bytes(32, 'big') for v in [0, SECP256K1_ORDER - 1, SECP256K1_ORDER, 2**256 - 1]]\n         keys = {}\n-        for privkey in byte_arrays:  # build array of key/pubkey pairs\n-            pubkey, _ = compute_xonly_pubkey(privkey)\n-            if pubkey is not None:\n-                keys[privkey] = pubkey\n+        for privkey_bytes in byte_arrays:  # build array of key/pubkey pairs\n+            privkey = ECKey()\n+            privkey.set(privkey_bytes, compressed=True)\n+            if privkey.is_valid:\n+                keys[privkey] = privkey.get_pubkey()",
+      "html_url" : "https://github.com/bitcoin/bitcoin/pull/27653#discussion_r1194287587",
+      "id" : 1194287587,
+      "line" : 529,
+      "node_id" : "PRRC_kwDOABII585HL2Hj",
+      "original_commit_id" : "490874fec509ed3aa39432c7857a60370b0657a6",
+      "original_line" : 529,
+      "original_position" : 23,
+      "original_start_line" : 528,
+      "path" : "test/functional/test_framework/key.py",
+      "position" : 23,
+      "pull_request_review_id" : 1427256339,
+      "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/27653",
+      "reactions" : {
+         "+1" : 0,
+         "-1" : 0,
+         "confused" : 0,
+         "eyes" : 0,
+         "heart" : 0,
+         "hooray" : 0,
+         "laugh" : 0,
+         "rocket" : 0,
+         "total_count" : 0,
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1194287587/reactions"
+      },
+      "side" : "RIGHT",
+      "start_line" : 528,
+      "start_side" : "RIGHT",
+      "subject_type" : "line",
+      "updated_at" : "2023-05-15T19:53:23Z",
+      "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/1194287587",
+      "user" : {
+         "avatar_url" : "https://avatars.githubusercontent.com/u/2084648?v=4",
+         "events_url" : "https://api.github.com/users/pinheadmz/events{/privacy}",
+         "followers_url" : "https://api.github.com/users/pinheadmz/followers",
+         "following_url" : "https://api.github.com/users/pinheadmz/following{/other_user}",
+         "gists_url" : "https://api.github.com/users/pinheadmz/gists{/gist_id}",
+         "gravatar_id" : "",
+         "html_url" : "https://github.com/pinheadmz",
+         "id" : 2084648,
+         "login" : "pinheadmz",
+         "node_id" : "MDQ6VXNlcjIwODQ2NDg=",
+         "organizations_url" : "https://api.github.com/users/pinheadmz/orgs",
+         "received_events_url" : "https://api.github.com/users/pinheadmz/received_events",
+         "repos_url" : "https://api.github.com/users/pinheadmz/repos",
+         "site_admin" : false,
+         "starred_url" : "https://api.github.com/users/pinheadmz/starred{/owner}{/repo}",
+         "subscriptions_url" : "https://api.github.com/users/pinheadmz/subscriptions",
+         "type" : "User",
+         "url" : "https://api.github.com/users/pinheadmz"
       }
    }
 ]

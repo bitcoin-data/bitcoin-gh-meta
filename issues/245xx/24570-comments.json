@@ -44,7 +44,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "> Would it be harder to use MiniWallet, which is deterministic by design?\r\n\r\nGood point! Looking through the full test, it _seems_ like you could use `MiniWallet`, but it's definitely a bigger change than the few lines I did here. Selfishly, I'd prefer making the small change now to unblock myself on a bigger PR I'm working on for coin selection, and then come back to this one later and re-write it to use `MiniWallet` in a follow-up PR.",
       "created_at" : "2022-03-15T16:54:34Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24570#issuecomment-1068221335",
@@ -53,7 +53,7 @@
       "node_id" : "IC_kwDOABII584_q8OX",
       "performed_via_github_app" : null,
       "reactions" : {
-         "+1" : 0,
+         "+1" : 1,
          "-1" : 0,
          "confused" : 0,
          "eyes" : 0,
@@ -61,7 +61,7 @@
          "hooray" : 0,
          "laugh" : 0,
          "rocket" : 0,
-         "total_count" : 0,
+         "total_count" : 1,
          "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/comments/1068221335/reactions"
       },
       "updated_at" : "2022-03-15T16:54:34Z",
@@ -88,7 +88,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "force push to fix the commit message",
       "created_at" : "2022-03-16T12:34:05Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24570#issuecomment-1069079022",
@@ -143,21 +143,21 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/829039353"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: missing space after ':'\r\n\r\n`tx1_inputs.append({\"txid\": utxo['txid'], \"vout\": utxo['vout']})`",
-      "commit_id" : "9a8b21f0dab2807e6fce993a7b64772998f2b64e",
+      "commit_id" : "6980d74cbbf6e27d0aec6456dd2469202368b227",
       "created_at" : "2022-03-17T11:57:05Z",
       "diff_hunk" : "@@ -147,11 +147,24 @@ def _test_coin_stats_index(self):\n             })\n             self.block_sanity_check(res5['block_info'])\n \n-        # Generate and send a normal tx with two outputs\n+        # Generate and send a normal tx with two outputs.\n+        # Since we are expecting a specific value from `getxoutsetinfo` to check against,\n+        # we need to fund tx1 deterministically, otherwise the value could change\n+        # depending on coin selection.\n+        #\n+        # If we simply rely on `fundrawtransaction`, this test will need to be updated\n+        # every time the logic for coin selection is changed.\n+        #\n+        # Instead, we know there is one UTXO of amount 40BTC in our wallet, so\n+        # we select this as the first input and then use `fundrawtransaction`\n+        # to select a 50 BTC coinbase UTXO from our wallet\n         tx1_inputs = []\n+        for utxo in self.nodes[0].listunspent():\n+            if utxo['amount'] == 40:\n+                tx1_inputs.append({\"txid\":utxo['txid'], \"vout\": utxo['vout']})",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24570#discussion_r829039353",
       "id" : 829039353,
-      "line" : 164,
+      "line" : null,
       "node_id" : "PRRC_kwDOABII584xaiL5",
       "original_commit_id" : "9a8b21f0dab2807e6fce993a7b64772998f2b64e",
       "original_line" : 164,
       "original_position" : 19,
       "original_start_line" : null,
       "path" : "test/functional/feature_coinstatsindex.py",
-      "position" : 19,
+      "position" : null,
       "pull_request_review_id" : 913028572,
       "pull_request_url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/24570",
       "reactions" : {
@@ -175,6 +175,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-17T12:03:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/829039353",
       "user" : {
@@ -210,9 +211,9 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/829040012"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "nit: These lines are > 79 chars",
-      "commit_id" : "9a8b21f0dab2807e6fce993a7b64772998f2b64e",
+      "commit_id" : "6980d74cbbf6e27d0aec6456dd2469202368b227",
       "created_at" : "2022-03-17T11:57:59Z",
       "diff_hunk" : "@@ -147,11 +147,24 @@ def _test_coin_stats_index(self):\n             })\n             self.block_sanity_check(res5['block_info'])\n \n-        # Generate and send a normal tx with two outputs\n+        # Generate and send a normal tx with two outputs.",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24570#discussion_r829040012",
@@ -242,6 +243,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-17T12:03:07Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/829040012",
       "user" : {
@@ -277,7 +279,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/829156181"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "good catch! ",
       "commit_id" : "6980d74cbbf6e27d0aec6456dd2469202368b227",
       "created_at" : "2022-03-17T14:18:11Z",
@@ -310,6 +312,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-17T14:18:11Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/829156181",
       "user" : {
@@ -345,7 +348,7 @@
             "href" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/829156291"
          }
       },
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "fixed!",
       "commit_id" : "6980d74cbbf6e27d0aec6456dd2469202368b227",
       "created_at" : "2022-03-17T14:18:19Z",
@@ -378,6 +381,7 @@
       "side" : "RIGHT",
       "start_line" : null,
       "start_side" : null,
+      "subject_type" : "line",
       "updated_at" : "2022-03-17T14:18:20Z",
       "url" : "https://api.github.com/repos/bitcoin/bitcoin/pulls/comments/829156291",
       "user" : {
@@ -402,7 +406,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "<!--e57a25ab6845829454e8d69fc972939a-->\n\nThe following sections might be updated with supplementary metadata relevant to reviewers and maintainers.\n\n<!--174a7506f384e20aa4161008e828411d-->\n### Conflicts\nReviewers, this pull request conflicts with the following ones:\n\n* [#24584](https://github.com/bitcoin/bitcoin/pull/24584) ([RFC] wallet: avoid mixing different `OutputTypes` during coin selection by josibake)\n\nIf you consider this pull request important, please also help to review the conflicting pull requests. Ideally, start with the one that should be merged first.",
       "created_at" : "2022-03-17T20:40:50Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24570#issuecomment-1071419334",
@@ -490,7 +494,7 @@
       }
    },
    {
-      "author_association" : "CONTRIBUTOR",
+      "author_association" : "MEMBER",
       "body" : "closing in favor of https://github.com/bitcoin/bitcoin/pull/24605",
       "created_at" : "2022-03-18T10:15:28Z",
       "html_url" : "https://github.com/bitcoin/bitcoin/pull/24570#issuecomment-1072266453",

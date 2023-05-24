@@ -6,7 +6,7 @@
    "body" : "Made the following changes:\r\n\r\n* Replaced the indexers threads active wait and the `is_ready` global flag by a postponed indexers start call (after `load-blk` thread finishes loading the blocks).\r\n\r\n* Decoupled index `Init()` from `Start()`. So indexers can be initialized without spawning the sync thread.\r\n\r\n* Simplified pruning violation code by re-purposing `GetFirstStoredBlock`. Now called `IsBlockDataAvailable`.\r\n\r\n* Fixed a race condition where an index's  `CustomAppend` method (from `BlockConnected`) might be called before its `CustomInit` method, causing the index to try to update itself before it is initialized.\r\n   This could happen because we set the index `m_synced=true` flag (which enables `BlockConnected` events) before calling to the child class init function (`CustomInit`). So, for example, the block filter index could theoretically process a block before initializing the next filter position field and end up overwriting the first stored filter.\r\n  This race was introduced in https://github.com/bitcoin/bitcoin/commit/bef4e405f3de2718dfee279a9abff4daf016da26 from https://github.com/bitcoin/bitcoin/pull/25494\r\n\r\n* Made the indexes pruning violation check more efficient by fetching the oldest block from all indexers and performing the block data availability check from that point only once, and not once per index as is now (If the oldest block passes the check, newer blocks will also pass it).",
    "closed_at" : null,
    "closed_by" : null,
-   "comments" : 16,
+   "comments" : 17,
    "comments_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27607/comments",
    "created_at" : "2023-05-09T14:55:04Z",
    "draft" : false,
@@ -15,13 +15,13 @@
    "id" : 1702212340,
    "labels" : [
       {
-         "color" : "cccccc",
+         "color" : "fbca04",
          "default" : false,
-         "description" : "",
-         "id" : 5334691551,
-         "name" : "CI failed",
-         "node_id" : "LA_kwDOABII588AAAABPfju3w",
-         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/CI%20failed"
+         "description" : null,
+         "id" : 97470796,
+         "name" : "UTXO Db and Indexes",
+         "node_id" : "MDU6TGFiZWw5NzQ3MDc5Ng==",
+         "url" : "https://api.github.com/repos/bitcoin/bitcoin/labels/UTXO%20Db%20and%20Indexes"
       }
    ],
    "labels_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27607/labels{/name}",
@@ -54,7 +54,7 @@
    "state_reason" : null,
    "timeline_url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27607/timeline",
    "title" : "index: improve initialization and pruning violation check",
-   "updated_at" : "2023-05-18T19:17:47Z",
+   "updated_at" : "2023-05-22T23:32:39Z",
    "url" : "https://api.github.com/repos/bitcoin/bitcoin/issues/27607",
    "user" : {
       "avatar_url" : "https://avatars.githubusercontent.com/u/5377650?v=4",
